@@ -1,6 +1,4 @@
 
-T
-$src/main/java/fr/euphyllia/Main.java,c\c\cc5ebd16cf5f849130fae3ca2a271c6e4262bc48
 @
 build.gradle.kts,d\b\dbcff70658daf80b53ce624f6adcaa529df5ed8d
 9
@@ -14,10 +12,6 @@ Asrc/main/java/fr/euphyllia/skyfolia/configuration/ConfigToml.java,2\9\2991c4e3
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-w
-Gsrc/main/java/fr/euphyllia/skyfolia/database/section/MariaDBConfig.java,c\7\c7fd24b6b45484a67edf7e437deb936c18c62590
-x
-Hsrc/main/java/fr/euphyllia/skyfolia/database/section/DatabaseLoader.java,6\d\6d4f81c4643a3cbe37c9a458965c2bc7e9ad4d7f
 p
 @src/main/java/fr/euphyllia/skyfolia/database/DatabaseLoader.java,6\f\6fad360e12b787e164486627b2dee9e0c6489327
 |
@@ -38,10 +32,6 @@ t
 Dsrc/main/java/fr/euphyllia/skyfolia/database/stream/AsciiStream.java,1\6\16666d1fdf6ab7a6f409b07a9ed00d6660e5745c
 u
 Esrc/main/java/fr/euphyllia/skyfolia/database/stream/BinaryStream.java,f\a\fa2dbee3cb8446753bb3a4581cb7479d8713017c
-o
-?src/main/java/fr/euphyllia/skyfolia/database/execute/Query.java,4\8\481701848ac4e1a4dda3232597d1caa2f63eb27e
-{
-Ksrc/main/java/fr/euphyllia/skyfolia/database/query/MariaDB_CreateTable.java,3\7\37c4803ff287ec7bb7915759fd1c57ce22182996
 z
 Jsrc/main/java/fr/euphyllia/skyfolia/database/query/MariaDBCreateTable.java,c\b\cb76b976218e8cf1b674759b1235ec23636d124b
 
@@ -52,3 +42,13 @@ g
 7src/main/java/fr/euphyllia/skyfolia/api/InterneAPI.java,2\f\2fca606c521e61a9bdb9f5646c8ddef759f2be1d
 x
 Hsrc/main/java/fr/euphyllia/skyfolia/database/execute/MariaDBExecute.java,c\5\c5d9965bcc43c5f4bed732c54ccd2371dcf966a3
+v
+Fsrc/main/java/fr/euphyllia/skyfolia/utils/generators/VoidWorldGen.java,2\4\2403b3f108c9fb0b6bea49e6ce38bfd042084be0
+u
+Esrc/main/java/fr/euphyllia/skyfolia/managers/world/WorldsManager.java,4\f\4fe305c1ab6bf791747f3061abf53a3e996f5df2
+h
+8src/main/java/fr/euphyllia/skyfolia/utils/WorldUtil.java,6\c\6cf8c9d697e22a97d4967b6d99a9a06b18ea0360
+z
+Jsrc/main/java/fr/euphyllia/skyfolia/configuration/section/WorldConfig.java,4\4\44d5855572032eac98c6e87102395051ab5922b7
+j
+:src/main/java/fr/euphyllia/skyfolia/managers/Managers.java,a\5\a5304625e025540ab5f38979d029900927b6b51a

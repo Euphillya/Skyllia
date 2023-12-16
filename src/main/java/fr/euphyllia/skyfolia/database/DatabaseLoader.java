@@ -1,6 +1,5 @@
 package fr.euphyllia.skyfolia.database;
 
-import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.database.sgbd.MariaDB;
 import fr.euphyllia.skyfolia.database.stream.AsciiStream;
 import fr.euphyllia.skyfolia.database.stream.BinaryStream;
@@ -15,10 +14,8 @@ import java.util.concurrent.CompletableFuture;
 public class DatabaseLoader {
 
     private final MariaDB mariaDB;
-    private final Main plugin;
 
-    public DatabaseLoader(Main javaPlugin, MariaDB mariaDB) {
-        this.plugin = javaPlugin;
+    public DatabaseLoader(MariaDB mariaDB) {
         this.mariaDB = mariaDB;
     }
 

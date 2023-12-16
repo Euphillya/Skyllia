@@ -4,14 +4,18 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
+import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,6 +103,8 @@ public class ConfigToml {
 
     private static <T> List getList(@NotNull String path, T def) {
         Object tryIt = config.get(path);
+        logger.log(Level.FATAL, "1");
+        logger.log(Level.FATAL, tryIt);
         if (tryIt == null) {
             set(path, def);
             return (List) def;
@@ -146,5 +152,17 @@ public class ConfigToml {
         int timeOut = getInt(path.formatted("timeOut"), 500);
         String database = getString(path.formatted("database"), "sky_folia");
         mariaDBConfig = new MariaDBConfig(hostname, port, username, password, useSSL, maxPool, timeOut, database);
+    }
+
+    public static List<WorldConfig> worldConfigs = new ArrayList<>();
+
+    private static void worlds() {
+        Map<String, ?> worldsMaps = getMap("worlds", new HashMap<>());
+        String parentConfig = "worlds.";
+        for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
+            String key = parentConfig + entry.getKey();
+            String skyblockEnvironment = getString(key+ ".environment", World.Environment.NORMAL.name());
+            worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment));
+        }
     }
 }

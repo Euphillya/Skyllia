@@ -1,6 +1,6 @@
 package fr.euphyllia.skyfolia.database.execute;
 
-import fr.euphyllia.skyfolia.Main;
+import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.database.DatabaseLoader;
 import fr.euphyllia.skyfolia.database.model.DBCallback;
 import fr.euphyllia.skyfolia.database.model.DBCallbackInt;
@@ -19,9 +19,8 @@ public class MariaDBExecute {
     private static final String DATABASE_NOT_FOUND_ERROR = "Cannot get connection to the database";
     private static final Logger logger = LogManager.getLogger("fr.euphyllia.skyfolia.database.execute.Query");
 
-    public static void executeQuery(String query, List<?> param, DBCallback callback, DBWork work) throws SQLException {
-        Main plugin = Main.getInterneAPI().getPluginInstance();
-        DatabaseLoader pool = plugin.getInterneAPI().getDatabaseLoader();
+    public static void executeQuery(InterneAPI internalApi,String query, List<?> param, DBCallback callback, DBWork work) throws SQLException {
+        DatabaseLoader pool = internalApi.getDatabaseLoader();
         if (pool == null) {
             throw new NullPointerException(DATABASE_NOT_FOUND_ERROR);
         }
@@ -54,9 +53,8 @@ public class MariaDBExecute {
      * @param callback rendu
      * @param work
      */
-    public static void executeQueryDML(String query, List<?> param, DBCallbackInt callback, DBWork work) throws SQLException {
-        Main plugin = Main.getInterneAPI().getPluginInstance();
-        DatabaseLoader pool = plugin.getInterneAPI().getDatabaseLoader();
+    public static void executeQueryDML(InterneAPI internalApi, String query, List<?> param, DBCallbackInt callback, DBWork work) throws SQLException {
+        DatabaseLoader pool = internalApi.getDatabaseLoader();
         if (pool == null) {
             throw new NullPointerException(DATABASE_NOT_FOUND_ERROR);
         }

@@ -1,6 +1,6 @@
 package fr.euphyllia.skyfolia.database.query;
 
-import fr.euphyllia.skyfolia.Main;
+import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
@@ -15,8 +15,10 @@ public class MariaDBCreateTable {
             """;
 
     private final String database;
+    private final InterneAPI api;
 
-    public MariaDBCreateTable(Main main) throws DatabaseException {
+    public MariaDBCreateTable(InterneAPI interneAPI) throws DatabaseException {
+        this.api = interneAPI;
         MariaDBConfig dbConfig = ConfigToml.mariaDBConfig;
         if (dbConfig == null) {
             throw new DatabaseException("No database is mentioned in the configuration of the plugin.", null);
@@ -31,7 +33,7 @@ public class MariaDBCreateTable {
 
     private void init() throws SQLException {
         // DATABASE
-        MariaDBExecute.executeQuery(CREATE_DATABASE.formatted(this.database), null, null, null);
+        MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database), null, null, null);
 
     }
 }

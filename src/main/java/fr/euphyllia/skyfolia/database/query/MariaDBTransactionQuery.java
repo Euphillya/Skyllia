@@ -1,12 +1,14 @@
 package fr.euphyllia.skyfolia.database.query;
 
-import fr.euphyllia.skyfolia.Main;
+import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
 
 public class MariaDBTransactionQuery {
 
-    // Execution Query
-    public MariaDBTransactionQuery(Main plugin) throws DatabaseException {
+    private final InterneAPI api;
 
+    // Execution Query
+    public MariaDBTransactionQuery(InterneAPI plugin) throws DatabaseException {
+        this.api = plugin;
     }
 }
