@@ -11,3 +11,6 @@ C
 settings.gradle.kts,7\4\749edfcc96398253e5b3416184e95c46621da850
 q
 Asrc/main/java/fr/euphyllia/skyfolia/configuration/ConfigToml.java,2\9\2991c4e37c4db4f55a4531d477d63c4557e0d9d3
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
