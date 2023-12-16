@@ -1,17 +1,22 @@
 
+g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Õ›ü¶úÿÿÿÿ8ÆÜˆ’Ç1
 Q
-java:S3740c"/Provide the parametrized type for this generic.(¡·«øşÿÿÿÿ8‘‡¾Ç1
+java:S3740d"/Provide the parametrized type for this generic.(¡·«øşÿÿÿÿ8ÇÜˆ’Ç1
 N
-java:S1444",Make this "public static config" field final(µˆôÀûÿÿÿÿ8“‡¾Ç1
+java:S1444",Make this "public static config" field final(µˆôÀûÿÿÿÿ8ÈÜˆ’Ç1
 O
-java:S1444"-Make this "public static version" field final(¼’çŠüÿÿÿÿ8“‡¾Ç1
+java:S1444"-Make this "public static version" field final(¼’çŠüÿÿÿÿ8ÈÜˆ’Ç1
+Q
+java:S1444ˆ"3Make this "public static mariaDBConfig" field final(±ü¢8ÈÜˆ’Ç1
 s
-java:S3008"VRename this field "CONFIG_FILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(íõ¥8Òˆ¾Ç1
+java:S3008"VRename this field "CONFIG_FILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(íõ¥8³İˆ’Ç1
 w
-java:S1450"ZRemove the "CONFIG_FILE" field and declare it as a local variable in the relevant methods.(íõ¥8Óˆ¾Ç1
+java:S1450"ZRemove the "CONFIG_FILE" field and declare it as a local variable in the relevant methods.(íõ¥8´İˆ’Ç1
 W
-java:S1118":Add a private constructor to hide the implicit public one.(Õ¬­—8ÕºÎÇ1
+java:S1118":Add a private constructor to hide the implicit public one.(Õ¬­—8¶İˆ’Ç1
+
+java:S1130"lRemove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body.(Õ›ü¶úÿÿÿÿ8·İˆ’Ç1
 I
-java:S3011/",This accessibility update should be removed.(Ó«§¯8Úˆ¾Ç1
+java:S30111",This accessibility update should be removed.(Ó«§¯8ºİˆ’Ç1
 L
-java:S1068"/Remove this unused "CONFIG_FILE" private field.(íõ¥8ãˆ¾Ç1
+java:S1068"/Remove this unused "CONFIG_FILE" private field.(íõ¥8Äİˆ’Ç1

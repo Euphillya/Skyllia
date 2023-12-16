@@ -3,6 +3,7 @@ package fr.euphyllia.skyfolia.configuration;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.common.collect.ImmutableMap;
+import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,9 +20,10 @@ public class ConfigToml {
     public static int version;
     private static boolean verbose;
     private static File CONFIG_FILE;
-    private static final Logger LOGGER = LogManager.getLogger("fr.euphyllia.skyfolia.configuration.ConfigToml");
+    private static Logger logger;
 
-    public static void init(File configFile) {
+    public static void init(File configFile) throws Exception{
+        logger = LogManager.getLogger("fr.euphyllia.skyfolia.configuration.ConfigToml.%s".formatted(configFile.getName()));
         CONFIG_FILE = configFile;
         config = FileConfig.of(configFile);
         config.load();
@@ -35,7 +37,7 @@ public class ConfigToml {
 
     protected static void log(Level level, String message) {
         if (verbose) {
-            LOGGER.log(level, message);
+            logger.log(level, message);
         }
     }
 
@@ -47,7 +49,6 @@ public class ConfigToml {
                     method.setAccessible(true);
                     method.invoke(instance);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     log(Level.FATAL, ex.getMessage());
                 }
             }
@@ -130,5 +131,20 @@ public class ConfigToml {
             }
         }
         return builder.build();
+    }
+
+    public static MariaDBConfig mariaDBConfig;
+
+    private static void initMariaDB() {
+        String path = "sgbd.mariadb.%s";
+        String hostname = getString(path.formatted("hostname"), "127.0.0.1");
+        String port = getString(path.formatted("host"), "3306");
+        String username = getString(path.formatted("username"), "admin");
+        String password = getString(path.formatted("password"), "azerty123@");
+        boolean useSSL = getBoolean(path.formatted("useSSL"), false);
+        int maxPool = getInt(path.formatted("maxPool"), 5);
+        int timeOut = getInt(path.formatted("timeOut"), 500);
+        String database = getString(path.formatted("database"), "sky_folia");
+        mariaDBConfig = new MariaDBConfig(hostname, port, username, password, useSSL, maxPool, timeOut, database);
     }
 }
