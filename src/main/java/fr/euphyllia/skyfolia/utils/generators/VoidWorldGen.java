@@ -13,7 +13,10 @@ public class VoidWorldGen extends ChunkGenerator {
 
     @Override
     public void generateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull ChunkData chunkData) {
-        int xMin = 0, xMax = 16, zMin = 0, zMax = 16;
+        int xMin = 0;
+        int xMax = 16;
+        int zMin = 0;
+        int zMax = 16;
         fillChunk(chunkData, xMin, xMax, zMin, zMax, Material.AIR);
     }
 

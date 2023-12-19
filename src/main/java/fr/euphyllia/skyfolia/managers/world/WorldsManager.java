@@ -1,6 +1,5 @@
 package fr.euphyllia.skyfolia.managers.world;
 
-import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.section.WorldConfig;

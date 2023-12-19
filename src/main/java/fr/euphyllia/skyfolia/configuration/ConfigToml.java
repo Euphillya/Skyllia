@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ConfigToml {
     private static File CONFIG_FILE;
     private static Logger logger;
 
-    public static void init(File configFile) throws Exception{
+    public static void init(File configFile) throws Exception {
         logger = LogManager.getLogger("fr.euphyllia.skyfolia.configuration.ConfigToml.%s".formatted(configFile.getName()));
         CONFIG_FILE = configFile;
         config = FileConfig.of(configFile);
@@ -45,16 +46,12 @@ public class ConfigToml {
         }
     }
 
-    public static void readConfig(@NotNull Class<?> clazz, Object instance) {
+    private static void readConfig(@NotNull Class<?> clazz, Object instance) throws InvocationTargetException, IllegalAccessException {
         for (Method method : clazz.getDeclaredMethods()) {
             if (Modifier.isPrivate(method.getModifiers())
                     && (method.getParameterTypes().length == 0 && method.getReturnType() == Void.TYPE)) {
-                try {
-                    method.setAccessible(true);
-                    method.invoke(instance);
-                } catch (Exception ex) {
-                    log(Level.FATAL, ex.getMessage());
-                }
+                method.setAccessible(true);
+                method.invoke(instance);
             }
         }
 
@@ -103,8 +100,6 @@ public class ConfigToml {
 
     private static <T> List getList(@NotNull String path, T def) {
         Object tryIt = config.get(path);
-        logger.log(Level.FATAL, "1");
-        logger.log(Level.FATAL, tryIt);
         if (tryIt == null) {
             set(path, def);
             return (List) def;

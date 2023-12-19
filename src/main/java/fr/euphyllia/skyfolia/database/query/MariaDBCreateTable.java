@@ -10,8 +10,45 @@ import java.sql.SQLException;
 
 public class MariaDBCreateTable {
 
-    private final static String CREATE_DATABASE = """
-            CREATE DATABASE IF NOT EXISTS %s;
+    private static final String CREATE_DATABASE = """
+            CREATE DATABASE IF NOT EXISTS `%s`;
+            """;
+
+    private static final String CREATE_ISLANDS = """
+             CREATE TABLE IF NOT EXISTS `%s`.`islands` (
+             `island_id` VARCHAR(36) NOT NULL,
+             `enable` TINYINT DEFAULT '1',
+             `region_x` INT NOT NULL,
+             `region_z` INT NOT NULL,
+             `private` TINYINT DEFAULT '0'
+             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+             """;
+
+    private static final String CREATE_ISLANDS_MEMBERS = """
+                CREATE TABLE IF NOT EXISTS `%s`.`members_in_islands` (
+                  `island_id` varchar(36) NOT NULL,
+                  `uuid_player` varchar(36) NOT NULL,
+                  `role` varchar(40) DEFAULT NULL,
+                  PRIMARY KEY (`island_id`,`uuid_player`),
+                  CONSTRAINT `members_in_islands_FK` FOREIGN KEY (`island_id`) REFERENCES `islands` (`island_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+
+    private static final String CREATE_ISLANDS_WARP = """
+                CREATE TABLE IF NOT EXISTS `%s`.`islands_warp` (
+                  `id` int unsigned NOT NULL AUTO_INCREMENT,
+                  `island_id` varchar(36) NOT NULL,
+                  `warp_name` varchar(100) DEFAULT NULL,
+                  `world_name` varchar(100) DEFAULT NULL,
+                  `x` int DEFAULT NULL,
+                  `y` int DEFAULT NULL,
+                  `z` int DEFAULT NULL,
+                  `pitch` FLOAT DEFAULT NULL,
+                  `yaw` FLOAT DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `islands_warp_FK` (`island_id`),
+                  CONSTRAINT `islands_warp_FK` FOREIGN KEY (`island_id`) REFERENCES `islands` (`island_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 
     private final String database;
@@ -33,7 +70,9 @@ public class MariaDBCreateTable {
 
     private void init() throws SQLException {
         // DATABASE
-        MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database), null, null, null);
-
+        MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database));
+        MariaDBExecute.executeQuery(api, CREATE_ISLANDS.formatted(this.database));
+        MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
+        MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
     }
 }

@@ -1,26 +1,24 @@
 
-g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Υ›ό¶ϊÿÿÿÿ8αρΫ—Η1
+g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Υ›ό¶ϊÿÿÿÿ8αρΫ—Η1
 Q
-java:S3740h"/Provide the parametrized type for this generic.(΅·«ψώÿÿÿÿ8γρΫ—Η1
+java:S3740e"/Provide the parametrized type for this generic.(΅·«ψώÿÿÿÿ8ª”Η1
 N
-java:S1444",Make this "public static config" field final(µτΐϋÿÿÿÿ8δρΫ—Η1
+java:S1444",Make this "public static config" field final(µτΐϋÿÿÿÿ8δρΫ—Η1
 O
-java:S1444"-Make this "public static version" field final(Ό’ηόÿÿÿÿ8ερΫ—Η1
+java:S1444"-Make this "public static version" field final(Ό’ηόÿÿÿÿ8ερΫ—Η1
 Q
-java:S1444"3Make this "public static mariaDBConfig" field final(±όΆ8ερΫ—Η1
+java:S1444‰"3Make this "public static mariaDBConfig" field final(±όΆ8ª”Η1
 U
-java:S1444"2Make this "public static worldConfigs" field final(Ω„πώÿÿÿÿ8ερΫ—Η1
+java:S1444"2Make this "public static worldConfigs" field final(Ω„πώÿÿÿÿ8ª”Η1
 s
-java:S3008"VRename this field "CONFIG_FILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(νυ¥8™σΫ—Η1
+java:S3008"VRename this field "CONFIG_FILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(νυ¥8™σΫ—Η1
 w
-java:S1450"ZRemove the "CONFIG_FILE" field and declare it as a local variable in the relevant methods.(νυ¥8σΫ—Η1
+java:S1450"ZRemove the "CONFIG_FILE" field and declare it as a local variable in the relevant methods.(νυ¥8σΫ—Η1
 @
-java:S2386"Make this member "protected".(Ω„πώÿÿÿÿ8σΫ—Η1
+java:S2386"Make this member "protected".(Ω„πώÿÿÿÿ8¬«”Η1
 W
-java:S1118":Add a private constructor to hide the implicit public one.(Υ¬­—8σΫ—Η1
-
-java:S1130"lRemove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body.(Υ›ό¶ϊÿÿÿÿ8σΫ—Η1
+java:S1118":Add a private constructor to hide the implicit public one.(Υ¬­—8σΫ—Η1
 I
-java:S30115",This accessibility update should be removed.(Σ«§―8΅σΫ—Η1
+java:S30115",This accessibility update should be removed.(Σ«§―8΄«”Η1
 L
-java:S1068"/Remove this unused "CONFIG_FILE" private field.(νυ¥8―σΫ—Η1
+java:S1068"/Remove this unused "CONFIG_FILE" private field.(νυ¥8―σΫ—Η1

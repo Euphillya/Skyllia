@@ -15,36 +15,40 @@ import java.io.IOException;
 public class Main extends JavaPlugin {
 
     private final Logger logger = LogManager.getLogger(this);
-    private static InterneAPI interneAPI;
+    private InterneAPI interneAPI;
 
     @Override
     public void onEnable() {
         logger.log(Level.INFO, "Plugin Start");
-        interneAPI = new InterneAPI(this);
+        this.interneAPI = new InterneAPI(this);
         try {
-            if (!interneAPI.setupConfigs(this.getDataFolder(), "config.toml")) {
+            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml")) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            if (!interneAPI.setupSGBD()) {
+            if (!this.interneAPI.setupSGBD()) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
         } catch (DatabaseException | IOException exception) {
-            logger.log(Level.FATAL, exception.getMessage());
+            this.logger.log(Level.FATAL, exception.getMessage());
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        interneAPI.setManagers(new Managers(interneAPI));
-        interneAPI.getManagers().init();
+        this.interneAPI.setManagers(new Managers(interneAPI));
+        this.interneAPI.getManagers().init();
     }
 
     @Override
     public void onDisable() {
-        logger.log(Level.INFO, "Plugin Off");
-        if (interneAPI.getDatabaseLoader() != null) {
-            interneAPI.getDatabaseLoader().closeDatabase();
+        this.logger.log(Level.INFO, "Plugin Off");
+        if (this.interneAPI.getDatabaseLoader() != null) {
+            this.interneAPI.getDatabaseLoader().closeDatabase();
         }
+    }
+
+    public InterneAPI getInterneAPI() {
+        return this.interneAPI;
     }
 }

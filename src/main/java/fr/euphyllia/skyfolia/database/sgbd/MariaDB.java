@@ -40,7 +40,7 @@ public class MariaDB implements DBConnect, DBInterface {
         try (Connection connection = pool.getConnection()) {
             if (connection.isValid(1)) {
                 this.connected = true;
-                logger.log(Level.INFO, "MariaDB pool initialized (" + mariaDBConfig.maxPool() + ")");
+                this.logger.log(Level.INFO, "MariaDB pool initialized (" + mariaDBConfig.maxPool() + ")");
                 return true;
             }
         } catch (SQLException e) {
