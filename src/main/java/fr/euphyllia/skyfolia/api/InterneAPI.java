@@ -89,4 +89,8 @@ public class InterneAPI {
     public IslandQuery getIslandQuery() {
         return new IslandQuery(this, this.transaction.getDatabaseName());
     }
+
+    public Main getPlugin() {
+        return plugin;
+    }
 }

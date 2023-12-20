@@ -160,4 +160,9 @@ public class ConfigToml {
             worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment));
         }
     }
+
+    public static int maxIsland = 100_000_000;
+    private static void maxIle() {
+        maxIsland = getInt("config.maxIsland", maxIsland);
+    }
 }

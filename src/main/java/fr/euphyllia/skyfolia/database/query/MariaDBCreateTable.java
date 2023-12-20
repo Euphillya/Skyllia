@@ -1,14 +1,23 @@
 package fr.euphyllia.skyfolia.database.query;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
+import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
+import fr.euphyllia.skyfolia.utils.RegionUtils;
 import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class MariaDBCreateTable {
+
+    private final Logger logger = LogManager.getLogger(this);
 
     private static final String CREATE_DATABASE = """
             CREATE DATABASE IF NOT EXISTS `%s`;
@@ -19,7 +28,7 @@ public class MariaDBCreateTable {
              `island_type` VARCHAR(36) NOT NULL,
              `island_id` VARCHAR(36) NOT NULL,
              `uuid_owner` varchar(36) NOT NULL,
-             `disable` TINYINT DEFAULT '1',
+             `disable` TINYINT DEFAULT '0',
              `region_x` INT NOT NULL,
              `region_z` INT NOT NULL,
              `private` TINYINT DEFAULT '0',
@@ -57,6 +66,22 @@ public class MariaDBCreateTable {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 
+    private static final String CREATE_SPIRAL = """
+                CREATE TABLE IF NOT EXISTS `%s`.`spiral` (
+                  `id` int NOT NULL,
+                  `region_x` int NOT NULL,
+                  `region_z` int NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+
+    private static final String INSERT_SPIRAL = """
+                INSERT IGNORE INTO `%s`.`spiral`
+                (id, region_x, region_z)
+                VALUES(?, ?, ?);
+            """;
+
+
     private final String database;
     private final InterneAPI api;
 
@@ -80,5 +105,15 @@ public class MariaDBCreateTable {
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
+        MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
+        Bukkit.getAsyncScheduler().runNow(this.api.getPlugin(), scheduledTask -> {
+            for(int i = 1; i < ConfigToml.maxIsland; i++) {
+                Position position = RegionUtils.getPosition(i);
+                MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.regionX(), position.regionZ()), null, null);
+                if (i % 1000 == 0) {
+                    logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
+                }
+            }
+        });
     }
 }
