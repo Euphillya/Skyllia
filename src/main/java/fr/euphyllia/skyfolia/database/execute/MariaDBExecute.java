@@ -23,7 +23,7 @@ public class MariaDBExecute {
         executeQuery(internalApi, query, null, null , null);
     }
 
-    public static void executeQuery(InterneAPI internalApi,String query, List<?> param, DBCallback callback, DBWork work) throws SQLException {
+    public static void executeQuery(InterneAPI internalApi,String query, List<?> param, DBCallback callback, DBWork work) {
         DatabaseLoader pool = internalApi.getDatabaseLoader();
         if (pool == null) {
             throw new NullPointerException(DATABASE_NOT_FOUND_ERROR);
@@ -44,7 +44,8 @@ public class MariaDBExecute {
             }
             connection.close();
         } catch (SQLException exception) {
-            throw new SQLException(exception.getMessage(), exception.getSQLState(), exception.getErrorCode(), exception);
+            logger.log(Level.FATAL, "[MARIADB] - Query : %s".formatted(query));
+            throw new RuntimeException(exception);
         }
 
     }

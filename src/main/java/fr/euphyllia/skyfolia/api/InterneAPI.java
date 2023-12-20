@@ -1,16 +1,17 @@
 package fr.euphyllia.skyfolia.api;
 
+import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.database.DatabaseLoader;
 import fr.euphyllia.skyfolia.database.query.MariaDBCreateTable;
 import fr.euphyllia.skyfolia.database.query.MariaDBTransactionQuery;
+import fr.euphyllia.skyfolia.database.query.exec.IslandQuery;
 import fr.euphyllia.skyfolia.database.sgbd.MariaDB;
 import fr.euphyllia.skyfolia.managers.Managers;
 import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -26,10 +27,10 @@ public class InterneAPI {
     private MariaDBTransactionQuery transaction;
     private DatabaseLoader databaseLoader;
     private Managers managers;
-    private final JavaPlugin javaPlugin;
+    private final Main plugin;
 
-    public InterneAPI(JavaPlugin plugin) {
-        this.javaPlugin = plugin;
+    public InterneAPI(Main plugin) {
+        this.plugin = plugin;
         this.logger = LogManager.getLogger("fr.euphyllia.skyfolia.api.InterneAPI");
     }
 
@@ -73,15 +74,19 @@ public class InterneAPI {
         MariaDB mariaDB;
         if (ConfigToml.mariaDBConfig != null) {
             mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
-            this.database = new DatabaseLoader(mariaDB);
+            this.database = new DatabaseLoader(this.plugin, mariaDB);
             if (!this.database.loadDatabase()) {
                 return false;
             }
             new MariaDBCreateTable(this);
-            this.transaction = new MariaDBTransactionQuery(this);
+            this.transaction = new MariaDBTransactionQuery();
         } else {
             return false;
         }
         return true;
+    }
+
+    public IslandQuery getIslandQuery() {
+        return new IslandQuery(this, this.transaction.getDatabaseName());
     }
 }

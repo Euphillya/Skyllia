@@ -1,8 +1,10 @@
 package fr.euphyllia.skyfolia.api.skyblock;
 
+import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -11,42 +13,51 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Island {
 
     private UUID islandId;
-    private int maxMembers;
+    private String islandType;
     private ConcurrentHashMap<String, Location> warps;
     private boolean privateIsland;
     private CopyOnWriteArrayList<Players> members;
     private boolean disable;
-    private long createDate;
+    private Timestamp createDate;
     private UUID ownerId;
-    private final int X;
-    private final int Z;
+    private final Position position;
 
-    public Island(UUID futurIslandId, UUID ownerId, int disable, int privateIsland, int maxMembers, int regionX, int regionZ) {
+    public Island(String islandType, UUID futurIslandId, UUID ownerId, int disable, int privateIsland, Position position) {
+        this.islandType = islandType;
         this.islandId = futurIslandId;
         this.ownerId = ownerId;
         this.disable = disable == 1;
         this.members = new CopyOnWriteArrayList<>();
         this.privateIsland = privateIsland == 1;
         this.warps = new ConcurrentHashMap<>();
-        this.createDate = System.currentTimeMillis();
-        this.maxMembers = maxMembers;
-        this.X = regionX;
-        this.Z = regionZ;
+        this.createDate = new Timestamp(System.currentTimeMillis());
+        this.position = position;
     }
 
-    public Island(UUID islandId, int disable, int privateIsland, int maxMembers, CopyOnWriteArrayList<Players> membersList, ConcurrentHashMap<String, Location> warpsMap,  int regionX, int regionZ, long date) {
+    /**
+     * @param islandType Type Island (config.toml)
+     * @param islandId Island ID
+     * @param ownerId Owner Island
+     * @param disable Island disable
+     * @param privateIsland Island closed visitor ?
+     * @param membersList List member of island
+     * @param warpsMap List warps
+     * @param position Position X/Z region File
+     * @param date Create Date
+     */
+    public Island(String islandType, UUID islandId, UUID ownerId, int disable, int privateIsland, CopyOnWriteArrayList<Players> membersList, ConcurrentHashMap<String, Location> warpsMap, Position position, Timestamp date) {
+        this.islandType = islandType;
         this.islandId = islandId;
+        this.ownerId = ownerId;
         this.disable = disable == 1;
         this.members = membersList;
         this.privateIsland = privateIsland == 1;
         this.warps = warpsMap;
         this.createDate = date;
-        this.maxMembers = maxMembers;
-        this.X = regionX;
-        this.Z = regionZ;
+        this.position = position;
     }
 
-    public long getCreateDate() {
+    public Timestamp getCreateDate() {
         return this.createDate;
     }
 
@@ -83,25 +94,18 @@ public class Island {
         this.privateIsland = privateIsland;
     }
 
-    public void setMaxMembers(int maxMembers) {
-        this.maxMembers = maxMembers;
-    }
-
     public CopyOnWriteArrayList<Players> getMembers() {
         return this.members;
     }
 
     public boolean addMembers(Players member) {
-        if (this.maxMembers >= this.members.size()) {
+        /*if (this.maxMembers >= this.members.size()) {
             this.members.add(member);
             return true;
         } else {
             return false;
-        }
-    }
-
-    public int getMaxMembers() {
-        return this.maxMembers;
+        }*/
+        return false;
     }
 
     public void setMembers(CopyOnWriteArrayList<Players> members) {
@@ -116,11 +120,15 @@ public class Island {
         this.ownerId = ownerId;
     }
 
-    public int getRegionX() {
-        return this.X;
+    public Position getPosition() {
+        return this.position;
     }
 
-    public int getRegionZ() {
-        return this.Z;
+    public String getIslandType() {
+        return islandType;
+    }
+
+    public void setIslandType(String islandType) {
+        this.islandType = islandType;
     }
 }

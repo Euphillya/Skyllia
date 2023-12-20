@@ -16,11 +16,15 @@ public class MariaDBCreateTable {
 
     private static final String CREATE_ISLANDS = """
              CREATE TABLE IF NOT EXISTS `%s`.`islands` (
+             `island_type` VARCHAR(36) NOT NULL,
              `island_id` VARCHAR(36) NOT NULL,
-             `enable` TINYINT DEFAULT '1',
+             `uuid_owner` varchar(36) NOT NULL,
+             `disable` TINYINT DEFAULT '1',
              `region_x` INT NOT NULL,
              `region_z` INT NOT NULL,
-             `private` TINYINT DEFAULT '0'
+             `private` TINYINT DEFAULT '0',
+             `create_time` TIMESTAMP,
+             PRIMARY KEY (`island_id`, `uuid_owner`, `region_x`, `region_z`)
              ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
              """;
 
@@ -29,6 +33,7 @@ public class MariaDBCreateTable {
                   `island_id` varchar(36) NOT NULL,
                   `uuid_player` varchar(36) NOT NULL,
                   `role` varchar(40) DEFAULT NULL,
+                  `joined` TIMESTAMP,
                   PRIMARY KEY (`island_id`,`uuid_player`),
                   CONSTRAINT `members_in_islands_FK` FOREIGN KEY (`island_id`) REFERENCES `islands` (`island_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

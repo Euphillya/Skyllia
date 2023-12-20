@@ -2,12 +2,14 @@ package fr.euphyllia.skyfolia;
 
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
+import fr.euphyllia.skyfolia.commands.SkyFoliaCommand;
 import fr.euphyllia.skyfolia.managers.Managers;
 import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -38,6 +40,7 @@ public class Main extends JavaPlugin {
 
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
+        this.setupCommands();
     }
 
     @Override
@@ -50,5 +53,16 @@ public class Main extends JavaPlugin {
 
     public InterneAPI getInterneAPI() {
         return this.interneAPI;
+    }
+
+    private void setupCommands() {
+        SkyFoliaCommand sc = new SkyFoliaCommand(this);
+        PluginCommand command = getServer().getPluginCommand("skyfolia");
+        if (command == null) {
+            logger.log(Level.FATAL, "Command not put in plugin.yml");
+            return;
+        }
+        command.setExecutor(sc);
+        command.setTabCompleter(sc);
     }
 }
