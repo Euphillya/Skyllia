@@ -63,6 +63,7 @@ public class SkyblockManager {
         if (islandExist == -1) {
             throw new RuntimeException("A problem with the database has occurred.");
         }
+        // Todo ? Bug quand il y aura duplication, à trouver un moyen que la base de donnée fasse directement le calcul.
         double r = Math.floor((Math.sqrt(islandExist + 1d) - 1) / 2) + 1;
         double p = (8 * r * (r - 1)) / 2;
         double en = r * 2;
