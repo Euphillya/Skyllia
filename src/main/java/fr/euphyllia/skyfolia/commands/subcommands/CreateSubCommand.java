@@ -7,7 +7,6 @@ import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
-import fr.euphyllia.skyfolia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +24,7 @@ import java.util.List;
 public class CreateSubCommand implements SubCommandInterface {
 
     private final Main plugin;
-    private final Logger logger = LogManager.getLogger("fr.euphyllia.skyfolia.commands.subcommands.CreateSubCommand");
+    private final Logger logger = LogManager.getLogger(this);
 
     public CreateSubCommand(Main main) {
         this.plugin = main;
@@ -34,7 +33,6 @@ public class CreateSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         try {
-            logger.log(Level.FATAL, "test create");
             if (sender instanceof Player player) {
                 player.setGameMode(GameMode.SPECTATOR);
                 Bukkit.getAsyncScheduler().runNow(this.plugin, scheduledTask -> {
@@ -45,22 +43,21 @@ public class CreateSubCommand implements SubCommandInterface {
                     } else {
                         island = skyblockManager.createIsland(player).join();
                         player.sendMessage("L'ile en création");
+                        Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.worldConfigs.stream().findFirst().get().name()), island.getPosition().regionX(), island.getPosition().regionZ());
+                        Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
+                            WorldEditUtils.pasteSchematicWE(this.plugin.getInterneAPI(), center, ConfigToml.islandTypes.get("example"));
+                            player.teleportAsync(center);
+                            player.setGameMode(GameMode.SURVIVAL);
+                        });
                     }
-                    Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.worldConfigs.stream().findFirst().get().name()), island.getPosition().regionX(), island.getPosition().regionZ());
-                    Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
-                        boolean isPaste = WorldEditUtils.pasteSchematicWE(this.plugin.getInterneAPI(), center, ConfigToml.islandTypes.get("example")).join();
-                        player.teleportAsync(center).join();
-                        player.setGameMode(GameMode.SPECTATOR);
-                    });
                 });
             }
-
+            return true;
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage());
-            e.fillInStackTrace();
+            sender.sendMessage("Impossible de créer l'ile, vérifier les logs !");
+            return false;
         }
-
-        return false;
     }
 
     @Override

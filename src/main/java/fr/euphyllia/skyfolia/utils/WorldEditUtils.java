@@ -17,6 +17,7 @@ import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.io.File;
@@ -29,16 +30,13 @@ public class WorldEditUtils {
     private static final LinkedHashMap<File, ClipboardFormat> cachedIslandSchematic = new LinkedHashMap<>();
     private static final Logger logger = LogManager.getLogger("fr.euphyllia.skyfolia.utils.WorldEditUtils");
 
-    public static CompletableFuture<Boolean> pasteSchematicWE(InterneAPI api, Location loc, IslandType islandType) {
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+    public static void pasteSchematicWE(InterneAPI api, Location loc, IslandType islandType) {
         File file = new File(api.getPlugin().getDataFolder() + File.separator + islandType.schematic());
         ClipboardFormat format = cachedIslandSchematic.getOrDefault(file, ClipboardFormats.findByFile(file));
         try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
             Clipboard clipboard = reader.read();
-
             World w = BukkitAdapter.adapt(loc.getWorld());
-
-
+            loc.getChunk().load();
             try (EditSession editSession = WorldEdit.getInstance().newEditSession(w)) {
                 Operation operation = new ClipboardHolder(clipboard)
                         .createPaste(editSession)
@@ -49,14 +47,11 @@ public class WorldEditUtils {
                         .build();
                 cachedIslandSchematic.putIfAbsent(file, format);
                 Operations.complete(operation);
-                completableFuture.complete(true);
             }
         }
         catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage());
-            completableFuture.complete(false);
         }
-        return completableFuture;
     }
 
 }
