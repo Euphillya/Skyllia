@@ -52,7 +52,7 @@ import java.util.Locale;
 /**
  * Ce code provient d'ici : <a href="https://github.com/Folia-Inquisitors/MoreFoWorld/blob/master/src/main/java/me/hsgamer/morefoworld/WorldUtil.java">MoreFoWorld</a> et CraftBukkit
  */
-public final class WorldUtil {
+public final class WorldUtils {
     public static FeedbackWorld addWorld(WorldCreator creator) {
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();

@@ -6,6 +6,8 @@ import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
+import fr.euphyllia.skyfolia.utils.WorldEditUtils;
+import fr.euphyllia.skyfolia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,9 +47,12 @@ public class CreateSubCommand implements SubCommandInterface {
                         player.sendMessage("L'ile en création");
                     }
                     Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.worldConfigs.stream().findFirst().get().name()), island.getPosition().regionX(), island.getPosition().regionZ());
-                    player.teleportAsync(center).join();
+                    Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
+                        boolean isPaste = WorldEditUtils.pasteSchematicWE(this.plugin.getInterneAPI(), center, ConfigToml.islandTypes.get("example")).join();
+                        player.teleportAsync(center).join();
+                        player.setGameMode(GameMode.SPECTATOR);
+                    });
                 });
-                player.setGameMode(GameMode.SPECTATOR);
             }
 
         } catch (Exception e) {

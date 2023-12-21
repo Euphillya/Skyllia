@@ -46,8 +46,6 @@ v
 Fsrc/main/java/fr/euphyllia/skyfolia/utils/generators/VoidWorldGen.java,2\4\2403b3f108c9fb0b6bea49e6ce38bfd042084be0
 u
 Esrc/main/java/fr/euphyllia/skyfolia/managers/world/WorldsManager.java,4\f\4fe305c1ab6bf791747f3061abf53a3e996f5df2
-h
-8src/main/java/fr/euphyllia/skyfolia/utils/WorldUtil.java,6\c\6cf8c9d697e22a97d4967b6d99a9a06b18ea0360
 z
 Jsrc/main/java/fr/euphyllia/skyfolia/configuration/section/WorldConfig.java,4\4\44d5855572032eac98c6e87102395051ab5922b7
 j
@@ -80,3 +78,7 @@ t
 Dsrc/main/java/fr/euphyllia/skyfolia/api/skyblock/model/Position.java,1\f\1f1f267e4a0d2a95e19dfa7a24f40fb8cb8d6cfa
 j
 :src/main/java/fr/euphyllia/skyfolia/utils/RegionUtils.java,a\a\aa6f671c5bb4cdaa6d6c479db407041f8100cae9
+m
+=src/main/java/fr/euphyllia/skyfolia/utils/WorldEditUtils.java,3\0\30a000bec3de9a67027e3894e4b98b0b6baba2a9
+v
+Fsrc/main/java/fr/euphyllia/skyfolia/api/skyblock/model/IslandType.java,6\2\620aea5b3a1b1236a0b6122cc015f1caeb286fb6

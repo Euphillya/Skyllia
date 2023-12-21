@@ -3,7 +3,7 @@ package fr.euphyllia.skyfolia.managers.world;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
-import fr.euphyllia.skyfolia.utils.WorldUtil;
+import fr.euphyllia.skyfolia.utils.WorldUtils;
 import fr.euphyllia.skyfolia.utils.generators.VoidWorldGen;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -36,8 +36,8 @@ public class WorldsManager {
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia
             } catch (Exception ignored) {
-                WorldUtil.FeedbackWorld feedbackWorld = WorldUtil.addWorld(worldCreator);
-                if (feedbackWorld.feedback == WorldUtil.Feedback.SUCCESS) {
+                WorldUtils.FeedbackWorld feedbackWorld = WorldUtils.addWorld(worldCreator);
+                if (feedbackWorld.feedback == WorldUtils.Feedback.SUCCESS) {
                     w = feedbackWorld.world;
                 } else {
                     logger.log(Level.FATAL, "WORLD IMPOSSIBLE TO CREATE");

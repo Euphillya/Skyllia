@@ -46,11 +46,7 @@ public class SkyblockManager {
             boolean create = this.plugin.getInterneAPI().getIslandQuery().insertIslands(futurIsland).join();
             if (create) {
                 Island island = this.plugin.getInterneAPI().getIslandQuery().getIslandByIslandId(idIsland).join();
-                if (island == null) {
-                    completableFuture.complete(null);
-                } else {
-                    completableFuture.complete(island);
-                }
+                completableFuture.complete(island);
             }
 
         } catch (Exception e) {

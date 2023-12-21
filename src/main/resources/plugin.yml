@@ -6,6 +6,8 @@ api-version: 1.20
 author: Euphyllia
 description: "${description}"
 folia-supported: true
+depend:
+  - WorldEdit
 
 commands:
   skyfolia:

@@ -1,26 +1,32 @@
 
-g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Õ›ü¶úÿÿÿÿ8½ùí½È1
+g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Õ›ü¶úÿÿÿÿ8ÄÑæÈÈ1
 Q
-java:S3740e"/Provide the parametrized type for this generic.(¡·«øşÿÿÿÿ8¾ùí½È1
+java:S3740f"/Provide the parametrized type for this generic.(¡·«øşÿÿÿÿ8ÄÑæÈÈ1
+k
+java:S1192°"HDefine a constant instead of duplicating this literal "example" 3 times.(›Ì¨ùÿÿÿÿ8®›ëÈÈ1
 N
-java:S1444",Make this "public static config" field final(µˆôÀûÿÿÿÿ8Àùí½È1
+java:S1444",Make this "public static config" field final(µˆôÀûÿÿÿÿ8ÅÑæÈÈ1
 O
-java:S1444"-Make this "public static version" field final(¼’çŠüÿÿÿÿ8Àùí½È1
+java:S1444"-Make this "public static version" field final(¼’çŠüÿÿÿÿ8ÆÑæÈÈ1
 Q
-java:S1444‰"3Make this "public static mariaDBConfig" field final(±ü¢8Àùí½È1
+java:S1444Š"3Make this "public static mariaDBConfig" field final(±ü¢8ÆÑæÈÈ1
 U
-java:S1444˜"2Make this "public static worldConfigs" field final(Ù„ğşÿÿÿÿ8Àùí½È1
+java:S1444™"2Make this "public static worldConfigs" field final(Ù„ğşÿÿÿÿ8ÆÑæÈÈ1
 M
-java:S1444¤"/Make this "public static maxIsland" field final(…Áãí8Áùí½È1
+java:S1444¥"/Make this "public static maxIsland" field final(…Áãí8ÆÑæÈÈ1
+T
+java:S1444ª"1Make this "public static islandTypes" field final(¼íóĞûÿÿÿÿ8ÆÑæÈÈ1
 s
-java:S3008"VRename this field "CONFIG_FILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(íõ¥8¥ûí½È1
+java:S3008"VRename this field "CONFIG_FILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(íõ¥8·ÒæÈÈ1
 w
-java:S1450"ZRemove the "CONFIG_FILE" field and declare it as a local variable in the relevant methods.(íõ¥8¨ûí½È1
+java:S1450"ZRemove the "CONFIG_FILE" field and declare it as a local variable in the relevant methods.(íõ¥8¸ÒæÈÈ1
 @
-java:S2386˜"Make this member "protected".(Ù„ğşÿÿÿÿ8©ûí½È1
+java:S2386™"Make this member "protected".(Ù„ğşÿÿÿÿ8¸ÒæÈÈ1
+@
+java:S2386ª"Make this member "protected".(¼íóĞûÿÿÿÿ8ææ€ÉÈ1
 W
-java:S1118":Add a private constructor to hide the implicit public one.(Õ¬­—8·Û‡¾È1
+java:S1118":Add a private constructor to hide the implicit public one.(Õ¬­—8ºÒæÈÈ1
 I
-java:S30115",This accessibility update should be removed.(Ó«§¯8¶ûí½È1
+java:S30116",This accessibility update should be removed.(Ó«§¯8¾ÒæÈÈ1
 L
-java:S1068"/Remove this unused "CONFIG_FILE" private field.(íõ¥8Ëûí½È1
+java:S1068"/Remove this unused "CONFIG_FILE" private field.(íõ¥8ÌÒæÈÈ1

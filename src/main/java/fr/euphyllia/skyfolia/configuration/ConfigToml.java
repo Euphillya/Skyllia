@@ -3,6 +3,7 @@ package fr.euphyllia.skyfolia.configuration;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.common.collect.ImmutableMap;
+import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
 import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import org.apache.logging.log4j.Level;
@@ -164,5 +165,25 @@ public class ConfigToml {
     public static int maxIsland = 100_000_000;
     private static void maxIle() {
         maxIsland = getInt("config.maxIsland", maxIsland);
+    }
+
+    public static Map<String, IslandType> islandTypes = new HashMap<>();
+
+    private static void typeIsland() {
+        Map<String, ?> worldsMaps = getMap("islandTypes", new HashMap<>());
+        String parentConfig = "islandTypes.";
+        if (worldsMaps.isEmpty()) {
+            String key = parentConfig + "example";
+            String schematicFile = getString(key+ ".schematic", "default.schem");
+            int maxMembers = getInt(key + ".maxMembers", 3);
+            islandTypes.put("example", new IslandType("example", schematicFile, maxMembers));
+        } else {
+            for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
+                String key = parentConfig + entry.getKey();
+                String schematicFile = getString(key+ ".schematic", "default.schem");
+                int maxMembers = getInt(key + ".maxMembers", 3);
+                islandTypes.put(entry.getKey(), new IslandType(entry.getKey(), schematicFile, maxMembers));
+            }
+        }
     }
 }
