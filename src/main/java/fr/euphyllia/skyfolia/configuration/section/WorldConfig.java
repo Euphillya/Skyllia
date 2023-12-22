@@ -1,4 +1,4 @@
 package fr.euphyllia.skyfolia.configuration.section;
 
-public record WorldConfig(String name, String environment) {
+public record WorldConfig(String name, String environment, String portalTP) {
 }

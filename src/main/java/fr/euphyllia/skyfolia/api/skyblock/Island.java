@@ -1,8 +1,8 @@
 package fr.euphyllia.skyfolia.api.skyblock;
 
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import org.bukkit.Location;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -99,17 +99,11 @@ public class Island {
     }
 
     public boolean addMembers(Players member) {
-        /*if (this.maxMembers >= this.members.size()) {
-            this.members.add(member);
-            return true;
+        if (ConfigToml.islandTypes.get(this.islandType).maxMembers() >= this.members.size()) {
+            return this.members.add(member);
         } else {
             return false;
-        }*/
-        return false;
-    }
-
-    public void setMembers(CopyOnWriteArrayList<Players> members) {
-        this.members = members;
+        }
     }
 
     public UUID getOwnerId() {

@@ -1,7 +1,7 @@
 package fr.euphyllia.skyfolia.configuration;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import com.electronwill.nightconfig.core.file.FileConfig;
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
@@ -22,23 +22,24 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfigToml {
-    public static FileConfig config;
+    public static CommentedFileConfig config;
     public static int version;
     private static boolean verbose;
-    private static File CONFIG_FILE;
-    private static Logger logger;
+    private static Logger logger = LogManager.getLogger(ConfigToml.class);
 
-    public static void init(File configFile) throws Exception {
-        logger = LogManager.getLogger("fr.euphyllia.skyfolia.configuration.ConfigToml.%s".formatted(configFile.getName()));
-        CONFIG_FILE = configFile;
-        config = FileConfig.of(configFile);
+    public static void init(File configFile) {
+        config = CommentedFileConfig.builder(configFile).autosave().build();
         config.load();
         verbose = getBoolean("verbose", false);
 
         version = getInt("config-version", 1);
         set("config-version", 1);
-
-        readConfig(ConfigToml.class, null);
+        logger.log(Level.FATAL, "Lecture des config");
+        try {
+            readConfig(ConfigToml.class, null);
+        } catch (Exception e) {
+            logger.log(Level.FATAL, "Erreur de lecture !", e);
+        }
     }
 
     protected static void log(Level level, String message) {
@@ -55,8 +56,6 @@ public class ConfigToml {
                 method.invoke(instance);
             }
         }
-
-        config.save();
     }
 
     private static void set(@NotNull String path, Object val) {
@@ -117,8 +116,8 @@ public class ConfigToml {
         return config.getLong(path);
     }
 
-    private static Map<String, ?> getMap(@NotNull String path, Object def) {
-        CommentedConfig commentedConfig = (CommentedConfig) config.getOrElse(path, def);
+    private static Map<String, ?> getMap(@NotNull String path) {
+        CommentedConfig commentedConfig = (CommentedConfig) config.get(path);
         return toMap(commentedConfig);
     }
 
@@ -153,37 +152,49 @@ public class ConfigToml {
     public static List<WorldConfig> worldConfigs = new ArrayList<>();
 
     private static void worlds() {
-        Map<String, ?> worldsMaps = getMap("worlds", new HashMap<>());
+        HashMap<String, ?> worldsMaps = new HashMap<>(getMap("worlds"));
+        if (worldsMaps.isEmpty()) {
+            worldsMaps.put("sky-overworld", null);
+        }
         String parentConfig = "worlds.";
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
             String key = parentConfig + entry.getKey();
             String skyblockEnvironment = getString(key+ ".environment", World.Environment.NORMAL.name());
-            worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment));
+            String portalTeleport = getString(key + ".portal-tp", "sky-overworld");
+            worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, portalTeleport));
         }
     }
 
     public static int maxIsland = 100_000_000;
     private static void maxIle() {
-        maxIsland = getInt("config.maxIsland", maxIsland);
+        maxIsland = getInt("config.max-island", maxIsland);
     }
 
     public static Map<String, IslandType> islandTypes = new HashMap<>();
 
     private static void typeIsland() {
-        Map<String, ?> worldsMaps = getMap("islandTypes", new HashMap<>());
-        String parentConfig = "islandTypes.";
-        if (worldsMaps.isEmpty()) {
-            String key = parentConfig + "example";
-            String schematicFile = getString(key+ ".schematic", "default.schem");
-            int maxMembers = getInt(key + ".maxMembers", 3);
-            islandTypes.put("example", new IslandType("example", schematicFile, maxMembers));
-        } else {
-            for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
-                String key = parentConfig + entry.getKey();
-                String schematicFile = getString(key+ ".schematic", "default.schem");
-                int maxMembers = getInt(key + ".maxMembers", 3);
-                islandTypes.put(entry.getKey(), new IslandType(entry.getKey(), schematicFile, maxMembers));
-            }
+        HashMap<String, ?> islandTypesHashMap = new HashMap<>(getMap("island-types"));
+        String parentConfig = "island-types.";
+        if (islandTypesHashMap.isEmpty()) {
+            islandTypesHashMap.putIfAbsent("example", null);
         }
+        for (Map.Entry<String, ?> entry : islandTypesHashMap.entrySet()) {
+            String key = parentConfig + entry.getKey();
+            String schematicFile = getString(key+ ".schematic", "default.schem");
+            int maxMembers = getInt(key + ".max-members", 3);
+            String worldName = getString(key + ".world", "sky-overworld");
+            String name = getString(key + ".name", entry.getKey());
+            islandTypes.put(name, new IslandType(name, worldName, schematicFile, maxMembers));
+        }
+    }
+
+    public static boolean clearInventoryWhenDeleteIsland = true;
+    public static boolean clearEnderChestWhenDeleteIsland = true;
+    public static boolean resetExperiencePlayerWhenDeleteIsland = true;
+
+    private static void playerSettings() {
+        clearInventoryWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-inventory", clearInventoryWhenDeleteIsland);
+        clearEnderChestWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-enderchest", clearEnderChestWhenDeleteIsland);
+        resetExperiencePlayerWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-experience", resetExperiencePlayerWhenDeleteIsland);
     }
 }

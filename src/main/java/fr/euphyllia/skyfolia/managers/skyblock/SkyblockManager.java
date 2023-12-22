@@ -2,6 +2,7 @@ package fr.euphyllia.skyfolia.managers.skyblock;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
+import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 public class SkyblockManager {
 
     private final Main plugin;
-    private final Logger logger = LogManager.getLogger(this);
+    private final Logger logger = LogManager.getLogger(SkyblockManager.class);
 
     public SkyblockManager(Main main) {
         this.plugin = main;
@@ -31,12 +32,12 @@ public class SkyblockManager {
         }
         return completableFuture;
     }
-    public CompletableFuture<@Nullable Island> createIsland(Player player) {
+    public CompletableFuture<@Nullable Island> createIsland(Player player, IslandType islandType) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
         try {
             UUID idIsland = UUID.randomUUID();
             Island futurIsland = new Island(
-                    "osef",
+                    islandType.name(),
                     idIsland,
                     player.getUniqueId(),
                     0,
@@ -54,5 +55,9 @@ public class SkyblockManager {
             completableFuture.complete(null);
         }
         return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> disableIsland(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updateDisable(island);
     }
 }

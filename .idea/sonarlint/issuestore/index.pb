@@ -82,3 +82,13 @@ m
 =src/main/java/fr/euphyllia/skyfolia/utils/WorldEditUtils.java,3\0\30a000bec3de9a67027e3894e4b98b0b6baba2a9
 v
 Fsrc/main/java/fr/euphyllia/skyfolia/api/skyblock/model/IslandType.java,6\2\620aea5b3a1b1236a0b6122cc015f1caeb286fb6
+~
+Nsrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/DeleteSubCommand.java,f\3\f3402fea05c7d5b15486a92d931184926a926b84
+j
+:src/main/java/fr/euphyllia/skyfolia/utils/PlayerUtils.java,4\3\43f8f4b587797b15d14c9c06b089d5b9cfadc8b9
+~
+Nsrc/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandUpdateQuery.java,7\5\753653a633c234dc09036ed1d8b410d04fb20aa1
+v
+Fsrc/main/java/fr/euphyllia/skyfolia/api/event/SkyblockRemoveEvent.java,c\c\cc255d6a8f3edb3167cf4da7ef043cec25c36fd6
+v
+Fsrc/main/java/fr/euphyllia/skyfolia/utils/models/CallbackLocation.java,5\9\590404782c69a8bd4e266034cc57d3ffc3bc30c3

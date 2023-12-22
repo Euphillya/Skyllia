@@ -26,10 +26,11 @@ public class SkyFoliaCommand implements CommandExecutor, TabCompleter {
         if (args.length != 0) {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
-            return switch (subCommand) {
-                case "create" -> new CreateSubCommand(this.plugin).onCommand(sender, command, label, listArgs);
-                default -> false;
-            };
+            SubCommands subCommands = SubCommands.subCommandByName(subCommand);
+            if (subCommands == null) {
+                return false;
+            }
+            return subCommands.getSubCommandInterface().onCommand(this.plugin, sender, command, label, listArgs);
         }
         return true;
     }
@@ -40,16 +41,17 @@ public class SkyFoliaCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             SubCommands[] subCommand = SubCommands.values();
             for (SubCommands sub : subCommand) {
-                tab.add(sub.getSubCommandName());
+                tab.add(sub.name().toLowerCase());
             }
         } else {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
-            return switch (subCommand) {
-                default -> tab;
-            };
+            SubCommands subCommands = SubCommands.subCommandByName(subCommand);
+            if (subCommands != null) {
+                return subCommands.getSubCommandInterface().onTabComplete(this.plugin, sender, command, label, listArgs);
+            }
         }
-        return null;
+        return tab;
     }
 
 }

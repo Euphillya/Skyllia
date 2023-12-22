@@ -1,4 +1,4 @@
 package fr.euphyllia.skyfolia.api.skyblock.model;
 
-public record IslandType(String name, String schematic, int maxMembers) {
+public record IslandType(String name, String worldName, String schematic, int maxMembers) {
 }

@@ -14,6 +14,9 @@ import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class MariaDBCreateTable {
 
@@ -105,7 +108,8 @@ public class MariaDBCreateTable {
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
-        Bukkit.getAsyncScheduler().runNow(this.api.getPlugin(), scheduledTask -> {
+        ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
+        scheduledExecutorService.execute(() -> {
             for(int i = 1; i < ConfigToml.maxIsland; i++) {
                 Position position = RegionUtils.getPosition(i);
                 MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.regionX(), position.regionZ()), null, null);
@@ -113,6 +117,7 @@ public class MariaDBCreateTable {
                     logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
                 }
             }
+            scheduledExecutorService.shutdown();
         });
     }
 }

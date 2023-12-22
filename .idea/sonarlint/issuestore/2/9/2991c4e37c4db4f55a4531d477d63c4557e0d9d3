@@ -1,32 +1,29 @@
 
-g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Õ›ü¶úÿÿÿÿ8ÄÑæÈÈ1
 Q
-java:S3740f"/Provide the parametrized type for this generic.(¡·«øşÿÿÿÿ8ÄÑæÈÈ1
-k
-java:S1192°"HDefine a constant instead of duplicating this literal "example" 3 times.(›Ì¨ùÿÿÿÿ8®›ëÈÈ1
+java:S3740e"/Provide the parametrized type for this generic.(¡·«øşÿÿÿÿ8´›†’É1
+q
+java:S1192"NDefine a constant instead of duplicating this literal "sky-overworld" 3 times.(Œ Âóøÿÿÿÿ8­‘À’É1
 N
-java:S1444",Make this "public static config" field final(µˆôÀûÿÿÿÿ8ÅÑæÈÈ1
+java:S1444",Make this "public static config" field final(êµæ˜øÿÿÿÿ8µ›†’É1
 O
-java:S1444"-Make this "public static version" field final(¼’çŠüÿÿÿÿ8ÆÑæÈÈ1
+java:S1444"-Make this "public static version" field final(¼’çŠüÿÿÿÿ8¶›†’É1
 Q
-java:S1444Š"3Make this "public static mariaDBConfig" field final(±ü¢8ÆÑæÈÈ1
+java:S1444‰"3Make this "public static mariaDBConfig" field final(±ü¢8¶›†’É1
 U
-java:S1444™"2Make this "public static worldConfigs" field final(Ù„ğşÿÿÿÿ8ÆÑæÈÈ1
+java:S1444˜"2Make this "public static worldConfigs" field final(Ù„ğşÿÿÿÿ8¶›†’É1
 M
-java:S1444¥"/Make this "public static maxIsland" field final(…Áãí8ÆÑæÈÈ1
+java:S1444¨"/Make this "public static maxIsland" field final(…Áãí8¶›†’É1
 T
-java:S1444ª"1Make this "public static islandTypes" field final(¼íóĞûÿÿÿÿ8ÆÑæÈÈ1
-s
-java:S3008"VRename this field "CONFIG_FILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(íõ¥8·ÒæÈÈ1
-w
-java:S1450"ZRemove the "CONFIG_FILE" field and declare it as a local variable in the relevant methods.(íõ¥8¸ÒæÈÈ1
+java:S1444­"1Make this "public static islandTypes" field final(¼íóĞûÿÿÿÿ8¶›†’É1
+g
+java:S1444¿"DMake this "public static clearInventoryWhenDeleteIsland" field final(Àæ×¦şÿÿÿÿ8¶›†’É1
+c
+java:S1444À"EMake this "public static clearEnderChestWhenDeleteIsland" field final(²²Ñ„8¶›†’É1
+n
+java:S1444Á"KMake this "public static resetExperiencePlayerWhenDeleteIsland" field final(ú«§µşÿÿÿÿ8¶›†’É1
 @
-java:S2386™"Make this member "protected".(Ù„ğşÿÿÿÿ8¸ÒæÈÈ1
+java:S2386˜"Make this member "protected".(Ù„ğşÿÿÿÿ8¹†’É1
 @
-java:S2386ª"Make this member "protected".(¼íóĞûÿÿÿÿ8ææ€ÉÈ1
+java:S2386­"Make this member "protected".(¼íóĞûÿÿÿÿ8¹†’É1
 W
-java:S1118":Add a private constructor to hide the implicit public one.(Õ¬­—8ºÒæÈÈ1
-I
-java:S30116",This accessibility update should be removed.(Ó«§¯8¾ÒæÈÈ1
-L
-java:S1068"/Remove this unused "CONFIG_FILE" private field.(íõ¥8ÌÒæÈÈ1
+java:S1118":Add a private constructor to hide the implicit public one.(Õ¬­—8º†’É1

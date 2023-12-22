@@ -9,6 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +22,14 @@ public class IslandQuery {
 
     private InterneAPI api;
     private String databaseName;
-    private final Logger logger;
+    private final Logger logger = LogManager.getLogger(IslandQuery.class);
+    private IslandUpdateQuery islandUpdateQuery;
+
+    public IslandQuery(InterneAPI api, String databaseName) {
+        this.api = api;
+        this.databaseName = databaseName;
+        this.islandUpdateQuery = new IslandUpdateQuery(api, databaseName);
+    }
 
     private static final String SELECT_ISLAND_BY_OWNER = """
             SELECT `island_type`, `island_id`, `uuid_owner`, `disable`, `region_x`, `region_z`, `private`, `create_time`
@@ -45,10 +54,8 @@ public class IslandQuery {
                 LIMIT 1;
             """;
 
-    public IslandQuery(InterneAPI api, String databaseName) {
-        this.logger = LogManager.getLogger("fr.euphyllia.skyfolia.database.query.exec.IslandQuery");
-        this.api = api;
-        this.databaseName = databaseName;
+    public IslandUpdateQuery getIslandUpdateQuery() {
+        return this.islandUpdateQuery;
     }
 
     public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
@@ -56,16 +63,7 @@ public class IslandQuery {
         MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_OWNER.formatted(this.databaseName), List.of(playerId), resultSet -> {
             try {
                 if (resultSet.next()) {
-                    String islandType = resultSet.getString("island_type");
-                    String islandId = resultSet.getString("island_id");
-                    int disable = resultSet.getInt("disable");
-                    int regionX = resultSet.getInt("region_x");
-                    int regionZ = resultSet.getInt("region_z");
-                    int privateIsland = resultSet.getInt("private");
-                    Timestamp timestamp = resultSet.getTimestamp("create_time");
-                    Position position = new Position(regionX, regionZ);
-                    Island island = new Island(islandType, UUID.fromString(islandId), playerId, disable, privateIsland, new CopyOnWriteArrayList<>(), new ConcurrentHashMap<>(), position, timestamp);
-                    completableFuture.complete(island);
+                    completableFuture.complete(this.constructIslandQuery(resultSet));
                 } else {
                     completableFuture.complete(null);
                 }
@@ -81,9 +79,7 @@ public class IslandQuery {
         try {
             MariaDBExecute.executeQueryDML(this.api, ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
                     futurIsland.getIslandType(), futurIsland.getIslandId(), futurIsland.getOwnerId(), futurIsland.isPrivateIsland() ? 1 : 0
-            ), i -> {
-                completableFuture.complete(i != 0);
-            }, null);
+            ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
             completableFuture.complete(false);
         }
@@ -95,17 +91,7 @@ public class IslandQuery {
         MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(islandId), resultSet -> {
             try {
                 if (resultSet.next()) {
-                    String islandType = resultSet.getString("island_type");
-                    String ownerId = resultSet.getString("uuid_owner");
-                    int disable = resultSet.getInt("disable");
-                    int regionX = resultSet.getInt("region_x");
-                    int regionZ = resultSet.getInt("region_z");
-                    int privateIsland = resultSet.getInt("private");
-                    Timestamp timestamp = resultSet.getTimestamp("create_time");
-                    logger.log(Level.FATAL, regionX + " " + regionZ);
-                    Position position = new Position(regionX, regionZ);
-                    Island island = new Island(islandType, islandId, UUID.fromString(ownerId), disable, privateIsland, new CopyOnWriteArrayList<>(), new ConcurrentHashMap<>(), position, timestamp);
-                    completableFuture.complete(island);
+                    completableFuture.complete(constructIslandQuery(resultSet));
                 } else {
                     completableFuture.complete(null);
                 }
@@ -115,6 +101,18 @@ public class IslandQuery {
         }, null);
         return completableFuture;
 
+    }
+    private Island constructIslandQuery(ResultSet resultSet) throws SQLException {
+        String islandType = resultSet.getString("island_type");
+        String islandId = resultSet.getString("island_id");
+        String ownerId = resultSet.getString("uuid_owner");
+        int disable = resultSet.getInt("disable");
+        int regionX = resultSet.getInt("region_x");
+        int regionZ = resultSet.getInt("region_z");
+        int privateIsland = resultSet.getInt("private");
+        Timestamp timestamp = resultSet.getTimestamp("create_time");
+        Position position = new Position(regionX, regionZ);
+        return new Island(islandType, UUID.fromString(islandId), UUID.fromString(ownerId), disable, privateIsland, new CopyOnWriteArrayList<>(), new ConcurrentHashMap<>(), position, timestamp);
     }
 
 }
