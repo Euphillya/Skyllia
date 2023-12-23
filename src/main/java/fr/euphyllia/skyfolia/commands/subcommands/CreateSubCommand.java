@@ -56,18 +56,14 @@ public class CreateSubCommand implements SubCommandInterface {
                             return;
                         }
 
-
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
                         switch (WorldEditUtils.worldEditVersion()) {
-                            case WORLD_EDIT -> {
-                                Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
-                                    WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
-                                });
-                            }
-                            case FAST_ASYNC_WORLD_EDIT -> {
+                            case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
                                 WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
-                            }
+                            });
+                            case FAST_ASYNC_WORLD_EDIT -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
                             case UNDEFINED -> {
+                                skyblockManager.disableIsland(island); // Désactiver l'ile !
                                 throw new RuntimeException("Unsupported Plugin Paste");
                             }
                         }

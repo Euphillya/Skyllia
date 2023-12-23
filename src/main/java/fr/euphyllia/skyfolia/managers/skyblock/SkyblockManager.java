@@ -58,6 +58,7 @@ public class SkyblockManager {
     }
 
     public CompletableFuture<Boolean> disableIsland(Island island) {
+        island.setDisable(true);
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updateDisable(island);
     }
 }

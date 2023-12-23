@@ -4,11 +4,19 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.utils.models.CallbackLocation;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.concurrent.TimeUnit;
+
 public class RegionUtils {
+
+    private static final Logger logger = LogManager.getLogger(RegionUtils.class);
+
     public static Location getCenterRegion(World w, int regionX, int regionZ){
         double rx = (regionX << 9) + 256d;
         double rz = (regionZ << 9) + 256d;
@@ -44,39 +52,41 @@ public class RegionUtils {
         return new Position(regionX, regionZ);
     }
 
-    public static void editBlockRegion(World world, int regionX, int regionZ, Main plugin, CallbackLocation callback) {
-        int minChunkX = regionX << 5;
-        int minChunkZ = regionZ << 5;
+    public static void editBlockRegion(World world, int regionX, int regionZ, Main plugin, CallbackLocation callback, int nbrPerSecond) {
+        Bukkit.getAsyncScheduler().runNow(plugin, t1 -> {
+            int minChunkX = regionX << 5;
+            int minChunkZ = regionZ << 5;
 
-        int minY = world.getMinHeight();
-        int maxY = world.getMaxHeight();
+            int minY = world.getMinHeight();
+            int maxY = world.getMaxHeight();
 
 
-        int maxChunkX = 32;
-        int maxChunkZ = 32;
+            int maxChunkX = 32;
+            int maxChunkZ = 32;
 
-        for(int cx = 0; cx < maxChunkX; cx++) {
-            for(int cz=0; cz < maxChunkZ; cz++){
-                int minX = (minChunkX + cx) << 4;
-                int maxX = minX + 15;
+            for(int cx = 0; cx < maxChunkX; cx++) {
+                for(int cz=0; cz < maxChunkZ; cz++){
+                    int minX = (minChunkX + cx) << 4;
+                    int maxX = minX + 15;
 
-                int minZ = (minChunkZ + cz) << 4;
-                int maxZ = minZ + 15;
-
-                for(int x = minX; x <= maxX; x++){
-                    for(int z = minZ; z <= maxZ; z++) {
-                        for(int y = minY; y <= maxY; y++) {
-                            Location loc = new Location(world, x, y, z);
-                            Bukkit.getServer().getRegionScheduler()
-                                    .runDelayed(plugin, loc, t -> {
-                                if(callback != null){
-                                    callback.run(loc);
-                                }
-                            }, 2000);
+                    int minZ = (minChunkZ + cz) << 4;
+                    int maxZ = minZ + 15;
+                    int numberChunk = (cx * maxChunkX) + cz;
+                    int delayAfter = ( numberChunk * 20) / nbrPerSecond;
+                    for(int x = minX; x <= maxX; x++){
+                        for(int z = minZ; z <= maxZ; z++) {
+                            for(int y = minY; y <= maxY; y++) {
+                                Location loc = new Location(world, x, y, z);
+                                Bukkit.getAsyncScheduler().runDelayed(plugin, t2 -> {
+                                    if(callback != null){
+                                        callback.run(loc);
+                                    }
+                                }, delayAfter, TimeUnit.MILLISECONDS);
+                            }
                         }
                     }
                 }
             }
-        }
+        });
     }
 }
