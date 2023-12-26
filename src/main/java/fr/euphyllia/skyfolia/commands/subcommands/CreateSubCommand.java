@@ -27,9 +27,6 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(this);
 
-    public CreateSubCommand() {
-    }
-
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         try {
@@ -41,7 +38,7 @@ public class CreateSubCommand implements SubCommandInterface {
                 }
                 player.setGameMode(GameMode.SPECTATOR);
                 Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                    SkyblockManager skyblockManager = new SkyblockManager(plugin);
+                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player).join();
 
                     if (island != null) {

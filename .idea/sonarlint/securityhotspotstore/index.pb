@@ -92,3 +92,9 @@ v
 Fsrc/main/java/fr/euphyllia/skyfolia/api/event/SkyblockRemoveEvent.java,c\c\cc255d6a8f3edb3167cf4da7ef043cec25c36fd6
 v
 Fsrc/main/java/fr/euphyllia/skyfolia/utils/models/CallbackLocation.java,5\9\590404782c69a8bd4e266034cc57d3ffc3bc30c3
+€
+Psrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/TeleportSubCommand.java,c\c\cc3fba50ed07e3f04c2422dff0760ab20b85dfa6
+i
+9src/main/java/fr/euphyllia/skyfolia/utils/WorldUtils.java,9\8\98d1c179995b3a1a2eebb18ffe10b26b61bbce42
+}
+Msrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/BiomeSubCommand.java,1\2\12666e4cb9d448a691cb38a7a29ed4cf0f68e0b1

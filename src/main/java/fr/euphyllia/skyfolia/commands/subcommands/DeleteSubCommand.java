@@ -25,16 +25,13 @@ public class DeleteSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(this);
 
-    public DeleteSubCommand() {
-    }
-
     @Override
-    public boolean onCommand(@NotNull Main plugin,@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         try {
             if (sender instanceof Player player) {
                 player.setGameMode(GameMode.SPECTATOR);
                 Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                    SkyblockManager skyblockManager = new SkyblockManager(plugin);
+                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player).join();
                     if (island == null) {
                         // pas d'ile
@@ -42,7 +39,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                     }
 
                     skyblockManager.disableIsland(island).join();
-                    // PlayerUtils.teleportPlayerSpawn(player);
+                    PlayerUtils.teleportPlayerSpawn(plugin, player);
                     for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
                         WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), 50);
                     }

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 
 import java.util.concurrent.TimeUnit;
 
@@ -88,5 +89,23 @@ public class RegionUtils {
                 }
             }
         });
+    }
+
+    public static Vector getMinXRegion(World world, int regionX, int regionZ) {
+        int minX = regionX << 9;
+        int minZ = regionZ << 9;
+        int minY = world.getMinHeight();
+
+        return new Vector(minX, minY, minZ);
+    }
+
+    public static Vector getMaxXRegion(World world, int regionX, int regionZ) {
+        Vector min = getMinXRegion(world, regionX, regionZ);
+
+        int maxX = min.getBlockX() + 511;
+        int maxZ = min.getBlockZ() + 511;
+        int maxY = world.getMaxHeight();
+
+        return new Vector(maxX, maxY, maxZ);
     }
 }

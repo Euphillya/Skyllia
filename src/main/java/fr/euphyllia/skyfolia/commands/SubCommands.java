@@ -1,12 +1,13 @@
 package fr.euphyllia.skyfolia.commands;
 
 import ca.spottedleaf.concurrentutil.util.Validate;
-import fr.euphyllia.skyfolia.commands.subcommands.CreateSubCommand;
-import fr.euphyllia.skyfolia.commands.subcommands.DeleteSubCommand;
+import fr.euphyllia.skyfolia.commands.subcommands.*;
 
 public enum SubCommands {
+    BIOME(new BiomeSubCommand()),
     CREATE(new CreateSubCommand()),
-    DELETE(new DeleteSubCommand());
+    DELETE(new DeleteSubCommand()),
+    TELEPORT(new TeleportSubCommand());
 
     private final SubCommandInterface commandInterface;
 

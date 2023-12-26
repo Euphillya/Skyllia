@@ -16,24 +16,32 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WorldEditUtils {
 
@@ -84,7 +92,7 @@ public class WorldEditUtils {
             case FAST_ASYNC_WORLD_EDIT -> {
                 Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
                     World world = BukkitAdapter.adapt(w);
-                    CuboidRegion selection = getCuboidRegion(world, w, island, rayon);
+                    CuboidRegion selection = getCuboidRegionWithRayon(world, w, island, rayon);
                     try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(-1).build();) { // get the edit session and use -1 for max blocks for no limit, this is a try with resources statement to ensure the edit session is closed after use
                         RandomPattern pat = new RandomPattern(); // Create the random pattern
                         BlockState air = BukkitAdapter.adapt(Material.AIR.createBlockData());
@@ -98,7 +106,7 @@ public class WorldEditUtils {
                 });
             }
             case WORLD_EDIT -> Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                CuboidRegion selection = getCuboidRegion(null, w, island, rayon);
+                CuboidRegion selection = getCuboidRegionWithRayon(null, w, island, rayon);
                 List<Block> blocksList = new ArrayList<>();
 
                 selection.forEach(blockVector3 -> blocksList.add(new Location(w, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ()).getBlock()));
@@ -111,7 +119,6 @@ public class WorldEditUtils {
                 }
             });
             default -> {
-                logger.log(Level.WARN, "Vous n'utilisez pas FAWE, ni WorldEdit ! Passage en mode manuel");
                 RegionUtils.editBlockRegion(w, island.getPosition().regionX(), island.getPosition().regionZ(), plugin, location -> {
                     Bukkit.getRegionScheduler().run(plugin, location, t1 -> {
                         Block block = location.getBlock();
@@ -123,7 +130,62 @@ public class WorldEditUtils {
         }
     }
 
-    private static CuboidRegion getCuboidRegion(World world, org.bukkit.World w, Island island, int rayon) {
+    public static void changeBiome(Main plugin, Island island, org.bukkit.World world, Biome biome, Player player) {
+        if (player.getWorld().getUID() != world.getUID()) return;
+        BiomeType biomeType = BiomeType.REGISTRY.get(biome.name().toLowerCase());
+        if (biomeType == null) {
+            logger.log(Level.FATAL, "BIOME NON TROUVER");
+            return;
+        }
+        CuboidRegion selection = getCuboidRegion(null, world, island);
+        List<Block> blocksList = new ArrayList<>();
+
+        selection.forEach(blockVector3 -> blocksList.add(new Location(world, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ()).getBlock()));
+
+        ConcurrentHashMap<Position, Location> positions = new ConcurrentHashMap<>();
+        AtomicInteger i = new AtomicInteger(1);
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        for (Block block : blocksList) {
+            BlockVector3 blockBiomeSet = BlockVector3.at(block.getX(), block.getY(), block.getZ());
+            if (worldEditVersion().equals(Type.FAST_ASYNC_WORLD_EDIT)) {
+                positions.putIfAbsent(new Position(block.getChunk().getX(), block.getChunk().getZ()), block.getLocation());
+                biomeType.applyBiome(blockBiomeSet);
+            } else if (worldEditVersion().equals(Type.WORLD_EDIT)) {
+                executorService.schedule(() -> {
+                    Bukkit.getServer().getRegionScheduler().run(plugin, block.getLocation(), t ->{
+                        logger.log(Level.FATAL, "Insertion " + block.getLocation().toString());
+                        block.setType(Material.END_STONE);
+                    });
+                }, i.get(), TimeUnit.SECONDS);
+            } else {
+                throw new RuntimeException("hein ?!");
+            }
+            i.set(i.get() + 1);
+        }
+        executorService.shutdown();
+        logger.log(Level.INFO, "fini ?");
+        positions.forEach((position, locTemp) -> {
+            Bukkit.getServer().getRegionScheduler().run(plugin, locTemp, scheduledTask -> {
+                PlayerUtils.refreshPlayerChunk(player, locTemp.getChunk().getX(), locTemp.getChunk().getZ());
+            });
+        });
+    }
+
+    private static CuboidRegion getCuboidRegion(World world, org.bukkit.World w, Island island) {
+        if (world == null) {
+            world = BukkitAdapter.adapt(w);
+        }
+
+        Vector vmin = RegionUtils.getMinXRegion(w, island.getPosition().regionX(), island.getPosition().regionZ());
+        Vector vmax = RegionUtils.getMaxXRegion(w, island.getPosition().regionX(), island.getPosition().regionZ());
+
+        BlockVector3 minRegion = BlockVector3.at(vmin.getX(), vmin.getY(), vmin.getZ());
+        BlockVector3 maxRegion = BlockVector3.at(vmax.getX(), vmax.getY(), vmax.getZ());
+
+        return new CuboidRegion(world, minRegion, maxRegion);
+    }
+
+    private static CuboidRegion getCuboidRegionWithRayon(World world, org.bukkit.World w, Island island, int rayon) {
         if (world == null) {
             world = BukkitAdapter.adapt(w);
         }

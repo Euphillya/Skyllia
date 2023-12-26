@@ -8,6 +8,7 @@ import fr.euphyllia.skyfolia.database.query.MariaDBTransactionQuery;
 import fr.euphyllia.skyfolia.database.query.exec.IslandQuery;
 import fr.euphyllia.skyfolia.database.sgbd.MariaDB;
 import fr.euphyllia.skyfolia.managers.Managers;
+import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -28,10 +29,12 @@ public class InterneAPI {
     private DatabaseLoader databaseLoader;
     private Managers managers;
     private final Main plugin;
+    private final SkyblockManager skyblockManager;
 
     public InterneAPI(Main plugin) {
         this.plugin = plugin;
         this.logger = LogManager.getLogger("fr.euphyllia.skyfolia.api.InterneAPI");
+        this.skyblockManager = new SkyblockManager(this.plugin);
     }
 
 
@@ -91,6 +94,10 @@ public class InterneAPI {
     }
 
     public Main getPlugin() {
-        return plugin;
+        return this.plugin;
+    }
+
+    public SkyblockManager getSkyblockManager() {
+        return this.skyblockManager;
     }
 }
