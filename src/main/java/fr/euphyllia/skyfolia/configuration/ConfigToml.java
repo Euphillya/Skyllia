@@ -24,8 +24,15 @@ import java.util.Map;
 public class ConfigToml {
     public static CommentedFileConfig config;
     public static int version;
+    public static MariaDBConfig mariaDBConfig;
+    public static List<WorldConfig> worldConfigs = new ArrayList<>();
+    public static int maxIsland = 100_000_000;
+    public static Map<String, IslandType> islandTypes = new HashMap<>();
+    public static boolean clearInventoryWhenDeleteIsland = true;
+    public static boolean clearEnderChestWhenDeleteIsland = true;
+    public static boolean resetExperiencePlayerWhenDeleteIsland = true;
     private static boolean verbose;
-    private static Logger logger = LogManager.getLogger(ConfigToml.class);
+    private static final Logger logger = LogManager.getLogger(ConfigToml.class);
 
     public static void init(File configFile) {
         config = CommentedFileConfig.builder(configFile).autosave().build();
@@ -117,7 +124,7 @@ public class ConfigToml {
     }
 
     private static Map<String, ?> getMap(@NotNull String path) {
-        CommentedConfig commentedConfig = (CommentedConfig) config.get(path);
+        CommentedConfig commentedConfig = config.get(path);
         return toMap(commentedConfig);
     }
 
@@ -134,8 +141,6 @@ public class ConfigToml {
         return builder.build();
     }
 
-    public static MariaDBConfig mariaDBConfig;
-
     private static void initMariaDB() {
         String path = "sgbd.mariadb.%s";
         String hostname = getString(path.formatted("hostname"), "127.0.0.1");
@@ -149,8 +154,6 @@ public class ConfigToml {
         mariaDBConfig = new MariaDBConfig(hostname, port, username, password, useSSL, maxPool, timeOut, database);
     }
 
-    public static List<WorldConfig> worldConfigs = new ArrayList<>();
-
     private static void worlds() {
         HashMap<String, ?> worldsMaps = new HashMap<>(getMap("worlds"));
         if (worldsMaps.isEmpty()) {
@@ -159,18 +162,15 @@ public class ConfigToml {
         String parentConfig = "worlds.";
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
             String key = parentConfig + entry.getKey();
-            String skyblockEnvironment = getString(key+ ".environment", World.Environment.NORMAL.name());
+            String skyblockEnvironment = getString(key + ".environment", World.Environment.NORMAL.name());
             String portalTeleport = getString(key + ".portal-tp", "sky-overworld");
             worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, portalTeleport));
         }
     }
 
-    public static int maxIsland = 100_000_000;
     private static void maxIle() {
         maxIsland = getInt("config.max-island", maxIsland);
     }
-
-    public static Map<String, IslandType> islandTypes = new HashMap<>();
 
     private static void typeIsland() {
         HashMap<String, ?> islandTypesHashMap = new HashMap<>(getMap("island-types"));
@@ -180,17 +180,13 @@ public class ConfigToml {
         }
         for (Map.Entry<String, ?> entry : islandTypesHashMap.entrySet()) {
             String key = parentConfig + entry.getKey();
-            String schematicFile = getString(key+ ".schematic", "default.schem");
+            String schematicFile = getString(key + ".schematic", "default.schem");
             int maxMembers = getInt(key + ".max-members", 3);
             String worldName = getString(key + ".world", "sky-overworld");
             String name = getString(key + ".name", entry.getKey());
             islandTypes.put(name, new IslandType(name, worldName, schematicFile, maxMembers));
         }
     }
-
-    public static boolean clearInventoryWhenDeleteIsland = true;
-    public static boolean clearEnderChestWhenDeleteIsland = true;
-    public static boolean resetExperiencePlayerWhenDeleteIsland = true;
 
     private static void playerSettings() {
         clearInventoryWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-inventory", clearInventoryWhenDeleteIsland);

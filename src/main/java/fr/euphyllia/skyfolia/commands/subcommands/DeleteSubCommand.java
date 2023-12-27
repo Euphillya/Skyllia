@@ -23,45 +23,46 @@ import java.util.List;
 
 public class DeleteSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(this);
+    private final Logger logger = LogManager.getLogger(DeleteSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         try {
-            if (sender instanceof Player player) {
-                player.setGameMode(GameMode.SPECTATOR);
-                Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player).join();
-                    if (island == null) {
-                        // pas d'ile
-                        return;
-                    }
-
-                    skyblockManager.disableIsland(island).join();
-                    PlayerUtils.teleportPlayerSpawn(plugin, player);
-                    for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                        WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), 50);
-                    }
-                    player.getScheduler().run(plugin, scheduledTask1 -> {
-                        if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                            player.getInventory().clear();
-                        }
-                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                            player.getEnderChest().clear();
-                        }
-                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                            player.setTotalExperience(0);
-                            player.sendExperienceChange(0, 0); // Mise à jour du packet
-                        }
-                        player.setGameMode(GameMode.SURVIVAL);
-                    }, null);
-
-                    SkyblockRemoveEvent skyblockRemoveEvent = new SkyblockRemoveEvent(island, player.getUniqueId());
-                    Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);
-                });
+            if (!(sender instanceof Player player)) {
                 return true;
             }
+            player.setGameMode(GameMode.SPECTATOR);
+            Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
+                SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+                Island island = skyblockManager.getIslandByOwner(player).join();
+                if (island == null) {
+                    // pas d'ile
+                    return;
+                }
+
+                skyblockManager.disableIsland(island).join();
+                PlayerUtils.teleportPlayerSpawn(plugin, player);
+                for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
+                    WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), 50);
+                }
+                player.getScheduler().run(plugin, scheduledTask1 -> {
+                    if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                        player.getInventory().clear();
+                    }
+                    if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                        player.getEnderChest().clear();
+                    }
+                    if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                        player.setTotalExperience(0);
+                        player.sendExperienceChange(0, 0); // Mise à jour du packet
+                    }
+                    player.setGameMode(GameMode.SURVIVAL);
+                }, null);
+
+                SkyblockRemoveEvent skyblockRemoveEvent = new SkyblockRemoveEvent(island, player.getUniqueId());
+                Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);
+            });
+            return true;
         } catch (Exception ex) {
             logger.fatal("Suppression ile a un bug", ex);
         }
@@ -69,7 +70,7 @@ public class DeleteSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Main plugin,@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return null;
     }
 }

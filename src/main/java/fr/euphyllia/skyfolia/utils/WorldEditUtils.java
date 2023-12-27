@@ -23,24 +23,26 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
-import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WorldEditUtils {
@@ -49,9 +51,9 @@ public class WorldEditUtils {
     private static final Logger logger = LogManager.getLogger(WorldEditUtils.class);
 
     public static Type worldEditVersion() {
-        if (Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit")){
+        if (Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
             return Type.FAST_ASYNC_WORLD_EDIT;
-        } else if (Bukkit.getPluginManager().isPluginEnabled("WorldEdit")){
+        } else if (Bukkit.getPluginManager().isPluginEnabled("WorldEdit")) {
             return Type.WORLD_EDIT;
         }
         return Type.UNDEFINED;
@@ -77,8 +79,7 @@ public class WorldEditUtils {
                     Operations.complete(operation);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage());
         }
     }
@@ -93,7 +94,7 @@ public class WorldEditUtils {
                 Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
                     World world = BukkitAdapter.adapt(w);
                     CuboidRegion selection = getCuboidRegionWithRayon(world, w, island, rayon);
-                    try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(-1).build();) { // get the edit session and use -1 for max blocks for no limit, this is a try with resources statement to ensure the edit session is closed after use
+                    try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(-1).build()) { // get the edit session and use -1 for max blocks for no limit, this is a try with resources statement to ensure the edit session is closed after use
                         RandomPattern pat = new RandomPattern(); // Create the random pattern
                         BlockState air = BukkitAdapter.adapt(Material.AIR.createBlockData());
                         pat.add(air, 1);
@@ -152,8 +153,8 @@ public class WorldEditUtils {
                 biomeType.applyBiome(blockBiomeSet);
             } else if (worldEditVersion().equals(Type.WORLD_EDIT)) {
                 executorService.schedule(() -> {
-                    Bukkit.getServer().getRegionScheduler().run(plugin, block.getLocation(), t ->{
-                        logger.log(Level.FATAL, "Insertion " + block.getLocation().toString());
+                    Bukkit.getServer().getRegionScheduler().run(plugin, block.getLocation(), t -> {
+                        logger.log(Level.FATAL, "Insertion " + block.getLocation());
                         block.setType(Material.END_STONE);
                     });
                 }, i.get(), TimeUnit.SECONDS);

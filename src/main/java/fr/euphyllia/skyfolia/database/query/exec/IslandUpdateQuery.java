@@ -11,20 +11,19 @@ import java.util.concurrent.CompletableFuture;
 
 public class IslandUpdateQuery {
 
-    private InterneAPI api;
-    private String databaseName;
-    private final Logger logger = LogManager.getLogger(IslandUpdateQuery.class);
-
-    public IslandUpdateQuery(InterneAPI api, String databaseName) {
-        this.api = api;
-        this.databaseName = databaseName;
-    }
-
     private static final String UPDATE_DISABLE_ISLAND = """
                 UPDATE `%s`.islands
                 SET `disable` = ?
                 WHERE `island_id` = ?;
             """;
+    private final Logger logger = LogManager.getLogger(IslandUpdateQuery.class);
+    private final InterneAPI api;
+    private final String databaseName;
+
+    public IslandUpdateQuery(InterneAPI api, String databaseName) {
+        this.api = api;
+        this.databaseName = databaseName;
+    }
 
     public CompletableFuture<Boolean> updateDisable(Island island) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();

@@ -4,10 +4,12 @@ import ca.spottedleaf.concurrentutil.util.Validate;
 import fr.euphyllia.skyfolia.commands.subcommands.*;
 
 public enum SubCommands {
-    BIOME(new BiomeSubCommand()),
+    BIOME(new SetBiomeSubCommand()),
     CREATE(new CreateSubCommand()),
     DELETE(new DeleteSubCommand()),
-    TELEPORT(new TeleportSubCommand());
+    TELEPORT(new TeleportSubCommand()),
+    SETHOME(new SetHomeSubCommand()),
+    SETWARP(new SetWarpSubCommand());
 
     private final SubCommandInterface commandInterface;
 

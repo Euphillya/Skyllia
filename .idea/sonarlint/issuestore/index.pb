@@ -96,5 +96,11 @@ Fsrc/main/java/fr/euphyllia/skyfolia/utils/models/CallbackLocation.java,5\9\590
 Psrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/TeleportSubCommand.java,c\c\cc3fba50ed07e3f04c2422dff0760ab20b85dfa6
 i
 9src/main/java/fr/euphyllia/skyfolia/utils/WorldUtils.java,9\8\98d1c179995b3a1a2eebb18ffe10b26b61bbce42
-}
-Msrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/BiomeSubCommand.java,1\2\12666e4cb9d448a691cb38a7a29ed4cf0f68e0b1
+€
+Psrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/SetBiomeSubCommand.java,8\3\83f650f3eed01c24078424587098878ae4b35c80
+
+Osrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/SetHomeSubCommand.java,4\8\48b3bc6ce1e9ee76dc099badcf88ccdd7dba68b9
+|
+Lsrc/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandWarpQuery.java,c\6\c6c26983936988feb55d1b82a8ad22a6abe3fec0
+
+Osrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/SetWarpSubCommand.java,8\d\8d00a6fa3b6e506336ab4209c2460a62b02d88a3

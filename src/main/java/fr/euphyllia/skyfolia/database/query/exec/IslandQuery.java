@@ -4,7 +4,6 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -20,29 +19,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class IslandQuery {
 
-    private InterneAPI api;
-    private String databaseName;
-    private final Logger logger = LogManager.getLogger(IslandQuery.class);
-    private IslandUpdateQuery islandUpdateQuery;
-
-    public IslandQuery(InterneAPI api, String databaseName) {
-        this.api = api;
-        this.databaseName = databaseName;
-        this.islandUpdateQuery = new IslandUpdateQuery(api, databaseName);
-    }
-
     private static final String SELECT_ISLAND_BY_OWNER = """
             SELECT `island_type`, `island_id`, `uuid_owner`, `disable`, `region_x`, `region_z`, `private`, `create_time`
             FROM `%s`.`islands`
             WHERE `uuid_owner` = ? AND `disable` = 0;
             """;
-
     private static final String SELECT_ISLAND_BY_ISLAND_ID = """
             SELECT `island_type`, `island_id`, `uuid_owner`, `disable`, `region_x`, `region_z`, `private`, `create_time`
             FROM `%s`.`islands`
             WHERE `island_id` = ?;
             """;
-
     private static final String ADD_ISLANDS = """
                 INSERT INTO `%s`.`islands`
                     SELECT ?, ?, ?, 0, S.region_x, S.region_z, ?, current_timestamp()
@@ -53,9 +39,25 @@ public class IslandQuery {
                         S.id
                 LIMIT 1;
             """;
+    private final Logger logger = LogManager.getLogger(IslandQuery.class);
+    private final InterneAPI api;
+    private final String databaseName;
+    private final IslandUpdateQuery islandUpdateQuery;
+    private final IslandWarpQuery islandWarpQuery;
+
+    public IslandQuery(InterneAPI api, String databaseName) {
+        this.api = api;
+        this.databaseName = databaseName;
+        this.islandUpdateQuery = new IslandUpdateQuery(api, databaseName);
+        this.islandWarpQuery = new IslandWarpQuery(api, databaseName);
+    }
 
     public IslandUpdateQuery getIslandUpdateQuery() {
         return this.islandUpdateQuery;
+    }
+
+    public IslandWarpQuery getIslandWarpQuery() {
+        return this.islandWarpQuery;
     }
 
     public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
@@ -102,6 +104,7 @@ public class IslandQuery {
         return completableFuture;
 
     }
+
     private Island constructIslandQuery(ResultSet resultSet) throws SQLException {
         String islandType = resultSet.getString("island_type");
         String islandId = resultSet.getString("island_id");

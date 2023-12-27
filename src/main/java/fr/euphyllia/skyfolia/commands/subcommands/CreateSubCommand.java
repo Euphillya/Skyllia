@@ -22,30 +22,32 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class CreateSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(this);
+    private final Logger logger = LogManager.getLogger(CreateSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         try {
-            if (sender instanceof Player player) {
-                IslandType islandType = this.getIslandType(args.length == 0 ? null : args[0]);
-                if (islandType == null) {
-                    logger.info("manque arguments");
-                    return false;
-                }
-                player.setGameMode(GameMode.SPECTATOR);
-                Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
+            if (!(sender instanceof Player player)) {
+                return true;
+            }
+            IslandType islandType = this.getIslandType(args.length == 0 ? null : args[0]);
+            if (islandType == null) {
+                logger.info("manque arguments");
+                return false;
+            }
+            player.setGameMode(GameMode.SPECTATOR);
+            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+            try {
+                executor.execute(() -> {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player).join();
 
-                    if (island != null) {
-                        Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-                        player.sendMessage("Vous avez déjà une île");
-                        player.teleportAsync(center);
-                    } else {
+                    if (island == null) {
                         player.sendMessage("L'ile en création");
                         island = skyblockManager.createIsland(player, islandType).join();
                         if (island == null) {
@@ -54,23 +56,20 @@ public class CreateSubCommand implements SubCommandInterface {
                         }
 
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-                        switch (WorldEditUtils.worldEditVersion()) {
-                            case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
-                                WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
-                            });
-                            case FAST_ASYNC_WORLD_EDIT -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
-                            case UNDEFINED -> {
-                                skyblockManager.disableIsland(island); // Désactiver l'ile !
-                                throw new RuntimeException("Unsupported Plugin Paste");
-                            }
+                        this.pasteSchematic(plugin, skyblockManager, island, center, islandType);
+                        this.setFirstHome(skyblockManager, island, center);
+                        this.restoreGameMode(plugin, player, center);
+                    } else {
+                        Location home = skyblockManager.getLocationWarp(island, "home").join();
+                        if (home == null) {
+                            home = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
                         }
-
-                        player.getScheduler().run(plugin, scheduledTask1 -> {
-                            player.teleportAsync(center);
-                            player.setGameMode(GameMode.SURVIVAL);
-                        }, null);
+                        player.sendMessage("Vous avez déjà une île");
+                        player.teleportAsync(home);
                     }
                 });
+            } finally {
+                executor.shutdown();
             }
             return true;
         } catch (Exception e) {
@@ -99,5 +98,29 @@ public class CreateSubCommand implements SubCommandInterface {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private void pasteSchematic(Main plugin, SkyblockManager skyblockManager, Island island, Location center, IslandType islandType) {
+        switch (WorldEditUtils.worldEditVersion()) {
+            case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
+                WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
+            });
+            case FAST_ASYNC_WORLD_EDIT -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
+            case UNDEFINED -> {
+                skyblockManager.disableIsland(island); // Désactiver l'ile !
+                throw new RuntimeException("Unsupported Plugin Paste");
+            }
+        }
+    }
+
+    private void restoreGameMode(Main plugin, Player player, Location center) {
+        player.getScheduler().run(plugin, t -> {
+            player.teleportAsync(center);
+            player.setGameMode(GameMode.SURVIVAL);
+        }, null);
+    }
+
+    private void setFirstHome(SkyblockManager skyblockManager, Island island, Location center) {
+        skyblockManager.addWarpsIsland(island, "home", center);
     }
 }

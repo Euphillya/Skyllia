@@ -1,12 +1,9 @@
 package fr.euphyllia.skyfolia.database;
 
 import fr.euphyllia.skyfolia.Main;
-import fr.euphyllia.skyfolia.api.InterneAPI;
-import fr.euphyllia.skyfolia.database.query.MariaDBCreateTable;
 import fr.euphyllia.skyfolia.database.sgbd.MariaDB;
 import fr.euphyllia.skyfolia.database.stream.AsciiStream;
 import fr.euphyllia.skyfolia.database.stream.BinaryStream;
-import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;

@@ -1,7 +1,6 @@
 package fr.euphyllia.skyfolia.commands;
 
 import fr.euphyllia.skyfolia.Main;
-import fr.euphyllia.skyfolia.commands.subcommands.CreateSubCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +14,7 @@ import java.util.List;
 
 public class SkyFoliaCommand implements CommandExecutor, TabCompleter {
 
-    private Main plugin;
+    private final Main plugin;
 
     public SkyFoliaCommand(Main main) {
         this.plugin = main;

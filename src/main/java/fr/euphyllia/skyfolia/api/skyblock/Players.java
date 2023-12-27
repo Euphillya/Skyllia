@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Players {
 
-    private UUID mojangId;
+    private final UUID mojangId;
     private String lastKnowName;
     private RoleType roleType;
 

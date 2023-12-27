@@ -20,9 +20,9 @@ public class VoidWorldGen extends ChunkGenerator {
         fillChunk(chunkData, xMin, xMax, zMin, zMax, Material.AIR);
     }
 
-    private void fillChunk(ChunkData chunkData, int minX, int maxX, int minZ, int maxZ, Material material){
-        for(int y = chunkData.getMinHeight(); y < chunkData.getMaxHeight(); y++){
-            for (int x = minX; x < maxX; x++){
+    private void fillChunk(ChunkData chunkData, int minX, int maxX, int minZ, int maxZ, Material material) {
+        for (int y = chunkData.getMinHeight(); y < chunkData.getMaxHeight(); y++) {
+            for (int x = minX; x < maxX; x++) {
                 for (int z = minZ; z < maxZ; z++) {
                     chunkData.setBlock(x, y, z, material);
                 }

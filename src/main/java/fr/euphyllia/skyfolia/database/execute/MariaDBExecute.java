@@ -19,11 +19,11 @@ public class MariaDBExecute {
     private static final String DATABASE_NOT_FOUND_ERROR = "Cannot get connection to the database";
     private static final Logger logger = LogManager.getLogger("fr.euphyllia.skyfolia.database.execute.MariaDBExecute");
 
-    public static void executeQuery(InterneAPI internalApi,String query) throws SQLException {
-        executeQuery(internalApi, query, null, null , null);
+    public static void executeQuery(InterneAPI internalApi, String query) throws SQLException {
+        executeQuery(internalApi, query, null, null, null);
     }
 
-    public static void executeQuery(InterneAPI internalApi,String query, List<?> param, DBCallback callback, DBWork work) {
+    public static void executeQuery(InterneAPI internalApi, String query, List<?> param, DBCallback callback, DBWork work) {
         DatabaseLoader pool = internalApi.getDatabaseLoader();
         if (pool == null) {
             throw new NullPointerException(DATABASE_NOT_FOUND_ERROR);
@@ -58,7 +58,7 @@ public class MariaDBExecute {
      * @param callback rendu
      * @param work     pool connexion
      */
-    public static void executeQueryDML(InterneAPI internalApi, String query, List<?> param, DBCallbackInt callback, DBWork work){
+    public static void executeQueryDML(InterneAPI internalApi, String query, List<?> param, DBCallbackInt callback, DBWork work) {
         DatabaseLoader pool = internalApi.getDatabaseLoader();
         if (pool == null) {
             throw new NullPointerException(DATABASE_NOT_FOUND_ERROR);

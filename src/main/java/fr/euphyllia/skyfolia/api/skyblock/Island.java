@@ -12,15 +12,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Island {
 
-    private UUID islandId;
-    private String islandType;
-    private ConcurrentHashMap<String, Location> warps;
-    private boolean privateIsland;
-    private CopyOnWriteArrayList<Players> members;
-    private boolean disable;
-    private Timestamp createDate;
-    private UUID ownerId;
     private final Position position;
+    private final UUID islandId;
+    private String islandType;
+    private final ConcurrentHashMap<String, Location> warps;
+    private boolean privateIsland;
+    private final CopyOnWriteArrayList<Players> members;
+    private boolean disable;
+    private final Timestamp createDate;
+    private UUID ownerId;
 
     public Island(String islandType, UUID futurIslandId, UUID ownerId, int disable, int privateIsland, Position position) {
         this.islandType = islandType;
@@ -35,15 +35,15 @@ public class Island {
     }
 
     /**
-     * @param islandType Type Island (config.toml)
-     * @param islandId Island ID
-     * @param ownerId Owner Island
-     * @param disable Island disable
+     * @param islandType    Type Island (config.toml)
+     * @param islandId      Island ID
+     * @param ownerId       Owner Island
+     * @param disable       Island disable
      * @param privateIsland Island closed visitor ?
-     * @param membersList List member of island
-     * @param warpsMap List warps
-     * @param position Position X/Z region File
-     * @param date Create Date
+     * @param membersList   List member of island
+     * @param warpsMap      List warps
+     * @param position      Position X/Z region File
+     * @param date          Create Date
      */
     public Island(String islandType, UUID islandId, UUID ownerId, int disable, int privateIsland, CopyOnWriteArrayList<Players> membersList, ConcurrentHashMap<String, Location> warpsMap, Position position, Timestamp date) {
         this.islandType = islandType;

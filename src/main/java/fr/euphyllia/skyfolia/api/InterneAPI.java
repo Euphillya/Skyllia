@@ -23,13 +23,13 @@ import java.nio.file.Path;
 
 public class InterneAPI {
 
-    private @Nullable DatabaseLoader database;
     private final Logger logger;
+    private final Main plugin;
+    private final SkyblockManager skyblockManager;
+    private @Nullable DatabaseLoader database;
     private MariaDBTransactionQuery transaction;
     private DatabaseLoader databaseLoader;
     private Managers managers;
-    private final Main plugin;
-    private final SkyblockManager skyblockManager;
 
     public InterneAPI(Main plugin) {
         this.plugin = plugin;

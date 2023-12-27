@@ -111,7 +111,6 @@ public final class WorldUtils {
         Pair<WorldData, WorldDimensions.Complete> pair = worldSession.getDataTag(dynamicops, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen().allRegistriesLifecycle());
 
 
-
         if (pair != null) {
             worlddata = (PrimaryLevelData) pair.getFirst();
             iregistry = pair.getSecond().dimensions();

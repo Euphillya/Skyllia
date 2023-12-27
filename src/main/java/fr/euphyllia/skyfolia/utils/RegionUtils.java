@@ -1,10 +1,8 @@
 package fr.euphyllia.skyfolia.utils;
 
 import fr.euphyllia.skyfolia.Main;
-import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.utils.models.CallbackLocation;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -18,7 +16,7 @@ public class RegionUtils {
 
     private static final Logger logger = LogManager.getLogger(RegionUtils.class);
 
-    public static Location getCenterRegion(World w, int regionX, int regionZ){
+    public static Location getCenterRegion(World w, int regionX, int regionZ) {
         double rx = (regionX << 9) + 256d;
         double rz = (regionZ << 9) + 256d;
         return new Location(w, rx, 0.0d, rz);
@@ -65,21 +63,21 @@ public class RegionUtils {
             int maxChunkX = 32;
             int maxChunkZ = 32;
 
-            for(int cx = 0; cx < maxChunkX; cx++) {
-                for(int cz=0; cz < maxChunkZ; cz++){
+            for (int cx = 0; cx < maxChunkX; cx++) {
+                for (int cz = 0; cz < maxChunkZ; cz++) {
                     int minX = (minChunkX + cx) << 4;
                     int maxX = minX + 15;
 
                     int minZ = (minChunkZ + cz) << 4;
                     int maxZ = minZ + 15;
                     int numberChunk = (cx * maxChunkX) + cz;
-                    int delayAfter = ( numberChunk * 20) / nbrPerSecond;
-                    for(int x = minX; x <= maxX; x++){
-                        for(int z = minZ; z <= maxZ; z++) {
-                            for(int y = minY; y <= maxY; y++) {
+                    int delayAfter = (numberChunk * 20) / nbrPerSecond;
+                    for (int x = minX; x <= maxX; x++) {
+                        for (int z = minZ; z <= maxZ; z++) {
+                            for (int y = minY; y <= maxY; y++) {
                                 Location loc = new Location(world, x, y, z);
                                 Bukkit.getAsyncScheduler().runDelayed(plugin, t2 -> {
-                                    if(callback != null){
+                                    if (callback != null) {
                                         callback.run(loc);
                                     }
                                 }, delayAfter, TimeUnit.MILLISECONDS);
@@ -107,5 +105,15 @@ public class RegionUtils {
         int maxY = world.getMaxHeight();
 
         return new Vector(maxX, maxY, maxZ);
+    }
+
+    public static Position getRegionInChunk(int chunkX, int chunkZ) {
+        return getRegionInChunk(new Position(chunkX, chunkZ));
+    }
+
+    public static Position getRegionInChunk(Position chunk) {
+        int regionX = chunk.regionX() >> 9;
+        int regionZ = chunk.regionZ() >> 9;
+        return new Position(regionX, regionZ);
     }
 }

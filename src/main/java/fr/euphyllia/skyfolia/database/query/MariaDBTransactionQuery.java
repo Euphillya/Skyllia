@@ -1,7 +1,6 @@
 package fr.euphyllia.skyfolia.database.query;
 
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
-import fr.euphyllia.skyfolia.database.query.exec.IslandQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
