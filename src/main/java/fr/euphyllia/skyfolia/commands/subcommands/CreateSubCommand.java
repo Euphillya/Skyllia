@@ -3,6 +3,7 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
@@ -60,12 +61,13 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.setFirstHome(skyblockManager, island, center);
                         this.restoreGameMode(plugin, player, center);
                     } else {
-                        Location home = skyblockManager.getLocationWarp(island, "home").join();
-                        if (home == null) {
-                            home = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-                        }
+                        WarpIsland home = island.getWarpByName("home");
                         player.sendMessage("Vous avez déjà une île");
-                        player.teleportAsync(home);
+                        if (home == null) {
+                            player.teleportAsync(RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ()));
+                        } else {
+                            player.teleportAsync(home.location());
+                        }
                     }
                 });
             } finally {
@@ -107,7 +109,7 @@ public class CreateSubCommand implements SubCommandInterface {
             });
             case FAST_ASYNC_WORLD_EDIT -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
             case UNDEFINED -> {
-                skyblockManager.disableIsland(island); // Désactiver l'ile !
+                island.setDisable(true); // Désactiver l'ile !
                 throw new RuntimeException("Unsupported Plugin Paste");
             }
         }
@@ -121,6 +123,6 @@ public class CreateSubCommand implements SubCommandInterface {
     }
 
     private void setFirstHome(SkyblockManager skyblockManager, Island island, Location center) {
-        skyblockManager.addWarpsIsland(island, "home", center);
+        island.addWarps("home", center);
     }
 }

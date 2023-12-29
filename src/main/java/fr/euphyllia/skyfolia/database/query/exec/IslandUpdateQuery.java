@@ -16,6 +16,12 @@ public class IslandUpdateQuery {
                 SET `disable` = ?
                 WHERE `island_id` = ?;
             """;
+
+    private static final String UPDATE_PRIVATE_ISLAND = """
+                UPDATE `%s`.islands
+                SET `private` = ?
+                WHERE `island_id` = ?;
+            """;
     private final Logger logger = LogManager.getLogger(IslandUpdateQuery.class);
     private final InterneAPI api;
     private final String databaseName;
@@ -31,6 +37,17 @@ public class IslandUpdateQuery {
             MariaDBExecute.executeQueryDML(this.api, UPDATE_DISABLE_ISLAND.formatted(this.databaseName), List.of(island.isDisable() ? 1 : 0, island.getIslandId()), i -> completableFuture.complete(i != 0), null);
         } catch (Exception ex) {
             logger.fatal("Error Disabled Island", ex);
+            completableFuture.complete(false);
+        }
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> updatePrivate(Island island) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        try {
+            MariaDBExecute.executeQueryDML(this.api, UPDATE_PRIVATE_ISLAND.formatted(this.databaseName), List.of(island.isPrivateIsland() ? 1 : 0, island.getIslandId()), i -> completableFuture.complete(i != 0), null);
+        } catch (Exception ex) {
+            logger.fatal("Error Change Private/Public Island", ex);
             completableFuture.complete(false);
         }
         return completableFuture;

@@ -2,7 +2,7 @@ package fr.euphyllia.skyfolia.api.skyblock.model;
 
 public enum RoleType {
 
-    OWNER(100), MODERATOR(50), MEMBER(1), VISITOR(0), BAN(-1); // Numbers are high in case more Role are needed.
+    OWNER(3), MODERATOR(2), MEMBER(1), VISITOR(0), BAN(-1);
 
     private final int value;
 

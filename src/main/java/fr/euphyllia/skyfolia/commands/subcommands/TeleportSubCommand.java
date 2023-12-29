@@ -2,6 +2,7 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
+import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
@@ -41,12 +42,15 @@ public class TeleportSubCommand implements SubCommandInterface {
                     Island island = skyblockManager.getIslandByOwner(player).join();
 
                     if (island != null) {
-                        Location[] home = {skyblockManager.getLocationWarp(island, "home").join()};
+                        WarpIsland warpIsland = island.getWarpByName("home");
                         player.getScheduler().run(plugin, scheduledTask1 -> {
-                            if (home[0] == null) {
-                                home[0] = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.islandTypes.get(island.getIslandType()).worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
+                            Location loc;
+                            if (warpIsland == null) {
+                                loc = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.islandTypes.get(island.getIslandType()).worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
+                            } else {
+                                loc = warpIsland.location();
                             }
-                            player.teleportAsync(home[0]);
+                            player.teleportAsync(loc);
                             player.setGameMode(GameMode.SURVIVAL);
                         }, null);
                     } else {

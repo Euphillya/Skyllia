@@ -37,7 +37,7 @@ public class MariaDBCreateTable {
     private static final String CREATE_ISLANDS_MEMBERS = """
                 CREATE TABLE IF NOT EXISTS `%s`.`members_in_islands` (
                   `island_id` CHAR(36) NOT NULL,
-                  `uuid_player` CHAR(36) NOT NULL,
+                  `uuid_player` CHAR(36) NOT NULL UNIQUE,
                   `role` VARCHAR(40) DEFAULT NULL,
                   `joined` TIMESTAMP,
                   PRIMARY KEY (`island_id`,`uuid_player`),

@@ -40,7 +40,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
         } else {
             logger.log(Level.FATAL, "Sur votre ile X=%s/%s et Y=%s/%s".formatted(islandPosition.regionX(), playerRegionPosition.regionX(), islandPosition.regionZ(), playerRegionPosition.regionZ()));
         }
-        boolean updateOrCreateWarps = skyblockManager.addWarpsIsland(island, warpName, playerLocation).join();
+        boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation); //skyblockManager.addWarpsIsland(island, warpName, playerLocation).join();
         if (updateOrCreateWarps) {
             player.sendMessage("OK !");
         } else {

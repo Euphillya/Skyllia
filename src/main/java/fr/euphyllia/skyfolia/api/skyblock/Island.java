@@ -1,128 +1,46 @@
 package fr.euphyllia.skyfolia.api.skyblock;
 
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
-import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Island {
+public abstract class Island {
 
-    private final Position position;
-    private final UUID islandId;
-    private String islandType;
-    private final ConcurrentHashMap<String, Location> warps;
-    private boolean privateIsland;
-    private final CopyOnWriteArrayList<Players> members;
-    private boolean disable;
-    private final Timestamp createDate;
-    private UUID ownerId;
+    public abstract Timestamp getCreateDate();
 
-    public Island(String islandType, UUID futurIslandId, UUID ownerId, int disable, int privateIsland, Position position) {
-        this.islandType = islandType;
-        this.islandId = futurIslandId;
-        this.ownerId = ownerId;
-        this.disable = disable == 1;
-        this.members = new CopyOnWriteArrayList<>();
-        this.privateIsland = privateIsland == 1;
-        this.warps = new ConcurrentHashMap<>();
-        this.createDate = new Timestamp(System.currentTimeMillis());
-        this.position = position;
-    }
+    public abstract UUID getIslandId();
 
-    /**
-     * @param islandType    Type Island (config.toml)
-     * @param islandId      Island ID
-     * @param ownerId       Owner Island
-     * @param disable       Island disable
-     * @param privateIsland Island closed visitor ?
-     * @param membersList   List member of island
-     * @param warpsMap      List warps
-     * @param position      Position X/Z region File
-     * @param date          Create Date
-     */
-    public Island(String islandType, UUID islandId, UUID ownerId, int disable, int privateIsland, CopyOnWriteArrayList<Players> membersList, ConcurrentHashMap<String, Location> warpsMap, Position position, Timestamp date) {
-        this.islandType = islandType;
-        this.islandId = islandId;
-        this.ownerId = ownerId;
-        this.disable = disable == 1;
-        this.members = membersList;
-        this.privateIsland = privateIsland == 1;
-        this.warps = warpsMap;
-        this.createDate = date;
-        this.position = position;
-    }
+    public abstract @Nullable CopyOnWriteArrayList<WarpIsland> getWarps();
 
-    public Timestamp getCreateDate() {
-        return this.createDate;
-    }
+    public abstract @Nullable WarpIsland getWarpByName(String name);
 
-    public UUID getIslandId() {
-        return this.islandId;
-    }
+    public abstract boolean addWarps(String name, Location loc);
 
-    public ConcurrentMap<String, Location> getWarps() {
-        return this.warps;
-    }
+    public abstract boolean isDisable();
 
-    public boolean addWarps(String name, Location loc) {
-        try {
-            this.warps.put(name, loc);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    public abstract void setDisable(boolean disable);
 
-    public boolean isDisable() {
-        return this.disable;
-    }
+    public abstract boolean isPrivateIsland();
 
-    public void setDisable(boolean disable) {
-        this.disable = disable;
-    }
+    public abstract void setPrivateIsland(boolean privateIsland);
 
-    public boolean isPrivateIsland() {
-        return this.privateIsland;
-    }
+    public abstract CopyOnWriteArrayList<Players> getMembers();
 
-    public void setPrivateIsland(boolean privateIsland) {
-        this.privateIsland = privateIsland;
-    }
+    public abstract boolean updateMember(Players member, RoleType roleType);
 
-    public CopyOnWriteArrayList<Players> getMembers() {
-        return this.members;
-    }
+    public abstract UUID getOwnerId();
+    public abstract void setOwnerId(UUID ownerId);
 
-    public boolean addMembers(Players member) {
-        if (ConfigToml.islandTypes.get(this.islandType).maxMembers() >= this.members.size()) {
-            return this.members.add(member);
-        } else {
-            return false;
-        }
-    }
+    public abstract Position getPosition();
 
-    public UUID getOwnerId() {
-        return this.ownerId;
-    }
+    public abstract String getIslandType();
 
-    public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public String getIslandType() {
-        return islandType;
-    }
-
-    public void setIslandType(String islandType) {
-        this.islandType = islandType;
-    }
+    public abstract void setIslandType(String islandType);
 }

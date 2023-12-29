@@ -4,6 +4,7 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
+import fr.euphyllia.skyfolia.managers.skyblock.IslandManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -44,12 +45,14 @@ public class IslandQuery {
     private final String databaseName;
     private final IslandUpdateQuery islandUpdateQuery;
     private final IslandWarpQuery islandWarpQuery;
+    private final IslandMemberQuery islandMemberQuery;
 
     public IslandQuery(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
         this.islandUpdateQuery = new IslandUpdateQuery(api, databaseName);
         this.islandWarpQuery = new IslandWarpQuery(api, databaseName);
+        this.islandMemberQuery = new IslandMemberQuery(api, databaseName);
     }
 
     public IslandUpdateQuery getIslandUpdateQuery() {
@@ -58,6 +61,10 @@ public class IslandQuery {
 
     public IslandWarpQuery getIslandWarpQuery() {
         return this.islandWarpQuery;
+    }
+
+    public IslandMemberQuery getIslandMemberQuery() {
+        return this.islandMemberQuery;
     }
 
     public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
@@ -115,7 +122,7 @@ public class IslandQuery {
         int privateIsland = resultSet.getInt("private");
         Timestamp timestamp = resultSet.getTimestamp("create_time");
         Position position = new Position(regionX, regionZ);
-        return new Island(islandType, UUID.fromString(islandId), UUID.fromString(ownerId), disable, privateIsland, new CopyOnWriteArrayList<>(), new ConcurrentHashMap<>(), position, timestamp);
+        return new IslandManager(this.api.getPlugin(), islandType, UUID.fromString(islandId), UUID.fromString(ownerId), disable, privateIsland, position, timestamp);
     }
 
 }

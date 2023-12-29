@@ -9,10 +9,12 @@ public class Players {
     private final UUID mojangId;
     private String lastKnowName;
     private RoleType roleType;
+    private UUID islandId;
 
-    public Players(UUID playerId, String playerName, RoleType role) {
+    public Players(UUID playerId, String playerName, UUID islandId,  RoleType role) {
         this.mojangId = playerId;
         this.lastKnowName = playerName;
+        this.islandId = islandId;
         this.roleType = role;
     }
 

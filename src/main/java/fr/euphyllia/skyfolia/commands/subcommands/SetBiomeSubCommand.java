@@ -7,7 +7,6 @@ import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
@@ -33,9 +32,6 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         if (true) {
             throw new RuntimeException("Bugué ! Ne pas utiliser.");
         }
-        Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-
-        });
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {

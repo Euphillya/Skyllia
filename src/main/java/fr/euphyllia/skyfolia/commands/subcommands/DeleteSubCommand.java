@@ -40,7 +40,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                     return;
                 }
 
-                skyblockManager.disableIsland(island).join();
+                island.setDisable(true);
                 PlayerUtils.teleportPlayerSpawn(plugin, player);
                 for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
                     WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), 50);

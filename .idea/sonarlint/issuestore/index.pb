@@ -104,3 +104,11 @@ Osrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/SetHomeSubCommand.java
 Lsrc/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandWarpQuery.java,c\6\c6c26983936988feb55d1b82a8ad22a6abe3fec0
 
 Osrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/SetWarpSubCommand.java,8\d\8d00a6fa3b6e506336ab4209c2460a62b02d88a3
+~
+Nsrc/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandMemberQuery.java,3\d\3d95ff3c5ddc4cb79266eca87c7f1197cf9e5f7f
+~
+Nsrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/DemoteSubCommand.java,5\a\5a38f36e8cbc7c8240fe2b54c9564f202c67a8d3
+x
+Hsrc/main/java/fr/euphyllia/skyfolia/managers/skyblock/IslandManager.java,f\c\fc805af9b5bc404cdd136204113aff0f46b978e2
+v
+Fsrc/main/java/fr/euphyllia/skyfolia/api/skyblock/model/WarpIsland.java,9\f\9fc60c4e7628c1e3aa3563018e13745cfb7adf70
