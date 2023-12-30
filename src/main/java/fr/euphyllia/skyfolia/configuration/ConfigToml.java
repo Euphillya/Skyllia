@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfigToml {
+    private static final Logger logger = LogManager.getLogger(ConfigToml.class);
     public static CommentedFileConfig config;
     public static int version;
     public static MariaDBConfig mariaDBConfig;
@@ -32,7 +33,6 @@ public class ConfigToml {
     public static boolean clearEnderChestWhenDeleteIsland = true;
     public static boolean resetExperiencePlayerWhenDeleteIsland = true;
     private static boolean verbose;
-    private static final Logger logger = LogManager.getLogger(ConfigToml.class);
 
     public static void init(File configFile) {
         config = CommentedFileConfig.builder(configFile).autosave().build();

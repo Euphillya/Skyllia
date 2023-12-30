@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class DemoteSubCommand implements SubCommandInterface {
+public class PromoteSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(DemoteSubCommand.class);
+    private final Logger logger = LogManager.getLogger(PromoteSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -47,12 +47,12 @@ public class DemoteSubCommand implements SubCommandInterface {
                     return;
                 }
                 Players players = island.getMember(offlinePlayer.getUniqueId());
-                if (players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.MEMBER)) {
+                if (!players.getRoleType().equals(RoleType.MEMBER)) {
                     logger.log(Level.FATAL, "peut pas %s".formatted(players.getRoleType().name()));
                     return;
                 }
-                RoleType demoteResult = RoleType.getRoleById(players.getRoleType().getValue() - 1);
-                players.setRoleType(demoteResult);
+                RoleType promoteResult = RoleType.getRoleById(players.getRoleType().getValue() + 1);
+                players.setRoleType(promoteResult);
                 island.updateMember(players);
                 logger.log(Level.FATAL, "changement fait");
             });

@@ -4,44 +4,36 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
-import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class IslandManager extends Island {
+public class IslandHook extends Island {
 
     private final Main plugin;
     private final Position position;
     private final UUID islandId;
-    private String islandType;
-    private boolean privateIsland;
-    private boolean disable;
     private final Timestamp createDate;
-    private UUID ownerId;
+    private final UUID ownerId;
+    private String islandType;
 
     /**
-     * @param main Plugin Skyfolia
-     * @param islandType    Type Island (config.toml)
-     * @param islandId      Island ID
-     * @param ownerId       Owner Island
-     * @param disable       Island disable
-     * @param privateIsland Island closed visitor ?
-     * @param position      Position X/Z region File
-     * @param date          Create Date
+     * @param main       Plugin Skyfolia
+     * @param islandType Type Island (config.toml)
+     * @param islandId   Island ID
+     * @param ownerId    Owner Island
+     * @param position   Position X/Z region File
+     * @param date       Create Date
      */
-    public IslandManager(Main main, String islandType, UUID islandId, UUID ownerId, int disable, int privateIsland, Position position, Timestamp date) {
+    public IslandHook(Main main, String islandType, UUID islandId, UUID ownerId, Position position, Timestamp date) {
         this.plugin = main;
         this.islandType = islandType;
         this.islandId = islandId;
         this.ownerId = ownerId;
-        this.disable = disable == 1;
-        this.privateIsland = privateIsland == 1;
         this.createDate = date;
         this.position = position;
     }
@@ -73,26 +65,22 @@ public class IslandManager extends Island {
 
     @Override
     public boolean isDisable() {
-        return this.disable;
+        return this.plugin.getInterneAPI().getSkyblockManager().isDisabledIsland(this).join();
     }
 
     @Override
     public void setDisable(boolean disable) {
-        if (Boolean.TRUE.equals(this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this).join())) {
-            this.disable = disable;
-        }
+        this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this).join();
     }
 
     @Override
     public boolean isPrivateIsland() {
-        return this.privateIsland;
+        return this.plugin.getInterneAPI().getSkyblockManager().isPrivateIsland(this).join();
     }
 
     @Override
     public void setPrivateIsland(boolean privateIsland) {
-        if (Boolean.TRUE.equals(this.plugin.getInterneAPI().getSkyblockManager().changeStatusIsland(this).join())) {
-            this.privateIsland = privateIsland;
-        }
+        this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this).join();
     }
 
     @Override
@@ -101,8 +89,13 @@ public class IslandManager extends Island {
     }
 
     @Override
-    public boolean updateMember(Players member, RoleType roleType) {
-        return this.plugin.getInterneAPI().getSkyblockManager().setRoleTypePlayer(this, member.getMojangId(), roleType).join();
+    public Players getMember(UUID mojangId) {
+        return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, mojangId).join();
+    }
+
+    @Override
+    public boolean updateMember(Players member) {
+        return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
     }
 
     @Override
@@ -112,7 +105,7 @@ public class IslandManager extends Island {
 
     @Override
     public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
+        // Todo ? a faire
     }
 
     @Override

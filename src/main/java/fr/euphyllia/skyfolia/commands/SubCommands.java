@@ -7,6 +7,7 @@ public enum SubCommands {
     BIOME(new SetBiomeSubCommand()),
     CREATE(new CreateSubCommand()),
     DELETE(new DeleteSubCommand()),
+    PRIVATE(new PrivateSubCommand()),
     TELEPORT(new TeleportSubCommand()),
     SETHOME(new SetHomeSubCommand()),
     SETWARP(new SetWarpSubCommand());

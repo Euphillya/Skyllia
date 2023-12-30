@@ -1,14 +1,12 @@
 package fr.euphyllia.skyfolia.api.skyblock;
 
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
-import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class Island {
@@ -33,9 +31,12 @@ public abstract class Island {
 
     public abstract CopyOnWriteArrayList<Players> getMembers();
 
-    public abstract boolean updateMember(Players member, RoleType roleType);
+    public abstract Players getMember(UUID mojangId);
+
+    public abstract boolean updateMember(Players member);
 
     public abstract UUID getOwnerId();
+
     public abstract void setOwnerId(UUID ownerId);
 
     public abstract Position getPosition();

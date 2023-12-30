@@ -18,20 +18,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class IslandMemberQuery {
 
-    private static final String ADD_MEMBERS = """
+    private static final String UPSERT_MEMBERS = """
                 INSERT INTO `%s`.`islands_members`
-                    (`island_id`, `uuid_player`, `role`, `joined`)
-                    VALUES(?, ?, ?, current_timestamp());
+                    (`island_id`, `uuid_player`, `player_name`, `role`, `joined`)
+                    VALUES(?, ?, ?, current_timestamp())
+                    on DUPLICATE key UPDATE `role` = ?;
             """;
 
     private static final String MEMBER_ISLAND_ROLE = """
-                SELECT `role`, `joined`
+                SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
                 FROM`%s`.`islands_members`
                 WHERE `island_id` = ? AND `uuid_player` = ?;
             """;
-
-
-
+    private static final String MEMBERS_ISLAND = """
+                SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
+                FROM`%s`.`islands_members`
+                WHERE `island_id` = ? AND `role` NOT IN ('BAN', 'VISITOR');
+            """;
     private final Logger logger = LogManager.getLogger(IslandMemberQuery.class);
     private final InterneAPI api;
     private final String databaseName;
@@ -41,38 +44,35 @@ public class IslandMemberQuery {
         this.databaseName = databaseName;
     }
 
-    public CompletableFuture<Boolean> setRoleTypeMemberInIsland(Island island, UUID playerId, RoleType roleType) {
+    public CompletableFuture<Boolean> updateMember(Island island, Players players) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQueryDML(this.api, ADD_MEMBERS.formatted(this.databaseName),
-                List.of(island.getIslandId(), playerId, roleType.name()),
+        MariaDBExecute.executeQueryDML(this.api, UPSERT_MEMBERS.formatted(this.databaseName),
+                List.of(island.getIslandId(), players.getMojangId(), players.getRoleType().name(), players.getRoleType().name()),
                 i -> completableFuture.complete(i != 0), null);
         return completableFuture;
     }
 
-    public CompletableFuture<RoleType> getRoleTypeMemberInIsland(Island island, UUID playerId) {
-        CompletableFuture<RoleType> completableFuture = new CompletableFuture<>();
+    public CompletableFuture<Players> getPlayersIsland(Island island, UUID playerId) {
+        CompletableFuture<Players> completableFuture = new CompletableFuture<>();
         MariaDBExecute.executeQuery(this.api, MEMBER_ISLAND_ROLE.formatted(this.databaseName),
                 List.of(island.getIslandId(), playerId),
                 resultSet -> {
                     try {
                         if (resultSet.next()) {
+                            String playerName = resultSet.getString("player_name");
                             String role = resultSet.getString("role");
-                            completableFuture.complete(RoleType.valueOf(role));
+                            Players players = new Players(playerId, playerName, island.getIslandId(), RoleType.valueOf(role));
+                            completableFuture.complete(players);
                         } else {
-                            completableFuture.complete(RoleType.VISITOR);
+                            completableFuture.complete(null);
                         }
                     } catch (SQLException e) {
-                        completableFuture.complete(RoleType.VISITOR);
+                        completableFuture.complete(null);
                     }
                 }, null);
         return completableFuture;
     }
 
-    private static final String MEMBERS_ISLAND = """
-                SELECT `island_id`, `uuid_player`, `role`, `joined`
-                FROM`%s`.`islands_members`
-                WHERE `island_id` = ? AND `role` NOT IN ('BAN', 'VISITOR');
-            """;
     public CompletableFuture<@Nullable CopyOnWriteArrayList<Players>> getMembersInIsland(Island island) {
         CompletableFuture<CopyOnWriteArrayList<Players>> completableFuture = new CompletableFuture<>();
         CopyOnWriteArrayList<Players> playersList = new CopyOnWriteArrayList<>();

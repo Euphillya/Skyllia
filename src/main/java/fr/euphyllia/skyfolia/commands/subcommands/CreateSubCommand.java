@@ -57,17 +57,21 @@ public class CreateSubCommand implements SubCommandInterface {
                         }
 
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-                        this.pasteSchematic(plugin, skyblockManager, island, center, islandType);
-                        this.setFirstHome(skyblockManager, island, center);
+                        this.pasteSchematic(plugin, island, center, islandType);
+                        this.setFirstHome(island, center);
                         this.restoreGameMode(plugin, player, center);
                     } else {
                         WarpIsland home = island.getWarpByName("home");
                         player.sendMessage("Vous avez déjà une île");
-                        if (home == null) {
-                            player.teleportAsync(RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ()));
-                        } else {
-                            player.teleportAsync(home.location());
-                        }
+                        int regionX = island.getPosition().regionX();
+                        int regionZ = island.getPosition().regionZ();
+                        player.getScheduler().run(plugin, scheduledTask -> {
+                            if (home == null) {
+                                player.teleportAsync(RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), regionX, regionZ));
+                            } else {
+                                player.teleportAsync(home.location());
+                            }
+                        }, null);
                     }
                 });
             } finally {
@@ -102,7 +106,7 @@ public class CreateSubCommand implements SubCommandInterface {
         }
     }
 
-    private void pasteSchematic(Main plugin, SkyblockManager skyblockManager, Island island, Location center, IslandType islandType) {
+    private void pasteSchematic(Main plugin, Island island, Location center, IslandType islandType) {
         switch (WorldEditUtils.worldEditVersion()) {
             case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
                 WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
@@ -122,7 +126,7 @@ public class CreateSubCommand implements SubCommandInterface {
         }, null);
     }
 
-    private void setFirstHome(SkyblockManager skyblockManager, Island island, Location center) {
+    private void setFirstHome(Island island, Location center) {
         island.addWarps("home", center);
     }
 }

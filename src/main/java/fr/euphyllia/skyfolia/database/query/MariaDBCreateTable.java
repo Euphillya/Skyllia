@@ -38,6 +38,7 @@ public class MariaDBCreateTable {
                 CREATE TABLE IF NOT EXISTS `%s`.`members_in_islands` (
                   `island_id` CHAR(36) NOT NULL,
                   `uuid_player` CHAR(36) NOT NULL UNIQUE,
+                  `player_name` VARCHAR(40) DEFAULT NULL,
                   `role` VARCHAR(40) DEFAULT NULL,
                   `joined` TIMESTAMP,
                   PRIMARY KEY (`island_id`,`uuid_player`),

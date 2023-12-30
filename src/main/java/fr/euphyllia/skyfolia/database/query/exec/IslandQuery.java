@@ -4,7 +4,7 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
-import fr.euphyllia.skyfolia.managers.skyblock.IslandManager;
+import fr.euphyllia.skyfolia.managers.skyblock.IslandHook;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -15,8 +15,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class IslandQuery {
 
@@ -116,13 +114,11 @@ public class IslandQuery {
         String islandType = resultSet.getString("island_type");
         String islandId = resultSet.getString("island_id");
         String ownerId = resultSet.getString("uuid_owner");
-        int disable = resultSet.getInt("disable");
         int regionX = resultSet.getInt("region_x");
         int regionZ = resultSet.getInt("region_z");
-        int privateIsland = resultSet.getInt("private");
         Timestamp timestamp = resultSet.getTimestamp("create_time");
         Position position = new Position(regionX, regionZ);
-        return new IslandManager(this.api.getPlugin(), islandType, UUID.fromString(islandId), UUID.fromString(ownerId), disable, privateIsland, position, timestamp);
+        return new IslandHook(this.api.getPlugin(), islandType, UUID.fromString(islandId), UUID.fromString(ownerId), position, timestamp);
     }
 
 }

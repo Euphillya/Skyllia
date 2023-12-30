@@ -4,13 +4,11 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
-import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,13 +29,11 @@ public class SkyblockManager {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
         try {
             UUID idIsland = UUID.randomUUID();
-            Island futurIsland = new IslandManager(
+            Island futurIsland = new IslandHook(
                     this.plugin,
                     islandType.name(),
                     idIsland,
                     player.getUniqueId(),
-                    0,
-                    0,
                     null,
                     null
             );
@@ -58,8 +54,16 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updateDisable(island);
     }
 
-    public CompletableFuture<Boolean> changeStatusIsland(Island island) {
+    public CompletableFuture<Boolean> isDisabledIsland(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isDisabledIsland(island);
+    }
+
+    public CompletableFuture<Boolean> setPrivateIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updatePrivate(island);
+    }
+
+    public CompletableFuture<Boolean> isPrivateIsland(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isPrivateIsland(island);
     }
 
     public CompletableFuture<@Nullable Island> getIslandByOwner(Player player) {
@@ -88,20 +92,16 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getListWarp(island);
     }
 
-    public CompletableFuture<RoleType> getRoleTypePlayer(Island island, OfflinePlayer player) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getRoleTypeMemberInIsland(island, player.getUniqueId());
-    }
-
-    public CompletableFuture<Boolean> setRoleTypePlayer(Island island, OfflinePlayer player, RoleType roleType) {
-        return this.setRoleTypePlayer(island, player.getUniqueId(), roleType);
-    }
-
-    public CompletableFuture<Boolean> setRoleTypePlayer(Island island, UUID playerId, RoleType roleType) {
-        // Todo ? Si le rolType est visitor, le supprimer de la db
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().setRoleTypeMemberInIsland(island, playerId, roleType);
+    public CompletableFuture<Boolean> updateMember(Island island, Players players) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().updateMember(island, players);
     }
 
     public CompletableFuture<CopyOnWriteArrayList<Players>> getMembersInIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getMembersInIsland(island);
     }
+
+    public CompletableFuture<Players> getMemberInIsland(Island island, UUID playerId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerId);
+    }
+
 }

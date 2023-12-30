@@ -5,15 +5,16 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class SkyblockRemoveEvent extends Event {
 
 
     private static final HandlerList handlerList = new HandlerList();
+    private final Island island;
 
-    public SkyblockRemoveEvent(Island island, UUID uniqueId) {
+
+    public SkyblockRemoveEvent(Island island) {
         super(true);
+        this.island = island;
     }
 
 
@@ -24,5 +25,9 @@ public class SkyblockRemoveEvent extends Event {
     @Override
     public @NotNull HandlerList getHandlers() {
         return getHandlerList();
+    }
+
+    public Island getIsland() {
+        return this.island;
     }
 }

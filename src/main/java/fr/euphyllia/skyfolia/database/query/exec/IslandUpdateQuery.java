@@ -11,12 +11,22 @@ import java.util.concurrent.CompletableFuture;
 
 public class IslandUpdateQuery {
 
+    private static final String SELECT_STATUS_ISLAND = """
+                SELECT `disable`
+                FROM `%s`.islands
+                WHERE `island_id` = ?;
+            """;
     private static final String UPDATE_DISABLE_ISLAND = """
                 UPDATE `%s`.islands
                 SET `disable` = ?
                 WHERE `island_id` = ?;
             """;
 
+    private static final String SELECT_PRIVATE_ISLAND = """
+                SELECT  `private`
+                FROM `%s`.islands
+                WHERE `island_id` = ?;
+            """;
     private static final String UPDATE_PRIVATE_ISLAND = """
                 UPDATE `%s`.islands
                 SET `private` = ?
@@ -52,4 +62,37 @@ public class IslandUpdateQuery {
         }
         return completableFuture;
     }
+
+    public CompletableFuture<Boolean> isDisabledIsland(Island island) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQuery(this.api, SELECT_STATUS_ISLAND.formatted(this.databaseName), List.of(island.getIslandId()), resultSet -> {
+            try {
+                if (resultSet.next()) {
+                    completableFuture.complete(resultSet.getInt("disable") == 1);
+                } else {
+                    completableFuture.complete(null);
+                }
+            } catch (Exception e) {
+                completableFuture.complete(null);
+            }
+        }, null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> isPrivateIsland(Island island) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQuery(this.api, SELECT_PRIVATE_ISLAND.formatted(this.databaseName), List.of(island.getIslandId()), resultSet -> {
+            try {
+                if (resultSet.next()) {
+                    completableFuture.complete(resultSet.getInt("private") == 1);
+                } else {
+                    completableFuture.complete(null);
+                }
+            } catch (Exception e) {
+                completableFuture.complete(null);
+            }
+        }, null);
+        return completableFuture;
+    }
+
 }

@@ -7,11 +7,11 @@ import java.util.UUID;
 public class Players {
 
     private final UUID mojangId;
+    private final UUID islandId;
     private String lastKnowName;
     private RoleType roleType;
-    private UUID islandId;
 
-    public Players(UUID playerId, String playerName, UUID islandId,  RoleType role) {
+    public Players(UUID playerId, String playerName, UUID islandId, RoleType role) {
         this.mojangId = playerId;
         this.lastKnowName = playerName;
         this.islandId = islandId;
