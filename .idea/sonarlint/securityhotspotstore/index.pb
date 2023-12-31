@@ -118,12 +118,6 @@ Osrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/PrivateSubCommand.java
 Psrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/TransferSubCommand.java,a\b\ab4b2a552631065e64cfee8e3c04a374ba90aad4
 }
 Msrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/VisitSubCommand.java,5\9\5936dedab617b6140331e383423c0b00311c1db9
-€
-Psrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/GameruleSubCommand.java,1\2\12773db98acd10c4cb8759e0f57ff2730521988d
-|
-Lsrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/HomeSubCommand.java,6\5\65f74ec6aec78cf34100ca9a15507e97abeedba4
-|
-Lsrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/InfoSubCommand.java,3\9\39ef8a6508840e03a864a9102d6344701698bf88
 ~
 Nsrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/InviteSubCommand.java,e\f\ef93e0bc90a9a6d49151814d5178a0415f31626f
 |
@@ -136,3 +130,7 @@ Rsrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/PermissionSubCommand.j
 Osrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/PromoteSubCommand.java,c\d\cdd6b717d83355faa17ba58b5a374fdbaf8a5f8d
 |
 Lsrc/main/java/fr/euphyllia/skyfolia/commands/subcommands/WarpSubCommand.java,6\c\6cb80dd7b5c8a71f6bf80f19d5ccb506991c109b
+|
+Lsrc/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandDataQuery.java,6\6\66ecc8d94786db66f7fa649a0976008cb3dbeb9d
+…
+Usrc/main/java/fr/euphyllia/skyfolia/utils/exception/MaxIslandSizeExceedException.java,2\0\20970056294008ba48d769949038b948b6a8d983

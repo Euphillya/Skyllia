@@ -36,7 +36,7 @@ public class PrivateSubCommand implements SubCommandInterface {
             try {
                 executor.execute(() -> {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player).join();
+                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                     if (island != null) {
                         if (island.getOwnerId().equals(player.getUniqueId())) {

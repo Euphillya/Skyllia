@@ -2,6 +2,7 @@ package fr.euphyllia.skyfolia.api.skyblock;
 
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyfolia.utils.exception.MaxIslandSizeExceedException;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +14,11 @@ public abstract class Island {
 
     public abstract Timestamp getCreateDate();
 
-    public abstract UUID getIslandId();
+    public abstract UUID getId();
+
+    public abstract int getSize() throws MaxIslandSizeExceedException;
+
+    public abstract void setSize(int rayon) throws MaxIslandSizeExceedException;
 
     public abstract @Nullable CopyOnWriteArrayList<WarpIsland> getWarps();
 
@@ -32,6 +37,10 @@ public abstract class Island {
     public abstract CopyOnWriteArrayList<Players> getMembers();
 
     public abstract Players getMember(UUID mojangId);
+
+    public abstract Players getMember(String playerName);
+
+    public abstract void removeMember(Players players);
 
     public abstract boolean updateMember(Players member);
 

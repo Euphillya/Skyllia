@@ -27,7 +27,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
 
     public static void setWarpRun(Main plugin, Player player, int regionLocX, int regionLocZ, Location playerLocation, Logger logger, String warpName) {
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByOwner(player).join();
+        Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
         if (island == null) {
             logger.log(Level.FATAL, "Pas dile");
             return;

@@ -184,7 +184,8 @@ public class ConfigToml {
             int maxMembers = getInt(key + ".max-members", 3);
             String worldName = getString(key + ".world", "sky-overworld");
             String name = getString(key + ".name", entry.getKey());
-            islandTypes.put(name, new IslandType(name, worldName, schematicFile, maxMembers));
+            int rayon = getInt(key + ".size", 50);
+            islandTypes.put(name, new IslandType(name, worldName, schematicFile, maxMembers, rayon));
         }
     }
 

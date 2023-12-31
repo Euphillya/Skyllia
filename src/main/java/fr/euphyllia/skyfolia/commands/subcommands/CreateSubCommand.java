@@ -46,11 +46,11 @@ public class CreateSubCommand implements SubCommandInterface {
             try {
                 executor.execute(() -> {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player).join();
+                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                     if (island == null) {
                         player.sendMessage("L'ile en création");
-                        island = skyblockManager.createIsland(player, islandType).join();
+                        island = skyblockManager.createIsland(player.getUniqueId(), islandType).join();
                         if (island == null) {
                             logger.fatal("island not create in database");
                             return;

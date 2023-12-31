@@ -30,6 +30,7 @@ public class MariaDBCreateTable {
             `region_x` INT NOT NULL,
             `region_z` INT NOT NULL,
             `private` TINYINT DEFAULT '0',
+            `size` INT NOT NULL,
             `create_time` TIMESTAMP,
             PRIMARY KEY (`island_id`, `uuid_owner`, `region_x`, `region_z`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

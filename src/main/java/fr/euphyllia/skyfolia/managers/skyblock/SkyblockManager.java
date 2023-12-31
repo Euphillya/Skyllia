@@ -25,7 +25,7 @@ public class SkyblockManager {
         this.plugin = main;
     }
 
-    public CompletableFuture<@Nullable Island> createIsland(Player player, IslandType islandType) {
+    public CompletableFuture<@Nullable Island> createIsland(UUID playerId, IslandType islandType) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
         try {
             UUID idIsland = UUID.randomUUID();
@@ -33,13 +33,14 @@ public class SkyblockManager {
                     this.plugin,
                     islandType.name(),
                     idIsland,
-                    player.getUniqueId(),
+                    playerId,
                     null,
+                    islandType.rayon(),
                     null
             );
-            boolean create = this.plugin.getInterneAPI().getIslandQuery().insertIslands(futurIsland).join();
+            boolean create = this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().insertIslands(futurIsland).join();
             if (create) {
-                Island island = this.getIslandByOwner(player).join();
+                Island island = this.getIslandByOwner(playerId).join();
                 completableFuture.complete(island);
             }
 
@@ -66,16 +67,8 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isPrivateIsland(island);
     }
 
-    public CompletableFuture<@Nullable Island> getIslandByOwner(Player player) {
-        CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        try {
-            Island island = this.plugin.getInterneAPI().getIslandQuery().getIslandByOwnerId(player.getUniqueId()).join();
-            completableFuture.complete(island);
-        } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage());
-            completableFuture.complete(null);
-        }
-        return completableFuture;
+    public CompletableFuture<@Nullable Island> getIslandByOwner(UUID playerId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByOwnerId(playerId);
     }
 
     public CompletableFuture<Boolean> addWarpsIsland(Island island, String name, Location playerLocation) {
@@ -102,6 +95,10 @@ public class SkyblockManager {
 
     public CompletableFuture<Players> getMemberInIsland(Island island, UUID playerId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerId);
+    }
+
+    public CompletableFuture<Players> getMemberInIsland(Island island, String playerName) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerName);
     }
 
 }

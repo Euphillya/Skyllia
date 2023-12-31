@@ -42,7 +42,7 @@ public class DemoteSubCommand implements SubCommandInterface {
                 }
 
                 SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                Island island = skyblockManager.getIslandByOwner(player).join();
+                Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
                 if (island == null) {
                     return;
                 }

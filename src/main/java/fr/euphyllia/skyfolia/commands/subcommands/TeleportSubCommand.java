@@ -39,7 +39,7 @@ public class TeleportSubCommand implements SubCommandInterface {
             try {
                 executor.execute(() -> {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player).join();
+                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                     if (island != null) {
                         WarpIsland warpIsland = island.getWarpByName("home");

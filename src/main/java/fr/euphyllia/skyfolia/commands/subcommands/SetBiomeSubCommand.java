@@ -39,7 +39,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 String selectBiome = args[0].toUpperCase();
                 SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
 
-                Island island = skyblockManager.getIslandByOwner(player).join();
+                Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                 if (island != null) {
                     World world = player.getWorld();

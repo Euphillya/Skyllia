@@ -37,7 +37,7 @@ public class DeleteSubCommand implements SubCommandInterface {
             try {
                 executor.execute(() -> {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player).join();
+                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
                     if (island == null) {
                         // pas d'ile
                         return;

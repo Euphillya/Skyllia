@@ -25,10 +25,16 @@ public class IslandMemberQuery {
                     on DUPLICATE key UPDATE `role` = ?;
             """;
 
-    private static final String MEMBER_ISLAND_ROLE = """
+    private static final String SELECT_MEMBER_ISLAND_MOJANG_ID = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
                 FROM`%s`.`islands_members`
                 WHERE `island_id` = ? AND `uuid_player` = ?;
+            """;
+
+    private static final String SELECT_MEMBER_ISLAND_MOJANG_NAME = """
+                SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
+                FROM`%s`.`islands_members`
+                WHERE `island_id` = ? AND `player_name` = ?;
             """;
     private static final String MEMBERS_ISLAND = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
@@ -47,21 +53,43 @@ public class IslandMemberQuery {
     public CompletableFuture<Boolean> updateMember(Island island, Players players) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         MariaDBExecute.executeQueryDML(this.api, UPSERT_MEMBERS.formatted(this.databaseName),
-                List.of(island.getIslandId(), players.getMojangId(), players.getRoleType().name(), players.getRoleType().name()),
+                List.of(island.getId(), players.getMojangId(), players.getRoleType().name(), players.getRoleType().name()),
                 i -> completableFuture.complete(i != 0), null);
         return completableFuture;
     }
 
     public CompletableFuture<Players> getPlayersIsland(Island island, UUID playerId) {
         CompletableFuture<Players> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, MEMBER_ISLAND_ROLE.formatted(this.databaseName),
-                List.of(island.getIslandId(), playerId),
+        MariaDBExecute.executeQuery(this.api, SELECT_MEMBER_ISLAND_MOJANG_ID.formatted(this.databaseName),
+                List.of(island.getId(), playerId),
                 resultSet -> {
                     try {
                         if (resultSet.next()) {
                             String playerName = resultSet.getString("player_name");
                             String role = resultSet.getString("role");
-                            Players players = new Players(playerId, playerName, island.getIslandId(), RoleType.valueOf(role));
+                            Players players = new Players(playerId, playerName, island.getId(), RoleType.valueOf(role));
+                            completableFuture.complete(players);
+                        } else {
+                            completableFuture.complete(null);
+                        }
+                    } catch (SQLException e) {
+                        completableFuture.complete(null);
+                    }
+                }, null);
+        return completableFuture;
+    }
+
+
+    public CompletableFuture<Players> getPlayersIsland(Island island, String playerName) {
+        CompletableFuture<Players> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQuery(this.api, SELECT_MEMBER_ISLAND_MOJANG_NAME.formatted(this.databaseName),
+                List.of(island.getId(), playerName),
+                resultSet -> {
+                    try {
+                        if (resultSet.next()) {
+                            UUID playerId = UUID.fromString(resultSet.getString("uuid_player"));
+                            String role = resultSet.getString("role");
+                            Players players = new Players(playerId, playerName, island.getId(), RoleType.valueOf(role));
                             completableFuture.complete(players);
                         } else {
                             completableFuture.complete(null);
@@ -77,14 +105,14 @@ public class IslandMemberQuery {
         CompletableFuture<CopyOnWriteArrayList<Players>> completableFuture = new CompletableFuture<>();
         CopyOnWriteArrayList<Players> playersList = new CopyOnWriteArrayList<>();
         MariaDBExecute.executeQuery(this.api, MEMBERS_ISLAND.formatted(this.databaseName),
-                List.of(island.getIslandId()),
+                List.of(island.getId()),
                 resultSet -> {
                     try {
                         if (resultSet.next()) {
                             do {
                                 UUID playerId = UUID.fromString(resultSet.getString("uuid_player"));
                                 RoleType roleType = RoleType.valueOf(resultSet.getString("role"));
-                                Players players = new Players(playerId, Bukkit.getOfflinePlayer(playerId).getName(), island.getIslandId(), roleType);
+                                Players players = new Players(playerId, Bukkit.getOfflinePlayer(playerId).getName(), island.getId(), roleType);
                                 playersList.add(players);
                             } while (resultSet.next());
                             completableFuture.complete(playersList);

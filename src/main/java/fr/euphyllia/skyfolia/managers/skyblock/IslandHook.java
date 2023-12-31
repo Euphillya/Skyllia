@@ -5,6 +5,7 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyfolia.utils.exception.MaxIslandSizeExceedException;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,8 @@ public class IslandHook extends Island {
     private final UUID islandId;
     private final Timestamp createDate;
     private final UUID ownerId;
-    private String islandType;
+    private final String islandType;
+    private int size;
 
     /**
      * @param main       Plugin Skyfolia
@@ -27,15 +29,20 @@ public class IslandHook extends Island {
      * @param islandId   Island ID
      * @param ownerId    Owner Island
      * @param position   Position X/Z region File
+     * @param size       Rayon Island
      * @param date       Create Date
      */
-    public IslandHook(Main main, String islandType, UUID islandId, UUID ownerId, Position position, Timestamp date) {
+    public IslandHook(Main main, String islandType, UUID islandId, UUID ownerId, Position position, int size, Timestamp date) throws MaxIslandSizeExceedException {
         this.plugin = main;
         this.islandType = islandType;
         this.islandId = islandId;
         this.ownerId = ownerId;
         this.createDate = date;
         this.position = position;
+        if (size <= 255) {
+            throw new MaxIslandSizeExceedException("Size exceeded !");
+        }
+        this.size = size;
     }
 
     @Override
@@ -44,8 +51,29 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public UUID getIslandId() {
+    public UUID getId() {
         return this.islandId;
+    }
+
+    @Override
+    public int getSize() throws MaxIslandSizeExceedException {
+        if (this.size == -1) {
+            // check db
+            throw new UnsupportedOperationException("pas encore implémenter");
+        } else {
+            if (size <= 255) {
+                throw new MaxIslandSizeExceedException("Size exceeded !");
+            }
+            return this.size;
+        }
+    }
+
+    @Override
+    public void setSize(int rayon) throws MaxIslandSizeExceedException{
+        if (rayon <= 255) {
+            throw new MaxIslandSizeExceedException("Size exceeded !");
+        }
+        this.size = rayon;
     }
 
     @Override
@@ -94,6 +122,16 @@ public class IslandHook extends Island {
     }
 
     @Override
+    public Players getMember(String playerName) {
+        return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, playerName).join();
+    }
+
+    @Override
+    public void removeMember(Players players) {
+        throw new UnsupportedOperationException("pas encore implémenter");
+    }
+
+    @Override
     public boolean updateMember(Players member) {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
     }
@@ -106,6 +144,7 @@ public class IslandHook extends Island {
     @Override
     public void setOwnerId(UUID ownerId) {
         // Todo ? a faire
+        throw new UnsupportedOperationException("pas encore implémenter");
     }
 
     @Override
@@ -120,6 +159,6 @@ public class IslandHook extends Island {
 
     @Override
     public void setIslandType(String islandType) {
-        this.islandType = islandType;
+        throw new UnsupportedOperationException("pas encore implémenter");
     }
 }

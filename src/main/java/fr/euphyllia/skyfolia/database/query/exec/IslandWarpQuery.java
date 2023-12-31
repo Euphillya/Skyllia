@@ -51,7 +51,7 @@ public class IslandWarpQuery {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             MariaDBExecute.executeQueryDML(this.api, UPSERT_WARPS.formatted(this.databaseName), List.of(
-                    island.getIslandId(),
+                    island.getId(),
                     warpName,
                     location.getWorld().getName(),
                     location.getBlockX(),
@@ -74,7 +74,7 @@ public class IslandWarpQuery {
 
     public CompletableFuture<@Nullable WarpIsland> getWarpByName(Island island, String warpName) {
         CompletableFuture<WarpIsland> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_WARP_NAME.formatted(this.databaseName, this.databaseName), List.of(island.getIslandId(), warpName), resultSet -> {
+        MariaDBExecute.executeQuery(this.api, SELECT_WARP_NAME.formatted(this.databaseName, this.databaseName), List.of(island.getId(), warpName), resultSet -> {
             try {
                 if (resultSet.next()) {
                     String worldName = resultSet.getString("world_name");
@@ -89,7 +89,7 @@ public class IslandWarpQuery {
                         completableFuture.complete(null);
                         return;
                     }
-                    WarpIsland warpIsland = new WarpIsland(island.getIslandId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
+                    WarpIsland warpIsland = new WarpIsland(island.getId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
                     completableFuture.complete(warpIsland);
                 }
             } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class IslandWarpQuery {
 
     public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getListWarp(Island island) {
         CompletableFuture<CopyOnWriteArrayList<WarpIsland>> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_LIST_WARP.formatted(this.databaseName, this.databaseName), List.of(island.getIslandId()), resultSet -> {
+        MariaDBExecute.executeQuery(this.api, SELECT_LIST_WARP.formatted(this.databaseName, this.databaseName), List.of(island.getId()), resultSet -> {
             try {
                 CopyOnWriteArrayList<WarpIsland> warpIslands = new CopyOnWriteArrayList<>();
                 if (resultSet.next()) {
@@ -120,7 +120,7 @@ public class IslandWarpQuery {
                             completableFuture.complete(null);
                             return;
                         }
-                        WarpIsland warpIsland = new WarpIsland(island.getIslandId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
+                        WarpIsland warpIsland = new WarpIsland(island.getId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
                         warpIslands.add(warpIsland);
                     } while (resultSet.next());
                     completableFuture.complete(warpIslands);
