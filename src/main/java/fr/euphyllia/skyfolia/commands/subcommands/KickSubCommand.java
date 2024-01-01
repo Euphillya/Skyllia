@@ -5,9 +5,11 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,6 +42,10 @@ public class KickSubCommand implements SubCommandInterface {
                 String playerKick = args[0];
                 Players players = island.getMember(playerKick);
                 island.removeMember(players);
+                Player bPlayer = Bukkit.getPlayer(players.getMojangId());
+                if (bPlayer != null && bPlayer.isOnline()) {
+                    PlayerUtils.teleportPlayerSpawn(plugin, player);
+                }
             });
         } finally {
             executor.shutdown();
