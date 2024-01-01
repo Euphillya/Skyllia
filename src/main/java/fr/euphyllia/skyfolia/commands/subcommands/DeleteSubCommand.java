@@ -61,7 +61,6 @@ public class DeleteSubCommand implements SubCommandInterface {
                     Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);
                 });
             } finally {
-                System.out.println("terminé");
                 executor.shutdown();
             }
 

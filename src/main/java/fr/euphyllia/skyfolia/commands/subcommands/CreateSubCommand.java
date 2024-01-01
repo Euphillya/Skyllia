@@ -2,7 +2,9 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
+import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
@@ -11,7 +13,6 @@ import fr.euphyllia.skyfolia.utils.IslandUtils;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
-import fr.euphyllia.skyfolia.utils.exception.MaxIslandSizeExceedException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,13 +59,13 @@ public class CreateSubCommand implements SubCommandInterface {
                             logger.fatal("island not create in database");
                             return;
                         }
-                        logger.info("inscrit");
 
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
                         this.pasteSchematic(plugin, island, center, islandType);
                         this.setFirstHome(island, center);
                         this.restoreGameMode(plugin, player, center);
-                        PlayerUtils.setOwnWorldBorder(plugin, player, center, "osef", island.getSize(), 0,0);
+                        this.addOwnerIslandInMember(island, player);
+                        PlayerUtils.setOwnWorldBorder(plugin, player, center, "", island.getSize(), 0,0);
                     } else {
                         WarpIsland home = island.getWarpByName("home");
                         player.sendMessage("Vous avez déjà une île");
@@ -78,7 +79,7 @@ public class CreateSubCommand implements SubCommandInterface {
                             } else {
                                 player.teleportAsync(home.location());
                             }
-                            PlayerUtils.setOwnWorldBorder(plugin, player, center, "osef", rayon, 0,0);
+                            PlayerUtils.setOwnWorldBorder(plugin, player, center, "", rayon, 0,0);
                         }, null);
                     }
                 });
@@ -124,5 +125,10 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private void setFirstHome(Island island, Location center) {
         island.addWarps("home", center);
+    }
+
+    private void addOwnerIslandInMember(Island island, Player player) {
+        Players owners = new Players(player.getUniqueId(), player.getName(), island.getOwnerId(), RoleType.OWNER);
+        island.updateMember(owners);
     }
 }
