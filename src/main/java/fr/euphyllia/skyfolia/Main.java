@@ -5,12 +5,14 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.commands.SkyFoliaCommand;
 import fr.euphyllia.skyfolia.managers.Managers;
 import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
+import net.kyori.adventure.audience.Audience;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 
@@ -28,12 +30,16 @@ public class Main extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
+            if (!this.interneAPI.setupConfigLanguage(this.getDataFolder(), "language.toml")) {
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
             if (!this.interneAPI.setupSGBD()) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
         } catch (DatabaseException | IOException exception) {
-            this.logger.log(Level.FATAL, exception.getMessage());
+            this.logger.log(Level.FATAL, exception);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }

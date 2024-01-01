@@ -6,6 +6,7 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
@@ -41,11 +42,11 @@ public class DeleteSubCommand implements SubCommandInterface {
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
                     if (island == null) {
                         // pas d'ile
-                        logger.log(Level.FATAL, "pas ile");
+                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
                         return;
                     }
                     if (!island.getOwnerId().equals(player.getUniqueId())) {
-                        logger.log(Level.FATAL, "pas owner");
+                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageOnlyOwnerCanDeleteIsland));
                         return; // Seul l'owner peut !
                     }
 
@@ -56,6 +57,8 @@ public class DeleteSubCommand implements SubCommandInterface {
                     for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
                         WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), island.getSize());
                     }
+
+                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandDeleteSuccess));
 
                     SkyblockRemoveEvent skyblockRemoveEvent = new SkyblockRemoveEvent(island);
                     Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);

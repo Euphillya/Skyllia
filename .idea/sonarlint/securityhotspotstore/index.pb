@@ -136,3 +136,5 @@ Lsrc/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandDataQuery.java,6
 Usrc/main/java/fr/euphyllia/skyfolia/utils/exception/MaxIslandSizeExceedException.java,2\0\20970056294008ba48d769949038b948b6a8d983
 j
 :src/main/java/fr/euphyllia/skyfolia/utils/IslandUtils.java,f\1\f14540eba19259385982dad1fbfdd7e2a7614794
+s
+Csrc/main/java/fr/euphyllia/skyfolia/configuration/LanguageToml.java,0\4\04646adaeb37b14fd7b17b08b90d7f5122d18cf7

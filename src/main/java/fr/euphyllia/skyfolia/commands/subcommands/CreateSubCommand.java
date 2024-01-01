@@ -8,6 +8,7 @@ import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.IslandUtils;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
@@ -53,7 +54,9 @@ public class CreateSubCommand implements SubCommandInterface {
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                     if (island == null) {
-                        player.sendMessage("L'ile en création");
+                        if (!LanguageToml.messageIslandInProgress.isEmpty()) {
+                            player.sendMessage(LanguageToml.messageIslandInProgress);
+                        }
                         island = skyblockManager.createIsland(player.getUniqueId(), islandType).join();
                         if (island == null) {
                             logger.fatal("island not create in database");
@@ -66,9 +69,15 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.restoreGameMode(plugin, player, center);
                         this.addOwnerIslandInMember(island, player);
                         PlayerUtils.setOwnWorldBorder(plugin, player, center, "", island.getSize(), 0,0);
+                        if (!LanguageToml.messageIslandCreateFinish.isEmpty()) {
+                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandCreateFinish));
+                        }
                     } else {
+                        if (!LanguageToml.messageIslandAlreadyExist.isEmpty()) {
+                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandAlreadyExist));
+                        }
+
                         WarpIsland home = island.getWarpByName("home");
-                        player.sendMessage("Vous avez déjà une île");
                         int regionX = island.getPosition().regionX();
                         int regionZ = island.getPosition().regionZ();
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());

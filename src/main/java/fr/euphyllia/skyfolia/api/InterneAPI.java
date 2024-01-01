@@ -2,6 +2,7 @@ package fr.euphyllia.skyfolia.api;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.database.DatabaseLoader;
 import fr.euphyllia.skyfolia.database.query.MariaDBCreateTable;
 import fr.euphyllia.skyfolia.database.query.MariaDBTransactionQuery;
@@ -10,9 +11,11 @@ import fr.euphyllia.skyfolia.database.sgbd.MariaDB;
 import fr.euphyllia.skyfolia.managers.Managers;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.exception.DatabaseException;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -50,10 +53,10 @@ public class InterneAPI {
         this.managers = managers;
     }
 
-    public boolean setupConfigs(File dataFolder, String fileName) throws IOException {
+    private @Nullable File checkFileExist(File dataFolder, String fileName) throws IOException {
         if (!dataFolder.exists() && (!dataFolder.mkdir())) {
             logger.log(Level.FATAL, "Unable to create the configuration folder.");
-            return false;
+            return null;
 
         }
         FileSystem fs = FileSystems.getDefault();
@@ -63,11 +66,34 @@ public class InterneAPI {
         if (!configFile.exists()) {
             configFile.createNewFile();
         }
+        return configFile;
+    }
+
+    public boolean setupConfigs(File dataFolder, String fileName) throws IOException {
+        File configFile = this.checkFileExist(dataFolder, fileName);
+        if (configFile == null) {
+            return false;
+        }
 
         try {
             ConfigToml.init(configFile);
         } catch (Exception databaseException) {
-            logger.log(Level.FATAL, databaseException.getMessage());
+            logger.log(Level.FATAL, databaseException);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean setupConfigLanguage(File dataFolder, String fileName) throws IOException {
+        File configFile = this.checkFileExist(dataFolder, fileName);
+        if (configFile == null) {
+            return false;
+        }
+
+        try {
+            LanguageToml.init(configFile);
+        } catch (Exception databaseException) {
+            logger.log(Level.FATAL, databaseException);
             return false;
         }
         return true;
@@ -99,5 +125,9 @@ public class InterneAPI {
 
     public SkyblockManager getSkyblockManager() {
         return this.skyblockManager;
+    }
+
+    public @NotNull MiniMessage getMiniMessage() {
+        return MiniMessage.miniMessage();
     }
 }

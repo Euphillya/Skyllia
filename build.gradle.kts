@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     paperweight.foliaDevBundle("1.20.2-R0.1-SNAPSHOT") // Car j'ai besoin du code de Folia
+    implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("com.electronwill.night-config:toml:3.6.6")
     implementation("com.google.guava:guava:33.0.0-jre")
     implementation("org.apache.logging.log4j:log4j-api:2.22.0")
