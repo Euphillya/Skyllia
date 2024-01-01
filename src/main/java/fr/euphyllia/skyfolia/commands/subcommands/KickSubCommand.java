@@ -44,7 +44,7 @@ public class KickSubCommand implements SubCommandInterface {
                 island.removeMember(players);
                 Player bPlayer = Bukkit.getPlayer(players.getMojangId());
                 if (bPlayer != null && bPlayer.isOnline()) {
-                    PlayerUtils.teleportPlayerSpawn(plugin, player);
+                    PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
                 }
             });
         } finally {
