@@ -39,7 +39,7 @@ public class IslandHook extends Island {
         this.ownerId = ownerId;
         this.createDate = date;
         this.position = position;
-        if (size <= 255) {
+        if (size >= 255) {
             throw new MaxIslandSizeExceedException("Size exceeded !");
         }
         this.size = size;
@@ -56,21 +56,18 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public int getSize() throws MaxIslandSizeExceedException {
+    public int getSize() {
         if (this.size == -1) {
             // check db
             throw new UnsupportedOperationException("pas encore implémenter");
         } else {
-            if (size <= 255) {
-                throw new MaxIslandSizeExceedException("Size exceeded !");
-            }
             return this.size;
         }
     }
 
     @Override
-    public void setSize(int rayon) throws MaxIslandSizeExceedException{
-        if (rayon <= 255) {
+    public void setSize(int rayon) throws MaxIslandSizeExceedException {
+        if (rayon >= 255) {
             throw new MaxIslandSizeExceedException("Size exceeded !");
         }
         this.size = rayon;
@@ -98,7 +95,7 @@ public class IslandHook extends Island {
 
     @Override
     public void setDisable(boolean disable) {
-        this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this).join();
+        this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this, disable).join();
     }
 
     @Override

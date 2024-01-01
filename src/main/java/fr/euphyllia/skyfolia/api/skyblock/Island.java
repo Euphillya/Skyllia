@@ -16,7 +16,7 @@ public abstract class Island {
 
     public abstract UUID getId();
 
-    public abstract int getSize() throws MaxIslandSizeExceedException;
+    public abstract int getSize();
 
     public abstract void setSize(int rayon) throws MaxIslandSizeExceedException;
 

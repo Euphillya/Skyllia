@@ -7,8 +7,11 @@ import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyfolia.utils.IslandUtils;
+import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
+import fr.euphyllia.skyfolia.utils.exception.MaxIslandSizeExceedException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +39,7 @@ public class CreateSubCommand implements SubCommandInterface {
             if (!(sender instanceof Player player)) {
                 return true;
             }
-            IslandType islandType = this.getIslandType(args.length == 0 ? null : args[0]);
+            IslandType islandType = IslandUtils.getIslandType(args.length == 0 ? null : args[0]);
             if (islandType == null) {
                 logger.info("manque arguments");
                 return false;
@@ -55,22 +58,27 @@ public class CreateSubCommand implements SubCommandInterface {
                             logger.fatal("island not create in database");
                             return;
                         }
+                        logger.info("inscrit");
 
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
                         this.pasteSchematic(plugin, island, center, islandType);
                         this.setFirstHome(island, center);
                         this.restoreGameMode(plugin, player, center);
+                        PlayerUtils.setOwnWorldBorder(plugin, player, center, "osef", island.getSize(), 0,0);
                     } else {
                         WarpIsland home = island.getWarpByName("home");
                         player.sendMessage("Vous avez déjà une île");
                         int regionX = island.getPosition().regionX();
                         int regionZ = island.getPosition().regionZ();
+                        Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
+                        int rayon = island.getSize();
                         player.getScheduler().run(plugin, scheduledTask -> {
                             if (home == null) {
                                 player.teleportAsync(RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), regionX, regionZ));
                             } else {
                                 player.teleportAsync(home.location());
                             }
+                            PlayerUtils.setOwnWorldBorder(plugin, player, center, "osef", rayon, 0,0);
                         }, null);
                     }
                 });
@@ -91,18 +99,6 @@ public class CreateSubCommand implements SubCommandInterface {
             return ConfigToml.islandTypes.keySet().stream().toList();
         } else {
             return new ArrayList<>();
-        }
-    }
-
-    private @Nullable IslandType getIslandType(String name) {
-        try {
-            if (name == null) {
-                return ConfigToml.islandTypes.values().stream().toList().get(0);
-            } else {
-                return ConfigToml.islandTypes.getOrDefault(name, null);
-            }
-        } catch (Exception e) {
-            return null;
         }
     }
 

@@ -41,10 +41,10 @@ public class IslandUpdateQuery {
         this.databaseName = databaseName;
     }
 
-    public CompletableFuture<Boolean> updateDisable(Island island) {
+    public CompletableFuture<Boolean> updateDisable(Island island, boolean disable) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api, UPDATE_DISABLE_ISLAND.formatted(this.databaseName), List.of(island.isDisable() ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
+            MariaDBExecute.executeQueryDML(this.api, UPDATE_DISABLE_ISLAND.formatted(this.databaseName), List.of(disable ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
         } catch (Exception ex) {
             logger.fatal("Error Disabled Island", ex);
             completableFuture.complete(false);

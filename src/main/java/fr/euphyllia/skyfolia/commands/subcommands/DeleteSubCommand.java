@@ -10,6 +10,7 @@ import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -40,24 +41,27 @@ public class DeleteSubCommand implements SubCommandInterface {
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
                     if (island == null) {
                         // pas d'ile
+                        logger.log(Level.FATAL, "pas ile");
                         return;
                     }
                     if (!island.getOwnerId().equals(player.getUniqueId())) {
+                        logger.log(Level.FATAL, "pas owner");
                         return; // Seul l'owner peut !
                     }
 
-                    this.teleportPlayerSpawn(plugin, island);
 
+                   // this.teleportPlayerSpawn(plugin, island); // Todo ? A reimplementer
                     island.setDisable(true);
 
                     for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                        WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), 50);
+                        WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), island.getSize());
                     }
 
                     SkyblockRemoveEvent skyblockRemoveEvent = new SkyblockRemoveEvent(island);
                     Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);
                 });
             } finally {
+                System.out.println("terminé");
                 executor.shutdown();
             }
 

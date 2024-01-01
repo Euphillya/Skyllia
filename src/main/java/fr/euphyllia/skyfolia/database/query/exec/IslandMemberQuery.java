@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class IslandMemberQuery {
 
     private static final String UPSERT_MEMBERS = """
-                INSERT INTO `%s`.`islands_members`
+                INSERT INTO `%s`.`members_in_islands`
                     (`island_id`, `uuid_player`, `player_name`, `role`, `joined`)
                     VALUES(?, ?, ?, current_timestamp())
                     on DUPLICATE key UPDATE `role` = ?;
@@ -27,18 +27,18 @@ public class IslandMemberQuery {
 
     private static final String SELECT_MEMBER_ISLAND_MOJANG_ID = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
-                FROM`%s`.`islands_members`
+                FROM`%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `uuid_player` = ?;
             """;
 
     private static final String SELECT_MEMBER_ISLAND_MOJANG_NAME = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
-                FROM`%s`.`islands_members`
+                FROM`%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `player_name` = ?;
             """;
     private static final String MEMBERS_ISLAND = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
-                FROM`%s`.`islands_members`
+                FROM`%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `role` NOT IN ('BAN', 'VISITOR');
             """;
     private final Logger logger = LogManager.getLogger(IslandMemberQuery.class);

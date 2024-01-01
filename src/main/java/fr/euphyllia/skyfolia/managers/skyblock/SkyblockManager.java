@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -51,8 +50,8 @@ public class SkyblockManager {
         return completableFuture;
     }
 
-    public CompletableFuture<Boolean> disableIsland(Island island) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updateDisable(island);
+    public CompletableFuture<Boolean> disableIsland(Island island, boolean disableValue) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updateDisable(island, disableValue);
     }
 
     public CompletableFuture<Boolean> isDisabledIsland(Island island) {
