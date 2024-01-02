@@ -12,16 +12,26 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 public class SkyblockManager {
 
     private final Main plugin;
+    private final SkyblockCache skyblockCache;
     private final Logger logger = LogManager.getLogger(SkyblockManager.class);
 
     public SkyblockManager(Main main) {
         this.plugin = main;
+        this.skyblockCache = new SkyblockCache(this);
+    }
+
+    public void loadCache() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        try {
+            executor.scheduleWithFixedDelay(this.skyblockCache::updateCache, 1, 60, TimeUnit.SECONDS);
+        } finally {
+            executor.shutdown();
+        }
     }
 
     public CompletableFuture<@Nullable Island> createIsland(UUID playerId, IslandType islandType) {

@@ -130,4 +130,8 @@ public class InterneAPI {
     public @NotNull MiniMessage getMiniMessage() {
         return MiniMessage.miniMessage();
     }
+
+    public void loadCachePlugin() {
+        this.skyblockManager.loadCache();
+    }
 }

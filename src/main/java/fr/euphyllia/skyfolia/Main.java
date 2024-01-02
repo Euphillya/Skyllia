@@ -44,6 +44,7 @@ public class Main extends JavaPlugin {
 
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
+        this.interneAPI.loadCachePlugin();
         this.setupCommands();
     }
 

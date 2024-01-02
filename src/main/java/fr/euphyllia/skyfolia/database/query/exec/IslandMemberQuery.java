@@ -21,7 +21,7 @@ public class IslandMemberQuery {
     private static final String UPSERT_MEMBERS = """
                 INSERT INTO `%s`.`members_in_islands`
                     (`island_id`, `uuid_player`, `player_name`, `role`, `joined`)
-                    VALUES(?, ?, ?, current_timestamp())
+                    VALUES(?, ?, ?, ?, current_timestamp())
                     on DUPLICATE key UPDATE `role` = ?;
             """;
 
@@ -53,7 +53,7 @@ public class IslandMemberQuery {
     public CompletableFuture<Boolean> updateMember(Island island, Players players) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         MariaDBExecute.executeQueryDML(this.api, UPSERT_MEMBERS.formatted(this.databaseName),
-                List.of(island.getId(), players.getMojangId(), players.getRoleType().name(), players.getRoleType().name()),
+                List.of(island.getId(), players.getMojangId(), players.getLastKnowName(), players.getRoleType().name(), players.getRoleType().name()),
                 i -> completableFuture.complete(i != 0), null);
         return completableFuture;
     }
