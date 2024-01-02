@@ -1,7 +1,7 @@
 name: Build SkyFolia
 on: [push]
 jobs:
-  paperclip:
+  skyfolia-testbuild:
     runs-on: ubuntu-22.04
     if: "!contains(github.event.commits[0].message, '[ci-skip]')"
     steps:
