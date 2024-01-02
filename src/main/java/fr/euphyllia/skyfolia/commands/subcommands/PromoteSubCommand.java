@@ -5,6 +5,7 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -37,13 +38,14 @@ public class PromoteSubCommand implements SubCommandInterface {
                 String playerName = args[0];
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(playerName);
                 if (offlinePlayer == null) {
-                    player.sendMessage("Le joueur est introuvable.");
+                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotFound));
                     return;
                 }
 
                 SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                 Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
                 if (island == null) {
+                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
                     return;
                 }
                 Players players = island.getMember(offlinePlayer.getUniqueId());

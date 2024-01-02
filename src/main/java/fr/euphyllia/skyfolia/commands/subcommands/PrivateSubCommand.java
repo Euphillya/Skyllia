@@ -4,6 +4,7 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -38,11 +39,14 @@ public class PrivateSubCommand implements SubCommandInterface {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
-                    if (island != null) {
-                        if (island.getOwnerId().equals(player.getUniqueId())) {
-                            island.setPrivateIsland(!island.isPrivateIsland());
-                            player.sendMessage("Maintenant votre île est " + (island.isPrivateIsland() ? "ouverte." : "fermée."));
-                        }
+                    if (island == null) {
+                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
+                        return;
+                    }
+
+                    if (island.getOwnerId().equals(player.getUniqueId())) {
+                        island.setPrivateIsland(!island.isPrivateIsland());
+                        player.sendMessage("Maintenant votre île est " + (island.isPrivateIsland() ? "ouverte." : "fermée."));
                     }
                 });
             } finally {

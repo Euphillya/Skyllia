@@ -3,6 +3,7 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
 import org.apache.logging.log4j.LogManager;
@@ -41,13 +42,13 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
                 Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
-                if (island != null) {
-                    World world = player.getWorld();
-                    WorldEditUtils.changeBiome(plugin, island, world, Biome.valueOf(selectBiome), player);
-                } else {
-                    // Besoin de créer une ile
-                    player.sendMessage("Faut créer une ile");
+                if (island == null) {
+                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
+                    return;
                 }
+
+                World world = player.getWorld();
+                WorldEditUtils.changeBiome(plugin, island, world, Biome.valueOf(selectBiome), player);
             });
         } finally {
             executor.shutdown();

@@ -20,6 +20,16 @@ public class LanguageToml {
     private static final Logger logger = LogManager.getLogger(LanguageToml.class);
     public static CommentedFileConfig config;
     public static int version;
+    public static String messageIslandInProgress = "L'île est en cours de création";
+    public static String messageIslandCreateFinish = "Bienvenue sur votre île !";
+    public static String messageOnlyOwnerCanDeleteIsland = "Désolé, seul le propriétaire peut exécuter cette commande";
+    public static String messageIslandDeleteSuccess = "L'île a été supprimé avec succès";
+    public static String messagePlayerHasNotIsland = "Vous n'avez pas d'île !";
+    public static String messageIslandAlreadyExist = "Vous avez déjà une île.";
+    public static String messagePlayerNotFound = "Le joueurs est introuvable.";
+    public static String messagePlayerNotInIsland = "Vous devez être sur votre île.";
+    public static String messageWarpCreate = "Votre warp : %s a été crée.";
+    public static String messageError = "Une erreur s'est produite. Merci de contacter un administrateur.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -129,24 +139,22 @@ public class LanguageToml {
         return builder.build();
     }
 
-    public static String messageIslandInProgress = "L'île est en cours de création";
-    public static String messageIslandCreateFinish = "Bienvenue sur votre île !";
     private static void createIslandLanguage() {
         messageIslandInProgress = getString("island.create.in-progress", messageIslandInProgress);
         messageIslandCreateFinish = getString("island.create.finish", messageIslandCreateFinish);
     }
 
-    public static String messageOnlyOwnerCanDeleteIsland = "Désolé, seul le propriétaire peut exécuter cette commande";
-    public static String messageIslandDeleteSuccess = "L'île a été supprimé avec succès";
     public static void deleteIslandLanguage() {
         messageOnlyOwnerCanDeleteIsland = getString("island.delete.only-owner", messageOnlyOwnerCanDeleteIsland);
         messageIslandDeleteSuccess = getString("island.delete.success", messageIslandDeleteSuccess);
     }
 
-    public static String messagePlayerHasNotIsland = "Vous n'avez pas d'île !";
-    public static String messageIslandAlreadyExist = "Vous avez déjà une île.";
     private static void islandGenericLanguage() {
         messagePlayerHasNotIsland = getString("island.generic.player.no-island", messagePlayerHasNotIsland);
         messageIslandAlreadyExist = getString("island.generic.player.already-exist", messageIslandAlreadyExist);
+        messagePlayerNotFound = getString("island.generic.player.not-found", messagePlayerNotFound);
+        messagePlayerNotInIsland = getString("island.generic.player.not-in-island", messagePlayerNotInIsland);
+        messageWarpCreate = getString("island.generic.player.warp-create", messageWarpCreate);
+        messageError = getString("island.generic.error", messageError);
     }
 }

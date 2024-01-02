@@ -11,7 +11,6 @@ import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -51,7 +50,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                     }
 
 
-                   // this.teleportPlayerSpawn(plugin, island); // Todo ? A reimplementer
+                    // this.teleportPlayerSpawn(plugin, island); // Todo ? A reimplementer
                     island.setDisable(true);
 
                     for (WorldConfig worldConfig : ConfigToml.worldConfigs) {

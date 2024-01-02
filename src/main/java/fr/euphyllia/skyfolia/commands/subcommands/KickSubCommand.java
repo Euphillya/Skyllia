@@ -4,9 +4,9 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -36,7 +36,7 @@ public class KickSubCommand implements SubCommandInterface {
                 SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                 Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
                 if (island == null) {
-                    logger.log(Level.FATAL, "Pas dile");
+                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
                     return;
                 }
                 String playerKick = args[0];

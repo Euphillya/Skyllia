@@ -2,11 +2,9 @@ package fr.euphyllia.skyfolia.database.query.exec;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
-import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
 import fr.euphyllia.skyfolia.managers.skyblock.IslandHook;
-import fr.euphyllia.skyfolia.utils.IslandUtils;
 import fr.euphyllia.skyfolia.utils.exception.MaxIslandSizeExceedException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +71,7 @@ public class IslandDataQuery {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             MariaDBExecute.executeQueryDML(this.api, ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
-                    futurIsland.getIslandType(), futurIsland.getId(), futurIsland.getOwnerId(),  1 , futurIsland.getSize()
+                    futurIsland.getIslandType(), futurIsland.getId(), futurIsland.getOwnerId(), 1, futurIsland.getSize()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
             logger.log(Level.FATAL, e);

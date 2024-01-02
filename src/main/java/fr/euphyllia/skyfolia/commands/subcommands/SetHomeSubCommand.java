@@ -3,6 +3,7 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
@@ -27,7 +28,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
         }
         Location playerLocation = player.getLocation();
         if (!isWorldIsland(playerLocation.getWorld().getName())) {
-            sender.sendMessage("Vous n'êtes pas sur votre ile");
+            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotInIsland));
             return true;
         }
 

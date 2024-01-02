@@ -55,11 +55,11 @@ public class CreateSubCommand implements SubCommandInterface {
 
                     if (island == null) {
                         if (!LanguageToml.messageIslandInProgress.isEmpty()) {
-                            player.sendMessage(LanguageToml.messageIslandInProgress);
+                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandInProgress));
                         }
                         island = skyblockManager.createIsland(player.getUniqueId(), islandType).join();
                         if (island == null) {
-                            logger.fatal("island not create in database");
+                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotFound));
                             return;
                         }
 
@@ -68,7 +68,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.setFirstHome(island, center);
                         this.restoreGameMode(plugin, player, center);
                         this.addOwnerIslandInMember(island, player);
-                        PlayerUtils.setOwnWorldBorder(plugin, player, center, "", island.getSize(), 0,0);
+                        PlayerUtils.setOwnWorldBorder(plugin, player, center, "", island.getSize(), 0, 0);
                         if (!LanguageToml.messageIslandCreateFinish.isEmpty()) {
                             player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandCreateFinish));
                         }
@@ -88,7 +88,7 @@ public class CreateSubCommand implements SubCommandInterface {
                             } else {
                                 player.teleportAsync(home.location());
                             }
-                            PlayerUtils.setOwnWorldBorder(plugin, player, center, "", rayon, 0,0);
+                            PlayerUtils.setOwnWorldBorder(plugin, player, center, "", rayon, 0, 0);
                         }, null);
                     }
                 });

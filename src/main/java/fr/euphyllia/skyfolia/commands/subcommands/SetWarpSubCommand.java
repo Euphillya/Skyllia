@@ -5,6 +5,7 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
@@ -29,22 +30,22 @@ public class SetWarpSubCommand implements SubCommandInterface {
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
         if (island == null) {
-            logger.log(Level.FATAL, "Pas dile");
+            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
             return;
         }
         Position islandPosition = island.getPosition();
         Position playerRegionPosition = RegionUtils.getRegionInChunk(regionLocX, regionLocZ);
+
         if (islandPosition.regionX() != playerRegionPosition.regionX() || islandPosition.regionZ() != playerRegionPosition.regionZ()) {
-            logger.log(Level.FATAL, "Pas sur votre ile X=%s/%s et Y=%s/%s".formatted(islandPosition.regionX(), playerRegionPosition.regionX(), islandPosition.regionZ(), playerRegionPosition.regionZ()));
+            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotInIsland));
             return;
-        } else {
-            logger.log(Level.FATAL, "Sur votre ile X=%s/%s et Y=%s/%s".formatted(islandPosition.regionX(), playerRegionPosition.regionX(), islandPosition.regionZ(), playerRegionPosition.regionZ()));
         }
+
         boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation);
         if (updateOrCreateWarps) {
-            player.sendMessage("OK !");
+            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageWarpCreate));
         } else {
-            logger.log(Level.FATAL, "pas ok !");
+            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageError));
         }
     }
 

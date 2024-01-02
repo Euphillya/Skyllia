@@ -5,6 +5,7 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
+import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
@@ -42,25 +43,25 @@ public class TeleportSubCommand implements SubCommandInterface {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
-                    if (island != null) {
-                        WarpIsland warpIsland = island.getWarpByName("home");
-                        Location centerIsland = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.islandTypes.get(island.getIslandType()).worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-                        int rayon = island.getSize();
-                        player.getScheduler().run(plugin, scheduledTask1 -> {
-                            Location loc;
-                            if (warpIsland == null) {
-                                loc = centerIsland;
-                            } else {
-                                loc = warpIsland.location();
-                            }
-                            player.teleportAsync(loc);
-                            PlayerUtils.setOwnWorldBorder(plugin, player, centerIsland, "osef", rayon, 0,0);
-                            player.setGameMode(GameMode.SURVIVAL);
-                        }, null);
-                    } else {
-                        // Besoin de creer une ile
-                        player.sendMessage("Faut créer une ile");
+                    if (island == null) {
+                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
+                        return;
                     }
+
+                    WarpIsland warpIsland = island.getWarpByName("home");
+                    Location centerIsland = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.islandTypes.get(island.getIslandType()).worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
+                    int rayon = island.getSize();
+                    player.getScheduler().run(plugin, scheduledTask1 -> {
+                        Location loc;
+                        if (warpIsland == null) {
+                            loc = centerIsland;
+                        } else {
+                            loc = warpIsland.location();
+                        }
+                        player.teleportAsync(loc);
+                        PlayerUtils.setOwnWorldBorder(plugin, player, centerIsland, "osef", rayon, 0, 0);
+                        player.setGameMode(GameMode.SURVIVAL);
+                    }, null);
                 });
             } finally {
                 executor.shutdown();
