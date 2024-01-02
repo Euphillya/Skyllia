@@ -30,6 +30,9 @@ public class LanguageToml {
     public static String messagePlayerNotInIsland = "Vous devez être sur votre île.";
     public static String messageWarpCreate = "Votre warp : %s a été crée.";
     public static String messageError = "Une erreur s'est produite. Merci de contacter un administrateur.";
+    public static String messageTransfertSuccess = "Le nouveau propriétaire de l'ile est : %new_owner%";
+    public static String messageOnlyOwner = "Seul le propriétaire de l'île peut faire ça.";
+    public static String messageNotMember = "Le joueur n'est pas membre de l'ile";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -139,6 +142,10 @@ public class LanguageToml {
         return builder.build();
     }
 
+    private static void changeOwnerLanguage() {
+        messageTransfertSuccess = getString("island.transfert.success", messageTransfertSuccess);
+    }
+
     private static void createIslandLanguage() {
         messageIslandInProgress = getString("island.create.in-progress", messageIslandInProgress);
         messageIslandCreateFinish = getString("island.create.finish", messageIslandCreateFinish);
@@ -156,5 +163,7 @@ public class LanguageToml {
         messagePlayerNotInIsland = getString("island.generic.player.not-in-island", messagePlayerNotInIsland);
         messageWarpCreate = getString("island.generic.player.warp-create", messageWarpCreate);
         messageError = getString("island.generic.error", messageError);
+        messageOnlyOwner = getString("island.generic.only-owner", messageOnlyOwner);
+        messageNotMember = getString("island.generic.not-member", messageNotMember);
     }
 }

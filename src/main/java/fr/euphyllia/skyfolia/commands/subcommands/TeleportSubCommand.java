@@ -59,7 +59,7 @@ public class TeleportSubCommand implements SubCommandInterface {
                             loc = warpIsland.location();
                         }
                         player.teleportAsync(loc);
-                        PlayerUtils.setOwnWorldBorder(plugin, player, centerIsland, "osef", rayon, 0, 0);
+                        PlayerUtils.setOwnWorldBorder(plugin, player, centerIsland, "", rayon, 0, 0);
                         player.setGameMode(GameMode.SURVIVAL);
                     }, null);
                 });

@@ -46,7 +46,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                     }
                     if (!island.getOwnerId().equals(player.getUniqueId())) {
                         player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageOnlyOwnerCanDeleteIsland));
-                        return; // Seul l'owner peut !
+                        return;
                     }
 
 
