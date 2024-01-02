@@ -17,4 +17,8 @@ public class IslandUtils {
             return null;
         }
     }
+
+    public static boolean isWorldIsland(String worldName) {
+        return ConfigToml.worldConfigs.stream().anyMatch(wc -> wc.name().equalsIgnoreCase(worldName));
+    }
 }

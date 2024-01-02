@@ -27,11 +27,7 @@ public class SkyblockManager {
 
     public void loadCache() {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.scheduleWithFixedDelay(this.skyblockCache::updateCache, 1, 60, TimeUnit.SECONDS);
-        } finally {
-            executor.shutdown();
-        }
+        executor.scheduleAtFixedRate(this.skyblockCache::updateCache, 1, 60, TimeUnit.SECONDS);
     }
 
     public CompletableFuture<@Nullable Island> createIsland(UUID playerId, IslandType islandType) {

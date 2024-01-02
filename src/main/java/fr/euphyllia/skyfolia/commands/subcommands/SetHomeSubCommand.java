@@ -4,6 +4,7 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
+import fr.euphyllia.skyfolia.utils.IslandUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
@@ -27,7 +28,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
             return true;
         }
         Location playerLocation = player.getLocation();
-        if (!isWorldIsland(playerLocation.getWorld().getName())) {
+        if (!IslandUtils.isWorldIsland(playerLocation.getWorld().getName())) {
             player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotInIsland));
             return true;
         }
@@ -49,9 +50,5 @@ public class SetHomeSubCommand implements SubCommandInterface {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return null;
-    }
-
-    private boolean isWorldIsland(String worldName) {
-        return ConfigToml.worldConfigs.stream().anyMatch(wc -> wc.name().equalsIgnoreCase(worldName));
     }
 }
