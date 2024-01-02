@@ -29,6 +29,8 @@ import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.WorldData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -50,6 +52,9 @@ import java.util.Locale;
  * Ce code provient d'ici : <a href="https://github.com/Folia-Inquisitors/MoreFoWorld/blob/master/src/main/java/me/hsgamer/morefoworld/WorldUtil.java">MoreFoWorld</a> et CraftBukkit
  */
 public final class WorldUtils {
+
+    private static final Logger logger = LogManager.getLogger(WorldUtils.class);
+
     public static FeedbackWorld addWorld(WorldCreator creator) {
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
@@ -71,9 +76,9 @@ public final class WorldUtils {
 
         CraftWorld worldByKey = (CraftWorld) craftServer.getWorld(creator.key());
         if (world != null || worldByKey != null) {
-            return world == worldByKey
-                    ? Feedback.WORLD_ALREADY_EXISTS.toFeedbackWorld(worldByKey)
-                    : Feedback.WORLD_DUPLICATED.toFeedbackWorld();
+            if (world != worldByKey) {
+                return Feedback.WORLD_DUPLICATED.toFeedbackWorld();
+            }
         }
 
         if ((folder.exists()) && (!folder.isDirectory())) {

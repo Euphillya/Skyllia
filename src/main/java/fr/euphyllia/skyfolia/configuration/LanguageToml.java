@@ -1,8 +1,6 @@
 package fr.euphyllia.skyfolia.configuration;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,8 +10,6 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Map;
 
 public class LanguageToml {
 
@@ -44,7 +40,7 @@ public class LanguageToml {
         set("config-version", 1);
         logger.log(Level.FATAL, "Lecture des config");
         try {
-            readConfig(ConfigToml.class, null);
+            readConfig(LanguageToml.class, null);
         } catch (Exception e) {
             logger.log(Level.FATAL, "Erreur de lecture !", e);
         }
@@ -88,14 +84,6 @@ public class LanguageToml {
         return config.get(path);
     }
 
-    private static Double getDouble(@NotNull String path, Double def) {
-        Object tryIt = config.get(path);
-        if (tryIt == null) {
-            set(path, def);
-            return def;
-        }
-        return config.get(path);
-    }
 
     private static Integer getInt(@NotNull String path, Integer def) {
         Object tryIt = config.get(path);
@@ -106,41 +94,8 @@ public class LanguageToml {
         return config.getInt(path);
     }
 
-    private static <T> List getList(@NotNull String path, T def) {
-        Object tryIt = config.get(path);
-        if (tryIt == null) {
-            set(path, def);
-            return (List) def;
-        }
-        return config.get(path);
-    }
 
-    private static Long getLong(@NotNull String path, Long def) {
-        Object tryIt = config.get(path);
-        if (tryIt == null) {
-            set(path, def);
-            return def;
-        }
-        return config.getLong(path);
-    }
 
-    private static Map<String, ?> getMap(@NotNull String path) {
-        CommentedConfig commentedConfig = config.get(path);
-        return toMap(commentedConfig);
-    }
-
-    private static Map<String, ?> toMap(CommentedConfig config) {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        if (config != null) {
-            for (CommentedConfig.Entry entry : config.entrySet()) {
-                Object obj = entry.getValue();
-                if (obj != null) {
-                    builder.put(entry.getKey(), obj instanceof CommentedConfig val ? toMap(val) : obj);
-                }
-            }
-        }
-        return builder.build();
-    }
 
     private static void changeOwnerLanguage() {
         messageTransfertSuccess = getString("island.transfert.success", messageTransfertSuccess);
