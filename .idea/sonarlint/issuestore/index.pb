@@ -138,3 +138,7 @@ j
 :src/main/java/fr/euphyllia/skyfolia/utils/IslandUtils.java,f\1\f14540eba19259385982dad1fbfdd7e2a7614794
 s
 Csrc/main/java/fr/euphyllia/skyfolia/configuration/LanguageToml.java,0\4\04646adaeb37b14fd7b17b08b90d7f5122d18cf7
+A
+.github/workflows,9\3\93d7c4b8379b044a4f4d044d632200ac9ae24251
+P
+ .github/workflows/test-build.yml,2\3\23859ec96080198aa2547504b5e6d823beec3ac3
