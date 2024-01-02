@@ -56,9 +56,11 @@ public class TransferSubCommand implements SubCommandInterface {
                     // Enlever le proprio
                     Players oldOwner = island.getMember(player.getUniqueId());
                     oldOwner.setRoleType(RoleType.MEMBER);
+                    island.updateMember(oldOwner);
                     // Nouveau proprio
                     island.setOwnerId(player.getUniqueId());
                     players.setRoleType(RoleType.OWNER);
+                    island.updateMember(players);
                     player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageTransfertSuccess.replace("%new_owner%", players.getLastKnowName())));
                     // msg ok
                 });
