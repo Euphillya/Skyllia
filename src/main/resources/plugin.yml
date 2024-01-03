@@ -1,7 +1,6 @@
 name: "SkyFolia"
 version: "${version}"
 main: fr.euphyllia.skyfolia.Main
-load: STARTUP
 api-version: 1.20
 author: Euphyllia
 description: "${description}"
