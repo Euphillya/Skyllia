@@ -1,29 +1,0 @@
-
-Q
-java:S3740l"/Provide the parametrized type for this generic.(¡·«øşÿÿÿÿ8Ğ¨ÅŠÌ1
-q
-java:S1192 "NDefine a constant instead of duplicating this literal "sky-overworld" 3 times.(Œ Âóøÿÿÿÿ8Ö¨ÅŠÌ1
-N
-java:S1444",Make this "public static config" field final(êµæ˜øÿÿÿÿ8Ø¨ÅŠÌ1
-O
-java:S1444"-Make this "public static version" field final(¼’çŠüÿÿÿÿ8Ù¨ÅŠÌ1
-P
-java:S1444"3Make this "public static mariaDBConfig" field final(±ü¢8Ú¨ÅŠÌ1
-T
-java:S1444"2Make this "public static worldConfigs" field final(Ù„ğşÿÿÿÿ8Û¨ÅŠÌ1
-L
-java:S1444"/Make this "public static maxIsland" field final(…Áãí8Ü¨ÅŠÌ1
-S
-java:S1444"1Make this "public static islandTypes" field final(¼íóĞûÿÿÿÿ8İ¨ÅŠÌ1
-f
-java:S1444 "DMake this "public static clearInventoryWhenDeleteIsland" field final(Àæ×¦şÿÿÿÿ8Ş¨ÅŠÌ1
-b
-java:S1444!"EMake this "public static clearEnderChestWhenDeleteIsland" field final(²²Ñ„8à¨ÅŠÌ1
-m
-java:S1444""KMake this "public static resetExperiencePlayerWhenDeleteIsland" field final(ú«§µşÿÿÿÿ8á¨ÅŠÌ1
-?
-java:S2386"Make this member "protected".(Ù„ğşÿÿÿÿ8ß¬ÅŠÌ1
-?
-java:S2386"Make this member "protected".(¼íóĞûÿÿÿÿ8ß¬ÅŠÌ1
-W
-java:S1118":Add a private constructor to hide the implicit public one.(Õ¬­—8á¬ÅŠÌ1

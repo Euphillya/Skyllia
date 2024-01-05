@@ -18,4 +18,4 @@ jobs:
       - name: Permission gradlew
         run: chmod +x gradlew
       - name: Build SkyFolia jar
-        run: ./gradlew reobfJar
+        run: ./gradlew shadowJar
