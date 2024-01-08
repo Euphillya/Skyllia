@@ -106,4 +106,16 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerName);
     }
 
+    public CompletableFuture<Boolean> addClearMemberNextLogin(UUID playerId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().addMemberClear(playerId);
+    }
+
+    public CompletableFuture<Boolean> deleteClearMember(UUID playerId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMemberClear(playerId);
+    }
+
+    public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId);
+    }
+
 }

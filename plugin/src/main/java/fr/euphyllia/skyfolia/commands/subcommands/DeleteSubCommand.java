@@ -4,6 +4,7 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.event.SkyblockRemoveEvent;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
+import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
@@ -11,9 +12,11 @@ import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,47 +33,50 @@ public class DeleteSubCommand implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            return true;
+        }
+        if (!player.hasPermission("skyfolia.island.command.delete")) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            return true;
+        }
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            if (!(sender instanceof Player player)) {
-                return true;
-            }
-            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-            try {
-                executor.execute(() -> {
+            executor.execute(() -> {
+                try {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
                     if (island == null) {
-                        // pas d'ile
-                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                         return;
                     }
                     if (!island.getOwnerId().equals(player.getUniqueId())) {
-                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageOnlyOwnerCanDeleteIsland));
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
                         return;
                     }
 
 
-                    // this.teleportPlayerSpawn(plugin, island); // Todo ? A reimplementer
                     island.setDisable(true);
+                    this.updatePlayer(plugin, skyblockManager, island);
 
                     for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
                         WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), island.getSize());
                     }
 
-                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandDeleteSuccess));
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
 
                     SkyblockRemoveEvent skyblockRemoveEvent = new SkyblockRemoveEvent(island);
                     Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);
-                });
-            } finally {
-                executor.shutdown();
-            }
-
-            return true;
-        } catch (Exception ex) {
-            logger.fatal("Suppression ile a un bug", ex);
+                } catch (Exception e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                }
+            });
+        } finally {
+            executor.shutdown();
         }
-        return false;
+
+        return true;
     }
 
     @Override
@@ -78,29 +84,29 @@ public class DeleteSubCommand implements SubCommandInterface {
         return null;
     }
 
-    private void teleportPlayerSpawn(Main plugin, @NotNull Island island) {
+    private void updatePlayer(Main plugin, SkyblockManager skyblockManager, Island island) {
         for (Players players : island.getMembers()) {
-            Player member = Bukkit.getPlayer(players.getMojangId());
-            if (member == null) continue;
-            if (member.isOnline()) {
-                PlayerUtils.teleportPlayerSpawn(plugin, member);
+            players.setRoleType(RoleType.VISITOR);
+            island.updateMember(players);
+            Player bPlayer = Bukkit.getPlayer(players.getMojangId());
+            if (bPlayer != null && bPlayer.isOnline()) {
+                PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
+                bPlayer.getScheduler().run(plugin, t -> {
+                    if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                        bPlayer.getInventory().clear();
+                    }
+                    if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                        bPlayer.getEnderChest().clear();
+                    }
+                    if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                        bPlayer.setTotalExperience(0);
+                        bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
+                    }
+                    bPlayer.setGameMode(GameMode.SURVIVAL);
+                }, null);
+            } else {
+                skyblockManager.addClearMemberNextLogin(players.getMojangId());
             }
         }
     }
-
-    /* Todo Va être déplacer
-    player.setGameMode(GameMode.SPECTATOR);
-        if (ConfigToml.clearInventoryWhenDeleteIsland) {
-            player.getInventory().clear();
-        }
-        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-            player.getEnderChest().clear();
-        }
-        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-            player.setTotalExperience(0);
-            player.sendExperienceChange(0, 0); // Mise à jour du packet
-        }
-
-        player.setGameMode(GameMode.SURVIVAL);
-     */
 }

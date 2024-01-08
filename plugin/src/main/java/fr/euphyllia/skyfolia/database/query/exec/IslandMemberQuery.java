@@ -5,6 +5,7 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -40,6 +41,20 @@ public class IslandMemberQuery {
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
                 FROM`%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `role` NOT IN ('BAN', 'VISITOR');
+            """;
+
+    private static final String ADD_MEMBER_CLEAR = """
+            INSERT INTO `%s`.`player_clear`
+            (`uuid_player`) VALUES (?);
+            """;
+    private static final String SELECT_MEMBER_CLEAR = """
+            SELECT `uuid_player` FROM `%s`.`player_clear`
+            WHERE `uuid_player` = ?;
+            """;
+
+    private static final String DELETE_MEMBER_CLEAR = """
+            DELETE FROM `%s`.`player_clear`
+                WHERE `uuid_player` = ?;
             """;
     private final Logger logger = LogManager.getLogger(IslandMemberQuery.class);
     private final InterneAPI api;
@@ -121,6 +136,33 @@ public class IslandMemberQuery {
                         completableFuture.complete(null);
                     }
                 }, null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> addMemberClear(UUID playerId) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQueryDML(this.api, ADD_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId), i -> completableFuture.complete(i != 0), null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> deleteMemberClear(UUID playerId) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQueryDML(this.api, DELETE_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId), i -> {
+            completableFuture.complete(i != 0);
+        }, null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQuery(this.api, SELECT_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId), resultSet -> {
+            try {
+                completableFuture.complete(resultSet.next());
+            } catch (SQLException e) {
+                logger.log(Level.FATAL, e.getMessage(), e);
+                completableFuture.complete(false);
+            }
+        }, null);
         return completableFuture;
     }
 }

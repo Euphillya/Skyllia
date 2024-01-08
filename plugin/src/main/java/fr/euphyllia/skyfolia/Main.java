@@ -4,6 +4,7 @@ package fr.euphyllia.skyfolia;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyfolia.commands.SkyFoliaCommand;
+import fr.euphyllia.skyfolia.listeners.bukkitevents.JoinEvent;
 import fr.euphyllia.skyfolia.managers.Managers;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +47,7 @@ public class Main extends JavaPlugin {
         this.interneAPI.getManagers().init();
         this.interneAPI.loadCachePlugin();
         this.setupCommands();
+        this.loadListener();
     }
 
     @Override
@@ -69,5 +71,9 @@ public class Main extends JavaPlugin {
         }
         command.setExecutor(sc);
         command.setTabCompleter(sc);
+    }
+
+    private void loadListener() {
+        getServer().getPluginManager().registerEvents(new JoinEvent(this.interneAPI), this);
     }
 }

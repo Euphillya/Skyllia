@@ -109,12 +109,13 @@ public class WorldEditUtils {
             }
             case WORLD_EDIT -> Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
                 CuboidRegion selection = getCuboidRegionWithRayon(null, w, island, rayon);
-                List<Block> blocksList = new ArrayList<>();
+                List<Location> blocksLocationList = new ArrayList<>();
 
-                selection.forEach(blockVector3 -> blocksList.add(new Location(w, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ()).getBlock()));
+                selection.forEach(blockVector3 -> blocksLocationList.add(new Location(w, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ())));
 
-                for (Block block : blocksList) {
-                    Bukkit.getRegionScheduler().run(plugin, w, block.getChunk().getX(), block.getChunk().getZ(), t -> {
+                for (Location blockLocation : blocksLocationList) {
+                    Bukkit.getRegionScheduler().run(plugin, blockLocation, t -> {
+                        Block block = blockLocation.getBlock();
                         if (block.getType().isAir()) return;
                         block.setType(Material.AIR, false);
                     });
@@ -154,6 +155,7 @@ public class WorldEditUtils {
                 biomeType.applyBiome(blockBiomeSet);
             } else if (worldEditVersion().equals(Type.WORLD_EDIT)) {
                 executorService.schedule(() -> {
+                    // Todo ? je bosse dessus !
                     Bukkit.getServer().getRegionScheduler().run(plugin, block.getLocation(), t -> {
                         logger.log(Level.FATAL, "Insertion " + block.getLocation());
                         block.setType(Material.END_STONE);

@@ -68,7 +68,16 @@ public class MariaDBCreateTable {
                   `id` INT NOT NULL,
                   `region_x` INT NOT NULL,
                   `region_z` INT NOT NULL,
-                  PRIMARY KEY (`id`)
+                  PRIMARY KEY (`id`),
+                  INDEX `idx_region_x` (`region_x`),
+                  INDEX `idx_region_z` (`region_z`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+
+    private static final String CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK = """
+                CREATE TABLE IF NOT EXISTS `%s`.`player_clear` (
+                   `uuid_player` CHAR(36) NOT NULL,
+                   PRIMARY KEY (`uuid_player`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
     private static final String INSERT_SPIRAL = """
@@ -102,6 +111,7 @@ public class MariaDBCreateTable {
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
+        MariaDBExecute.executeQuery(api, CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
         ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
         try {
             scheduledExecutorService.execute(() -> {

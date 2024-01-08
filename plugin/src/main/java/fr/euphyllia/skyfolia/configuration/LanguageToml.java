@@ -33,6 +33,7 @@ public class LanguageToml {
     public static String messageNotMember = "Le joueur n'est pas membre de l'ile";
     public static String messageIslandTypeNotExist = "Le type d'île sélectionné n'existe pas.";
     public static String messagePlayerPermissionDenied = "Vous n'avez pas la permission de faire cela.";
+    public static String messageIslandError = "Une erreur s'est produite lors de la création de l'ile";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -100,8 +101,6 @@ public class LanguageToml {
     private static void changeOwnerLanguage() {
         messageTransfertSuccess = getString("island.transfert.success", messageTransfertSuccess);
     }
-
-    public static String messageIslandError = "Une erreur s'est produite lors de la création de l'ile";
 
     private static void createIslandLanguage() {
         messageIslandInProgress = getString("island.create.in-progress", messageIslandInProgress);
