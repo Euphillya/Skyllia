@@ -5,13 +5,11 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.IslandUtils;
-import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
 import fr.euphyllia.skyfolia.utils.nms.v1_20_R2.PlayerNMS;
@@ -38,29 +36,38 @@ public class CreateSubCommand implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            return true;
+        }
+        if (!player.hasPermission("skyfolia.island.command.create")) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            return true;
+        }
+        player.setGameMode(GameMode.SPECTATOR);
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            if (!(sender instanceof Player player)) {
-                return true;
-            }
-            IslandType islandType = IslandUtils.getIslandType(args.length == 0 ? null : args[0]);
-            if (islandType == null) {
-                logger.info("manque arguments");
-                return false;
-            }
-            player.setGameMode(GameMode.SPECTATOR);
-            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-            try {
-                executor.execute(() -> {
+            executor.execute(() -> {
+                try {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                     if (island == null) {
-                        if (!LanguageToml.messageIslandInProgress.isEmpty()) {
-                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandInProgress));
+                        IslandType islandType = IslandUtils.getIslandType(args.length == 0 ? null : args[0]);
+                        if (islandType == null) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandTypeNotExist);
+                            return;
                         }
+
+                        if (!player.hasPermission("skyfolia.island.command.create.%s".formatted(islandType.name()))) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                            return;
+                        }
+
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandInProgress);
+
                         island = skyblockManager.createIsland(player.getUniqueId(), islandType).join();
                         if (island == null) {
-                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotFound));
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
                             return;
                         }
 
@@ -70,38 +77,19 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.restoreGameMode(plugin, player, center);
                         this.addOwnerIslandInMember(island, player);
                         PlayerNMS.setOwnWorldBorder(plugin, player, center, "", island.getSize(), 0, 0);
-                        if (!LanguageToml.messageIslandCreateFinish.isEmpty()) {
-                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandCreateFinish));
-                        }
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
                     } else {
-                        if (!LanguageToml.messageIslandAlreadyExist.isEmpty()) {
-                            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageIslandAlreadyExist));
-                        }
-
-                        WarpIsland home = island.getWarpByName("home");
-                        int regionX = island.getPosition().regionX();
-                        int regionZ = island.getPosition().regionZ();
-                        Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-                        int rayon = island.getSize();
-                        player.getScheduler().run(plugin, scheduledTask -> {
-                            if (home == null) {
-                                player.teleportAsync(RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), regionX, regionZ));
-                            } else {
-                                player.teleportAsync(home.location());
-                            }
-                            PlayerNMS.setOwnWorldBorder(plugin, player, center, "", rayon, 0, 0);
-                        }, null);
+                        TeleportSubCommand.tpHomeIsland(plugin, island, player);
                     }
-                });
-            } finally {
-                executor.shutdown();
-            }
-            return true;
-        } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage());
-            sender.sendMessage("Impossible de créer l'ile, vérifier les logs !");
-            return false;
+                } catch (Exception e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                }
+            });
+        } finally {
+            executor.shutdown();
         }
+        return true;
     }
 
     @Override

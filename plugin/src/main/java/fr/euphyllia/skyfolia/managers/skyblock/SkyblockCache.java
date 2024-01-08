@@ -14,12 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SkyblockCache {
 
-    private SkyblockManager skyblockManager;
     private final Logger logger = LogManager.getLogger(SkyblockCache.class);
-
     private final ConcurrentHashMap<UUID, Island> islandId_Island;
     private final ConcurrentHashMap<Position, UUID> position_islandId;
     private final ConcurrentHashMap<UUID, UUID> playerId_IslandId;
+    private final SkyblockManager skyblockManager;
 
 
     public SkyblockCache(SkyblockManager sm) {

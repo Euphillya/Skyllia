@@ -2,7 +2,6 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
-import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.utils.IslandUtils;
 import org.apache.logging.log4j.LogManager;
