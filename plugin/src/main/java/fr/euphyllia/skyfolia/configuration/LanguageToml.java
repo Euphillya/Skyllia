@@ -111,11 +111,23 @@ public class LanguageToml {
 
     public static String messageDemotePlayer = "Le joueur %s a été rétrogradé.";
     public static String messageDemotePlayerFailed = "Le joueur %s ne peut pas être rétrogradé.";
-    public static String messageDemotePlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas rétrograder un joueur à votre rang ou celui au dessus.";
+    public static String messageDemotePlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas rétrograder un joueur de votre rang ou d'un rang plus élevé.";
+    public static String messageDemoteCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia demote <member>";
+    public static String messagePromotePlayer = "Le joueur %s a été promu.";
+    public static String messagePromotePlayerFailed = "Le joueur %s ne peut pas être promu.";
+    public static String messagePromotePlayerFailedLowOrEqualsStatus = "Vous ne pouvez pas promouvoir un joueur à votre rang ou d'un rang plus élevé.";
+    public static String messagePromoteCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia promote <member>";
     private static void changeStatusPlayerLanguage() {
+        // Demote
         messageDemotePlayer = getString("island.demote.success", messageDemotePlayer);
         messageDemotePlayerFailed = getString("island.demote.fail", messageDemotePlayerFailed);
+        messageDemoteCommandNotEnoughArgs = getString("island.demote.not-enough-args", messageDemoteCommandNotEnoughArgs);
         messageDemotePlayerFailedHighOrEqualsStatus = getString("island.demote.fail-high-equals-status", messageDemotePlayerFailedHighOrEqualsStatus);
+        // Promote
+        messagePromotePlayer = getString("island.promote.success", messagePromotePlayer);
+        messagePromotePlayerFailed = getString("island.promote.fail", messagePromotePlayerFailed);
+        messagePromoteCommandNotEnoughArgs = getString("island.promote.not-enough-args", messagePromoteCommandNotEnoughArgs);
+        messagePromotePlayerFailedLowOrEqualsStatus = getString("island.promote.fail-high-equals-status", messagePromotePlayerFailedLowOrEqualsStatus);
     }
 
     public static void deleteIslandLanguage() {
@@ -134,6 +146,7 @@ public class LanguageToml {
         messageNotMember = getString("island.generic.not-member", messageNotMember);
         messagePlayerPermissionDenied = getString("island.generic.player.permission-denied", messagePlayerPermissionDenied);
     }
+
 
     public static void sendMessage(Main plugin, Entity entity, String msg) {
         if (msg.isEmpty()) return;

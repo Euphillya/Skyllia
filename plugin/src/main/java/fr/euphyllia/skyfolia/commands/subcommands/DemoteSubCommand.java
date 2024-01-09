@@ -36,6 +36,10 @@ public class DemoteSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
+        if (args.length < 1) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemoteCommandNotEnoughArgs);
+            return true;
+        }
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
             executor.execute(() -> {

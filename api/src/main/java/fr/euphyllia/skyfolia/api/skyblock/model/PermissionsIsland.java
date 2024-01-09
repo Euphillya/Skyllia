@@ -19,7 +19,7 @@ public enum PermissionsIsland {
         try {
             return PermissionsIsland.valueOf(names).getPermissionValue();
         } catch (IllegalArgumentException e) {
-            return -1;
+            return 0;
         }
     }
 

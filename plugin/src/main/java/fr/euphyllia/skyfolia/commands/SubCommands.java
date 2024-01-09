@@ -9,6 +9,7 @@ public enum SubCommands {
     DELETE(new DeleteSubCommand()),
     DEMOTE(new DemoteSubCommand()),
     PRIVATE(new PrivateSubCommand()),
+    PROMOTE(new PromoteSubCommand()),
     TELEPORT(new TeleportSubCommand()),
     TRANSFER(new TransferSubCommand()),
     SETHOME(new SetHomeSubCommand()),

@@ -2,6 +2,7 @@ dependencies {
     compileOnly("dev.folia:folia-api:1.20.2-R0.1-SNAPSHOT")
     implementation(project(":api"))
     implementation(project(":nms:v1_19_R3"))
+    implementation(project(":nms:v1_20_R1"))
     implementation(project(":nms:v1_20_R2"))
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("com.electronwill.night-config:toml:3.6.6")

@@ -3,9 +3,12 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
+import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.PermissionsIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
+import fr.euphyllia.skyfolia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -31,32 +34,62 @@ public class PromoteSubCommand implements SubCommandInterface {
         if (!(sender instanceof Player player)) {
             return true;
         }
-
+        if (!player.hasPermission("skyfolia.island.command.promote")) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            return true;
+        }
+        if (args.length < 1) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromoteCommandNotEnoughArgs);
+            return true;
+        }
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
             executor.execute(() -> {
-                String playerName = args[0];
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(playerName);
-                if (offlinePlayer == null) {
-                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotFound));
-                    return;
-                }
+                try {
+                    String playerName = args[0];
 
-                SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
-                if (island == null) {
-                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
-                    return;
+                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+                    if (island == null) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                        return;
+                    }
+
+                    Players executorPlayer = island.getMember(player.getUniqueId());
+
+                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), executorPlayer.getRoleType()).join();
+
+                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+
+                    if (!permissionManager.hasPermission(PermissionsIsland.PROMOTE)) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                        return;
+                    }
+
+                    Players players = island.getMember(playerName);
+
+                    if(players == null) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                        return;
+                    }
+
+                    if (executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayerFailedLowOrEqualsStatus);
+                        return;
+                    }
+
+                    RoleType promoteResult = RoleType.getRoleById(players.getRoleType().getValue() + 1);
+                    if (promoteResult.getValue() == 0 || promoteResult.getValue() == RoleType.OWNER.getValue()) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayerFailed.formatted(playerName));
+                        return;
+                    }
+                    players.setRoleType(promoteResult);
+                    island.updateMember(players);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayer.formatted(playerName));
+                } catch (Exception e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                 }
-                Players players = island.getMember(offlinePlayer.getUniqueId());
-                if (!players.getRoleType().equals(RoleType.MEMBER)) {
-                    logger.log(Level.FATAL, "peut pas %s".formatted(players.getRoleType().name()));
-                    return;
-                }
-                RoleType promoteResult = RoleType.getRoleById(players.getRoleType().getValue() + 1);
-                players.setRoleType(promoteResult);
-                island.updateMember(players);
-                logger.log(Level.FATAL, "changement fait");
             });
         } finally {
             executor.shutdown();
