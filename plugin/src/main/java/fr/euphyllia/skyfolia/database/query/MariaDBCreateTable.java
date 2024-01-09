@@ -74,6 +74,14 @@ public class MariaDBCreateTable {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 
+    private static final String CREATE_TABLE_ISLAND_PERMISSION = """
+            CREATE TABLE IF NOT EXISTS %s.`islands_permissions` (
+            `island_id` VARCHAR(36) NOT NULL,
+            `role` VARCHAR(40) NOT NULL,
+            `flags` INT NOT NULL DEFAULT '0',
+            PRIMARY KEY (`island_id`,`role`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
     private static final String CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK = """
                 CREATE TABLE IF NOT EXISTS `%s`.`player_clear` (
                    `uuid_player` CHAR(36) NOT NULL,
@@ -112,6 +120,7 @@ public class MariaDBCreateTable {
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
+        MariaDBExecute.executeQuery(api, CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
         ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
         try {
             scheduledExecutorService.execute(() -> {

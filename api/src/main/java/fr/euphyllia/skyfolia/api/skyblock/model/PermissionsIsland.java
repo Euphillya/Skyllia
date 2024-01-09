@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PermissionsIsland {
-    DEFAULT(0);
+    DEFAULT(0),
+    DEMOTE(1),
+    PROMOTE(2);
 
     private final int permissionValue;
 

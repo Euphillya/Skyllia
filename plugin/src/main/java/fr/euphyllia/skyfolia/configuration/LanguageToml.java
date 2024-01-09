@@ -109,6 +109,15 @@ public class LanguageToml {
         messageIslandError = getString("island.create.error", messageIslandError);
     }
 
+    public static String messageDemotePlayer = "Le joueur %s a été rétrogradé.";
+    public static String messageDemotePlayerFailed = "Le joueur %s ne peut pas être rétrogradé.";
+    public static String messageDemotePlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas rétrograder un joueur à votre rang ou celui au dessus.";
+    private static void changeStatusPlayerLanguage() {
+        messageDemotePlayer = getString("island.demote.success", messageDemotePlayer);
+        messageDemotePlayerFailed = getString("island.demote.fail", messageDemotePlayerFailed);
+        messageDemotePlayerFailedHighOrEqualsStatus = getString("island.demote.fail-high-equals-status", messageDemotePlayerFailedHighOrEqualsStatus);
+    }
+
     public static void deleteIslandLanguage() {
         messageOnlyOwnerCanDeleteIsland = getString("island.delete.only-owner", messageOnlyOwnerCanDeleteIsland);
         messageIslandDeleteSuccess = getString("island.delete.success", messageIslandDeleteSuccess);

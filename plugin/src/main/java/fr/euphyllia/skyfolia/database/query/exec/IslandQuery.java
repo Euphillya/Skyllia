@@ -14,6 +14,7 @@ public class IslandQuery {
     private final IslandUpdateQuery islandUpdateQuery;
     private final IslandWarpQuery islandWarpQuery;
     private final IslandMemberQuery islandMemberQuery;
+    private final IslandPermissionQuery islandPermissionQuery;
 
     public IslandQuery(InterneAPI api, String databaseName) {
         this.api = api;
@@ -22,6 +23,7 @@ public class IslandQuery {
         this.islandUpdateQuery = new IslandUpdateQuery(api, databaseName);
         this.islandWarpQuery = new IslandWarpQuery(api, databaseName);
         this.islandMemberQuery = new IslandMemberQuery(api, databaseName);
+        this.islandPermissionQuery = new IslandPermissionQuery(api, databaseName);
     }
 
     public IslandDataQuery getIslandDataQuery() {
@@ -40,4 +42,7 @@ public class IslandQuery {
         return this.islandMemberQuery;
     }
 
+    public IslandPermissionQuery getIslandPermissionQuery() {
+        return this.islandPermissionQuery;
+    }
 }

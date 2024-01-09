@@ -38,7 +38,7 @@ public abstract class Island {
 
     public abstract Players getMember(UUID mojangId);
 
-    public abstract Players getMember(String playerName);
+    public abstract @Nullable Players getMember(String playerName);
 
     public abstract void removeMember(Players players);
 

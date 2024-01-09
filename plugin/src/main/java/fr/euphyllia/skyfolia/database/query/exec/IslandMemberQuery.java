@@ -95,7 +95,7 @@ public class IslandMemberQuery {
     }
 
 
-    public CompletableFuture<Players> getPlayersIsland(Island island, String playerName) {
+    public CompletableFuture<@Nullable Players> getPlayersIsland(Island island, String playerName) {
         CompletableFuture<Players> completableFuture = new CompletableFuture<>();
         MariaDBExecute.executeQuery(this.api, SELECT_MEMBER_ISLAND_MOJANG_NAME.formatted(this.databaseName),
                 List.of(island.getId(), playerName),

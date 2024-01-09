@@ -4,6 +4,8 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -102,7 +104,7 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerId);
     }
 
-    public CompletableFuture<Players> getMemberInIsland(Island island, String playerName) {
+    public CompletableFuture<@Nullable Players> getMemberInIsland(Island island, String playerName) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerName);
     }
 
@@ -116,6 +118,14 @@ public class SkyblockManager {
 
     public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId);
+    }
+
+    public CompletableFuture<Boolean> updatePermissionIsland(UUID islandId, RoleType roleType, int permissions) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandsPermission(islandId, roleType, permissions);
+    }
+
+    public CompletableFuture<PermissionRoleIsland> getPermissionIsland(UUID islandId, RoleType roleType) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandPermission(islandId, roleType);
     }
 
 }

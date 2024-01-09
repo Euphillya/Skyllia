@@ -119,7 +119,7 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public Players getMember(String playerName) {
+    public @Nullable Players getMember(String playerName) {
         return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, playerName).join();
     }
 
