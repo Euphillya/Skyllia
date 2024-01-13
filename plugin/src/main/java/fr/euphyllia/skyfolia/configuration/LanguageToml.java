@@ -36,6 +36,46 @@ public class LanguageToml {
     public static String messageIslandError = "Une erreur s'est produite lors de la création de l'ile";
     private static boolean verbose;
 
+    //Below is the Chinese translation of the code above
+    /*
+    public static String messageIslandInProgress = "空岛正在创建中";
+    public static String messageIslandCreateFinish = "欢迎来到你的空岛";
+    public static String messageOnlyOwnerCanDeleteIsland = "抱歉，只有所有者才能执行此命令";
+    public static String messageIslandDeleteSuccess = "空岛已成功删除";
+    public static String messagePlayerHasNotIsland = "您没有空岛！";
+    public static String messageIslandAlreadyExist = "您已经拥有一个空岛";
+    public static String messagePlayerNotFound = "找不到玩家";
+    public static String messagePlayerNotInIsland = "您必须在您自己的空岛上";
+    public static String messageWarpCreate = "您的传送点：%s 已创建";
+    public static String messageError = "发生错误。请联系管理员";
+    public static String messageTransfertSuccess = "空岛的新所有者是：%new_owner%";
+    public static String messageOnlyOwner = "只有空岛所有者才能这样做";
+    public static String messageNotMember = "玩家不是空岛成员";
+    public static String messageIslandTypeNotExist = "所选空岛类型不存在";
+    public static String messagePlayerPermissionDenied = "您没有执行此操作的权限";
+    public static String messageIslandError = "创建空岛时出现错误";
+    */
+    
+    //Below is the English translation of the code above
+    /*
+    public static String messageIslandInProgress = "The island is in progress of creation.";
+    public static String messageIslandCreateFinish = "Welcome to your island!";
+    public static String messageOnlyOwnerCanDeleteIsland = "Sorry, only the owner can execute this command.";
+    public static String messageIslandDeleteSuccess = "The island has been successfully deleted.";
+    public static String messagePlayerHasNotIsland = "You do not have an island!";
+    public static String messageIslandAlreadyExist = "You already have an island.";
+    public static String messagePlayerNotFound = "Player not found.";
+    public static String messagePlayerNotInIsland = "You must be on your island.";
+    public static String messageWarpCreate = "Your warp: %s has been created.";
+    public static String messageError = "An error has occurred. Please contact an administrator.";
+    public static String messageTransfertSuccess = "The new owner of the island is: %new_owner%.";
+    public static String messageOnlyOwner = "Only the owner of the island can do that.";
+    public static String messageNotMember = "The player is not a member of the island.";
+    public static String messageIslandTypeNotExist = "The selected island type does not exist.";
+    public static String messagePlayerPermissionDenied = "You do not have permission to do that.";
+    public static String messageIslandError = "An error occurred while creating the island.";
+    */
+
     public static void init(File configFile) {
         config = CommentedFileConfig.builder(configFile).autosave().build();
         config.load();
