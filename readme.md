@@ -1,3 +1,7 @@
+# SkyFolia
+
+English | [中文](./readme_zh.md)
+
 ## Plugin Skyblock for Folia
 
 SkyFolia is a Skyblock plugin that will essentially run on Folia. 
