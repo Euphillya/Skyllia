@@ -63,9 +63,11 @@ public class VisitSubCommand implements SubCommandInterface {
                         return;
                     }
 
-                    if (island.isPrivateIsland()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandIsPrivate);
-                        return;
+                    if (!player.hasPermission("skyfolia.island.command.visit.bypass")) {
+                        if (island.isPrivateIsland()) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandIsPrivate);
+                            return;
+                        }
                     }
 
                     WarpIsland warpIsland = island.getWarpByName("home");
