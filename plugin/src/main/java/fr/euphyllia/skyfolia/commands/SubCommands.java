@@ -9,11 +9,11 @@ public enum SubCommands {
     CREATE(new CreateSubCommand()),
     DELETE(new DeleteSubCommand()),
     DEMOTE(new DemoteSubCommand()),
+    HOME(new HomeSubCommand()),
     INVITE(new InviteSubCommand()),
     KICK(new KickSubCommand()),
     LEAVE(new LeaveSubCommand()),
     PROMOTE(new PromoteSubCommand()),
-    TELEPORT(new TeleportSubCommand()),
     TRANSFER(new TransferSubCommand()),
     SETHOME(new SetHomeSubCommand()),
     SETWARP(new SetWarpSubCommand());

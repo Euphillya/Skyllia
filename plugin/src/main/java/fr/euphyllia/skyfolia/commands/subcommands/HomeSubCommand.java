@@ -26,31 +26,11 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class TeleportSubCommand implements SubCommandInterface {
+public class HomeSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(TeleportSubCommand.class);
+    private final Logger logger = LogManager.getLogger(HomeSubCommand.class);
 
-    public static void tpHomeIsland(Main plugin, Island island, Player player) {
-        if (island == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-            return;
-        }
 
-        WarpIsland warpIsland = island.getWarpByName("home");
-        Location centerIsland = RegionUtils.getCenterRegion(Bukkit.getWorld(IslandUtils.getSchematic(null).worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-        double rayon = island.getSize();
-        player.getScheduler().run(plugin, scheduledTask1 -> {
-            Location loc;
-            if (warpIsland == null) {
-                loc = centerIsland;
-            } else {
-                loc = warpIsland.location();
-            }
-            player.teleportAsync(loc);
-            PlayerNMS.setOwnWorldBorder(plugin, player, centerIsland, "", rayon, 0, 0);
-            player.setGameMode(GameMode.SURVIVAL);
-        }, null);
-    }
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -64,7 +44,25 @@ public class TeleportSubCommand implements SubCommandInterface {
                 try {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
-                    tpHomeIsland(plugin, island, player);
+                    if (island == null) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                        return;
+                    }
+
+                    WarpIsland warpIsland = island.getWarpByName("home");
+                    double rayon = island.getSize();
+                    player.getScheduler().run(plugin, scheduledTask1 -> {
+                        Location loc;
+                        if (warpIsland == null) {
+                            loc = RegionUtils.getCenterRegion(Bukkit.getWorld(IslandUtils.getWorldConfigs().get(0).name()), island.getPosition().regionX(), island.getPosition().regionZ());
+                        } else {
+                            loc = warpIsland.location();
+                        }
+                        player.teleportAsync(loc);
+                        PlayerNMS.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().regionX(), island.getPosition().regionZ()), "", rayon, 0, 0);
+                        player.setGameMode(GameMode.SURVIVAL);
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);
+                    }, null);
                 } catch (Exception exception) {
                     logger.log(Level.FATAL, exception.getMessage(), exception);
                     LanguageToml.sendMessage(plugin, player, "Impossible de se téléporter sur l'ile, vérifier les logs !");

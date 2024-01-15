@@ -171,9 +171,14 @@ public class LanguageToml {
         messageIslandError = getString("island.create.error", messageIslandError);
     }
 
-    public static void deleteIslandLanguage() {
+    private static void deleteIslandLanguage() {
         messageOnlyOwnerCanDeleteIsland = getString("island.delete.only-owner", messageOnlyOwnerCanDeleteIsland);
         messageIslandDeleteSuccess = getString("island.delete.success", messageIslandDeleteSuccess);
+    }
+
+    public static String messageHomeIslandSuccess = "Vous avez été téléporté sur votre île.";
+    private static void homeIslandLanguage() {
+        messageHomeIslandSuccess = getString("island.home.success", messageHomeIslandSuccess);
     }
 
     private static void islandGenericLanguage() {

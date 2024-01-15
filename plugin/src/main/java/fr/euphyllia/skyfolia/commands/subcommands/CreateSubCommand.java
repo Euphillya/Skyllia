@@ -87,7 +87,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         PlayerNMS.setOwnWorldBorder(plugin, player, center, "", island.getSize(), 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
                     } else {
-                        TeleportSubCommand.tpHomeIsland(plugin, island, player);
+                        new HomeSubCommand().onCommand(plugin, sender, command, label, args);
                     }
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
