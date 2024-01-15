@@ -1,5 +1,6 @@
 package fr.euphyllia.skyfolia.managers.skyblock;
 
+import com.google.common.base.Joiner;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
@@ -128,4 +129,7 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandPermission(islandId, roleType);
     }
 
+    public CompletableFuture<Boolean> deleteMember(Island island, Players oldMember) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMember(island, oldMember);
+    }
 }

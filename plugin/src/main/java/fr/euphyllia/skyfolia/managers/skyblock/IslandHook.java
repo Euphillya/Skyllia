@@ -125,8 +125,8 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public void removeMember(Players players) {
-        throw new UnsupportedOperationException("pas encore implémenter");
+    public boolean removeMember(Players oldMember) {
+        return this.plugin.getInterneAPI().getSkyblockManager().deleteMember(this, oldMember).join();
     }
 
     @Override

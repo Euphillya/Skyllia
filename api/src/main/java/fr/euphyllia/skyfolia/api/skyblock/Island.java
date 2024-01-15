@@ -41,7 +41,7 @@ public abstract class Island {
 
     public abstract @Nullable Players getMember(String playerName);
 
-    public abstract void removeMember(Players players);
+    public abstract boolean removeMember(Players players);
 
     public abstract boolean updateMember(Players member);
 

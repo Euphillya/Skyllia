@@ -26,6 +26,11 @@ public class IslandMemberQuery {
                     on DUPLICATE key UPDATE `role` = ?;
             """;
 
+    private static final String DELETE_MEMBERS = """
+                DELETE FROM `%s`.`members_in_islands`
+                    WHERE `island_id`= ? AND `uuid_player`= ?;
+            """;
+
     private static final String SELECT_MEMBER_ISLAND_MOJANG_ID = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
                 FROM`%s`.`members_in_islands`
@@ -163,6 +168,15 @@ public class IslandMemberQuery {
                 completableFuture.complete(false);
             }
         }, null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> deleteMember(Island island, Players oldMember) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQueryDML(this.api, DELETE_MEMBERS.formatted(this.databaseName),
+                List.of(island.getId(), oldMember.getMojangId()),
+                var1 -> completableFuture.complete(var1 != 0),
+                null);
         return completableFuture;
     }
 }

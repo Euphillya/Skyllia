@@ -129,14 +129,6 @@ public class LanguageToml {
         messageTransfertSuccess = getString("island.transfert.success", messageTransfertSuccess);
     }
 
-    private static void createIslandLanguage() {
-        messageIslandInProgress = getString("island.create.in-progress", messageIslandInProgress);
-        messageIslandCreateFinish = getString("island.create.finish", messageIslandCreateFinish);
-        messageIslandTypeNotExist = getString("island.create.type-no-exist", messageIslandTypeNotExist);
-        messageIslandSchemNotExist = getString("island.create.schem-no-exist", messageIslandSchemNotExist);
-        messageIslandError = getString("island.create.error", messageIslandError);
-    }
-
     private static void changeStatusPlayerLanguage() {
         // Demote
         messageDemotePlayer = getString("island.demote.success", messageDemotePlayer);
@@ -148,6 +140,22 @@ public class LanguageToml {
         messagePromotePlayerFailed = getString("island.promote.fail", messagePromotePlayerFailed);
         messagePromoteCommandNotEnoughArgs = getString("island.promote.not-enough-args", messagePromoteCommandNotEnoughArgs);
         messagePromotePlayerFailedLowOrEqualsStatus = getString("island.promote.fail-high-equals-status", messagePromotePlayerFailedLowOrEqualsStatus);
+    }
+
+    private static void biomeLanguage() {
+        messageBiomeCommandNotEnoughArgs = getString("island.biome.not-enough-args", messageBiomeCommandNotEnoughArgs);
+        messageBiomeOnlyIsland = getString("island.biome.only-island", messageBiomeOnlyIsland);
+        messageBiomeNotExist = getString("island.biome.biome-not-exist", messageBiomeNotExist);
+        messageBiomeChangeInProgress = getString("island.biome.change-in-progress", messageBiomeChangeInProgress);
+        messageBiomeChangeSuccess = getString("island.biome.success", messageBiomeChangeSuccess);
+    }
+
+    private static void createIslandLanguage() {
+        messageIslandInProgress = getString("island.create.in-progress", messageIslandInProgress);
+        messageIslandCreateFinish = getString("island.create.finish", messageIslandCreateFinish);
+        messageIslandTypeNotExist = getString("island.create.type-no-exist", messageIslandTypeNotExist);
+        messageIslandSchemNotExist = getString("island.create.schem-no-exist", messageIslandSchemNotExist);
+        messageIslandError = getString("island.create.error", messageIslandError);
     }
 
     public static void deleteIslandLanguage() {
@@ -182,12 +190,13 @@ public class LanguageToml {
         messageInviteDeclineOwnerHasNotIsland = getString("island.invite.decline.owner-not-island", messageInviteDeclineOwnerHasNotIsland);
     }
 
-    private static void setBiomeLanguage() {
-        messageBiomeCommandNotEnoughArgs = getString("island.biome.not-enough-args", messageBiomeCommandNotEnoughArgs);
-        messageBiomeOnlyIsland = getString("island.biome.only-island", messageBiomeOnlyIsland);
-        messageBiomeNotExist = getString("island.biome.biome-not-exist", messageBiomeNotExist);
-        messageBiomeChangeInProgress = getString("island.biome.change-in-progress", messageBiomeChangeInProgress);
-        messageBiomeChangeSuccess = getString("island.biome.success", messageBiomeChangeSuccess);
+    public static String messageKickPlayerSuccess = "Le joueur a été viré de votre île.";
+    public static String messageKickPlayerFailed = "Le joueur n'a pas pu être viré. Si le problème persiste, contacter un administrateur";
+    public static String messageKickPlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas virer un joueur de votre rang ou d'un rang plus élevé.";
+    private static void islandKickLanguage() {
+        messageKickPlayerSuccess = getString("island.kick.success", messageInviteJoinIsland);
+        messageKickPlayerFailed = getString("island.kick.failed", messageKickPlayerFailed);
+        messageKickPlayerFailedHighOrEqualsStatus = getString("island.kick.fail-high-equals-status", messageKickPlayerFailedHighOrEqualsStatus);
     }
 
 
