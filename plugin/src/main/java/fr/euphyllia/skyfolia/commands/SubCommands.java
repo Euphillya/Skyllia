@@ -10,6 +10,7 @@ public enum SubCommands {
     DELETE(new DeleteSubCommand()),
     DELWARP(new DelWarpSubCommand()),
     DEMOTE(new DemoteSubCommand()),
+    EXPEL(new ExpelSubCommand()),
     HOME(new HomeSubCommand()),
     INVITE(new InviteSubCommand()),
     KICK(new KickSubCommand()),

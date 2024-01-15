@@ -80,6 +80,10 @@ public class LanguageToml {
     public static String messageVisitPlayerHasNotIsland = "Le joueur n'a pas d'île";
     public static String messageVisitIslandIsPrivate = "L'île est fermée.";
     public static String messageVisitIslandSuccess = "Vous avez été téléporté sur l'île de %player%.";
+    public static String messageExpelPlayerFailed = "Le joueur ne peut être expulser de votre île.";
+    public static String messageExpelPlayerFailedNotInIsland = "Le joueur n'est pas sur votre île.";
+    public static String messageExpelCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia expel <player>";
+    public static String messagePlayerNotConnected = "Le joueur n'est pas connecté";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -187,6 +191,12 @@ public class LanguageToml {
         messageIslandDeleteSuccess = getString("island.delete.success", messageIslandDeleteSuccess);
     }
 
+    private static void expelIslandLanguage() {
+        messageExpelCommandNotEnoughArgs = getString("island.expel.not-enough-args", messageExpelCommandNotEnoughArgs);
+        messageExpelPlayerFailed = getString("island.expel.player-failed", messageExpelPlayerFailed);
+        messageExpelPlayerFailedNotInIsland = getString("island.expel.player-not-in-island", messageExpelPlayerFailedNotInIsland);
+    }
+
     private static void homeIslandLanguage() {
         messageHomeIslandSuccess = getString("island.home.success", messageHomeIslandSuccess);
         messageHomeCreateSuccess = getString("island.home.set.success", messageHomeCreateSuccess);
@@ -202,6 +212,7 @@ public class LanguageToml {
         messageNotMember = getString("island.generic.not-member", messageNotMember);
         messagePlayerPermissionDenied = getString("island.generic.player.permission-denied", messagePlayerPermissionDenied);
         messageCommandAlreadyExecution = getString("island.generic.player.command-already-execution", messageCommandAlreadyExecution);
+        messagePlayerNotConnected = getString("island.generic.player.offline", messagePlayerNotConnected);
     }
 
     private static void islandInviteLanguage() {
