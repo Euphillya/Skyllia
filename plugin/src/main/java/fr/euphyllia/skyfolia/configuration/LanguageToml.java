@@ -79,6 +79,7 @@ public class LanguageToml {
     public static String messageVisitCommandNotEnoughArgs = "Vous devez le nom de l'île que vous souhaitez visiter : /skyfolia visit <player>";
     public static String messageVisitPlayerHasNotIsland = "Le joueur n'a pas d'île";
     public static String messageVisitIslandIsPrivate = "L'île est fermée.";
+    public static String messageVisitIslandSuccess = "Vous avez été téléporté sur l'île de %player%.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -242,6 +243,7 @@ public class LanguageToml {
         messageVisitCommandNotEnoughArgs = getString("island.visit.not-enough-args", messageVisitCommandNotEnoughArgs);
         messageVisitPlayerHasNotIsland = getString("island.visit.player-not-island", messageVisitPlayerHasNotIsland);
         messageVisitIslandIsPrivate = getString("island.visit.island-not-open", messageVisitIslandIsPrivate);
+        messageVisitIslandSuccess = getString("island.visit.success", messageVisitIslandSuccess);
     }
 
 

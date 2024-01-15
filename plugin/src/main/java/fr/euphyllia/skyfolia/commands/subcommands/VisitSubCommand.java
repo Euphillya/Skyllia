@@ -84,7 +84,7 @@ public class VisitSubCommand implements SubCommandInterface {
                             logger.log(Level.FATAL, e.getMessage(), e);
                         }
                         player.setGameMode(GameMode.SURVIVAL);
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
                     }, null);
                 } catch (Exception exception) {
                     logger.log(Level.FATAL, exception.getMessage(), exception);
