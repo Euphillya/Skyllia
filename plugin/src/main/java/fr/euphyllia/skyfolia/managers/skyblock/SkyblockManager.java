@@ -85,6 +85,10 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().updateWarp(island, name, playerLocation);
     }
 
+    public CompletableFuture<Boolean> delWarpsIsland(Island island, String name) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().deleteWarp(island, name);
+    }
+
     public CompletableFuture<@Nullable WarpIsland> getWarpIslandByName(Island island, String name) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getWarpByName(island, name);
     }

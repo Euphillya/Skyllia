@@ -93,7 +93,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
                     } else {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                     }
-                } catch (Exception e)  {
+                } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                 }

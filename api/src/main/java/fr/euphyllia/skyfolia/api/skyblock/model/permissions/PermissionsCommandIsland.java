@@ -13,7 +13,9 @@ public enum PermissionsCommandIsland implements Permissions {
     SET_HOME(16),
     INVITE(32),
     SET_BIOME(64),
-    SET_WARP(128);
+    SET_WARP(128),
+    DEL_WARP(256),
+    TP_WARP(512);
 
     private final int permissionValue;
 

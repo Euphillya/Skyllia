@@ -12,7 +12,6 @@ import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyfolia.utils.IslandUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +79,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
                     } else {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                     }
-                } catch (Exception e)  {
+                } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                 }

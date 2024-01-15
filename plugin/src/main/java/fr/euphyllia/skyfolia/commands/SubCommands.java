@@ -8,6 +8,7 @@ public enum SubCommands {
     BIOME(new SetBiomeSubCommand()),
     CREATE(new CreateSubCommand()),
     DELETE(new DeleteSubCommand()),
+    DELWARP(new DelWarpSubCommand()),
     DEMOTE(new DemoteSubCommand()),
     HOME(new HomeSubCommand()),
     INVITE(new InviteSubCommand()),
@@ -16,7 +17,8 @@ public enum SubCommands {
     PROMOTE(new PromoteSubCommand()),
     TRANSFER(new TransferSubCommand()),
     SETHOME(new SetHomeSubCommand()),
-    SETWARP(new SetWarpSubCommand());
+    SETWARP(new SetWarpSubCommand()),
+    WARP(new WarpSubCommand());
 
     private final SubCommandInterface commandInterface;
 

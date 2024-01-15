@@ -27,6 +27,8 @@ public abstract class Island {
 
     public abstract boolean addWarps(String name, Location loc);
 
+    public abstract boolean delWarp(String name);
+
     public abstract boolean isDisable();
 
     public abstract void setDisable(boolean disable);

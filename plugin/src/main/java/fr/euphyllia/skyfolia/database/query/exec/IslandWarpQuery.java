@@ -38,6 +38,11 @@ public class IslandWarpQuery {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 on DUPLICATE key UPDATE x = ?, y = ?, z = ?, pitch = ?, yaw = ?;
             """;
+
+    private static final String DELETE_WARP = """
+            DELETE FROM `%s`.`islands_warp`
+            WHERE `island_id` = ? AND `warp_name` = ?;
+            """;
     private final Logger logger = LogManager.getLogger(IslandWarpQuery.class);
     private final InterneAPI api;
     private final String databaseName;
@@ -65,8 +70,8 @@ public class IslandWarpQuery {
                     location.getPitch(),
                     location.getYaw()
             ), i -> completableFuture.complete(i != 0), null);
-        } catch (Exception ex) {
-            logger.fatal("Error Disabled Island", ex);
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
             completableFuture.complete(false);
         }
         return completableFuture;
@@ -93,7 +98,7 @@ public class IslandWarpQuery {
                     completableFuture.complete(warpIsland);
                 }
             } catch (SQLException e) {
-                logger.log(Level.FATAL, e);
+                logger.log(Level.FATAL, e.getMessage(), e);
                 completableFuture.complete(null);
             }
         }, null);
@@ -128,10 +133,22 @@ public class IslandWarpQuery {
                     completableFuture.complete(null);
                 }
             } catch (SQLException e) {
-                logger.log(Level.FATAL, e);
+                logger.log(Level.FATAL, e.getMessage(), e);
                 completableFuture.complete(null);
             }
         }, null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> deleteWarp(Island island, String name) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        try {
+            MariaDBExecute.executeQueryDML(this.api, DELETE_WARP.formatted(this.databaseName),
+                    List.of(island.getId(), name), var1 -> completableFuture.complete(var1 != 0), null);
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            completableFuture.complete(false);
+        }
         return completableFuture;
     }
 }

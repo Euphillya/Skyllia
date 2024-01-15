@@ -180,3 +180,5 @@ Wapi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/permissions/Permissi
 Kplugin/src/main/java/fr/euphyllia/skyfolia/utils/models/CallbackEntity.java,b\b\bbe77692682e28179a883b4a329d236cada4a14d
 ƒ
 Splugin/src/main/java/fr/euphyllia/skyfolia/commands/subcommands/HomeSubCommand.java,d\6\d65f9df27292bc3745225c4c01523c0cf0ba0cf2
+†
+Vplugin/src/main/java/fr/euphyllia/skyfolia/commands/subcommands/DelWarpSubCommand.java,d\c\dc7e8c736be5256f0151383a5efa90eced805577

@@ -90,6 +90,11 @@ public class IslandHook extends Island {
     }
 
     @Override
+    public boolean delWarp(String name) {
+        return this.plugin.getInterneAPI().getSkyblockManager().delWarpsIsland(this, name).join();
+    }
+
+    @Override
     public boolean isDisable() {
         return this.plugin.getInterneAPI().getSkyblockManager().isDisabledIsland(this).join();
     }
