@@ -61,6 +61,12 @@ public class LanguageToml {
     public static String messageInviteJoinIsland = "Vous êtes dorénavant membre de l'île !";
     public static String messageInviteMaxMemberExceededIsland = "Le seuil de place de membre de l'ile a été atteints. Vous ne pouvez pas rejoindre l'île.";
     public static String messageInviteDeclineDeleteInvitation = "Vous avez refusé l'invitation de %player_invite%.";
+    public static String messageKickPlayerSuccess = "Le joueur a été viré de votre île.";
+    public static String messageKickPlayerFailed = "Le joueur n'a pas pu être viré. Si le problème persiste, contacter un administrateur";
+    public static String messageKickPlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas virer un joueur de votre rang ou d'un rang plus élevé.";
+    public static String messageLeaveFailedIsOwnerIsland = "Vous ne pouvez pas quitter votre île, car vous être le propriétaire !";
+    public static String messageLeaveSuccess = "Vous avez quitté votre île.";
+    public static String messageLeavePlayerFailed = "Vous n'avez pas pu quitter votre île. Si le problème persiste, contacter un administrateur";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -190,13 +196,16 @@ public class LanguageToml {
         messageInviteDeclineOwnerHasNotIsland = getString("island.invite.decline.owner-not-island", messageInviteDeclineOwnerHasNotIsland);
     }
 
-    public static String messageKickPlayerSuccess = "Le joueur a été viré de votre île.";
-    public static String messageKickPlayerFailed = "Le joueur n'a pas pu être viré. Si le problème persiste, contacter un administrateur";
-    public static String messageKickPlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas virer un joueur de votre rang ou d'un rang plus élevé.";
     private static void islandKickLanguage() {
         messageKickPlayerSuccess = getString("island.kick.success", messageInviteJoinIsland);
         messageKickPlayerFailed = getString("island.kick.failed", messageKickPlayerFailed);
         messageKickPlayerFailedHighOrEqualsStatus = getString("island.kick.fail-high-equals-status", messageKickPlayerFailedHighOrEqualsStatus);
+    }
+
+    private static void islandLeaveLanguage() {
+        messageLeaveSuccess = getString("island.leave.success", messageLeaveSuccess);
+        messageLeavePlayerFailed = getString("island.leave.failed", messageLeavePlayerFailed);
+        messageLeaveFailedIsOwnerIsland = getString("island.leave.he-is-owner", messageLeaveFailedIsOwnerIsland);
     }
 
 

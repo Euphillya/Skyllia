@@ -1,6 +1,5 @@
 package fr.euphyllia.skyfolia.managers.skyblock;
 
-import com.google.common.base.Joiner;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;

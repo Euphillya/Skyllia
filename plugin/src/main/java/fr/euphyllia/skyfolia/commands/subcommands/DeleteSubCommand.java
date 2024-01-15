@@ -31,6 +31,28 @@ public class DeleteSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(DeleteSubCommand.class);
 
+    public static void checkClearPlayer(Main plugin, SkyblockManager skyblockManager, Players players) {
+        Player bPlayer = Bukkit.getPlayer(players.getMojangId());
+        if (bPlayer != null && bPlayer.isOnline()) {
+            PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
+            bPlayer.getScheduler().run(plugin, t -> {
+                if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                    bPlayer.getInventory().clear();
+                }
+                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                    bPlayer.getEnderChest().clear();
+                }
+                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                    bPlayer.setTotalExperience(0);
+                    bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
+                }
+                bPlayer.setGameMode(GameMode.SURVIVAL);
+            }, null);
+        } else {
+            skyblockManager.addClearMemberNextLogin(players.getMojangId());
+        }
+    }
+
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -89,28 +111,6 @@ public class DeleteSubCommand implements SubCommandInterface {
             players.setRoleType(RoleType.VISITOR);
             island.updateMember(players);
             checkClearPlayer(plugin, skyblockManager, players);
-        }
-    }
-
-    public static void checkClearPlayer(Main plugin, SkyblockManager skyblockManager, Players players) {
-        Player bPlayer = Bukkit.getPlayer(players.getMojangId());
-        if (bPlayer != null && bPlayer.isOnline()) {
-            PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
-            bPlayer.getScheduler().run(plugin, t -> {
-                if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                    bPlayer.getInventory().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    bPlayer.getEnderChest().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    bPlayer.setTotalExperience(0);
-                    bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
-                }
-                bPlayer.setGameMode(GameMode.SURVIVAL);
-            }, null);
-        } else {
-            skyblockManager.addClearMemberNextLogin(players.getMojangId());
         }
     }
 }
