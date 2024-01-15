@@ -9,7 +9,11 @@ public enum PermissionsCommandIsland implements Permissions {
     DEMOTE(1),
     PROMOTE(2),
     KICK(4),
-    ACCESS(8);
+    ACCESS(8),
+    SET_HOME(16),
+    INVITE(32),
+    SET_BIOME(64),
+    SET_WARP(128);
 
     private final int permissionValue;
 

@@ -57,13 +57,14 @@ public class AccessSubCommand implements SubCommandInterface {
                     }
 
                     Players executorPlayer = island.getMember(player.getUniqueId());
+                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER) && !permissionManager.hasPermission(PermissionsCommandIsland.ACCESS)) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                        return;
+                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                        if (!permissionManager.hasPermission(PermissionsCommandIsland.ACCESS)) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                            return;
+                        }
                     }
 
                     boolean statusAccessUpdate = !island.isPrivateIsland();

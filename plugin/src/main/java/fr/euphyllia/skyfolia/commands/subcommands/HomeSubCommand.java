@@ -37,6 +37,11 @@ public class HomeSubCommand implements SubCommandInterface {
         if (!(sender instanceof Player player)) {
             return true;
         }
+        if (!player.hasPermission("skyfolia.island.command.home")) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            return true;
+        }
+
         player.setGameMode(GameMode.SPECTATOR);
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {

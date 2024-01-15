@@ -26,7 +26,7 @@ public class LanguageToml {
     public static String messageIslandAlreadyExist = "Vous avez déjà une île.";
     public static String messagePlayerNotFound = "Le joueur est introuvable.";
     public static String messagePlayerNotInIsland = "Vous devez être sur votre île.";
-    public static String messageWarpCreate = "Votre warp : %s a été crée.";
+    public static String messageWarpCreateSuccess = "Votre warp : %s a été crée.";
     public static String messageError = "Une erreur s'est produite. Merci de contacter un administrateur.";
     public static String messageTransfertSuccess = "Le nouveau propriétaire de l'ile est : %new_owner%";
     public static String messageOnlyOwner = "Seul le propriétaire de l'île peut faire ça.";
@@ -177,8 +177,10 @@ public class LanguageToml {
     }
 
     public static String messageHomeIslandSuccess = "Vous avez été téléporté sur votre île.";
+    public static String messageHomeCreateSuccess = "Vous avez modifier votre home !";
     private static void homeIslandLanguage() {
         messageHomeIslandSuccess = getString("island.home.success", messageHomeIslandSuccess);
+        messageHomeCreateSuccess= getString("island.home.set.success", messageHomeCreateSuccess);
     }
 
     private static void islandGenericLanguage() {
@@ -186,7 +188,6 @@ public class LanguageToml {
         messageIslandAlreadyExist = getString("island.generic.player.already-exist", messageIslandAlreadyExist);
         messagePlayerNotFound = getString("island.generic.player.not-found", messagePlayerNotFound);
         messagePlayerNotInIsland = getString("island.generic.player.not-in-island", messagePlayerNotInIsland);
-        messageWarpCreate = getString("island.generic.player.warp-create", messageWarpCreate);
         messageError = getString("island.generic.error", messageError);
         messageOnlyOwner = getString("island.generic.only-owner", messageOnlyOwner);
         messageNotMember = getString("island.generic.not-member", messageNotMember);
@@ -218,6 +219,12 @@ public class LanguageToml {
         messageLeaveSuccess = getString("island.leave.success", messageLeaveSuccess);
         messageLeavePlayerFailed = getString("island.leave.failed", messageLeavePlayerFailed);
         messageLeaveFailedIsOwnerIsland = getString("island.leave.he-is-owner", messageLeaveFailedIsOwnerIsland);
+    }
+
+    public static String messageWarpCommandNotEnoughArgs = "Vous devez préciser le nom du warp à enregistrer : /skyfolia setwarp <warp_name>";
+    private static void islandWarpLanguage() {
+        messageWarpCommandNotEnoughArgs = getString("island.warp.not-enough-args", messageWarpCommandNotEnoughArgs);
+        messageWarpCreateSuccess = getString("island.warp.success", messageWarpCreateSuccess);
     }
 
 

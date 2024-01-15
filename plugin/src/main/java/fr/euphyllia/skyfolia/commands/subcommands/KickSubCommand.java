@@ -52,14 +52,16 @@ public class KickSubCommand implements SubCommandInterface {
 
                 Players executorPlayer = island.getMember(player.getUniqueId());
 
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.KICK)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                    return;
+                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                    if (!permissionManager.hasPermission(PermissionsCommandIsland.KICK)) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                        return;
+                    }
                 }
+
                 String playerKick = args[0];
                 Players players = island.getMember(playerKick);
 

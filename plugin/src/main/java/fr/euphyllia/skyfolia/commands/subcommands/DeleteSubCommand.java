@@ -4,11 +4,15 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.event.SkyblockRemoveEvent;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
+import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsCommandIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
+import fr.euphyllia.skyfolia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.WorldEditUtils;
@@ -72,7 +76,10 @@ public class DeleteSubCommand implements SubCommandInterface {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                         return;
                     }
-                    if (!island.getOwnerId().equals(player.getUniqueId())) {
+
+                    Players executorPlayer = island.getMember(player.getUniqueId());
+
+                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
                         return;
                     }

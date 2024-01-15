@@ -2,10 +2,16 @@ package fr.euphyllia.skyfolia.commands.subcommands;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
+import fr.euphyllia.skyfolia.api.skyblock.Players;
+import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsCommandIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
+import fr.euphyllia.skyfolia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
@@ -26,50 +32,72 @@ public class SetWarpSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(SetWarpSubCommand.class);
 
-    public static void setWarpRun(Main plugin, Player player, int regionLocX, int regionLocZ, Location playerLocation, Logger logger, String warpName) {
-        SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
-        if (island == null) {
-            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
-            return;
-        }
-        Position islandPosition = island.getPosition();
-        Position playerRegionPosition = RegionUtils.getRegionInChunk(regionLocX, regionLocZ);
-
-        if (islandPosition.regionX() != playerRegionPosition.regionX() || islandPosition.regionZ() != playerRegionPosition.regionZ()) {
-            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerNotInIsland));
-            return;
-        }
-
-        boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation);
-        if (updateOrCreateWarps) {
-            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageWarpCreate));
-        } else {
-            player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageError));
-        }
-    }
-
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
         if (args.length <= 1) {
-            logger.log(Level.FATAL, "manque arguments");
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
             return true;
         }
+        if (!player.hasPermission("skyfolia.island.command.setwarp")) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            return true;
+        }
+
         Location playerLocation = player.getLocation();
         if (!isWorldIsland(playerLocation.getWorld().getName())) {
             sender.sendMessage("Vous n'êtes pas sur votre ile");
             return true;
         }
 
+        String warpName = args[0];
+
         int regionLocX = playerLocation.getChunk().getX();
         int regionLocZ = playerLocation.getChunk().getZ();
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> SetWarpSubCommand.setWarpRun(plugin, player, regionLocX, regionLocZ, playerLocation, logger, args[0]));
+            executor.execute(() -> {
+                try {
+                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+                    if (island == null) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                        return;
+                    }
+
+                    Players executorPlayer = island.getMember(player.getUniqueId());
+
+                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                        if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_WARP)) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                            return;
+                        }
+                    }
+
+                    Position islandPosition = island.getPosition();
+                    Position playerRegionPosition = RegionUtils.getRegionInChunk(regionLocX, regionLocZ);
+
+                    if (islandPosition.regionX() != playerRegionPosition.regionX() || islandPosition.regionZ() != playerRegionPosition.regionZ()) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);
+                        return;
+                    }
+
+                    boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation);
+                    if (updateOrCreateWarps) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCreateSuccess);
+                    } else {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                    }
+                } catch (Exception e)  {
+                    logger.log(Level.FATAL, e.getMessage(), e);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                }
+            });
         } finally {
             executor.shutdown();
         }
