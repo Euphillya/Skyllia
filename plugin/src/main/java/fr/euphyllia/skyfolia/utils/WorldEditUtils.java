@@ -20,7 +20,6 @@ import com.sk89q.worldedit.world.block.BlockState;
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
-import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.api.skyblock.model.SchematicWorld;
 import org.apache.logging.log4j.Level;

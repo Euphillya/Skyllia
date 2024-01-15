@@ -4,7 +4,6 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
-import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
 import fr.euphyllia.skyfolia.managers.skyblock.IslandHook;
 import fr.euphyllia.skyfolia.utils.IslandUtils;

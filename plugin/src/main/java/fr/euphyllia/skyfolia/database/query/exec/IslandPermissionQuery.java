@@ -27,6 +27,7 @@ public class IslandPermissionQuery {
     private final Logger logger = LogManager.getLogger(IslandPermissionQuery.class);
     private final InterneAPI api;
     private final String databaseName;
+
     public IslandPermissionQuery(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;

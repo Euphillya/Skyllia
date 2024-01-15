@@ -12,7 +12,7 @@ public class IslandUtils {
             if (name == null) {
                 return ConfigToml.islandTypes.values().stream().toList().get(0);
             } else {
-                return ConfigToml.islandTypes.getOrDefault(name, null);
+                return ConfigToml.islandTypes.getOrDefault(name, getIslandType(null));
             }
         } catch (Exception e) {
             return null;
@@ -22,9 +22,9 @@ public class IslandUtils {
     public static @Nullable SchematicWorld getSchematic(String name) {
         try {
             if (name == null) {
-                return ConfigToml.schematicWorldMap.values().stream().toList().get(0);
+                return ConfigToml.schematicWorldMap.entrySet().stream().toList().get(0).getValue();
             } else {
-                return ConfigToml.schematicWorldMap.getOrDefault(name, null);
+                return ConfigToml.schematicWorldMap.getOrDefault(name.toLowerCase(), getSchematic(null));
             }
         } catch (Exception e) {
             return null;

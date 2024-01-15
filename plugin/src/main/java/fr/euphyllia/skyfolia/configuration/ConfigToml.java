@@ -33,6 +33,8 @@ public class ConfigToml {
     public static boolean clearInventoryWhenDeleteIsland = true;
     public static boolean clearEnderChestWhenDeleteIsland = true;
     public static boolean resetExperiencePlayerWhenDeleteIsland = true;
+    public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
+    public static String defaultSchematicKey = "example-schem";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -188,7 +190,6 @@ public class ConfigToml {
         }
     }
 
-    public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
     private static void schematicIsland() {
         HashMap<String, ?> islandStarter = new HashMap<>(getMap("island-starter"));
         String parentConfig = "island-starter.";
@@ -208,12 +209,11 @@ public class ConfigToml {
                 String worldName = islandStarterEntry.getKey();
                 String name = getString(isKey + ".name", entry.getKey());
                 SchematicWorld schematicWorld = new SchematicWorld(name, worldName, schematicFile);
-                schematicWorldMap.put(worldName, schematicWorld);
+                schematicWorldMap.put(name.toLowerCase(), schematicWorld);
             }
         }
     }
 
-    public static String defaultSchematicKey = "example-schem";
     private static void configIsland() {
         defaultSchematicKey = getString("island.create.default-schem-key", defaultSchematicKey);
     }

@@ -103,7 +103,9 @@ public class CreateSubCommand implements SubCommandInterface {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
-            return ConfigToml.schematicWorldMap.keySet().stream().toList();
+            List<String> nameSchem = new ArrayList<>();
+            ConfigToml.schematicWorldMap.forEach((key, schematicWorld) -> nameSchem.add(key));
+            return nameSchem;
         } else {
             return new ArrayList<>();
         }
@@ -114,7 +116,8 @@ public class CreateSubCommand implements SubCommandInterface {
             case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
                 WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
             });
-            case FAST_ASYNC_WORLD_EDIT -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
+            case FAST_ASYNC_WORLD_EDIT ->
+                    WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
             case UNDEFINED -> {
                 island.setDisable(true); // Désactiver l'ile !
                 throw new RuntimeException("Unsupported Plugin Paste");
