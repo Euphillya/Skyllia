@@ -4,24 +4,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public enum PermissionsCommandIsland implements Permissions {
+public enum PermissionInventory implements Permissions {
     DEFAULT(0),
-    DEMOTE(1),
-    PROMOTE(2),
-    KICK(4),
-    ACCESS(8),
-    SET_HOME(16),
-    INVITE(32),
-    SET_BIOME(64),
-    SET_WARP(128),
-    DEL_WARP(256),
-    TP_WARP(512),
-    EXPEL(1024)
+    OPEN_CHEST(1),
+    USE_ANVIL(2),
+    USE_WORKBENCH(4),
+    USE_ENCHANTING_TABLE(8),
+    USE_BREWING_TABLE(16),
+    USE_SMITING(32),
+    USE_BEACON(64),
+    OPEN_SHULKER(128),
+    USE_FURNACE(256),
+    USE_LECTERN(512),
+    OPEN_CRAFTER(1_024),
+    USE_LOOM(2_048),
+    USE_GRINDSTONE(4_096),
+    USE_STONECUTTER(8_192),
+    OPEN_ENDERCHEST(16_384),
+    OPEN_CARTOGRAPHY(32_768),
+    OPEN_MERCHANT(65_536)
     ;
 
     private final long permissionValue;
 
-    PermissionsCommandIsland(long permissionLong) {
+    PermissionInventory(long permissionLong) {
         this.permissionValue = permissionLong;
     }
 
@@ -49,10 +55,5 @@ public enum PermissionsCommandIsland implements Permissions {
     @Override
     public long getPermissionValue() {
         return this.permissionValue;
-    }
-
-    @Override
-    public PermissionsType getPermissionType() {
-        return PermissionsType.COMMANDS;
     }
 }

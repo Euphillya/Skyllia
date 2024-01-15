@@ -5,15 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PermissionsIsland implements Permissions {
-    DEFAULT(0);
+    DEFAULT(0),
+    BLOCK_BREAK(1),
+    BLOCK_PLACE(2),
+    BUCKETS(4),
+    REDSTONE(8),
+    PVP(16),
+    KILL_MONSTER(32),
+    KILL_ANIMAL(64),
+    DROP_ITEMS(128),
+    TAKE_ITEMS(256),
+    USE_PORTAL(5012),
+    INTERACT_ENTITIES(1_024),
+    ;
 
-    private final int permissionValue;
+    private final long permissionValue;
 
-    PermissionsIsland(int permissionInt) {
-        this.permissionValue = permissionInt;
+    PermissionsIsland(long permissionLong) {
+        this.permissionValue = permissionLong;
     }
 
-    public static int permissionValue(String names) {
+    public static long permissionValue(String names) {
         try {
             return PermissionsIsland.valueOf(names).getPermissionValue();
         } catch (IllegalArgumentException e) {
@@ -21,8 +33,8 @@ public enum PermissionsIsland implements Permissions {
         }
     }
 
-    public static int maxPermissionsValue() {
-        return Arrays.stream(PermissionsIsland.values()).mapToInt(PermissionsIsland::getPermissionValue).sum();
+    public static long maxPermissionsValue() {
+        return Arrays.stream(PermissionsIsland.values()).mapToLong(PermissionsIsland::getPermissionValue).sum();
     }
 
     public static List<String> getListPermissions() {
@@ -35,7 +47,12 @@ public enum PermissionsIsland implements Permissions {
     }
 
     @Override
-    public int getPermissionValue() {
+    public long getPermissionValue() {
         return this.permissionValue;
+    }
+
+    @Override
+    public PermissionsType getPermissionType() {
+        return PermissionsType.ISLAND;
     }
 }

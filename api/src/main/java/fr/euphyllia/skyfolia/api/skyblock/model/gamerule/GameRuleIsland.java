@@ -1,27 +1,24 @@
-package fr.euphyllia.skyfolia.api.skyblock.model.permissions;
+package fr.euphyllia.skyfolia.api.skyblock.model.gamerule;
+
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsIsland;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public enum PermissionsCommandIsland implements Permissions {
-    DEFAULT(0),
-    DEMOTE(1),
-    PROMOTE(2),
-    KICK(4),
-    ACCESS(8),
-    SET_HOME(16),
-    INVITE(32),
-    SET_BIOME(64),
-    SET_WARP(128),
-    DEL_WARP(256),
-    TP_WARP(512),
-    EXPEL(1024)
+public enum GameRuleIsland {
+    SPAWN_HOSTILE(1),
+    SPAWN_PASSIVE(2),
+    HUMAN_EXPLOSION(4),
+    MOB_EXPLOSION(8),
+    ENDERMAN_PICK_BLOCK(16),
+    ZOMBIE_BREAK_DOORS(32),
+    FIRE_SPREADING(64),
     ;
 
     private final long permissionValue;
 
-    PermissionsCommandIsland(long permissionLong) {
+    GameRuleIsland(long permissionLong) {
         this.permissionValue = permissionLong;
     }
 
@@ -46,13 +43,7 @@ public enum PermissionsCommandIsland implements Permissions {
         return list;
     }
 
-    @Override
     public long getPermissionValue() {
         return this.permissionValue;
-    }
-
-    @Override
-    public PermissionsType getPermissionType() {
-        return PermissionsType.COMMANDS;
     }
 }
