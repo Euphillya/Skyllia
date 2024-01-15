@@ -18,6 +18,7 @@ public enum SubCommands {
     TRANSFER(new TransferSubCommand()),
     SETHOME(new SetHomeSubCommand()),
     SETWARP(new SetWarpSubCommand()),
+    VISIT(new VisitSubCommand()),
     WARP(new WarpSubCommand());
 
     private final SubCommandInterface commandInterface;

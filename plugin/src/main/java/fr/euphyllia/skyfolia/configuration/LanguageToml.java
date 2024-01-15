@@ -71,11 +71,14 @@ public class LanguageToml {
     public static String messageAccessIslandClose = "Votre île est maintenant fermée.";
     public static String messageHomeIslandSuccess = "Vous avez été téléporté sur votre île.";
     public static String messageHomeCreateSuccess = "Vous avez modifier votre home !";
-    public static String messageWarpCommandNotEnoughArgs = "Vous devez préciser le nom du warp à enregistrer : /skyfolia setwarp <warp_name>";
+    public static String messageWarpCommandNotEnoughArgs = "Vous devez préciser le nom du warp à enregistrer : /skyfolia <set/del>warp <warp_name>";
     public static String messageIslandNotDeleteHome = "Vous ne pouvez pas supprimer le warp home.";
     public static String messageWarpDeleteSuccess = "Le warp a été supprimé.";
     public static String messageWarpNotExist = "Le warp demandé n'existe pas.";
     public static String messageWarpTeleportSuccess = "Vous avez été téléporter sur le warp demandé.";
+    public static String messageVisitCommandNotEnoughArgs = "Vous devez le nom de l'île que vous souhaitez visiter : /skyfolia visit <player>";
+    public static String messageVisitPlayerHasNotIsland = "Le joueur n'a pas d'île";
+    public static String messageVisitIslandIsPrivate = "L'île est fermée.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -233,6 +236,12 @@ public class LanguageToml {
         messageWarpDeleteSuccess = getString("island.warp.delete.success", messageWarpDeleteSuccess);
         messageWarpNotExist = getString("island.warp.teleport.not-exist", messageWarpNotExist);
         messageWarpTeleportSuccess = getString("island.warp.teleport.success", messageWarpTeleportSuccess);
+    }
+
+    private static void islandVisitLanguage() {
+        messageVisitCommandNotEnoughArgs = getString("island.visit.not-enough-args", messageVisitCommandNotEnoughArgs);
+        messageVisitPlayerHasNotIsland = getString("island.visit.player-not-island", messageVisitPlayerHasNotIsland);
+        messageVisitIslandIsPrivate = getString("island.visit.island-not-open", messageVisitIslandIsPrivate);
     }
 
 

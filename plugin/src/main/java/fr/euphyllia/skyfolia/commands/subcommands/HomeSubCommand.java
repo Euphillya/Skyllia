@@ -1,14 +1,15 @@
 package fr.euphyllia.skyfolia.commands.subcommands;
 
 import fr.euphyllia.skyfolia.Main;
+import fr.euphyllia.skyfolia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.IslandUtils;
+import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
-import fr.euphyllia.skyfolia.utils.nms.v1_20_R2.PlayerNMS;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,13 +64,18 @@ public class HomeSubCommand implements SubCommandInterface {
                             loc = warpIsland.location();
                         }
                         player.teleportAsync(loc);
-                        PlayerNMS.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().regionX(), island.getPosition().regionZ()), "", rayon, 0, 0);
                         player.setGameMode(GameMode.SURVIVAL);
+                        try {
+                            PlayerUtils.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().regionX(), island.getPosition().regionZ()), "", rayon, 0, 0);
+                        } catch (UnsupportedMinecraftVersionException e) {
+                            logger.log(Level.FATAL, e.getMessage(), e);
+                        }
+
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);
                     }, null);
                 } catch (Exception exception) {
                     logger.log(Level.FATAL, exception.getMessage(), exception);
-                    LanguageToml.sendMessage(plugin, player, "Impossible de se téléporter sur l'ile, vérifier les logs !");
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                 }
             });
         } finally {

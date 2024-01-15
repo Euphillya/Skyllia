@@ -34,7 +34,7 @@ public class WarpSubCommand implements SubCommandInterface {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (args.length <= 1) {
+        if (args.length < 1) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
             return true;
         }
