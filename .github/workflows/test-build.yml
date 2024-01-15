@@ -1,5 +1,5 @@
 name: Build SkyFolia
-on: [push]
+on: [ push ]
 jobs:
   skyfolia-testbuild:
     runs-on: ubuntu-22.04

@@ -5,11 +5,15 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import fr.euphyllia.skyfolia.api.world.WorldFeedback;
+import io.papermc.paper.threadedregions.RegionizedServer;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.Main;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
@@ -67,7 +71,7 @@ public class WorldNMS {
         ChunkGenerator generator = creator.generator();
         BiomeProvider biomeProvider = creator.biomeProvider();
         File folder = new File(craftServer.getWorldContainer(), name);
-        org.bukkit.World world = craftServer.getWorld(name);
+        World world = craftServer.getWorld(name);
 
         CraftWorld worldByKey = (CraftWorld) craftServer.getWorld(creator.key());
         if (world != null || worldByKey != null) {
@@ -106,7 +110,7 @@ public class WorldNMS {
 
         PrimaryLevelData worlddata;
         WorldLoader.DataLoadContext worldloader_a = console.worldLoader;
-        net.minecraft.core.Registry<LevelStem> iregistry = worldloader_a.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
+        Registry<LevelStem> iregistry = worldloader_a.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
         DynamicOps<Tag> dynamicops = RegistryOps.create(NbtOps.INSTANCE, worldloader_a.datapackWorldgen());
         Pair<WorldData, WorldDimensions.Complete> pair = worldSession.getDataTag(dynamicops, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen().allRegistriesLifecycle());
 
@@ -144,13 +148,13 @@ public class WorldNMS {
         }
 
         if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.convertWorldButItWorks(
+            Main.convertWorldButItWorks(
                     actualDimension, worldSession, DataFixers.getDataFixer(), worlddimension.generator().getTypeNameForDataFixer(), console.options.has("eraseCache")
             );
         }
 
-        ResourceKey<net.minecraft.world.level.Level> worldKey;
-        worldKey = ResourceKey.create(Registries.DIMENSION, new net.minecraft.resources.ResourceLocation(creator.key().getNamespace().toLowerCase(java.util.Locale.ENGLISH), creator.key().getKey().toLowerCase(java.util.Locale.ENGLISH))); // Paper
+        ResourceKey<Level> worldKey;
+        worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(creator.key().getNamespace().toLowerCase(Locale.ENGLISH), creator.key().getKey().toLowerCase(Locale.ENGLISH))); // Paper
 
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(11),
                 worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, creator.environment(), generator, biomeProvider);
@@ -165,7 +169,7 @@ public class WorldNMS {
 
         internal.keepSpawnInMemory = creator.keepSpawnLoaded().toBooleanOrElse(internal.getWorld().getKeepSpawnInMemory()); // Paper
 
-        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
+        RegionizedServer.getInstance().addWorld(internal);
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(internal.getWorld()));
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());

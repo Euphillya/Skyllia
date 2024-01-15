@@ -1,0 +1,16 @@
+package fr.euphyllia.skyfolia.api.exceptions;
+
+public class UnsupportedMinecraftVersionException extends Exception {
+
+    public UnsupportedMinecraftVersionException(String message) {
+        super(message);
+    }
+
+    public UnsupportedMinecraftVersionException(Throwable cause) {
+        super(cause);
+    }
+
+    public UnsupportedMinecraftVersionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

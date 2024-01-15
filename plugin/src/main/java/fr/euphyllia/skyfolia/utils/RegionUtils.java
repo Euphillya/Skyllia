@@ -22,7 +22,7 @@ public class RegionUtils {
         return new Location(w, rx, 0.0d, rz);
     }
 
-    public static Position getPosition(int start) {
+    public static Position getPositionNewIsland(int start) {
         double r = Math.floor((Math.sqrt(start + 1d) - 1) / 2) + 1;
         double p = (8 * r * (r - 1)) / 2;
         double en = r * 2;

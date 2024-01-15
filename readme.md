@@ -1,30 +1,36 @@
 ## Plugin Skyblock for Folia
 
-SkyFolia is a Skyblock plugin that will essentially run on Folia. 
-The plugin will have very little innovative functionality, and it's not my intention at all that there should be external features (like quests, for example). 
+SkyFolia is a Skyblock plugin that will essentially run on Folia.
+The plugin will have very little innovative functionality, and it's not my intention at all that there should be
+external features (like quests, for example).
 The plugin has an API that you can use to add feature extensions to customize your server.
 
 ## Download Plugin
 
-I won't be providing a Plugin Jar just yet, as the plugin isn't finished yet! Once I find it "usable", it will be made available.
-HOWEVER, the plugin won't be stable right away. I'm developing in my spare time, so I won't be able to fix every bug that comes along at once. Nevertheless, don't hesitate to tell me about any problems you encounter, such as :
+I won't be providing a Plugin Jar just yet, as the plugin isn't finished yet! Once I find it "usable", it will be made
+available.
+HOWEVER, the plugin won't be stable right away. I'm developing in my spare time, so I won't be able to fix every bug
+that comes along at once. Nevertheless, don't hesitate to tell me about any problems you encounter, such as :
+
 - Performance problems (spark recommended)
 - Minor or fatal bug
 
 ## Compatible Plugin
 
 - Folia: (that's why the plugin exists)
-- Paper and fork: To be tested with the addition of Folia's scheduler API to Paper: [Move some Folia API to Paper for easy compat (#9360)](https://github.com/PaperMC/Paper/commit/d6d4c78e7d88f3fcd274bceab1e6b022224096ef)
+- Paper and fork: To be tested with the addition of Folia's scheduler API to
+  Paper: [Move some Folia API to Paper for easy compat (#9360)](https://github.com/PaperMC/Paper/commit/d6d4c78e7d88f3fcd274bceab1e6b022224096ef)
 - Spigot : no !
 - Bukkit: no !
 
 ## Generation Island
 
-Each island will be generated on a single region file! 
+Each island will be generated on a single region file!
 
 ## Configuration
 
 plugins/SkyFolia/config.toml
+
 ```toml
 config-version = 1
 verbose = false
@@ -72,6 +78,7 @@ verbose = false
 ```
 
 plugins/SkyFolia/language.toml (Support MiniMessage)
+
 ```toml
 config-version = 1
 verbose = false

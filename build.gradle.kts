@@ -15,10 +15,10 @@ val essentialsRepo = "https://repo.essentialsx.net/releases"
 
 
 dependencies {
-    implementation (project(":nms:v1_19_R3", "reobf"))
-    implementation (project(":nms:v1_20_R1", "reobf"))
-    implementation (project(":nms:v1_20_R2", "reobf"))
-    implementation (project(":plugin"))
+    implementation(project(":nms:v1_19_R3", "reobf"))
+    implementation(project(":nms:v1_20_R1", "reobf"))
+    implementation(project(":nms:v1_20_R2", "reobf"))
+    implementation(project(":plugin"))
 
     testImplementation(platform("org.junit:junit-bom:5.9.2"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyfolia.managers.world;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
+import fr.euphyllia.skyfolia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyfolia.api.world.WorldFeedback;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
@@ -37,7 +38,13 @@ public class WorldsManager {
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia
             } catch (Exception ignored) {
-                WorldFeedback.FeedbackWorld feedbackWorld = WorldUtils.addWorld(worldCreator);
+                WorldFeedback.FeedbackWorld feedbackWorld = null;
+                try {
+                    feedbackWorld = WorldUtils.addWorld(worldCreator);
+                } catch (UnsupportedMinecraftVersionException e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
+                    return;
+                }
                 if (feedbackWorld.feedback == WorldFeedback.Feedback.SUCCESS) {
                     w = feedbackWorld.world;
                 } else {

@@ -66,7 +66,7 @@ public class DemoteSubCommand implements SubCommandInterface {
 
                     Players players = island.getMember(playerName);
 
-                    if(players == null) {
+                    if (players == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
                         return;
                     }

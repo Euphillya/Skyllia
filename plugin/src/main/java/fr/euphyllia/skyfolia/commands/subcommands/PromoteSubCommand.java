@@ -13,8 +13,6 @@ import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -68,7 +66,7 @@ public class PromoteSubCommand implements SubCommandInterface {
 
                     Players players = island.getMember(playerName);
 
-                    if(players == null) {
+                    if (players == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
                         return;
                     }

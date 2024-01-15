@@ -34,6 +34,20 @@ public class LanguageToml {
     public static String messageIslandTypeNotExist = "Le type d'île sélectionné n'existe pas.";
     public static String messagePlayerPermissionDenied = "Vous n'avez pas la permission de faire cela.";
     public static String messageIslandError = "Une erreur s'est produite lors de la création de l'ile";
+    public static String messageDemotePlayer = "Le joueur %s a été rétrogradé.";
+    public static String messageDemotePlayerFailed = "Le joueur %s ne peut pas être rétrogradé.";
+    public static String messageDemotePlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas rétrograder un joueur de votre rang ou d'un rang plus élevé.";
+    public static String messageDemoteCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia demote <member>";
+    public static String messagePromotePlayer = "Le joueur %s a été promu.";
+    public static String messagePromotePlayerFailed = "Le joueur %s ne peut pas être promu.";
+    public static String messagePromotePlayerFailedLowOrEqualsStatus = "Vous ne pouvez pas promouvoir un joueur à votre rang ou d'un rang plus élevé.";
+    public static String messagePromoteCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia promote <member>";
+    public static String messageCommandAlreadyExecution = "La commande est déjà en cours d'execution, veuillez patienter quelques instants.";
+    public static String messageBiomeCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia biome <biome>";
+    public static String messageBiomeOnlyIsland = "La commande ne peut être exécuté seulement sur une île";
+    public static String messageBiomeNotExist = "Le biome %s n'existe pas.";
+    public static String messageBiomeChangeInProgress = "Changement de biome en cours. Veuillez notez que ça prends du temps... Un message vous avertira quand le processus sera achevé.";
+    public static String messageBiomeChangeSuccess = "Le changement de biome dans le chunk où vous étiez est terminé !";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -109,14 +123,6 @@ public class LanguageToml {
         messageIslandError = getString("island.create.error", messageIslandError);
     }
 
-    public static String messageDemotePlayer = "Le joueur %s a été rétrogradé.";
-    public static String messageDemotePlayerFailed = "Le joueur %s ne peut pas être rétrogradé.";
-    public static String messageDemotePlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas rétrograder un joueur de votre rang ou d'un rang plus élevé.";
-    public static String messageDemoteCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia demote <member>";
-    public static String messagePromotePlayer = "Le joueur %s a été promu.";
-    public static String messagePromotePlayerFailed = "Le joueur %s ne peut pas être promu.";
-    public static String messagePromotePlayerFailedLowOrEqualsStatus = "Vous ne pouvez pas promouvoir un joueur à votre rang ou d'un rang plus élevé.";
-    public static String messagePromoteCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia promote <member>";
     private static void changeStatusPlayerLanguage() {
         // Demote
         messageDemotePlayer = getString("island.demote.success", messageDemotePlayer);
@@ -145,6 +151,15 @@ public class LanguageToml {
         messageOnlyOwner = getString("island.generic.only-owner", messageOnlyOwner);
         messageNotMember = getString("island.generic.not-member", messageNotMember);
         messagePlayerPermissionDenied = getString("island.generic.player.permission-denied", messagePlayerPermissionDenied);
+        messageCommandAlreadyExecution = getString("island.generic.player.command-already-execution", messageCommandAlreadyExecution);
+    }
+
+    private static void setBiomeLanguage() {
+        messageBiomeCommandNotEnoughArgs = getString("island.biome.not-enough-args", messageBiomeCommandNotEnoughArgs);
+        messageBiomeOnlyIsland = getString("island.biome.only-island", messageBiomeOnlyIsland);
+        messageBiomeNotExist = getString("island.biome.biome-not-exist", messageBiomeNotExist);
+        messageBiomeChangeInProgress = getString("island.biome.change-in-progress", messageBiomeChangeInProgress);
+        messageBiomeChangeSuccess = getString("island.biome.success", messageBiomeChangeSuccess);
     }
 
 

@@ -7,11 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlayerNMS {
 
-    public static void refreshPlayerChunk(Player player, int chunkX, int chunkZ) {
-        org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer craftPlayer = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) player);
-        final net.minecraft.world.level.chunk.LevelChunk levelChunk = craftPlayer.getHandle().level().getChunk(chunkX, chunkZ);
-        final net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket refresh = new net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket(levelChunk, levelChunk.getLevel().getLightEngine(), null, null, true);
-        craftPlayer.getHandle().connection.send(refresh);
+    public static void refreshPlayerChunk(JavaPlugin javaPlugin, Player player, int chunkX, int chunkZ) {
+        player.getScheduler().run(javaPlugin, task -> {
+            org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer craftPlayer = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) player);
+            final net.minecraft.world.level.chunk.LevelChunk levelChunk = craftPlayer.getHandle().level().getChunk(chunkX, chunkZ);
+            final net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket refresh = new net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket(levelChunk, levelChunk.getLevel().getLightEngine(), null, null, true);
+            craftPlayer.getHandle().connection.send(refresh);
+        }, null);
     }
 
     /**

@@ -2,7 +2,6 @@ package fr.euphyllia.skyfolia.database.query.exec;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
-import fr.euphyllia.skyfolia.api.skyblock.model.PermissionsIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
 import org.apache.logging.log4j.Level;
@@ -14,16 +13,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class IslandPermissionQuery {
-    private final Logger logger = LogManager.getLogger(IslandPermissionQuery.class);
-
-    private final InterneAPI api;
-    private final String databaseName;
-
-    public IslandPermissionQuery(InterneAPI api, String databaseName) {
-        this.api = api;
-        this.databaseName = databaseName;
-    }
-
     private static final String UPSERT_PERMISSIONS_ISLANDS = """
             INSERT INTO `%s`.`islands_permissions`
             (`island_id`, `role`, `flags`)
@@ -35,6 +24,13 @@ public class IslandPermissionQuery {
             WHERE P.`island_id` = ?
             AND P.`role` = ?;
             """;
+    private final Logger logger = LogManager.getLogger(IslandPermissionQuery.class);
+    private final InterneAPI api;
+    private final String databaseName;
+    public IslandPermissionQuery(InterneAPI api, String databaseName) {
+        this.api = api;
+        this.databaseName = databaseName;
+    }
 
     public CompletableFuture<Boolean> updateIslandsPermission(UUID islandId, RoleType roleType, int permissions) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
