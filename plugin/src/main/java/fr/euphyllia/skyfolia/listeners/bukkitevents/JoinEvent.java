@@ -1,11 +1,19 @@
 package fr.euphyllia.skyfolia.listeners.bukkitevents;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
+import fr.euphyllia.skyfolia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
+import fr.euphyllia.skyfolia.utils.RegionUtils;
+import fr.euphyllia.skyfolia.utils.WorldUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class JoinEvent implements Listener {
 
     private final InterneAPI api;
+    private final Logger logger = LogManager.getLogger(JoinEvent.class);
 
     public JoinEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
@@ -35,7 +44,16 @@ public class JoinEvent implements Listener {
                 if (island == null) {
                     PlayerUtils.teleportPlayerSpawn(this.api.getPlugin(), player);
                 } else {
-                    // Todo load cache
+                    World world = player.getLocation().getWorld();
+                    if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
+                        Location centerIsland = RegionUtils.getCenterRegion(world, island.getPosition().regionX(), island.getPosition().regionZ());
+                        try {
+                            PlayerUtils.setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, "", island.getSize(), 0,0);
+                        } catch (UnsupportedMinecraftVersionException e) {
+                            logger.log(Level.FATAL, e.getMessage(), e);
+                        }
+                    }
+
                 }
             });
         } finally {
