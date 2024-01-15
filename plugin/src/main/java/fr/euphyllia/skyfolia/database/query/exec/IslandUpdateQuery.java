@@ -52,10 +52,10 @@ public class IslandUpdateQuery {
         return completableFuture;
     }
 
-    public CompletableFuture<Boolean> updatePrivate(Island island) {
+    public CompletableFuture<Boolean> updatePrivate(Island island, boolean privateIsland) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api, UPDATE_PRIVATE_ISLAND.formatted(this.databaseName), List.of(island.isPrivateIsland() ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
+            MariaDBExecute.executeQueryDML(this.api, UPDATE_PRIVATE_ISLAND.formatted(this.databaseName), List.of(privateIsland ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
         } catch (Exception ex) {
             logger.fatal("Error Change Private/Public Island", ex);
             completableFuture.complete(false);

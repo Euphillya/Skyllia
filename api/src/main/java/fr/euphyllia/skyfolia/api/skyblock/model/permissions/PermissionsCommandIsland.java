@@ -1,18 +1,19 @@
-package fr.euphyllia.skyfolia.api.skyblock.model;
+package fr.euphyllia.skyfolia.api.skyblock.model.permissions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public enum PermissionsIsland {
+public enum PermissionsCommandIsland implements Permissions {
     DEFAULT(0),
     DEMOTE(1),
     PROMOTE(2),
-    KICK(4);
+    KICK(4),
+    ACCESS(8);
 
     private final int permissionValue;
 
-    PermissionsIsland(int permissionInt) {
+    PermissionsCommandIsland(int permissionInt) {
         this.permissionValue = permissionInt;
     }
 
@@ -37,6 +38,7 @@ public enum PermissionsIsland {
         return list;
     }
 
+    @Override
     public int getPermissionValue() {
         return this.permissionValue;
     }

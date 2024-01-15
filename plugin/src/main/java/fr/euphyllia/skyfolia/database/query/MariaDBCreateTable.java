@@ -77,9 +77,10 @@ public class MariaDBCreateTable {
     private static final String CREATE_TABLE_ISLAND_PERMISSION = """
             CREATE TABLE IF NOT EXISTS %s.`islands_permissions` (
             `island_id` VARCHAR(36) NOT NULL,
+            `type` VARCHAR(36) NOT NULL,
             `role` VARCHAR(40) NOT NULL,
             `flags` INT NOT NULL DEFAULT '0',
-            PRIMARY KEY (`island_id`,`role`)
+            PRIMARY KEY (`island_id`,`type`,`role`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
     private static final String CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK = """

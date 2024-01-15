@@ -7,6 +7,7 @@ import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,8 +67,8 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isDisabledIsland(island);
     }
 
-    public CompletableFuture<Boolean> setPrivateIsland(Island island) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updatePrivate(island);
+    public CompletableFuture<Boolean> setPrivateIsland(Island island, boolean privateIsland) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updatePrivate(island, privateIsland);
     }
 
     public CompletableFuture<Boolean> isPrivateIsland(Island island) {
@@ -120,12 +121,12 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId);
     }
 
-    public CompletableFuture<Boolean> updatePermissionIsland(UUID islandId, RoleType roleType, int permissions) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandsPermission(islandId, roleType, permissions);
+    public CompletableFuture<Boolean> updatePermissionIsland(UUID islandId, PermissionsType permissionsType, RoleType roleType, int permissions) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandsPermission(islandId, permissionsType, roleType, permissions);
     }
 
-    public CompletableFuture<PermissionRoleIsland> getPermissionIsland(UUID islandId, RoleType roleType) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandPermission(islandId, roleType);
+    public CompletableFuture<PermissionRoleIsland> getPermissionIsland(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandPermission(islandId, permissionsType, roleType);
     }
 
     public CompletableFuture<Boolean> deleteMember(Island island, Players oldMember) {

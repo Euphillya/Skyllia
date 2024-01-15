@@ -1,6 +1,7 @@
 package fr.euphyllia.skyfolia.managers.skyblock;
 
-import fr.euphyllia.skyfolia.api.skyblock.model.PermissionsIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.Permissions;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyfolia.api.utils.BitwiseFlag;
 
 public class PermissionManager extends BitwiseFlag {
@@ -25,7 +26,7 @@ public class PermissionManager extends BitwiseFlag {
         return this.isFlagSet(permission);
     }
 
-    public boolean hasPermission(PermissionsIsland permissionsIsland) {
+    public boolean hasPermission(Permissions permissionsIsland) {
         return this.isFlagSet(permissionsIsland.getPermissionValue());
     }
 }

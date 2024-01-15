@@ -3,6 +3,7 @@ package fr.euphyllia.skyfolia.database.query.exec;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -15,14 +16,14 @@ import java.util.concurrent.CompletableFuture;
 public class IslandPermissionQuery {
     private static final String UPSERT_PERMISSIONS_ISLANDS = """
             INSERT INTO `%s`.`islands_permissions`
-            (`island_id`, `role`, `flags`)
-            VALUES (?, ?, ?)
-            on DUPLICATE key UPDATE `role` = ?, `flags` = ?;
+            (`island_id`, `type`, `role`, `flags`)
+            VALUES (?, ?, ?, ?)
+            on DUPLICATE key UPDATE `role` = ?, `type` = ?, `flags` = ?;
             """;
     private static final String ISLAND_PERMISSION_ROLE = """
             SELECT P.`flags` FROM `%s`.`islands_permissions` P
             WHERE P.`island_id` = ?
-            AND P.`role` = ?;
+            AND P.`role` = ? AND P.`type` = ?;
             """;
     private final Logger logger = LogManager.getLogger(IslandPermissionQuery.class);
     private final InterneAPI api;
@@ -33,11 +34,11 @@ public class IslandPermissionQuery {
         this.databaseName = databaseName;
     }
 
-    public CompletableFuture<Boolean> updateIslandsPermission(UUID islandId, RoleType roleType, int permissions) {
+    public CompletableFuture<Boolean> updateIslandsPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType, int permissions) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
         MariaDBExecute.executeQueryDML(this.api, UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
-                List.of(islandId, roleType.name(), permissions, roleType.name(), permissions), i -> {
+                List.of(islandId, permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
                     if (i != 0) {
                         completableFuture.complete(true);
                     } else {
@@ -48,9 +49,9 @@ public class IslandPermissionQuery {
         return completableFuture;
     }
 
-    public CompletableFuture<PermissionRoleIsland> getIslandPermission(UUID islandId, RoleType roleType) {
+    public CompletableFuture<PermissionRoleIsland> getIslandPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
         CompletableFuture<PermissionRoleIsland> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name()), resultSet -> {
+        MariaDBExecute.executeQuery(this.api, ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
             try {
                 if (resultSet.next()) {
                     int flags = resultSet.getInt("flags");

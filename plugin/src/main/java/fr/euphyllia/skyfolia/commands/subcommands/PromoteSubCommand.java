@@ -4,8 +4,9 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
-import fr.euphyllia.skyfolia.api.skyblock.model.PermissionsIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsCommandIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.PermissionManager;
@@ -55,11 +56,11 @@ public class PromoteSubCommand implements SubCommandInterface {
 
                     Players executorPlayer = island.getMember(player.getUniqueId());
 
-                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), executorPlayer.getRoleType()).join();
+                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
                     PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
 
-                    if (!permissionManager.hasPermission(PermissionsIsland.PROMOTE)) {
+                    if (!permissionManager.hasPermission(PermissionsCommandIsland.PROMOTE)) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                         return;
                     }

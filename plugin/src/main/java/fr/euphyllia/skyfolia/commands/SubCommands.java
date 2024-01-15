@@ -4,6 +4,7 @@ import fr.euphyllia.skyfolia.commands.subcommands.*;
 import org.jetbrains.annotations.NotNull;
 
 public enum SubCommands {
+    ACCESS(new AccessSubCommand()),
     BIOME(new SetBiomeSubCommand()),
     CREATE(new CreateSubCommand()),
     DELETE(new DeleteSubCommand()),
@@ -11,7 +12,6 @@ public enum SubCommands {
     INVITE(new InviteSubCommand()),
     KICK(new KickSubCommand()),
     LEAVE(new LeaveSubCommand()),
-    PRIVATE(new PrivateSubCommand()),
     PROMOTE(new PromoteSubCommand()),
     TELEPORT(new TeleportSubCommand()),
     TRANSFER(new TransferSubCommand()),

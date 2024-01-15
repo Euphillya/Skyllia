@@ -2,12 +2,16 @@ package fr.euphyllia.skyfolia.utils;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.utils.models.CallbackEntity;
 import fr.euphyllia.skyfolia.utils.models.CallbackLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.TimeUnit;
@@ -115,5 +119,33 @@ public class RegionUtils {
         int regionX = chunk.regionX() >> 9;
         int regionZ = chunk.regionZ() >> 9;
         return new Position(regionX, regionZ);
+    }
+
+
+    public static void getEntitiesInRegion(Main plugin, EntityType entityType, World world, int regionX, int regionZ, CallbackEntity callbackEntity) {
+        int minChunkX = regionX << 5; // Calcul de la coordonnée X minimale du chunk
+        int minChunkZ = regionZ << 5; // Calcul de la coordonnée Z minimale du chunk
+
+        int maxChunkX = minChunkX + 31; // 32 chunks en X
+        int maxChunkZ = minChunkZ + 31; // 32 chunks en Z
+
+        for (int x = minChunkX; x <= maxChunkX; x++) {
+            for (int z = minChunkZ; z <= maxChunkZ; z++) {
+                final int chunkX = x;
+                final int chunkZ = z;
+                Bukkit.getRegionScheduler().run(plugin, world, chunkX, chunkZ, task -> {
+                    Chunk chunk = world.getChunkAt(chunkX, chunkZ);
+                    if (chunk.isLoaded()) {
+                        // Traitement du chunk chargé
+                        Entity[] listEntities = chunk.getEntities();
+                        for (Entity entity : listEntities) {
+                            if (entityType == entity.getType() || entityType == null) {
+                                callbackEntity.run(entity);
+                            }
+                        }
+                    }
+                });
+            }
+        }
     }
 }

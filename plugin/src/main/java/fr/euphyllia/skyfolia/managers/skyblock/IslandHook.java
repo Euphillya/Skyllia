@@ -106,7 +106,7 @@ public class IslandHook extends Island {
 
     @Override
     public void setPrivateIsland(boolean privateIsland) {
-        this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this).join();
+        this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland).join();
     }
 
     @Override

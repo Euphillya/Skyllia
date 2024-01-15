@@ -67,6 +67,8 @@ public class LanguageToml {
     public static String messageLeaveFailedIsOwnerIsland = "Vous ne pouvez pas quitter votre île, car vous être le propriétaire !";
     public static String messageLeaveSuccess = "Vous avez quitté votre île.";
     public static String messageLeavePlayerFailed = "Vous n'avez pas pu quitter votre île. Si le problème persiste, contacter un administrateur";
+    public static String messageAccessIslandOpen = "Votre île est maintenant ouverte.";
+    public static String messageAccessIslandClose = "Votre île est maintenant fermée.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -129,6 +131,11 @@ public class LanguageToml {
             return def;
         }
         return config.getInt(path);
+    }
+
+    private static void accessIslandLanguage() {
+        messageAccessIslandOpen = getString("island.access.open", messageAccessIslandOpen);
+        messageAccessIslandClose = getString("island.access.close", messageAccessIslandClose);
     }
 
     private static void changeOwnerLanguage() {
