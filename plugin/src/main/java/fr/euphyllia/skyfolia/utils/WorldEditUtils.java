@@ -22,6 +22,7 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.api.skyblock.model.SchematicWorld;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,9 +56,9 @@ public class WorldEditUtils {
         return Type.UNDEFINED;
     }
 
-    public static void pasteSchematicWE(InterneAPI api, Location loc, IslandType islandType) {
+    public static void pasteSchematicWE(InterneAPI api, Location loc, SchematicWorld schematicWorld) {
         try {
-            File file = new File(api.getPlugin().getDataFolder() + File.separator + islandType.schematic());
+            File file = new File(api.getPlugin().getDataFolder() + File.separator + schematicWorld.schematicFile());
             ClipboardFormat format = cachedIslandSchematic.getOrDefault(file, ClipboardFormats.findByFile(file));
             try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
                 Clipboard clipboard = reader.read();
@@ -80,7 +81,7 @@ public class WorldEditUtils {
         }
     }
 
-    public static void deleteIsland(Main plugin, Island island, org.bukkit.World w, int rayon) {
+    public static void deleteIsland(Main plugin, Island island, org.bukkit.World w, double rayon) {
         if (w == null) {
             throw new RuntimeException("World is not loaded or not exist");
         }
@@ -196,7 +197,7 @@ public class WorldEditUtils {
         return new CuboidRegion(world, minRegion, maxRegion);
     }
 
-    private static CuboidRegion getCuboidRegionWithRayon(World world, org.bukkit.World w, Island island, int rayon) {
+    private static CuboidRegion getCuboidRegionWithRayon(World world, org.bukkit.World w, Island island, double rayon) {
         if (world == null) {
             world = BukkitAdapter.adapt(w);
         }

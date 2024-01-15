@@ -24,7 +24,7 @@ public class LanguageToml {
     public static String messageIslandDeleteSuccess = "L'île a été supprimé avec succès";
     public static String messagePlayerHasNotIsland = "Vous n'avez pas d'île !";
     public static String messageIslandAlreadyExist = "Vous avez déjà une île.";
-    public static String messagePlayerNotFound = "Le joueurs est introuvable.";
+    public static String messagePlayerNotFound = "Le joueur est introuvable.";
     public static String messagePlayerNotInIsland = "Vous devez être sur votre île.";
     public static String messageWarpCreate = "Votre warp : %s a été crée.";
     public static String messageError = "Une erreur s'est produite. Merci de contacter un administrateur.";
@@ -32,6 +32,7 @@ public class LanguageToml {
     public static String messageOnlyOwner = "Seul le propriétaire de l'île peut faire ça.";
     public static String messageNotMember = "Le joueur n'est pas membre de l'ile";
     public static String messageIslandTypeNotExist = "Le type d'île sélectionné n'existe pas.";
+    public static String messageIslandSchemNotExist = "La schematic pour créer l'ile n'existe pas.";
     public static String messagePlayerPermissionDenied = "Vous n'avez pas la permission de faire cela.";
     public static String messageIslandError = "Une erreur s'est produite lors de la création de l'ile";
     public static String messageDemotePlayer = "Le joueur %s a été rétrogradé.";
@@ -120,6 +121,7 @@ public class LanguageToml {
         messageIslandInProgress = getString("island.create.in-progress", messageIslandInProgress);
         messageIslandCreateFinish = getString("island.create.finish", messageIslandCreateFinish);
         messageIslandTypeNotExist = getString("island.create.type-no-exist", messageIslandTypeNotExist);
+        messageIslandSchemNotExist = getString("island.create.schem-no-exist", messageIslandSchemNotExist);
         messageIslandError = getString("island.create.error", messageIslandError);
     }
 
@@ -152,6 +154,32 @@ public class LanguageToml {
         messageNotMember = getString("island.generic.not-member", messageNotMember);
         messagePlayerPermissionDenied = getString("island.generic.player.permission-denied", messagePlayerPermissionDenied);
         messageCommandAlreadyExecution = getString("island.generic.player.command-already-execution", messageCommandAlreadyExecution);
+    }
+
+    public static String messageInviteAlreadyIsland = "Vous êtes déjà sur une île !";
+    public static String messageInviteCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia invite <add/accept/decline> <player/island_owner>";
+    public static String messageInviteAcceptCommandNotEnoughArgs = "Vous devez préciser sur quel île vous souhaiter rejoindre : /skyfolia invite accept <island_owner>";
+    public static String messageInviteDeclineCommandNotEnoughArgs = "Vous devez préciser sur quel île vous souhaiter décliner : /skyfolia invite decline <island_owner>";
+    public static String messageInviteAddCommandNotEnoughArgs = "Vous devez préciser sur quel île vous souhaiter décliner : /skyfolia invite add <player>";
+    public static String messageInvitePlayerInvited = "Le joueur %s a bien été invité. En attente d'une réponse...";
+    public static String messageInvitePlayerNotification = "Le joueur %player_invite% vous a invité sur son île. Pour accepter : /skyfolia invite accept %player_invite%. Pour décliner : /skyfolia invite decline %player_invite%";
+    public static String messageInviteAcceptOwnerHasNotIsland = "L'île du joueur %s n'a pas été trouvé.";
+    public static String messageInviteDeclineOwnerHasNotIsland = "L'île du joueur %s n'a pas été trouvé.";
+    public static String messageInviteJoinIsland = "Vous êtes dorénavant membre de l'île !";
+    public static String messageInviteMaxMemberExceededIsland = "Le seuil de place de membre de l'ile a été atteints. Vous ne pouvez pas rejoindre l'île.";
+    public static String messageInviteDeclineDeleteInvitation = "Vous avez refusé l'invitation de %player_invite%.";
+    private static void islandInviteLanguage() {
+        messageInviteAlreadyIsland = getString("island.invite.already-on-an-island", messageInviteAlreadyIsland);
+        messageInviteCommandNotEnoughArgs = getString("island.invite.not-enough-args", messageInviteCommandNotEnoughArgs);
+        messageInviteAcceptCommandNotEnoughArgs = getString("island.invite.accept.not-enough-args", messageInviteAcceptCommandNotEnoughArgs);
+        messageInviteDeclineCommandNotEnoughArgs = getString("island.invite.decline.not-enough-args", messageInviteDeclineCommandNotEnoughArgs);
+        messageInviteAddCommandNotEnoughArgs =  getString("island.invite.add.not-enough-args", messageInviteAddCommandNotEnoughArgs);
+        messageInvitePlayerNotification = getString("island.invite.add.notification-player", messageInvitePlayerNotification);
+        messageInvitePlayerInvited = getString("island.invite.add.pending", messageInvitePlayerInvited);
+        messageInviteJoinIsland = getString("island.invite.accept.success", messageInviteJoinIsland);
+        messageInviteMaxMemberExceededIsland = getString("island.invite.accept.max-member-exceeded", messageInviteMaxMemberExceededIsland);
+        messageInviteAcceptOwnerHasNotIsland = getString("island.invite.accept.owner-not-island", messageInviteAcceptOwnerHasNotIsland);
+        messageInviteDeclineOwnerHasNotIsland = getString("island.invite.decline.owner-not-island", messageInviteDeclineOwnerHasNotIsland);
     }
 
     private static void setBiomeLanguage() {

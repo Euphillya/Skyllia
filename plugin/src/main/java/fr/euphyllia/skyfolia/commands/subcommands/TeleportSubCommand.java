@@ -7,6 +7,7 @@ import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyfolia.utils.IslandUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
 import fr.euphyllia.skyfolia.utils.nms.v1_20_R2.PlayerNMS;
 import org.apache.logging.log4j.Level;
@@ -37,8 +38,8 @@ public class TeleportSubCommand implements SubCommandInterface {
         }
 
         WarpIsland warpIsland = island.getWarpByName("home");
-        Location centerIsland = RegionUtils.getCenterRegion(Bukkit.getWorld(ConfigToml.islandTypes.get(island.getIslandType()).worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-        int rayon = island.getSize();
+        Location centerIsland = RegionUtils.getCenterRegion(Bukkit.getWorld(IslandUtils.getSchematic(null).worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
+        double rayon = island.getSize();
         player.getScheduler().run(plugin, scheduledTask1 -> {
             Location loc;
             if (warpIsland == null) {

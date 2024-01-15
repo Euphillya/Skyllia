@@ -38,7 +38,7 @@ public class SkyblockManager {
             UUID idIsland = UUID.randomUUID();
             Island futurIsland = new IslandHook(
                     this.plugin,
-                    islandType.name(),
+                    islandType,
                     idIsland,
                     playerId,
                     null,

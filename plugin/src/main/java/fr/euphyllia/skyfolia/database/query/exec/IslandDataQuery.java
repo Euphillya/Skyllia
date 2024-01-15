@@ -4,8 +4,10 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.database.execute.MariaDBExecute;
 import fr.euphyllia.skyfolia.managers.skyblock.IslandHook;
+import fr.euphyllia.skyfolia.utils.IslandUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,7 +73,7 @@ public class IslandDataQuery {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             MariaDBExecute.executeQueryDML(this.api, ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
-                    futurIsland.getIslandType(), futurIsland.getId(), futurIsland.getOwnerId(), 1, futurIsland.getSize()
+                    futurIsland.getIslandType().name(), futurIsland.getId(), futurIsland.getOwnerId(), 1, futurIsland.getSize()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
             logger.log(Level.FATAL, e);
@@ -108,7 +110,7 @@ public class IslandDataQuery {
         Timestamp timestamp = resultSet.getTimestamp("create_time");
         Position position = new Position(regionX, regionZ);
         try {
-            return new IslandHook(this.api.getPlugin(), islandType, UUID.fromString(islandId), UUID.fromString(ownerId), position, size, timestamp);
+            return new IslandHook(this.api.getPlugin(), IslandUtils.getIslandType(islandType), UUID.fromString(islandId), UUID.fromString(ownerId), position, size, timestamp);
         } catch (MaxIslandSizeExceedException maxIslandSizeExceedException) {
             logger.log(Level.FATAL, maxIslandSizeExceedException);
             return null;

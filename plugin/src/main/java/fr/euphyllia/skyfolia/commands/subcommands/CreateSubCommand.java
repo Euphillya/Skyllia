@@ -5,6 +5,7 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyfolia.api.skyblock.model.SchematicWorld;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
@@ -52,13 +53,20 @@ public class CreateSubCommand implements SubCommandInterface {
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                     if (island == null) {
-                        IslandType islandType = IslandUtils.getIslandType(args.length == 0 ? null : args[0]);
+                        SchematicWorld schematicWorld = IslandUtils.getSchematic(args.length == 0 ? null : args[0]);
+                        if (schematicWorld == null) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandSchemNotExist);
+                            return;
+                        }
+
+                        IslandType islandType = IslandUtils.getIslandType(ConfigToml.defaultSchematicKey);
+
                         if (islandType == null) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandTypeNotExist);
                             return;
                         }
 
-                        if (!player.hasPermission("skyfolia.island.command.create.%s".formatted(islandType.name()))) {
+                        if (!player.hasPermission("skyfolia.island.command.create.%s".formatted(schematicWorld.key()))) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                             return;
                         }
@@ -71,8 +79,8 @@ public class CreateSubCommand implements SubCommandInterface {
                             return;
                         }
 
-                        Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(islandType.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
-                        this.pasteSchematic(plugin, island, center, islandType);
+                        Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(schematicWorld.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
+                        this.pasteSchematic(plugin, island, center, schematicWorld);
                         this.setFirstHome(island, center);
                         this.restoreGameMode(plugin, player, center);
                         this.addOwnerIslandInMember(island, player);
@@ -95,18 +103,18 @@ public class CreateSubCommand implements SubCommandInterface {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
-            return ConfigToml.islandTypes.keySet().stream().toList();
+            return ConfigToml.schematicWorldMap.keySet().stream().toList();
         } else {
             return new ArrayList<>();
         }
     }
 
-    private void pasteSchematic(Main plugin, Island island, Location center, IslandType islandType) {
+    private void pasteSchematic(Main plugin, Island island, Location center, SchematicWorld schematicWorld) {
         switch (WorldEditUtils.worldEditVersion()) {
             case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
-                WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
+                WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
             });
-            case FAST_ASYNC_WORLD_EDIT -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, islandType);
+            case FAST_ASYNC_WORLD_EDIT -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
             case UNDEFINED -> {
                 island.setDisable(true); // Désactiver l'ile !
                 throw new RuntimeException("Unsupported Plugin Paste");

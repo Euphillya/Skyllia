@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyfolia.api.skyblock.model.SchematicWorld;
 import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
 import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import org.apache.logging.log4j.Level;
@@ -180,13 +181,41 @@ public class ConfigToml {
         }
         for (Map.Entry<String, ?> entry : islandTypesHashMap.entrySet()) {
             String key = parentConfig + entry.getKey();
-            String schematicFile = getString(key + ".schematic", "default.schem");
             int maxMembers = getInt(key + ".max-members", 3);
-            String worldName = getString(key + ".world", "sky-overworld");
             String name = getString(key + ".name", entry.getKey());
-            int rayon = getInt(key + ".size", 50);
-            islandTypes.put(name, new IslandType(name, worldName, schematicFile, maxMembers, rayon));
+            double rayon = getDouble(key + ".size", 50D);
+            islandTypes.put(name, new IslandType(name, maxMembers, rayon));
         }
+    }
+
+    public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
+    private static void schematicIsland() {
+        HashMap<String, ?> islandStarter = new HashMap<>(getMap("island-starter"));
+        String parentConfig = "island-starter.";
+        if (islandStarter.isEmpty()) {
+            islandStarter.putIfAbsent("example-schem", null);
+        }
+        for (Map.Entry<String, ?> entry : islandStarter.entrySet()) {
+            String key = parentConfig + entry.getKey();
+            HashMap<String, ?> worldSchem = new HashMap<>(getMap(key + ".worlds"));
+            String childrenConfig = key + ".worlds.";
+            if (worldSchem.isEmpty()) {
+                worldSchem.put("sky-overworld", null);
+            }
+            for (Map.Entry<String, ?> islandStarterEntry : worldSchem.entrySet()) {
+                String isKey = childrenConfig + islandStarterEntry.getKey();
+                String schematicFile = getString(isKey + ".schematic", "./schematics/default.schem");
+                String worldName = islandStarterEntry.getKey();
+                String name = getString(isKey + ".name", entry.getKey());
+                SchematicWorld schematicWorld = new SchematicWorld(name, worldName, schematicFile);
+                schematicWorldMap.put(worldName, schematicWorld);
+            }
+        }
+    }
+
+    public static String defaultSchematicKey = "example-schem";
+    private static void configIsland() {
+        defaultSchematicKey = getString("island.create.default-schem-key", defaultSchematicKey);
     }
 
     private static void playerSettings() {

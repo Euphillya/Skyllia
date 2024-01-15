@@ -1,6 +1,7 @@
 package fr.euphyllia.skyfolia.api.skyblock;
 
 import fr.euphyllia.skyfolia.api.exceptions.MaxIslandSizeExceedException;
+import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
@@ -16,7 +17,7 @@ public abstract class Island {
 
     public abstract UUID getId();
 
-    public abstract int getSize();
+    public abstract double getSize();
 
     public abstract void setSize(int rayon) throws MaxIslandSizeExceedException;
 
@@ -50,7 +51,7 @@ public abstract class Island {
 
     public abstract Position getPosition();
 
-    public abstract String getIslandType();
+    public abstract IslandType getIslandType();
 
-    public abstract void setIslandType(String islandType);
+    public abstract void setIslandType(IslandType islandType);
 }

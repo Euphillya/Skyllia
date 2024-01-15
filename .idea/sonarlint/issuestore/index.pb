@@ -138,11 +138,15 @@ Hapi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/Position.java,8\5\8
 Vplugin/src/main/java/fr/euphyllia/skyfolia/commands/subcommands/SetWarpSubCommand.java,6\f\6ffef5729fb1c855a8a546d72c7bfa8e7ca75da3
 t
 Dapi/src/main/java/fr/euphyllia/skyfolia/api/world/WorldFeedback.java,4\1\417b50d39ada49165a18565777a68341eb53127e
-é
-^api/src/main/java/fr/euphyllia/skyfolia/api/exceptions/NoSupportMinecraftVersionException.java,e\d\eda8f895296d8872bdb068215fc360ac95e0a126
 }
 Mapi/src/main/java/fr/euphyllia/skyfolia/api/exceptions/DatabaseException.java,b\0\b021b349bfa9c554e6586f8c7d1dc9a4d8e00928
 ê
 `api/src/main/java/fr/euphyllia/skyfolia/api/exceptions/UnsupportedMinecraftVersionException.java,0\7\07aad0db980b71ec84116854672130a319dbd5f4
 {
 Kplugin/src/main/java/fr/euphyllia/skyfolia/cache/CommandCacheExecution.java,e\3\e3cb180996946e3548a506a0f3c8be576fcb57e1
+z
+Jplugin/src/main/java/fr/euphyllia/skyfolia/cache/InviteCacheExecution.java,b\8\b8d4d1eb5f2bf1d390e40c7a22ac3eea2b8a8767
+}
+Mapi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/IslandStarter.java,3\5\35bdb21d1fa41127a620440356f2755f8df9c7ad
+~
+Napi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/SchematicWorld.java,f\7\f753e2aedf33816f08879c3b50ddd163ed489040

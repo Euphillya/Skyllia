@@ -4,6 +4,7 @@ import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
+import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
@@ -20,8 +21,8 @@ public class IslandHook extends Island {
     private final UUID islandId;
     private final Timestamp createDate;
     private final UUID ownerId;
-    private final String islandType;
-    private int size;
+    private final IslandType islandType;
+    private double size;
 
     /**
      * @param main       Plugin Skyfolia
@@ -32,7 +33,7 @@ public class IslandHook extends Island {
      * @param size       Rayon Island
      * @param date       Create Date
      */
-    public IslandHook(Main main, String islandType, UUID islandId, UUID ownerId, Position position, int size, Timestamp date) throws MaxIslandSizeExceedException {
+    public IslandHook(Main main, IslandType islandType, UUID islandId, UUID ownerId, Position position, double size, Timestamp date) throws MaxIslandSizeExceedException {
         this.plugin = main;
         this.islandType = islandType;
         this.islandId = islandId;
@@ -56,7 +57,7 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public int getSize() {
+    public double getSize() {
         if (this.size == -1) {
             // check db
             throw new UnsupportedOperationException("pas encore implémenter");
@@ -150,12 +151,12 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public String getIslandType() {
+    public IslandType getIslandType() {
         return this.islandType;
     }
 
     @Override
-    public void setIslandType(String islandType) {
+    public void setIslandType(IslandType islandType) {
         throw new UnsupportedOperationException("pas encore implémenter");
     }
 }
