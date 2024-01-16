@@ -44,6 +44,7 @@ public class JoinEvent implements Listener {
                 if (island == null) {
                     PlayerUtils.teleportPlayerSpawn(this.api.getPlugin(), player);
                 } else {
+                    this.api.updateCache(player);
                     World world = player.getLocation().getWorld();
                     if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
                         Location centerIsland = RegionUtils.getCenterRegion(world, island.getPosition().regionX(), island.getPosition().regionZ());

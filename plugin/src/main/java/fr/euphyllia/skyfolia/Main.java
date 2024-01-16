@@ -4,16 +4,22 @@ package fr.euphyllia.skyfolia;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyfolia.commands.SkyFoliaCommand;
+import fr.euphyllia.skyfolia.listeners.bukkitevents.BlockEvent;
 import fr.euphyllia.skyfolia.listeners.bukkitevents.JoinEvent;
+import fr.euphyllia.skyfolia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyfolia.managers.Managers;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin {
 
@@ -45,9 +51,9 @@ public class Main extends JavaPlugin {
 
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
-        this.interneAPI.loadCachePlugin();
         this.setupCommands();
         this.loadListener();
+        this.runCache();
     }
 
     @Override
@@ -74,6 +80,23 @@ public class Main extends JavaPlugin {
     }
 
     private void loadListener() {
-        getServer().getPluginManager().registerEvents(new JoinEvent(this.interneAPI), this);
+        PluginManager pluginManager = getServer().getPluginManager();
+        // Bukkit Events
+        pluginManager.registerEvents(new JoinEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new BlockEvent(this.interneAPI), this);
+
+        // Skyblock Event
+        pluginManager.registerEvents(new SkyblockEvent(this.interneAPI), this);
+    }
+
+    private void runCache() {
+        ScheduledExecutorService executors = Executors.newScheduledThreadPool(2);
+        executors.scheduleAtFixedRate(() -> {
+            logger.log(Level.FATAL, "Update en cours");
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                this.interneAPI.updateCache(player);
+            });
+        }, 0, 10, TimeUnit.SECONDS);
+
     }
 }

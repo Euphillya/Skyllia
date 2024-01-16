@@ -2,6 +2,7 @@ package fr.euphyllia.skyfolia.api;
 
 import fr.euphyllia.skyfolia.Main;
 import fr.euphyllia.skyfolia.api.exceptions.DatabaseException;
+import fr.euphyllia.skyfolia.cache.CacheManager;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.database.DatabaseLoader;
@@ -15,6 +16,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,11 +35,13 @@ public class InterneAPI {
     private MariaDBTransactionQuery transaction;
     private DatabaseLoader databaseLoader;
     private Managers managers;
+    private CacheManager cacheManager;
 
     public InterneAPI(Main plugin) {
         this.plugin = plugin;
         this.logger = LogManager.getLogger("fr.euphyllia.skyfolia.api.InterneAPI");
         this.skyblockManager = new SkyblockManager(this.plugin);
+        this.cacheManager = new CacheManager(this.skyblockManager);
     }
 
 
@@ -131,7 +135,11 @@ public class InterneAPI {
         return MiniMessage.miniMessage();
     }
 
-    public void loadCachePlugin() {
-        this.skyblockManager.loadCache();
+    public void updateCache(Player player) {
+        this.cacheManager.updateCache(skyblockManager, player);
+    }
+
+    public CacheManager getCacheManager() {
+        return this.cacheManager;
     }
 }

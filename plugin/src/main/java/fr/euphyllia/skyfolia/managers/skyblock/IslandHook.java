@@ -58,12 +58,7 @@ public class IslandHook extends Island {
 
     @Override
     public double getSize() {
-        if (this.size == -1) {
-            // check db
-            throw new UnsupportedOperationException("pas encore implémenter");
-        } else {
-            return this.size;
-        }
+        return this.size;
     }
 
     @Override
