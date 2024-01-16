@@ -50,6 +50,7 @@ import java.util.Locale;
 public class WorldNMS {
 
     public static WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
+        io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
 

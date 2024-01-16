@@ -2,6 +2,7 @@ package fr.euphyllia.skyfolia.managers;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.managers.world.WorldsManager;
+import org.bukkit.Bukkit;
 
 public class Managers {
 
@@ -15,7 +16,7 @@ public class Managers {
 
     public void init() {
         if (this.worldsManager != null) {
-            this.worldsManager.initWorld();
+            Bukkit.getGlobalRegionScheduler().run(this.api.getPlugin(), task -> this.worldsManager.initWorld());
         }
     }
 }

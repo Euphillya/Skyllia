@@ -35,10 +35,6 @@ Japi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/IslandType.java,c\4
 Ñ
 Tapi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/PermissionRoleIsland.java,9\2\9296466fd2f9f65739cf9e3cb9a5fa0797e72a04
 z
-Japi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockRemoveEvent.java,e\1\e1080f6b7fdf5e33d3009167a4ad5a693f6da916
-z
-Japi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockChangeEvent.java,4\2\42a799e591b4f62bff0f6c0478012a1f2c82d75f
-z
 Japi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/WarpIsland.java,4\d\4d92fed1c7a6a673de055b65a37fd3cea0a4d07b
 à
 Xapi/src/main/java/fr/euphyllia/skyfolia/api/exceptions/MaxIslandSizeExceedException.java,8\b\8ba99095f8e2bb93ba0dfe6769db2e16ebd80985
@@ -120,8 +116,6 @@ Splugin/src/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandWarpQuery.
 Uplugin/src/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandUpdateQuery.java,4\c\4c13c0749cf5d4882e283b21db16f8abcb003713
 
 Oplugin/src/main/java/fr/euphyllia/skyfolia/database/query/exec/IslandQuery.java,a\0\a08527cfe992c17b83e4664e1b23772caa4e0de8
-
-Oplugin/src/main/java/fr/euphyllia/skyfolia/managers/skyblock/SkyblockCache.java,d\d\dd4514afb713367a3d5d8a6d29c51b26955f71f7
 É
 Splugin/src/main/java/fr/euphyllia/skyfolia/managers/skyblock/PermissionManager.java,3\e\3ea554c974632e34b4c7b6cb87112fa091ae9100
 r
@@ -184,8 +178,6 @@ _api/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/permissions/Permissi
 Wapi/src/main/java/fr/euphyllia/skyfolia/api/skyblock/model/gamerule/GameRuleIsland.java,a\e\ae2b1f9ebeca20443d167189e2d10125ae5f18c6
 Å
 Qplugin/src/main/java/fr/euphyllia/skyfolia/listeners/bukkitevents/BlockEvent.java,2\d\2ddcd2bd9834ef3f4f49ab7d467c740d2e7f885e
-y
-Iplugin/src/main/java/fr/euphyllia/skyfolia/cache/MemberInIslandCache.java,d\f\dfda69f771ac5d8a5d7352349aa9e2308b453905
 z
 Jplugin/src/main/java/fr/euphyllia/skyfolia/cache/PlayersInIslandCache.java,1\e\1ed76a6614dbe9624d475ba78a03371641b39c6c
 r
