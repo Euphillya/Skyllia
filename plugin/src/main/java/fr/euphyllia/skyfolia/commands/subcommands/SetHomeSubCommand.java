@@ -73,7 +73,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
                         }
                     }
 
-                    boolean updateOrCreateHome = island.addWarps("home", playerLocation);
+                    boolean updateOrCreateHome = island.addWarps("home", playerLocation, false);
                     if (updateOrCreateHome) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeCreateSuccess);
                     } else {

@@ -5,6 +5,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Appelé quand l'île est créée. <br />
+ */
 public class SkyblockCreateEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();

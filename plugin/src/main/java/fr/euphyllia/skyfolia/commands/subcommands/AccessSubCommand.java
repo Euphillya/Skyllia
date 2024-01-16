@@ -69,21 +69,23 @@ public class AccessSubCommand implements SubCommandInterface {
 
                     boolean statusAccessUpdate = !island.isPrivateIsland();
 
-                    island.setPrivateIsland(statusAccessUpdate);
-                    if (statusAccessUpdate) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandClose);
-                        ConfigToml.worldConfigs.forEach(worldConfig -> {
-                            RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().regionX(), island.getPosition().regionZ(), entity -> {
-                                Player playerInIsland = (Player) entity;
-                                if (playerInIsland.hasPermission("skyfolia.island.command.access.bypass")) return;
-                                Players players = island.getMember(playerInIsland.getUniqueId());
-                                if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
-                                    PlayerUtils.teleportPlayerSpawn(plugin, playerInIsland);
-                                }
+                    boolean isUpdate = island.setPrivateIsland(statusAccessUpdate);
+                    if (isUpdate) {
+                        if (statusAccessUpdate) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandClose);
+                            ConfigToml.worldConfigs.forEach(worldConfig -> {
+                                RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().regionX(), island.getPosition().regionZ(), entity -> {
+                                    Player playerInIsland = (Player) entity;
+                                    if (playerInIsland.hasPermission("skyfolia.island.command.access.bypass")) return;
+                                    Players players = island.getMember(playerInIsland.getUniqueId());
+                                    if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
+                                        PlayerUtils.teleportPlayerSpawn(plugin, playerInIsland);
+                                    }
+                                });
                             });
-                        });
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandOpen);
+                        } else {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandOpen);
+                        }
                     }
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);

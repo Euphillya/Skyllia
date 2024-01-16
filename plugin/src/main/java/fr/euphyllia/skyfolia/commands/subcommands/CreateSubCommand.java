@@ -132,8 +132,8 @@ public class CreateSubCommand implements SubCommandInterface {
         }, null);
     }
 
-    private void setFirstHome(Island island, Location center) {
-        island.addWarps("home", center);
+    private boolean setFirstHome(Island island, Location center) {
+        return island.addWarps("home", center, true);
     }
 
     private void addOwnerIslandInMember(Island island, Player player) {

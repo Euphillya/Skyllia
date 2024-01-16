@@ -200,3 +200,11 @@ w
 Gapi/src/main/java/fr/euphyllia/skyfolia/api/annotation/Information.java,3\3\3376da0038fc83235314efc96c0e2abe7d4a39d3
 z
 Japi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockCreateEvent.java,9\6\969d813a90066279e4d975b4c63b3e8d59c63bbb
+z
+Japi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockDeleteEvent.java,d\6\d61716c51f1ff0a62f0465d94f1653ecae5ce4d6
+€
+Papi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockChangeAccessEvent.java,4\e\4ead396b7d285e84b53675f5db9c35d77e8a4101
+~
+Napi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockCreateWarpEvent.java,b\c\bcef10e1ac01ec32b681c77493164fc3961a0980
+~
+Napi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockDeleteWarpEvent.java,e\6\e6abf89ee7fa5b4f0c4bc322bf06836ac1db03f4

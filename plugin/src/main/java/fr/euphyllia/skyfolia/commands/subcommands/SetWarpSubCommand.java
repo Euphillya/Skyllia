@@ -87,7 +87,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
                         return;
                     }
 
-                    boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation);
+                    boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation, false);
                     if (updateOrCreateWarps) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCreateSuccess);
                     } else {

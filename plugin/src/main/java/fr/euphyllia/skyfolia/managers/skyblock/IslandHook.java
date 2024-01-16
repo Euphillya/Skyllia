@@ -1,12 +1,17 @@
 package fr.euphyllia.skyfolia.managers.skyblock;
 
 import fr.euphyllia.skyfolia.Main;
+import fr.euphyllia.skyfolia.api.event.SkyblockChangeAccessEvent;
+import fr.euphyllia.skyfolia.api.event.SkyblockCreateWarpEvent;
+import fr.euphyllia.skyfolia.api.event.SkyblockDeleteEvent;
+import fr.euphyllia.skyfolia.api.event.SkyblockDeleteWarpEvent;
 import fr.euphyllia.skyfolia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,13 +85,25 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public boolean addWarps(String name, Location loc) {
-        return this.plugin.getInterneAPI().getSkyblockManager().addWarpsIsland(this, name, loc).join();
+    public boolean addWarps(String name, Location loc, boolean ignoreEvent) {
+        SkyblockCreateWarpEvent skyblockCreateWarpEvent = new SkyblockCreateWarpEvent(this, name, loc);
+        if (!ignoreEvent) {
+            Bukkit.getPluginManager().callEvent(skyblockCreateWarpEvent);
+            if (skyblockCreateWarpEvent.isCancelled()) {
+                return false;
+            }
+        }
+        return this.plugin.getInterneAPI().getSkyblockManager().addWarpsIsland(this, skyblockCreateWarpEvent.getWarpName(), skyblockCreateWarpEvent.getWarpLocation()).join();
     }
 
     @Override
     public boolean delWarp(String name) {
-        return this.plugin.getInterneAPI().getSkyblockManager().delWarpsIsland(this, name).join();
+        SkyblockDeleteWarpEvent skyblockCreateWarpEvent = new SkyblockDeleteWarpEvent(this, name);
+        Bukkit.getPluginManager().callEvent(skyblockCreateWarpEvent);
+        if (skyblockCreateWarpEvent.isCancelled()) {
+            return false;
+        }
+        return this.plugin.getInterneAPI().getSkyblockManager().delWarpsIsland(this, skyblockCreateWarpEvent.getWarpName()).join();
     }
 
     @Override
@@ -95,8 +112,15 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public void setDisable(boolean disable) {
+    public boolean setDisable(boolean disable) {
+        SkyblockDeleteEvent skyblockRemoveEvent = new SkyblockDeleteEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);
+        if (skyblockRemoveEvent.isCancelled()) {
+            return false;
+        }
         this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this, disable).join();
+
+        return disable;
     }
 
     @Override
@@ -105,8 +129,13 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public void setPrivateIsland(boolean privateIsland) {
-        this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland).join();
+    public boolean setPrivateIsland(boolean privateIsland) {
+        SkyblockChangeAccessEvent skyblockChangeAccessEvent = new SkyblockChangeAccessEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(skyblockChangeAccessEvent);
+        if (skyblockChangeAccessEvent.isCancelled()) {
+            return false;
+        }
+        return this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland).join();
     }
 
     @Override

@@ -25,17 +25,17 @@ public abstract class Island {
 
     public abstract @Nullable WarpIsland getWarpByName(String name);
 
-    public abstract boolean addWarps(String name, Location loc);
+    public abstract boolean addWarps(String name, Location loc, boolean ignoreEvent);
 
     public abstract boolean delWarp(String name);
 
     public abstract boolean isDisable();
 
-    public abstract void setDisable(boolean disable);
+    public abstract boolean setDisable(boolean disable);
 
     public abstract boolean isPrivateIsland();
 
-    public abstract void setPrivateIsland(boolean privateIsland);
+    public abstract boolean setPrivateIsland(boolean privateIsland);
 
     public abstract CopyOnWriteArrayList<Players> getMembers();
 

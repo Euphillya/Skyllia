@@ -1,7 +1,6 @@
 package fr.euphyllia.skyfolia.commands.subcommands;
 
 import fr.euphyllia.skyfolia.Main;
-import fr.euphyllia.skyfolia.api.event.SkyblockRemoveEvent;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
@@ -81,17 +80,16 @@ public class DeleteSubCommand implements SubCommandInterface {
                     }
 
 
-                    island.setDisable(true);
-                    this.updatePlayer(plugin, skyblockManager, island);
+                    boolean isDisabled = island.setDisable(true);
+                    if (isDisabled) {
+                        this.updatePlayer(plugin, skyblockManager, island);
 
-                    for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                        WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), island.getSize());
+                        for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
+                            WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), island.getSize());
+                        }
+
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
                     }
-
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
-
-                    SkyblockRemoveEvent skyblockRemoveEvent = new SkyblockRemoveEvent(island);
-                    Bukkit.getServer().getPluginManager().callEvent(skyblockRemoveEvent);
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
