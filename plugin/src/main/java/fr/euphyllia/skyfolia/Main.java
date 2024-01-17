@@ -5,7 +5,9 @@ import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyfolia.commands.SkyFoliaCommand;
 import fr.euphyllia.skyfolia.listeners.bukkitevents.BlockEvent;
+import fr.euphyllia.skyfolia.listeners.bukkitevents.InventoryEvent;
 import fr.euphyllia.skyfolia.listeners.bukkitevents.JoinEvent;
+import fr.euphyllia.skyfolia.listeners.bukkitevents.PlayerEvent;
 import fr.euphyllia.skyfolia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyfolia.managers.Managers;
 import org.apache.logging.log4j.Level;
@@ -84,6 +86,8 @@ public class Main extends JavaPlugin {
         // Bukkit Events
         pluginManager.registerEvents(new JoinEvent(this.interneAPI), this);
         pluginManager.registerEvents(new BlockEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new InventoryEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
 
         // Skyblock Event
         pluginManager.registerEvents(new SkyblockEvent(this.interneAPI), this);
