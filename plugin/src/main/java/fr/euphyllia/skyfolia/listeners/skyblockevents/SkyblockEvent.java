@@ -38,9 +38,7 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockChangePermission(final SkyblockChangePermissionEvent event) {
-        System.out.println("called !");
         this.api.getCacheManager().updatePermissionCacheIsland(event.getIsland());
-        System.out.println("updated !");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
