@@ -1,9 +1,9 @@
 name: "SkyFolia"
-version: "${version}"
+version: "1.0-alpha.1"
 main: fr.euphyllia.skyfolia.Main
-api-version: 1.20
+api-version: 1.19
 author: Euphyllia
-description: "${description}"
+description: "Plugin Skyblock pour Folia / PaperMC"
 folia-supported: true
 depend:
   - WorldEdit
