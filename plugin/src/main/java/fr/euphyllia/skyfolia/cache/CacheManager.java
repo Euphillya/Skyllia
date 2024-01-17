@@ -8,7 +8,6 @@ import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.entity.Player;
@@ -53,8 +52,6 @@ public class CacheManager {
                     PermissionRoleInIslandCache.deletePermissionInIsland(island.getId(), roleType, permissionsType);
                 }
             }
-
-            logger.log(Level.INFO, island.getId() + " a été supprimé.");
         });
     }
 
@@ -66,14 +63,16 @@ public class CacheManager {
             // ============= position island cache
             PositionIslandCache.add(island.getPosition(), island);
             // ============= permission role cache
-            for (RoleType roleType : RoleType.values()) {
-                for (PermissionsType permissionsType : PermissionsType.values()) {
-                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), permissionsType, roleType).join();
-                    PermissionRoleInIslandCache.addPermissionInIsland(island.getId(), roleType, permissionsType, permissionRoleIsland);
-                }
-            }
-
-            logger.log(Level.INFO, island.getId() + " est mis à jour.");
+            this.updatePermissionCacheIsland(island);
         });
+    }
+
+    public void updatePermissionCacheIsland(Island island) {
+        for (RoleType roleType : RoleType.values()) {
+            for (PermissionsType permissionsType : PermissionsType.values()) {
+                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), permissionsType, roleType).join();
+                PermissionRoleInIslandCache.addPermissionInIsland(island.getId(), roleType, permissionsType, permissionRoleIsland);
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public enum PermissionInventory implements Permissions {
+public enum PermissionsInventory implements Permissions {
     DEFAULT(0),
     OPEN_CHEST(1),
     OPEN_ANVIL(2),
@@ -33,7 +33,7 @@ public enum PermissionInventory implements Permissions {
 
     private final long permissionValue;
 
-    PermissionInventory(long permissionLong) {
+    PermissionsInventory(long permissionLong) {
         this.permissionValue = permissionLong;
     }
 

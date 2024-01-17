@@ -123,8 +123,8 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId);
     }
 
-    public CompletableFuture<Boolean> updatePermissionIsland(UUID islandId, PermissionsType permissionsType, RoleType roleType, int permissions) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandsPermission(islandId, permissionsType, roleType, permissions);
+    public CompletableFuture<Boolean> updatePermissionIsland(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandsPermission(island, permissionsType, roleType, permissions);
     }
 
     public CompletableFuture<PermissionRoleIsland> getPermissionIsland(UUID islandId, PermissionsType permissionsType, RoleType roleType) {

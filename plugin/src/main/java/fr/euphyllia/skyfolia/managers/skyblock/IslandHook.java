@@ -10,7 +10,9 @@ import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.Players;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -172,6 +174,11 @@ public class IslandHook extends Island {
     public void setOwnerId(UUID ownerId) {
         // Todo ? a faire
         throw new UnsupportedOperationException("pas encore implémenter");
+    }
+
+    @Override
+    public boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions) {
+        return this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
     }
 
     @Override

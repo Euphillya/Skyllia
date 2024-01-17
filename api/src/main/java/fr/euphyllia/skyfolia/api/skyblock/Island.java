@@ -3,7 +3,9 @@ package fr.euphyllia.skyfolia.api.skyblock;
 import fr.euphyllia.skyfolia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
+import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +48,8 @@ public abstract class Island {
     public abstract boolean removeMember(Players players);
 
     public abstract boolean updateMember(Players member);
+
+    public abstract boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions);
 
     public abstract UUID getOwnerId();
 

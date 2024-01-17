@@ -214,3 +214,5 @@ Japi/src/main/java/fr/euphyllia/skyfolia/api/configuration/WorldConfig.java,5\e
 Mnms/v1_20_R2/src/main/java/fr/euphyllia/skyfolia/utils/nms/v1_20_R2/yolo.java,6\9\69029def2ae8fe5264b706cb6c2aa2b98d8f9de9
 “
 cplugin/src/main/java/fr/euphyllia/skyfolia/listeners/bukkitevents/PortailAlternativeFoliaEvent.java,4\2\42c09759d1438d3546cb90855008d2bcd5ec9e9f
+„
+Tapi/src/main/java/fr/euphyllia/skyfolia/api/event/SkyblockChangePermissionEvent.java,c\f\cf29ced74805126abcce78a9f3c910fcfefb36d2

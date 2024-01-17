@@ -3,6 +3,7 @@ package fr.euphyllia.skyfolia.listeners.skyblockevents;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.configuration.WorldConfig;
 import fr.euphyllia.skyfolia.api.event.PlayerPrepareChangeWorldSkyblockEvent;
+import fr.euphyllia.skyfolia.api.event.SkyblockChangePermissionEvent;
 import fr.euphyllia.skyfolia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyfolia.api.event.SkyblockDeleteEvent;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
@@ -33,6 +34,13 @@ public class SkyblockEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockCreate(final SkyblockCreateEvent event) {
         this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getIsland().getOwnerId());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onSkyblockChangePermission(final SkyblockChangePermissionEvent event) {
+        System.out.println("called !");
+        this.api.getCacheManager().updatePermissionCacheIsland(event.getIsland());
+        System.out.println("updated !");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

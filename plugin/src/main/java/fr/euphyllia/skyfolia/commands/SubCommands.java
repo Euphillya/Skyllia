@@ -15,6 +15,7 @@ public enum SubCommands {
     INVITE(new InviteSubCommand()),
     KICK(new KickSubCommand()),
     LEAVE(new LeaveSubCommand()),
+    PERMISSION(new PermissionSubCommand()),
     PROMOTE(new PromoteSubCommand()),
     TRANSFER(new TransferSubCommand()),
     SETHOME(new SetHomeSubCommand()),

@@ -35,6 +35,7 @@ public class ConfigToml {
     public static boolean resetExperiencePlayerWhenDeleteIsland = true;
     public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
     public static String defaultSchematicKey = "example-schem";
+    public static int updateCacheTimer = 60;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -223,5 +224,9 @@ public class ConfigToml {
         clearInventoryWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-inventory", clearInventoryWhenDeleteIsland);
         clearEnderChestWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-enderchest", clearEnderChestWhenDeleteIsland);
         resetExperiencePlayerWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-experience", resetExperiencePlayerWhenDeleteIsland);
+    }
+
+    private static void updateCache() {
+        updateCacheTimer = getInt("settings.global.cache.update-timer-seconds", updateCacheTimer);
     }
 }

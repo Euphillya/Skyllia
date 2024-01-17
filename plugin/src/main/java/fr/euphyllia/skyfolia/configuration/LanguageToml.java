@@ -85,6 +85,13 @@ public class LanguageToml {
     public static String messageExpelCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia expel <player>";
     public static String messagePlayerNotConnected = "Le joueur n'est pas connecté";
     public static String messageLocationNotSafe = "La localisation n'est pas sure ! Téléportation impossible.";
+    public static String messagePermissionCommandNotEnoughArgs = "La commande est incomplete : /skyfolia permission <island/commands/inventory> <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN> <PERMISSION_NAME> <true/false>";
+    public static String messagePermissionPermissionTypeInvalid = "Le type est invalide, possibilité : <island/commands/inventory>";
+    public static String messagePermissionRoleTypeInvalid = "Le role est invalide, possibilité : <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN>";
+    public static String messagePermissionsPermissionsValueInvalid = "Cette permission n'existe pas.";
+    public static String messagePermissionsUpdateSuccess = "La permission a été mise à jour !";
+    public static String messagePermissionsUpdateFailed = "Le changement n'a pas pu être réalisé.";
+    public static String messagePermissionPlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas modifier votre propres permissions ou les permissions des roles supérieur à vous.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -241,6 +248,16 @@ public class LanguageToml {
         messageLeaveSuccess = getString("island.leave.success", messageLeaveSuccess);
         messageLeavePlayerFailed = getString("island.leave.failed", messageLeavePlayerFailed);
         messageLeaveFailedIsOwnerIsland = getString("island.leave.he-is-owner", messageLeaveFailedIsOwnerIsland);
+    }
+
+    private static void islandPermissionLanguage() {
+        messagePermissionCommandNotEnoughArgs = getString("island.permissions.not-enough-args", messagePermissionCommandNotEnoughArgs);
+        messagePermissionPermissionTypeInvalid = getString("island.permissions.permission-type-invalid", messagePermissionPermissionTypeInvalid);
+        messagePermissionRoleTypeInvalid = getString("island.permissions.role-invalid", messagePermissionRoleTypeInvalid);
+        messagePermissionsPermissionsValueInvalid = getString("island.permissions.permissions-invalid", messagePermissionsPermissionsValueInvalid);
+        messagePermissionsUpdateSuccess = getString("island.permissions.update.success", messagePermissionsUpdateSuccess);
+        messagePermissionsUpdateFailed = getString("island.permissions.update.failed", messagePermissionsUpdateFailed);
+        messagePermissionPlayerFailedHighOrEqualsStatus = getString("island.permission.fail-high-equals-status", messagePermissionPlayerFailedHighOrEqualsStatus);
     }
 
     private static void islandWarpLanguage() {

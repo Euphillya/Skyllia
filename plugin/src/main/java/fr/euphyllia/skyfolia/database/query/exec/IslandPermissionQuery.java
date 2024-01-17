@@ -1,6 +1,7 @@
 package fr.euphyllia.skyfolia.database.query.exec;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
+import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
@@ -34,11 +35,11 @@ public class IslandPermissionQuery {
         this.databaseName = databaseName;
     }
 
-    public CompletableFuture<Boolean> updateIslandsPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType, int permissions) {
+    public CompletableFuture<Boolean> updateIslandsPermission(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
         MariaDBExecute.executeQueryDML(this.api, UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
-                List.of(islandId, permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
+                List.of(island.getId(), permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
                     if (i != 0) {
                         completableFuture.complete(true);
                     } else {

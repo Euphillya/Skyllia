@@ -4,6 +4,7 @@ package fr.euphyllia.skyfolia;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyfolia.commands.SkyFoliaCommand;
+import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.listeners.bukkitevents.*;
 import fr.euphyllia.skyfolia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyfolia.managers.Managers;
@@ -97,9 +98,8 @@ public class Main extends JavaPlugin {
     private void runCache() {
         ScheduledExecutorService executors = Executors.newScheduledThreadPool(2);
         executors.scheduleAtFixedRate(() -> {
-            logger.log(Level.FATAL, "Update en cours");
             Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
-        }, 0, 10, TimeUnit.SECONDS);
+        }, 0, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
     }
 
     private void disabledConfig() {
