@@ -47,12 +47,12 @@ public class SkyblockCreateWarpEvent extends Event implements Cancellable {
         return this.warp;
     }
 
-    public Location getWarpLocation() {
-        return this.location;
-    }
-
     public void setWarpName(String warp) {
         this.warp = warp;
+    }
+
+    public Location getWarpLocation() {
+        return this.location;
     }
 
     public void setWarpLocation(Location location) {

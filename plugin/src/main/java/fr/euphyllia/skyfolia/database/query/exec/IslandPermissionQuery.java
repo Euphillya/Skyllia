@@ -21,9 +21,9 @@ public class IslandPermissionQuery {
             on DUPLICATE key UPDATE `role` = ?, `type` = ?, `flags` = ?;
             """;
     private static final String ISLAND_PERMISSION_ROLE = """
-            SELECT P.`flags` FROM `%s`.`islands_permissions` P
-            WHERE P.`island_id` = ?
-            AND P.`role` = ? AND P.`type` = ?;
+            SELECT `flags`
+            FROM `%s`.`islands_permissions`
+            WHERE `island_id` = ? AND `role` = ? AND `type` = ?;
             """;
     private final Logger logger = LogManager.getLogger(IslandPermissionQuery.class);
     private final InterneAPI api;
@@ -54,16 +54,16 @@ public class IslandPermissionQuery {
         MariaDBExecute.executeQuery(this.api, ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
             try {
                 if (resultSet.next()) {
-                    int flags = resultSet.getInt("flags");
-                    PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, roleType, flags);
+                    long flags = resultSet.getLong("flags");
+                    PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, flags);
                     completableFuture.complete(permissionsIsland);
                 } else {
-                    PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, roleType, 0);
+                    PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, 0);
                     completableFuture.complete(permissionsIsland);
                 }
             } catch (Exception e) {
                 logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(new PermissionRoleIsland(islandId, roleType, 0));
+                completableFuture.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
             }
         }, null);
         return completableFuture;

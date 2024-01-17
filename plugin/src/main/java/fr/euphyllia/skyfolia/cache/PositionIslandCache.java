@@ -1,21 +1,24 @@
 package fr.euphyllia.skyfolia.cache;
 
+import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class PositionIslandCache {
 
-    private static final ConcurrentHashMap<String, UUID> positionIslandId = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Position, Island> positionIslandId = new ConcurrentHashMap<>();
 
-    public @Nullable UUID getIslandId(Position position) {
-        return positionIslandId.getOrDefault(position.toString(), null);
+    public static void delete(Position position) {
+        positionIslandId.remove(position);
     }
 
-    public static ConcurrentMap<String, UUID> getPositionIslandId() {
-        return positionIslandId;
+    public static @Nullable Island getIsland(Position position) {
+        return positionIslandId.getOrDefault(position, null);
+    }
+
+    public static void add(Position position, Island island) {
+        positionIslandId.put(position, island);
     }
 }

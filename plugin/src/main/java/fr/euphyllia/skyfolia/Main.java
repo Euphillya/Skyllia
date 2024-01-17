@@ -93,9 +93,7 @@ public class Main extends JavaPlugin {
         ScheduledExecutorService executors = Executors.newScheduledThreadPool(2);
         executors.scheduleAtFixedRate(() -> {
             logger.log(Level.FATAL, "Update en cours");
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                this.interneAPI.updateCache(player);
-            });
+            Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
         }, 0, 10, TimeUnit.SECONDS);
 
     }

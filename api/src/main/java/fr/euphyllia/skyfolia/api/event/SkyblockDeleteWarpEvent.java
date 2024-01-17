@@ -15,8 +15,8 @@ public class SkyblockDeleteWarpEvent extends Event implements Cancellable {
 
     private static final HandlerList handlerList = new HandlerList();
     private final Island island;
-    private boolean cancel = false;
     private final String warp;
+    private boolean cancel = false;
 
 
     public SkyblockDeleteWarpEvent(Island island, String warpName) {
@@ -25,12 +25,12 @@ public class SkyblockDeleteWarpEvent extends Event implements Cancellable {
         this.warp = warpName;
     }
 
-    public String getWarpName() {
-        return warp;
-    }
-
     public static HandlerList getHandlerList() {
         return handlerList;
+    }
+
+    public String getWarpName() {
+        return warp;
     }
 
     @Override

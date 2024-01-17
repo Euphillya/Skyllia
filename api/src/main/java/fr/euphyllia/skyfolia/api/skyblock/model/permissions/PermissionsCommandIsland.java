@@ -16,8 +16,7 @@ public enum PermissionsCommandIsland implements Permissions {
     SET_WARP(128),
     DEL_WARP(256),
     TP_WARP(512),
-    EXPEL(1024)
-    ;
+    EXPEL(1024);
 
     private final long permissionValue;
 

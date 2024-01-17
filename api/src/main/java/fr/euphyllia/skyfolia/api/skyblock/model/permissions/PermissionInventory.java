@@ -22,8 +22,7 @@ public enum PermissionInventory implements Permissions {
     USE_STONECUTTER(8_192),
     OPEN_ENDERCHEST(16_384),
     OPEN_CARTOGRAPHY(32_768),
-    OPEN_MERCHANT(65_536)
-    ;
+    OPEN_MERCHANT(65_536);
 
     private final long permissionValue;
 
