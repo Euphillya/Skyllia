@@ -14,9 +14,10 @@ public enum PermissionsIsland implements Permissions {
     KILL_MONSTER(32),
     KILL_ANIMAL(64),
     DROP_ITEMS(128),
-    TAKE_ITEMS(256),
-    USE_PORTAL(512),
-    INTERACT_ENTITIES(1_024),
+    PICKUP_ITEMS(256),
+    USE_NETHER_PORTAL(512),
+    USE_END_PORTAL(1_024),
+    INTERACT_ENTITIES(2_048),
     ;
 
     private final long permissionValue;

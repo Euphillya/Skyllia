@@ -1,10 +1,10 @@
 package fr.euphyllia.skyfolia.managers.world;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
+import fr.euphyllia.skyfolia.api.configuration.WorldConfig;
 import fr.euphyllia.skyfolia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyfolia.api.world.WorldFeedback;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
-import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import fr.euphyllia.skyfolia.utils.WorldUtils;
 import fr.euphyllia.skyfolia.utils.generators.VoidWorldGen;
 import org.apache.logging.log4j.Level;

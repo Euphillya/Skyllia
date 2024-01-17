@@ -44,6 +44,15 @@ public class InterneAPI {
         this.cacheManager = new CacheManager(this.skyblockManager);
     }
 
+    public boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.scheduler.RegionScheduler");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
+    }
+
 
     public @Nullable DatabaseLoader getDatabaseLoader() {
         return this.database;

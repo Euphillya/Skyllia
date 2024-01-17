@@ -3,10 +3,10 @@ package fr.euphyllia.skyfolia.configuration;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.ImmutableMap;
+import fr.euphyllia.skyfolia.api.configuration.WorldConfig;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.SchematicWorld;
 import fr.euphyllia.skyfolia.configuration.section.MariaDBConfig;
-import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -166,8 +166,9 @@ public class ConfigToml {
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
             String key = parentConfig + entry.getKey();
             String skyblockEnvironment = getString(key + ".environment", World.Environment.NORMAL.name());
-            String portalTeleport = getString(key + ".portal-tp", "sky-overworld");
-            worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, portalTeleport));
+            String netherPortalTeleport = getString(key + ".nether-portal-", "sky-overworld");
+            String endPortalTeleport = getString(key + ".end-portal-tp", "sky-overworld");
+            worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, netherPortalTeleport, endPortalTeleport));
         }
     }
 

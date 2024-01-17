@@ -3,10 +3,7 @@ package fr.euphyllia.skyfolia.utils;
 import fr.euphyllia.skyfolia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyfolia.api.skyblock.model.SchematicWorld;
 import fr.euphyllia.skyfolia.configuration.ConfigToml;
-import fr.euphyllia.skyfolia.configuration.section.WorldConfig;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class IslandUtils {
 
@@ -32,13 +29,5 @@ public class IslandUtils {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public static boolean isWorldIsland(String worldName) {
-        return getWorldConfigs().stream().anyMatch(wc -> wc.name().equalsIgnoreCase(worldName));
-    }
-
-    public static List<WorldConfig> getWorldConfigs() {
-        return ConfigToml.worldConfigs;
     }
 }

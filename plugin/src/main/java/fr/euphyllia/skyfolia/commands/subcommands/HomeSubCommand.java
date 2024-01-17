@@ -7,9 +7,9 @@ import fr.euphyllia.skyfolia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyfolia.utils.IslandUtils;
 import fr.euphyllia.skyfolia.utils.PlayerUtils;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
+import fr.euphyllia.skyfolia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,7 +59,7 @@ public class HomeSubCommand implements SubCommandInterface {
                     player.getScheduler().run(plugin, scheduledTask1 -> {
                         Location loc;
                         if (warpIsland == null) {
-                            loc = RegionUtils.getCenterRegion(Bukkit.getWorld(IslandUtils.getWorldConfigs().get(0).name()), island.getPosition().regionX(), island.getPosition().regionZ());
+                            loc = RegionUtils.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().regionX(), island.getPosition().regionZ());
                         } else {
                             loc = warpIsland.location();
                         }

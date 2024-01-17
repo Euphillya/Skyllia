@@ -9,11 +9,11 @@ import fr.euphyllia.skyfolia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyfolia.commands.SubCommandInterface;
-import fr.euphyllia.skyfolia.configuration.ConfigToml;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
 import fr.euphyllia.skyfolia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyfolia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyfolia.utils.RegionUtils;
+import fr.euphyllia.skyfolia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +47,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
         }
 
         Location playerLocation = player.getLocation();
-        if (!isWorldIsland(playerLocation.getWorld().getName())) {
+        if (!WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName())) {
             sender.sendMessage("Vous n'êtes pas sur votre ile");
             return true;
         }
@@ -109,9 +109,5 @@ public class SetWarpSubCommand implements SubCommandInterface {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return null;
-    }
-
-    private boolean isWorldIsland(String worldName) {
-        return ConfigToml.worldConfigs.stream().anyMatch(wc -> wc.name().equalsIgnoreCase(worldName));
     }
 }

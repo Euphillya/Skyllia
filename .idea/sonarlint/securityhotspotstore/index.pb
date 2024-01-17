@@ -206,3 +206,11 @@ x
 Hplugin/src/main/java/fr/euphyllia/skyfolia/listeners/ListenersUtils.java,1\6\16f8f37ffc96eca16b0b3b3c5c98b4daf58a993d
 …
 Uplugin/src/main/java/fr/euphyllia/skyfolia/listeners/bukkitevents/InventoryEvent.java,b\3\b3c08970aa39e0ee8f10d5a55e4d4639606dba16
+Œ
+\api/src/main/java/fr/euphyllia/skyfolia/api/event/PlayerPrepareChangeWorldSkyblockEvent.java,1\5\15ef3eb9b794bb8de1d82df8dc3f613f9e0d5533
+z
+Japi/src/main/java/fr/euphyllia/skyfolia/api/configuration/WorldConfig.java,5\e\5ed57a2e569acc046413256dfe184c1c1abf84f7
+}
+Mnms/v1_20_R2/src/main/java/fr/euphyllia/skyfolia/utils/nms/v1_20_R2/yolo.java,6\9\69029def2ae8fe5264b706cb6c2aa2b98d8f9de9
+“
+cplugin/src/main/java/fr/euphyllia/skyfolia/listeners/bukkitevents/PortailAlternativeFoliaEvent.java,4\2\42c09759d1438d3546cb90855008d2bcd5ec9e9f

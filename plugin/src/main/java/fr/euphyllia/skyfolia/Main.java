@@ -4,10 +4,7 @@ package fr.euphyllia.skyfolia;
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyfolia.commands.SkyFoliaCommand;
-import fr.euphyllia.skyfolia.listeners.bukkitevents.BlockEvent;
-import fr.euphyllia.skyfolia.listeners.bukkitevents.InventoryEvent;
-import fr.euphyllia.skyfolia.listeners.bukkitevents.JoinEvent;
-import fr.euphyllia.skyfolia.listeners.bukkitevents.PlayerEvent;
+import fr.euphyllia.skyfolia.listeners.bukkitevents.*;
 import fr.euphyllia.skyfolia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyfolia.managers.Managers;
 import org.apache.logging.log4j.Level;
@@ -56,6 +53,7 @@ public class Main extends JavaPlugin {
         this.setupCommands();
         this.loadListener();
         this.runCache();
+        this.disabledConfig();
     }
 
     @Override
@@ -88,6 +86,9 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new BlockEvent(this.interneAPI), this);
         pluginManager.registerEvents(new InventoryEvent(this.interneAPI), this);
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
+        if (this.interneAPI.isFolia()) {
+            pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
+        }
 
         // Skyblock Event
         pluginManager.registerEvents(new SkyblockEvent(this.interneAPI), this);
@@ -99,6 +100,16 @@ public class Main extends JavaPlugin {
             logger.log(Level.FATAL, "Update en cours");
             Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
         }, 0, 10, TimeUnit.SECONDS);
+    }
 
+    private void disabledConfig() {
+        if (this.getInterneAPI().isFolia()) {
+            if (Bukkit.getAllowNether()) {
+                logger.log(Level.WARN, "Disable nether in server.properties to disable nether portals!");
+            }
+            if (Bukkit.getAllowEnd()) {
+                logger.log(Level.WARN, "Disable end in bukkit.yml to disable end portals!");
+            }
+        }
     }
 }

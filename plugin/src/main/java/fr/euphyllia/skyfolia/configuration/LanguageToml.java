@@ -84,6 +84,7 @@ public class LanguageToml {
     public static String messageExpelPlayerFailedNotInIsland = "Le joueur n'est pas sur votre île.";
     public static String messageExpelCommandNotEnoughArgs = "La commande n'est pas complète : /skyfolia expel <player>";
     public static String messagePlayerNotConnected = "Le joueur n'est pas connecté";
+    public static String messageLocationNotSafe = "La localisation n'est pas sure ! Téléportation impossible.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -213,6 +214,7 @@ public class LanguageToml {
         messagePlayerPermissionDenied = getString("island.generic.player.permission-denied", messagePlayerPermissionDenied);
         messageCommandAlreadyExecution = getString("island.generic.player.command-already-execution", messageCommandAlreadyExecution);
         messagePlayerNotConnected = getString("island.generic.player.offline", messagePlayerNotConnected);
+        messageLocationNotSafe = getString("island.generic.location.not-safe", messageLocationNotSafe);
     }
 
     private static void islandInviteLanguage() {
