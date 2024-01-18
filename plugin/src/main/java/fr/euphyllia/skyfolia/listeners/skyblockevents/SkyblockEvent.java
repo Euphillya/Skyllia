@@ -2,10 +2,7 @@ package fr.euphyllia.skyfolia.listeners.skyblockevents;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
 import fr.euphyllia.skyfolia.api.configuration.WorldConfig;
-import fr.euphyllia.skyfolia.api.event.PlayerPrepareChangeWorldSkyblockEvent;
-import fr.euphyllia.skyfolia.api.event.SkyblockChangePermissionEvent;
-import fr.euphyllia.skyfolia.api.event.SkyblockCreateEvent;
-import fr.euphyllia.skyfolia.api.event.SkyblockDeleteEvent;
+import fr.euphyllia.skyfolia.api.event.*;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyfolia.configuration.LanguageToml;
@@ -56,6 +53,12 @@ public class SkyblockEvent implements Listener {
         } else if (event.getPortalType() == PlayerPrepareChangeWorldSkyblockEvent.PortalType.END) {
             teleportOtherWorld(player, event, PermissionsIsland.USE_END_PORTAL);
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onSkyblockLoad(final SkyblockLoadEvent event) {
+        System.out.println("called");
+        this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getIsland().getOwnerId());
     }
 
     private void teleportOtherWorld(Player player, PlayerPrepareChangeWorldSkyblockEvent event, PermissionsIsland permissionsIsland) {

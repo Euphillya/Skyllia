@@ -19,6 +19,7 @@ public class PositionIslandCache {
     }
 
     public static void add(Position position, Island island) {
+        System.out.println("put");
         positionIslandId.put(position, island);
     }
 }

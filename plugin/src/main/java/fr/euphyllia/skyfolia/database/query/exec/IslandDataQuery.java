@@ -1,6 +1,7 @@
 package fr.euphyllia.skyfolia.database.query.exec;
 
 import fr.euphyllia.skyfolia.api.InterneAPI;
+import fr.euphyllia.skyfolia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyfolia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyfolia.api.skyblock.Island;
 import fr.euphyllia.skyfolia.api.skyblock.model.Position;
@@ -10,6 +11,7 @@ import fr.euphyllia.skyfolia.utils.IslandUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -56,7 +58,9 @@ public class IslandDataQuery {
         MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_OWNER.formatted(this.databaseName), List.of(playerId), resultSet -> {
             try {
                 if (resultSet.next()) {
-                    completableFuture.complete(this.constructIslandQuery(resultSet));
+                    Island island = this.constructIslandQuery(resultSet);
+                    completableFuture.complete(island);
+                    Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
                 } else {
                     completableFuture.complete(null);
                 }

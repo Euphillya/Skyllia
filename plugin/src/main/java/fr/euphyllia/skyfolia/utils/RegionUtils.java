@@ -111,13 +111,16 @@ public class RegionUtils {
         return new Vector(maxX, maxY, maxZ);
     }
 
-    public static Position getRegionInChunk(int chunkX, int chunkZ) {
-        return getRegionInChunk(new Position(chunkX, chunkZ));
+    public static Position getRegionWithLocation(int locX, int locZ) {
+        return getRegionInChunk(locX >> 4, locZ >> 4);
+    }
+    public static Position getRegionInChunk(Position chunk) {
+        return getRegionInChunk(chunk.regionX(), chunk.regionZ());
     }
 
-    public static Position getRegionInChunk(Position chunk) {
-        int regionX = chunk.regionX() >> 9;
-        int regionZ = chunk.regionZ() >> 9;
+    public static Position getRegionInChunk(int chunkX, int chunkZ) {
+        int regionX = chunkX >> 5;
+        int regionZ = chunkZ >> 5;
         return new Position(regionX, regionZ);
     }
 

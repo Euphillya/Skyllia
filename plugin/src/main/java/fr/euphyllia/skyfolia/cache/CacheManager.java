@@ -61,6 +61,7 @@ public class CacheManager {
             PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());
             PlayersInIslandCache.add(island.getId(), island.getMembers());
             // ============= position island cache
+            System.out.println(island.getPosition());
             PositionIslandCache.add(island.getPosition(), island);
             // ============= permission role cache
             this.updatePermissionCacheIsland(island);
