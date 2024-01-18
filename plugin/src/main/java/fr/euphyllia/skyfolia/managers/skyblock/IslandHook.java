@@ -69,9 +69,9 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public void setSize(int rayon) throws MaxIslandSizeExceedException {
-        if (rayon >= 255) {
-            throw new MaxIslandSizeExceedException("Size exceeded !");
+    public void setSize(double rayon) throws MaxIslandSizeExceedException {
+        if (rayon >= 511) {
+            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and 511."); // Fix https://github.com/Euphillya/SkyFolia/issues/9
         }
         this.size = rayon;
     }

@@ -21,7 +21,7 @@ public abstract class Island {
 
     public abstract double getSize();
 
-    public abstract void setSize(int rayon) throws MaxIslandSizeExceedException;
+    public abstract void setSize(double rayon) throws MaxIslandSizeExceedException;
 
     public abstract @Nullable CopyOnWriteArrayList<WarpIsland> getWarps();
 

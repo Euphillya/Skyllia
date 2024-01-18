@@ -97,7 +97,12 @@ public class ConfigToml {
             set(path, def);
             return def;
         }
-        return config.get(path);
+        if (tryIt instanceof Double) { // Fix issue https://github.com/Euphillya/SkyFolia/issues/9
+            return config.get(path);
+        } else {
+            return Double.valueOf(config.get(path));
+        }
+
     }
 
     private static Integer getInt(@NotNull String path, Integer def) {
