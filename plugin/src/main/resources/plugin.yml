@@ -1,6 +1,6 @@
-name: "SkyFolia"
+name: "Skyllia"
 version: "1.0-alpha.3"
-main: fr.euphyllia.skyfolia.Main
+main: fr.euphyllia.skyllia.Main
 api-version: 1.19
 author: Euphyllia
 description: "Plugin Skyblock pour Folia / PaperMC"
@@ -9,8 +9,9 @@ depend:
   - WorldEdit
 
 commands:
-  skyfolia:
+  skyllia:
     description: "Plugin Island"
     aliases:
       - island
+      - skyfolia // oldb
       - is

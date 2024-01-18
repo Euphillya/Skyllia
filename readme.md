@@ -1,6 +1,6 @@
 ## Plugin Skyblock for Folia
 
-SkyFolia is a Skyblock plugin that will essentially run on Folia.
+Skyllia is a Skyblock plugin that will essentially run on Folia.
 The plugin will have very little innovative functionality, and it's not my intention at all that there should be
 external features (like quests, for example).
 The plugin has an API that you can use to add feature extensions to customize your server.
@@ -15,7 +15,7 @@ that comes along at once. Nevertheless, don't hesitate to tell me about any prob
 - Performance problems (spark recommended)
 - Minor or fatal bug
 
-To see the progress of the plugin, look here : [In progress](https://github.com/Euphillya/SkyFolia/issues/3)
+To see the progress of the plugin, look here : [In progress](https://github.com/Euphillya/Skyllia/issues/3)
 
 ## Compatible Plugin
 
@@ -31,7 +31,7 @@ Each island will be generated on a single region file!
 
 ## Configuration
 
-plugins/SkyFolia/config.toml
+plugins/Skyllia/config.toml
 
 ```toml
 config-version = 1
@@ -93,7 +93,7 @@ max-island = 1_000_000
 
 ```
 
-plugins/SkyFolia/language.toml (Support MiniMessage)
+plugins/Skyllia/language.toml (Support MiniMessage)
 
 ```toml
 config-version = 1
@@ -105,19 +105,19 @@ verbose = false
 fail = "Le joueur %s ne peut pas être promu."
 fail-high-equals-status = "Vous ne pouvez pas promouvoir un joueur à votre rang ou d'un rang plus élevé."
 success = "Le joueur %s a été promu."
-not-enough-args = "La commande n'est pas complète : /skyfolia promote <member>"
+not-enough-args = "La commande n'est pas complète : /skyllia promote <member>"
 
 [island.demote]
 fail = "Le joueur %s ne peut pas être rétrogradé."
 fail-high-equals-status = "Vous ne pouvez pas rétrograder un joueur à votre rang ou celui au dessus."
 success = "Le joueur %s a été rétrogradé."
-not-enough-args = "La commande n'est pas complète : /skyfolia demote <member>"
+not-enough-args = "La commande n'est pas complète : /skyllia demote <member>"
 
 [island.biome]
 change-in-progress = "Changement de biome en cours. Veuillez notez que ça prends du temps... Un message vous avertira quand le processus sera achevé."
 success = "Le changement de biome dans le chunk où vous étiez est terminé !"
 only-island = "La commande ne peut être exécuté seulement sur une île"
-not-enough-args = "La commande n'est pas complète : /skyfolia biome <biome>"
+not-enough-args = "La commande n'est pas complète : /skyllia biome <biome>"
 biome-not-exist = "Le biome %s n'existe pas."
 
 [island.transfert]
@@ -132,22 +132,22 @@ schem-no-exist = "La schematic pour créer l'ile n'existe pas."
 
 [island.invite]
 already-on-an-island = "Vous êtes déjà sur une île !"
-not-enough-args = "La commande n'est pas complète : /skyfolia invite <add/accept/decline> <player/island_owner>"
+not-enough-args = "La commande n'est pas complète : /skyllia invite <add/accept/decline> <player/island_owner>"
 
 [island.invite.add]
-notification-player = "Le joueur %player_invite% vous a invité sur son île. Pour accepter : /skyfolia invite accept %player_invite%. Pour décliner : /skyfolia invite decline %player_invite%"
+notification-player = "Le joueur %player_invite% vous a invité sur son île. Pour accepter : /skyllia invite accept %player_invite%. Pour décliner : /skyllia invite decline %player_invite%"
 pending = "Le joueur %s a bien été invité. En attente d'une réponse..."
-not-enough-args = "Vous devez préciser sur quel île vous souhaiter décliner : /skyfolia invite add <player>"
+not-enough-args = "Vous devez préciser sur quel île vous souhaiter décliner : /skyllia invite add <player>"
 
 [island.invite.decline]
 owner-not-island = "L'île du joueur %s n'a pas été trouvé."
-not-enough-args = "Vous devez préciser sur quel île vous souhaiter décliner : /skyfolia invite decline <island_owner>"
+not-enough-args = "Vous devez préciser sur quel île vous souhaiter décliner : /skyllia invite decline <island_owner>"
 
 [island.invite.accept]
 owner-not-island = "L'île du joueur %s n'a pas été trouvé."
 success = "Vous êtes dorénavant membre de l'île !"
 max-member-exceeded = "Le seuil de place de membre de l'ile a été atteints. Vous ne pouvez pas rejoindre l'île."
-not-enough-args = "Vous devez préciser sur quel île vous souhaiter rejoindre : /skyfolia invite accept <island_owner>"
+not-enough-args = "Vous devez préciser sur quel île vous souhaiter rejoindre : /skyllia invite accept <island_owner>"
 
 [island.generic]
 not-member = "Le joueur n'est pas membre de l'ile"

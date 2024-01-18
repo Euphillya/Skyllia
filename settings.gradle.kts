@@ -1,4 +1,4 @@
-rootProject.name = "SkyFolia"
+rootProject.name = "Skyllia"
 
 include("plugin")
 include("api")
