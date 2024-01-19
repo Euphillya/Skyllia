@@ -36,6 +36,7 @@ public class ConfigToml {
     public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
+    public static int dbVersion = 1;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -45,7 +46,9 @@ public class ConfigToml {
 
         version = getInt("config-version", 1);
         set("config-version", 1);
-        logger.log(Level.FATAL, "Lecture des config");
+        if (verbose) {
+            logger.log(Level.INFO, "Lecture des config");
+        }
         try {
             readConfig(ConfigToml.class, null);
         } catch (Exception e) {
@@ -99,7 +102,7 @@ public class ConfigToml {
         }
         if (tryIt instanceof Double) { // Fix issue https://github.com/Euphillya/skyllia/issues/9
             return config.get(path);
-        } else if (tryIt instanceof Integer){
+        } else if (tryIt instanceof Integer) {
             return (double) config.getInt(path);
         } else {
             String value = String.valueOf(config.get(path));
@@ -152,8 +155,6 @@ public class ConfigToml {
         }
         return builder.build();
     }
-
-    public static int dbVersion = 1;
 
     private static void initMariaDB() {
         String path = "sgbd.mariadb.%s";

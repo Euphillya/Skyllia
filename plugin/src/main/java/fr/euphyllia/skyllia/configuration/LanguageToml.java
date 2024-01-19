@@ -101,7 +101,9 @@ public class LanguageToml {
 
         version = getInt("config-version", 1);
         set("config-version", 1);
-        logger.log(Level.FATAL, "Lecture des config");
+        if (verbose) {
+            logger.log(Level.INFO, "Lecture du fichier langue");
+        }
         try {
             readConfig(LanguageToml.class, null);
         } catch (Exception e) {

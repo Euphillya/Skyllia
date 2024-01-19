@@ -34,8 +34,7 @@ public class PlayerUtils {
     public static void updateChunk(Main main, Player player, int chunkX, int chunkZ) throws UnsupportedMinecraftVersionException {
         final String versionMC = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         switch (versionMC) {
-            case "v1_19_R3" ->
-                    PlayerNMS.refreshPlayerChunk(main, player, chunkX, chunkZ);
+            case "v1_19_R3" -> PlayerNMS.refreshPlayerChunk(main, player, chunkX, chunkZ);
             case "v1_20_R1" ->
                     fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS.refreshPlayerChunk(main, player, chunkX, chunkZ);
             case "v1_20_R2" ->

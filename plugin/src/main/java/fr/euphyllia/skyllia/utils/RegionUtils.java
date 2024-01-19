@@ -114,6 +114,7 @@ public class RegionUtils {
     public static Position getRegionWithLocation(int locX, int locZ) {
         return getRegionInChunk(locX >> 4, locZ >> 4);
     }
+
     public static Position getRegionInChunk(Position chunk) {
         return getRegionInChunk(chunk.regionX(), chunk.regionZ());
     }
