@@ -57,7 +57,6 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockLoad(final SkyblockLoadEvent event) {
-        System.out.println("called");
         this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getIsland().getOwnerId());
     }
 

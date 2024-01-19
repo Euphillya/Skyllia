@@ -30,7 +30,7 @@ public class MariaDBCreateTable {
             `region_x` INT NOT NULL,
             `region_z` INT NOT NULL,
             `private` TINYINT DEFAULT '0',
-            `size` INT NOT NULL,
+            `size` DOUBLE NOT NULL,
             `create_time` TIMESTAMP,
             PRIMARY KEY (`island_id`, `uuid_owner`, `region_x`, `region_z`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -97,6 +97,7 @@ public class MariaDBCreateTable {
     private final Logger logger = LogManager.getLogger(this);
     private final String database;
     private final InterneAPI api;
+    private final int dbVersion;
 
     public MariaDBCreateTable(InterneAPI interneAPI) throws DatabaseException {
         this.api = interneAPI;
@@ -104,7 +105,8 @@ public class MariaDBCreateTable {
         if (dbConfig == null) {
             throw new DatabaseException("No database is mentioned in the configuration of the plugin.", null);
         }
-        this.database = ConfigToml.mariaDBConfig.database();
+        this.database = dbConfig.database();
+        this.dbVersion = dbConfig.dbVersion();
         try {
             this.init();
         } catch (SQLException e) {
@@ -117,6 +119,9 @@ public class MariaDBCreateTable {
         // DATABASE
         MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS.formatted(this.database));
+        if (this.dbVersion <= 1) {
+            MariaDBExecute.executeQuery(api, "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
+        }
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
         MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));

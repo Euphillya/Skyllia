@@ -109,7 +109,7 @@ public class IslandDataQuery {
         String ownerId = resultSet.getString("uuid_owner");
         int regionX = resultSet.getInt("region_x");
         int regionZ = resultSet.getInt("region_z");
-        int size = resultSet.getInt("size");
+        double size = resultSet.getDouble("size");
         Timestamp timestamp = resultSet.getTimestamp("create_time");
         Position position = new Position(regionX, regionZ);
         try {

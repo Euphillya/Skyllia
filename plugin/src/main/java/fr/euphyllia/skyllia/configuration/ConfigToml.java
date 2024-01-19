@@ -99,8 +99,11 @@ public class ConfigToml {
         }
         if (tryIt instanceof Double) { // Fix issue https://github.com/Euphillya/skyllia/issues/9
             return config.get(path);
+        } else if (tryIt instanceof Integer){
+            return (double) config.getInt(path);
         } else {
-            return Double.valueOf(config.get(path));
+            String value = String.valueOf(config.get(path));
+            return Double.parseDouble(value);
         }
 
     }
@@ -150,6 +153,8 @@ public class ConfigToml {
         return builder.build();
     }
 
+    public static int dbVersion = 1;
+
     private static void initMariaDB() {
         String path = "sgbd.mariadb.%s";
         String hostname = getString(path.formatted("hostname"), "127.0.0.1");
@@ -160,7 +165,8 @@ public class ConfigToml {
         int maxPool = getInt(path.formatted("maxPool"), 5);
         int timeOut = getInt(path.formatted("timeOut"), 500);
         String database = getString(path.formatted("database"), "sky_folia");
-        mariaDBConfig = new MariaDBConfig(hostname, port, username, password, useSSL, maxPool, timeOut, database);
+        dbVersion = getInt(path.formatted("version"), dbVersion);
+        mariaDBConfig = new MariaDBConfig(hostname, port, username, password, useSSL, maxPool, timeOut, database, dbVersion);
     }
 
     private static void worlds() {

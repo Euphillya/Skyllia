@@ -47,8 +47,8 @@ public class IslandHook extends Island {
         this.ownerId = ownerId;
         this.createDate = date;
         this.position = position;
-        if (size >= 255) {
-            throw new MaxIslandSizeExceedException("Size exceeded !");
+        if (size >= 511 || size <= 1) {
+            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and 511.");
         }
         this.size = size;
     }
@@ -70,7 +70,7 @@ public class IslandHook extends Island {
 
     @Override
     public void setSize(double rayon) throws MaxIslandSizeExceedException {
-        if (rayon >= 511) {
+        if (this.size >= 511 || this.size <= 1) {
             throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and 511."); // Fix https://github.com/Euphillya/skyllia/issues/9
         }
         this.size = rayon;
