@@ -221,7 +221,8 @@ public class ConfigToml {
                 String schematicFile = getString(isKey + ".schematic", "./schematics/default.schem");
                 String worldName = islandStarterEntry.getKey();
                 String name = getString(isKey + ".name", entry.getKey());
-                SchematicWorld schematicWorld = new SchematicWorld(name, worldName, schematicFile);
+                double height = getDouble(isKey + ".height", 64D);
+                SchematicWorld schematicWorld = new SchematicWorld(name, worldName, height, schematicFile);
                 schematicWorldMap.put(name.toLowerCase(), schematicWorld);
             }
         }

@@ -57,6 +57,7 @@ public class WorldEditUtils {
 
     public static void pasteSchematicWE(InterneAPI api, Location loc, SchematicWorld schematicWorld) {
         try {
+            loc.setY(schematicWorld.height());
             File file = new File(api.getPlugin().getDataFolder() + File.separator + schematicWorld.schematicFile());
             ClipboardFormat format = cachedIslandSchematic.getOrDefault(file, ClipboardFormats.findByFile(file));
             try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
