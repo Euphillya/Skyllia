@@ -36,21 +36,23 @@ public class InterneAPI {
     private DatabaseLoader databaseLoader;
     private Managers managers;
     private CacheManager cacheManager;
+    private boolean useFolia = false;
 
     public InterneAPI(Main plugin) {
         this.plugin = plugin;
         this.logger = LogManager.getLogger("fr.euphyllia.skyllia.api.InterneAPI");
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager);
+        try {
+            Class.forName("io.papermc.paper.threadedregions.scheduler.RegionScheduler");
+            this.useFolia = true;
+        } catch (ClassNotFoundException ignored) {
+            this.useFolia = false;
+        }
     }
 
     public boolean isFolia() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.RegionScheduler");
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
+        return this.useFolia;
     }
 
 
