@@ -80,6 +80,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         }
 
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(schematicWorld.worldName()), island.getPosition().regionX(), island.getPosition().regionZ());
+                        center.setY(schematicWorld.height()); // Fix
                         this.pasteSchematic(plugin, island, center, schematicWorld);
                         this.setFirstHome(island, center);
                         this.restoreGameMode(plugin, player, center);
