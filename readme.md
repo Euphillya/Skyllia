@@ -10,15 +10,8 @@ The plugin has an API that you can use to add feature extensions to customize yo
 
 ## Download Plugin
 
-I won't be providing a Plugin Jar just yet, as the plugin isn't finished yet! Once I find it "usable", it will be made
-available.
-HOWEVER, the plugin won't be stable right away. I'm developing in my spare time, so I won't be able to fix every bug
-that comes along at once. Nevertheless, don't hesitate to tell me about any problems you encounter, such as :
-
-- Performance problems (spark recommended)
-- Minor or fatal bug
-
-To see the progress of the plugin, look here : [In progress](https://github.com/Euphillya/Skyllia/issues/3)
+- Dev : https://github.com/Euphillya/Skyllia/actions
+- Alpha : https://github.com/Euphillya/Skyllia/releases
 
 ## Compatible Plugin
 
