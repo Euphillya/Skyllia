@@ -1,5 +1,6 @@
 ## Contact :
-<img src="https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2" alt="Discord Banner 2"/>
+
+[![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
 
 ## Plugin Skyblock for Folia
 
