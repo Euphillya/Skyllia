@@ -7,6 +7,8 @@ description: "Plugin Skyblock pour Folia / PaperMC"
 folia-supported: true
 depend:
   - WorldEdit
+softdepend:
+  - EssentialsX
 
 commands:
   skyllia:

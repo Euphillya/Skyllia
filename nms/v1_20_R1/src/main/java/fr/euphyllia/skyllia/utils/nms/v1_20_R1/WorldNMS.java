@@ -187,12 +187,16 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     @Override
     public void resetChunk(World craftWorld, Position position) {
         final ServerLevel serverLevel = ((CraftWorld) craftWorld).getHandle();
+        io.papermc.paper.util.TickThread.ensureTickThread(serverLevel, position.x(), position.z(), "Cannot regenerate chunk asynchronously");
         final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
         final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
         final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);
-        for (final BlockPos blockPos : BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinBuildHeight(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxBuildHeight() - 1, chunkPos.getMaxBlockZ())) {
+        final Iterable<BlockPos> blockPosIterable = BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinBuildHeight(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxBuildHeight() - 1, chunkPos.getMaxBlockZ());
+        for (final BlockPos blockPos : blockPosIterable) {
             levelChunk.removeBlockEntity(blockPos);
             serverLevel.setBlock(blockPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 16);
+        }
+        for (final BlockPos blockPos : blockPosIterable) { // Fix memory issue client
             serverChunkCache.blockChanged(blockPos);
         }
     }

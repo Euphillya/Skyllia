@@ -11,7 +11,6 @@ import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.IslandUtils;
-import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import org.apache.logging.log4j.Level;
@@ -85,7 +84,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.setFirstHome(island, center);
                         this.restoreGameMode(plugin, player, center);
                         this.addOwnerIslandInMember(island, player);
-                        PlayerUtils.setOwnWorldBorder(plugin, player, center, "", island.getSize(), 0, 0);
+                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, center, island.getSize(), 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
                     } else {
                         new HomeSubCommand().onCommand(plugin, sender, command, label, args);

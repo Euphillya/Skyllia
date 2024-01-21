@@ -22,7 +22,7 @@ public class WorldsManager {
 
     public WorldsManager(InterneAPI interneAPI) {
         this.api = interneAPI;
-        this.logger = LogManager.getLogger("fr.euphyllia.skyllia.managers.world.WorldsManager");
+        this.logger = LogManager.getLogger(this);
     }
 
     public void initWorld() {

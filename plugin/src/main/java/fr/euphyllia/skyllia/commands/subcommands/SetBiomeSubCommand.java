@@ -13,7 +13,6 @@ import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -118,7 +117,9 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                         for (Players players : island.getMembers()) {
                             Player bPlayer = Bukkit.getPlayer(players.getMojangId());
                             if (bPlayer != null && bPlayer.isOnline()) {
-                                PlayerUtils.updateChunk(plugin, player, chunkLocX, chunkLocZ);
+                                player.getScheduler().run(plugin, task -> {
+                                    player.getWorld().refreshChunk(chunkLocX, chunkLocZ);
+                                }, null);
                             }
                         }
                     }

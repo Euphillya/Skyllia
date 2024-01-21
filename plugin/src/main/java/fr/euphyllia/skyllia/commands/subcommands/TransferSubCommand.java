@@ -48,7 +48,7 @@ public class TransferSubCommand implements SubCommandInterface {
 
                     String newOwner = args[0];
                     Players players = island.getMember(newOwner);
-                    if (!players.getRoleType().equals(RoleType.MEMBER) || !players.getRoleType().equals(RoleType.MODERATOR)) {
+                    if (players == null || !players.getRoleType().equals(RoleType.MEMBER) || !players.getRoleType().equals(RoleType.MODERATOR)) {
                         player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageNotMember));
                         return;
                     }

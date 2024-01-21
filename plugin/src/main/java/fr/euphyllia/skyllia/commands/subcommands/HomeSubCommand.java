@@ -1,13 +1,11 @@
 package fr.euphyllia.skyllia.commands.subcommands;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -65,12 +63,7 @@ public class HomeSubCommand implements SubCommandInterface {
                         }
                         player.teleportAsync(loc);
                         player.setGameMode(GameMode.SURVIVAL);
-                        try {
-                            PlayerUtils.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), "", rayon, 0, 0);
-                        } catch (UnsupportedMinecraftVersionException e) {
-                            logger.log(Level.FATAL, e.getMessage(), e);
-                        }
-
+                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);
                     }, null);
                 } catch (Exception exception) {

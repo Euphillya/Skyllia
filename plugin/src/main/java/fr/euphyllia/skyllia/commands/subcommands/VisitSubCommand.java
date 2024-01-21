@@ -1,13 +1,11 @@
 package fr.euphyllia.skyllia.commands.subcommands;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -80,11 +78,7 @@ public class VisitSubCommand implements SubCommandInterface {
                             loc = warpIsland.location();
                         }
                         player.teleportAsync(loc);
-                        try {
-                            PlayerUtils.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), "", island.getSize(), 0, 0);
-                        } catch (UnsupportedMinecraftVersionException e) {
-                            logger.log(Level.FATAL, e.getMessage(), e);
-                        }
+                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                         player.setGameMode(GameMode.SURVIVAL);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
                     }, null);

@@ -89,6 +89,8 @@ public class DeleteSubCommand implements SubCommandInterface {
                         }
 
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
+                    } else {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                     }
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);

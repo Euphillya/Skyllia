@@ -1,14 +1,12 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.GameMode;
@@ -48,13 +46,8 @@ public class JoinEvent implements Listener {
                     World world = player.getLocation().getWorld();
                     if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
                         Location centerIsland = RegionUtils.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
-                        try {
-                            PlayerUtils.setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, "", island.getSize(), 0, 0);
-                        } catch (UnsupportedMinecraftVersionException e) {
-                            logger.log(Level.FATAL, e.getMessage(), e);
-                        }
+                        this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
                     }
-
                 }
             });
         } finally {
