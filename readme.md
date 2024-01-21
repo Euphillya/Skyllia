@@ -1,3 +1,6 @@
+## Contact :
+<img src="https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2" alt="Discord Banner 2"/>
+
 ## Plugin Skyblock for Folia
 
 Skyllia is a Skyblock plugin that will essentially run on Folia.

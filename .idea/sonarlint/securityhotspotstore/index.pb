@@ -154,8 +154,6 @@ r
 Bapi/src/main/java/fr/euphyllia/skyllia/api/utils/nms/WorldNMS.java,9\d\9d0958fbd9d6dc3e202f67c699a6ecb77dfa07e3
 €
 Pnms/v1_20_R1/src/main/java/fr/euphyllia/skyllia/utils/nms/v1_20_R1/WorldNMS.java,5\7\57e89a467de6626808224fb02433e9bbcb08b8e6
-k
-;plugin/src/main/java/fr/euphyllia/skyllia/utils/Spiral.java,4\6\46139d9d21ff3236856041af5253abd9b2865c09
 |
 Lplugin/src/main/java/fr/euphyllia/skyllia/utils/models/CallBackPosition.java,8\6\862ded2c846643f50c0b7531a49da0e84e19879e
 |
