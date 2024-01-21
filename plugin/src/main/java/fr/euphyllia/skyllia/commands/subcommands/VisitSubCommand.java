@@ -75,13 +75,13 @@ public class VisitSubCommand implements SubCommandInterface {
                         player.setGameMode(GameMode.SPECTATOR);
                         Location loc;
                         if (warpIsland == null) {
-                            loc = RegionUtils.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().regionX(), island.getPosition().regionZ());
+                            loc = RegionUtils.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().x(), island.getPosition().z());
                         } else {
                             loc = warpIsland.location();
                         }
                         player.teleportAsync(loc);
                         try {
-                            PlayerUtils.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().regionX(), island.getPosition().regionZ()), "", island.getSize(), 0, 0);
+                            PlayerUtils.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), "", island.getSize(), 0, 0);
                         } catch (UnsupportedMinecraftVersionException e) {
                             logger.log(Level.FATAL, e.getMessage(), e);
                         }

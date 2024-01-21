@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
+import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -32,6 +34,7 @@ import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.WorldData;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
@@ -47,9 +50,19 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class WorldNMS {
+public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
-    public static WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
+    static GameType getGameType(GameMode gameMode) {
+        return switch (gameMode) {
+            case SURVIVAL -> GameType.SURVIVAL;
+            case CREATIVE -> GameType.CREATIVE;
+            case ADVENTURE -> GameType.ADVENTURE;
+            case SPECTATOR -> GameType.SPECTATOR;
+        };
+    }
+
+    @Override
+    public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
         io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
@@ -171,12 +184,16 @@ public class WorldNMS {
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());
     }
 
-    static GameType getGameType(GameMode gameMode) {
-        return switch (gameMode) {
-            case SURVIVAL -> GameType.SURVIVAL;
-            case CREATIVE -> GameType.CREATIVE;
-            case ADVENTURE -> GameType.ADVENTURE;
-            case SPECTATOR -> GameType.SPECTATOR;
-        };
+    @Override
+    public void resetChunk(World craftWorld, Position position) {
+        final ServerLevel serverLevel = ((CraftWorld) craftWorld).getHandle();
+        final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
+        final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
+        final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);
+        for (final BlockPos blockPos : BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinBuildHeight(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxBuildHeight() - 1, chunkPos.getMaxBlockZ())) {
+            levelChunk.removeBlockEntity(blockPos);
+            serverLevel.setBlock(blockPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 16);
+            serverChunkCache.blockChanged(blockPos);
+        }
     }
 }

@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.utils;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -10,13 +9,11 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
-import com.sk89q.worldedit.world.block.BlockState;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -27,9 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 import java.io.File;
@@ -80,58 +75,24 @@ public class WorldEditUtils {
         }
     }
 
-    public static void deleteIsland(Main plugin, Island island, org.bukkit.World w, double rayon) {
+    public static void deleteIsland(Main plugin, Island island, org.bukkit.World w) {
         if (w == null) {
             throw new RuntimeException("World is not loaded or not exist");
         }
+        Position position = island.getPosition();
 
-        switch (worldEditVersion()) {
-            case FAST_ASYNC_WORLD_EDIT -> {
-                Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                    World world = BukkitAdapter.adapt(w);
-                    CuboidRegion selection = getCuboidRegionWithRayon(world, w, island, rayon);
-                    try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder().world(world).maxBlocks(-1).build()) { // get the edit session and use -1 for max blocks for no limit, this is a try with resources statement to ensure the edit session is closed after use
-                        RandomPattern pat = new RandomPattern(); // Create the random pattern
-                        BlockState air = BukkitAdapter.adapt(Material.AIR.createBlockData());
-                        pat.add(air, 1);
-                        editSession.setReorderMode(EditSession.ReorderMode.MULTI_STAGE);
-                        editSession.setSideEffectApplier(SideEffectSet.defaults());
-                        editSession.setBlocks(selection, pat);
-                    } catch (MaxChangedBlocksException ex) {
-                        logger.log(Level.FATAL, ex);
-                    }
-                });
-            }
-            case WORLD_EDIT -> Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                CuboidRegion selection = getCuboidRegionWithRayon(null, w, island, rayon);
-                List<Location> blocksLocationList = new ArrayList<>();
-
-                selection.forEach(blockVector3 -> blocksLocationList.add(new Location(w, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ())));
-
-                for (Location blockLocation : blocksLocationList) {
-                    Bukkit.getRegionScheduler().run(plugin, blockLocation, t -> {
-                        Block block = blockLocation.getBlock();
-                        if (block.getType().isAir()) return;
-                        block.setType(Material.AIR, false);
-                    });
-                }
-            });
-            default -> {
-                RegionUtils.editBlockRegion(w, island.getPosition().regionX(), island.getPosition().regionZ(), plugin, location -> {
-                    Bukkit.getRegionScheduler().run(plugin, location, t1 -> {
-                        Block block = location.getBlock();
-                        if (block.getType().isAir()) return;
-                        block.setType(Material.AIR);
-                    });
-                }, 20);
-            }
-        }
+        AtomicInteger delay = new AtomicInteger(1);
+        int regionSize = 33; // une region à une taille de 32, mais un chunk n'est jamais au centre ! Donc je rajoute une marge d'erreur qui sera vérifier dans la spirale
+        RegionUtils.spiralStartCenter(position, regionSize, chunKPosition -> {
+            Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
+                    plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), delay.getAndIncrement());
+        });
     }
 
     public static CompletableFuture<Boolean> changeBiomeChunk(Main plugin, org.bukkit.World world, Biome biome, Position position) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        int blockX = position.regionX() << 4;
-        int blockZ = position.regionZ() << 4;
+        int blockX = position.x() << 4;
+        int blockZ = position.z() << 4;
         BlockVector3 pos1 = BlockVector3.at(blockX, world.getMinHeight(), blockZ);
         BlockVector3 pos2 = BlockVector3.at(blockX + 15, world.getMaxHeight(), blockZ + 15);
         CuboidRegion selection = new CuboidRegion(pos1, pos2);
@@ -155,8 +116,8 @@ public class WorldEditUtils {
             world = BukkitAdapter.adapt(w);
         }
 
-        Vector vmin = RegionUtils.getMinXRegion(w, island.getPosition().regionX(), island.getPosition().regionZ());
-        Vector vmax = RegionUtils.getMaxXRegion(w, island.getPosition().regionX(), island.getPosition().regionZ());
+        Vector vmin = RegionUtils.getMinXRegion(w, island.getPosition().x(), island.getPosition().z());
+        Vector vmax = RegionUtils.getMaxXRegion(w, island.getPosition().x(), island.getPosition().z());
 
         int minX = (int) vmin.getX();
         int minY = (int) vmin.getY();
@@ -187,8 +148,8 @@ public class WorldEditUtils {
             world = BukkitAdapter.adapt(w);
         }
 
-        Vector vmin = RegionUtils.getMinXRegion(w, island.getPosition().regionX(), island.getPosition().regionZ());
-        Vector vmax = RegionUtils.getMaxXRegion(w, island.getPosition().regionX(), island.getPosition().regionZ());
+        Vector vmin = RegionUtils.getMinXRegion(w, island.getPosition().x(), island.getPosition().z());
+        Vector vmax = RegionUtils.getMaxXRegion(w, island.getPosition().x(), island.getPosition().z());
 
         BlockVector3 minRegion = BlockVector3.at(vmin.getX(), vmin.getY(), vmin.getZ());
         BlockVector3 maxRegion = BlockVector3.at(vmax.getX(), vmax.getY(), vmax.getZ());
@@ -200,7 +161,7 @@ public class WorldEditUtils {
         if (world == null) {
             world = BukkitAdapter.adapt(w);
         }
-        Location center = RegionUtils.getCenterRegion(w, island.getPosition().regionX(), island.getPosition().regionZ());
+        Location center = RegionUtils.getCenterRegion(w, island.getPosition().x(), island.getPosition().z());
         BlockVector3 minRegion = BlockVector3.at(center.getBlockX() - rayon, world.getMinY(), center.getBlockZ() + rayon);
         BlockVector3 maxRegion = BlockVector3.at(center.getBlockX() + rayon, world.getMaxY(), center.getBlockZ() - rayon);
 

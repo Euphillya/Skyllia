@@ -2,6 +2,8 @@ package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -16,6 +18,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,10 +40,12 @@ public class InterneAPI {
     private Managers managers;
     private CacheManager cacheManager;
     private boolean useFolia = false;
+    private WorldNMS worldNMS;
 
-    public InterneAPI(Main plugin) {
+    public InterneAPI(Main plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
         this.logger = LogManager.getLogger("fr.euphyllia.skyllia.api.InterneAPI");
+        this.setWorldNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager);
         try {
@@ -152,5 +157,20 @@ public class InterneAPI {
 
     public CacheManager getCacheManager() {
         return this.cacheManager;
+    }
+
+    private void setWorldNMS() throws UnsupportedMinecraftVersionException {
+        final String versionMC = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        worldNMS = switch (versionMC) {
+            case "v1_19_R3" -> new fr.euphyllia.skyllia.utils.nms.v1_19_R3.WorldNMS();
+            case "v1_20_R1" -> new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
+            case "v1_20_R2" -> new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
+            default ->
+                    throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(versionMC));
+        };
+    }
+
+    public WorldNMS getWorldNMS() {
+        return this.worldNMS;
     }
 }

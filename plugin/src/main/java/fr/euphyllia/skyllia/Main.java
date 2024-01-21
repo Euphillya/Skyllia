@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.commands.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.listeners.bukkitevents.*;
@@ -29,7 +30,13 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         logger.log(Level.INFO, "Plugin Start");
-        this.interneAPI = new InterneAPI(this);
+        try {
+            this.interneAPI = new InterneAPI(this);
+        } catch (UnsupportedMinecraftVersionException e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
         try {
             if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml")) {
                 Bukkit.getPluginManager().disablePlugin(this);

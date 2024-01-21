@@ -59,14 +59,14 @@ public class HomeSubCommand implements SubCommandInterface {
                     player.getScheduler().run(plugin, scheduledTask1 -> {
                         Location loc;
                         if (warpIsland == null) {
-                            loc = RegionUtils.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().regionX(), island.getPosition().regionZ());
+                            loc = RegionUtils.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().x(), island.getPosition().z());
                         } else {
                             loc = warpIsland.location();
                         }
                         player.teleportAsync(loc);
                         player.setGameMode(GameMode.SURVIVAL);
                         try {
-                            PlayerUtils.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().regionX(), island.getPosition().regionZ()), "", rayon, 0, 0);
+                            PlayerUtils.setOwnWorldBorder(plugin, player, RegionUtils.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), "", rayon, 0, 0);
                         } catch (UnsupportedMinecraftVersionException e) {
                             logger.log(Level.FATAL, e.getMessage(), e);
                         }

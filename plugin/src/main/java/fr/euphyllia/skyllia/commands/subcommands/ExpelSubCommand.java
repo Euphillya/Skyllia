@@ -97,7 +97,7 @@ public class ExpelSubCommand implements SubCommandInterface {
                     Position islandPosition = island.getPosition();
                     Position playerRegionPosition = RegionUtils.getRegionInChunk(chunkLocX, chunkLocZ);
 
-                    if (islandPosition.regionX() != playerRegionPosition.regionX() || islandPosition.regionZ() != playerRegionPosition.regionZ()) {
+                    if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageExpelPlayerFailedNotInIsland);
                         return;
                     }

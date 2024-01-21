@@ -47,7 +47,7 @@ public class JoinEvent implements Listener {
                     this.api.updateCache(player);
                     World world = player.getLocation().getWorld();
                     if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
-                        Location centerIsland = RegionUtils.getCenterRegion(world, island.getPosition().regionX(), island.getPosition().regionZ());
+                        Location centerIsland = RegionUtils.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
                         try {
                             PlayerUtils.setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, "", island.getSize(), 0, 0);
                         } catch (UnsupportedMinecraftVersionException e) {

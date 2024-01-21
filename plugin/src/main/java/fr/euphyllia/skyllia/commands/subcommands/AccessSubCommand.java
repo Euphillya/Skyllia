@@ -74,7 +74,7 @@ public class AccessSubCommand implements SubCommandInterface {
                         if (statusAccessUpdate) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandClose);
                             ConfigToml.worldConfigs.forEach(worldConfig -> {
-                                RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().regionX(), island.getPosition().regionZ(), entity -> {
+                                RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().x(), island.getPosition().z(), entity -> {
                                     Player playerInIsland = (Player) entity;
                                     if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
                                     Players players = island.getMember(playerInIsland.getUniqueId());

@@ -132,7 +132,7 @@ public class MariaDBCreateTable {
             scheduledExecutorService.execute(() -> {
                 for (int i = 1; i < ConfigToml.maxIsland; i++) {
                     Position position = RegionUtils.getPositionNewIsland(i);
-                    MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.regionX(), position.regionZ()), null, null);
+                    MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.x(), position.z()), null, null);
                     if (i % 1000 == 0) {
                         logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
                     }

@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.utils.models.CallBackPosition;
 import fr.euphyllia.skyllia.utils.models.CallbackEntity;
 import fr.euphyllia.skyllia.utils.models.CallbackLocation;
 import org.apache.logging.log4j.LogManager;
@@ -19,11 +20,19 @@ import java.util.concurrent.TimeUnit;
 public class RegionUtils {
 
     private static final Logger logger = LogManager.getLogger(RegionUtils.class);
+    private static final double OFFSET = 256D;
 
     public static Location getCenterRegion(World w, int regionX, int regionZ) {
-        double rx = (regionX << 9) + 256d;
-        double rz = (regionZ << 9) + 256d;
+        double rx = (regionX << 9) + OFFSET;
+        double rz = (regionZ << 9) + OFFSET;
         return new Location(w, rx, 0.0d, rz);
+    }
+
+    public static Position getChunkCenterRegion(int regionX, int regionZ) {
+        int chunkX = (regionX << 9) + (int) OFFSET;
+        int chunkZ = (regionZ << 9) + (int) OFFSET;
+
+        return new Position(chunkX >> 4, chunkZ >> 4);
     }
 
     public static Position getPositionNewIsland(int start) {
@@ -116,7 +125,7 @@ public class RegionUtils {
     }
 
     public static Position getRegionInChunk(Position chunk) {
-        return getRegionInChunk(chunk.regionX(), chunk.regionZ());
+        return getRegionInChunk(chunk.x(), chunk.z());
     }
 
     public static Position getRegionInChunk(int chunkX, int chunkZ) {
@@ -150,6 +159,33 @@ public class RegionUtils {
                     }
                 });
             }
+        }
+    }
+
+    public static void spiralStartCenter(Position islandRegion, int size, CallBackPosition callbackChunkPosition) {
+        Position chunk = RegionUtils.getChunkCenterRegion(islandRegion.x(), islandRegion.z());
+        int cx = chunk.x();
+        int cz = chunk.z();
+        int x = 0, z = 0;
+        int dx = 0, dz = -1;
+        int maxI = size * size;
+
+        for (int i = 0; i < maxI; i++) {
+            if ((-size / 2 <= x) && (x <= size / 2) && (-size / 2 <= z) && (z <= size / 2)) {
+                Position chunkPos = new Position(cx + x, cz + z);
+                Position region = RegionUtils.getRegionInChunk(chunkPos.x(), chunkPos.z());
+                if (islandRegion.x() == region.x() && (islandRegion.z() == region.z())) {
+                    callbackChunkPosition.run(chunkPos);
+                }
+            }
+
+            if ((x == z) || ((x < 0) && (x == -z)) || ((x > 0) && (x == 1 - z))) {
+                int temp = dx;
+                dx = -dz;
+                dz = temp;
+            }
+            x += dx;
+            z += dz;
         }
     }
 }

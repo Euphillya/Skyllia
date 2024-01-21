@@ -85,7 +85,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                         this.updatePlayer(plugin, skyblockManager, island);
 
                         for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                            WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()), island.getSize());
+                            WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
                         }
 
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
