@@ -188,3 +188,7 @@ Tplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/InviteSubCommand
 Rplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/WarpSubCommand.java,1\6\16b2ca2e74d32ee7fb795997bae617e185f9c539
 €
 Pplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/BlockEvent.java,1\2\12ee245389e2908bfd4d08445bd74af89978caef
+…
+Uplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/DelWarpSubCommand.java,2\c\2ca10b384b33bf8effb1e5d74fea238c88048b07
+„
+Tplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/DemoteSubCommand.java,e\c\eced7ec3a593b9d0ac4a05da608a6fb34d8de0dd

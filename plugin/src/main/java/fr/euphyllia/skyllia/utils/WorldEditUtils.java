@@ -71,7 +71,7 @@ public class WorldEditUtils {
                 }
             }
         } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage());
+            logger.log(Level.FATAL, e.getMessage(), e);
         }
     }
 
