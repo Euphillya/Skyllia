@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
@@ -86,6 +87,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.addOwnerIslandInMember(island, player);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, center, island.getSize(), 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
+                        Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
                     } else {
                         new HomeSubCommand().onCommand(plugin, sender, command, label, args);
                     }
