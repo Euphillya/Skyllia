@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "fr.euphyllia";
-version = "1.0-alpha.6";
+version = "1.0-alpha.7-SNAPSHOT";
 description = "Plugin Skyblock pour Folia / PaperMC";
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
@@ -41,6 +41,15 @@ allprojects {
         compileJava {
             options.encoding = "UTF-8"
         }
+        processResources {
+            filesMatching("**/plugin.yml") {
+                expand(rootProject.project.properties)
+            }
+
+            // Always re-run this task
+            outputs.upToDateWhen { false }
+        }
+
     }
 }
 

@@ -13,6 +13,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -47,8 +48,8 @@ public class IslandHook extends Island {
         this.ownerId = ownerId;
         this.createDate = date;
         this.position = position;
-        if (size >= 511 || size <= 1) {
-            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and 511.");
+        if (size >= (511 * ConfigToml.regionDistance) || size <= 1) {
+            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted((511 * ConfigToml.regionDistance)));
         }
         this.size = size;
     }
@@ -70,8 +71,8 @@ public class IslandHook extends Island {
 
     @Override
     public void setSize(double rayon) throws MaxIslandSizeExceedException {
-        if (this.size >= 511 || this.size <= 1) {
-            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and 511."); // Fix https://github.com/Euphillya/skyllia/issues/9
+        if (this.size >= (511 * ConfigToml.regionDistance) || this.size <= 1) {
+            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted(511 * ConfigToml.regionDistance) ); // Fix https://github.com/Euphillya/skyllia/issues/9
         }
         this.size = rayon;
     }

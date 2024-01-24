@@ -185,8 +185,11 @@ public class ConfigToml {
         }
     }
 
-    private static void maxIle() {
+    public static int regionDistance = -1;
+
+    private static void configs() {
         maxIsland = getInt("config.max-island", maxIsland);
+        regionDistance = getInt("config.region-distance-per-island", regionDistance);
     }
 
     private static void typeIsland() {
