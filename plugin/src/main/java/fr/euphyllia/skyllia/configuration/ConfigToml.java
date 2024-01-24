@@ -180,7 +180,7 @@ public class ConfigToml {
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
             String key = parentConfig + entry.getKey();
             String skyblockEnvironment = getString(key + ".environment", World.Environment.NORMAL.name());
-            String netherPortalTeleport = getString(key + ".nether-portal-", "sky-overworld");
+            String netherPortalTeleport = getString(key + ".nether-portal", "sky-overworld");
             String endPortalTeleport = getString(key + ".end-portal-tp", "sky-overworld");
             worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, netherPortalTeleport, endPortalTeleport));
         }
