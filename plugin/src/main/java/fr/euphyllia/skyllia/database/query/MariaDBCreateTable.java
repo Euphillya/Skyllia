@@ -10,7 +10,6 @@ import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
 import java.util.List;

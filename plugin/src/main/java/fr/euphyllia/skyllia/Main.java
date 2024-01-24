@@ -95,7 +95,7 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new InventoryEvent(this.interneAPI), this);
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
         if (this.interneAPI.isFolia()) {
-           pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
+            pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
         }
 
         // Skyblock Event

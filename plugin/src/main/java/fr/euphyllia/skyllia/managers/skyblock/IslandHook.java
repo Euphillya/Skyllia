@@ -72,7 +72,7 @@ public class IslandHook extends Island {
     @Override
     public void setSize(double rayon) throws MaxIslandSizeExceedException {
         if (this.size >= (511 * ConfigToml.regionDistance) || this.size <= 1) {
-            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted(511 * ConfigToml.regionDistance) ); // Fix https://github.com/Euphillya/skyllia/issues/9
+            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted(511 * ConfigToml.regionDistance)); // Fix https://github.com/Euphillya/skyllia/issues/9
         }
         this.size = rayon;
     }

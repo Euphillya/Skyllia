@@ -37,6 +37,7 @@ public class ConfigToml {
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
     public static int dbVersion = 1;
+    public static int regionDistance = -1;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -184,8 +185,6 @@ public class ConfigToml {
             worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, netherPortalTeleport, endPortalTeleport));
         }
     }
-
-    public static int regionDistance = -1;
 
     private static void configs() {
         maxIsland = getInt("config.max-island", maxIsland);
