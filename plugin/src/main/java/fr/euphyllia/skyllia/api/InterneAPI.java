@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.sql.SQLException;
 
 public class InterneAPI {
 
@@ -129,12 +130,12 @@ public class InterneAPI {
             if (!this.database.loadDatabase()) {
                 return false;
             }
-            new MariaDBCreateTable(this);
+            boolean start = new MariaDBCreateTable(this).init();
             this.transaction = new MariaDBTransactionQuery();
+            return start;
         } else {
             return false;
         }
-        return true;
     }
 
     public IslandQuery getIslandQuery() {

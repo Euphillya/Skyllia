@@ -108,46 +108,44 @@ public class MariaDBCreateTable {
         }
         this.database = dbConfig.database();
         this.dbVersion = dbConfig.dbVersion();
-        try {
-            this.init();
-        } catch (SQLException e) {
-            logger.log(Level.FATAL, e);
-            throw new DatabaseException(e);
-        }
     }
 
-    private void init() throws SQLException {
-        // DATABASE
-        MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_ISLANDS.formatted(this.database));
-        if (this.dbVersion <= 1) {
-            MariaDBExecute.executeQuery(api, "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
-        }
-        MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
-        ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
+    public boolean init() throws DatabaseException {
         try {
-            scheduledExecutorService.execute(() -> {
-                int distancePerIsland = ConfigToml.regionDistance;
-                if (distancePerIsland <= 0) {
-                    logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
-                            "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
-                    Bukkit.getPluginManager().disablePlugin(api.getPlugin());
-                    return;
-                }
-                for (int i = 1; i < ConfigToml.maxIsland; i++) {
-                    Position position = RegionUtils.getPositionNewIsland(i);
-                    MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null);
-                    if (i % 1000 == 0) {
-                        logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
+            // DATABASE
+            MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database));
+            MariaDBExecute.executeQuery(api, CREATE_ISLANDS.formatted(this.database));
+            if (this.dbVersion <= 1) {
+                MariaDBExecute.executeQuery(api, "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
+            }
+            MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
+            MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
+            MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
+            MariaDBExecute.executeQuery(api, CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
+            MariaDBExecute.executeQuery(api, CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
+            int distancePerIsland = ConfigToml.regionDistance;
+            if (distancePerIsland <= 0) {
+                logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
+                        "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
+                return false;
+            }
+            ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
+            try {
+                scheduledExecutorService.execute(() -> {
+                    for (int i = 1; i < ConfigToml.maxIsland; i++) {
+                        Position position = RegionUtils.getPositionNewIsland(i);
+                        MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null);
+                        if (i % 1000 == 0) {
+                            logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
+                        }
                     }
-                }
-            });
-        } finally {
-            scheduledExecutorService.shutdown();
+                });
+            } finally {
+                scheduledExecutorService.shutdown();
+            }
+            return true;
+        } catch (SQLException exception) {
+            throw new DatabaseException(exception);
         }
     }
 }

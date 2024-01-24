@@ -51,7 +51,7 @@ public class Main extends JavaPlugin {
                 return;
             }
         } catch (DatabaseException | IOException exception) {
-            this.logger.log(Level.FATAL, exception);
+            this.logger.log(Level.FATAL, exception, exception);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
