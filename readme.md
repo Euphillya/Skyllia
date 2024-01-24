@@ -1,32 +1,29 @@
-## Contact :
+## 联系我们 :
 
-[![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
+[![在Discord上与我们联系](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
 
-## Plugin Skyblock for Folia
+## Skyllia是什么
 
-Skyllia is a Skyblock plugin that will essentially run on Folia.
-The plugin will have very little innovative functionality, and it's not my intention at all that there should be
-external features (like quests, for example).
-The plugin has an API that you can use to add feature extensions to customize your server.
+Skyllia是一个Skyblock插件，它将在Folia上运行。 该插件几乎没有创新功能，我并不打算添加外部功能（例如任务）。 该插件有一个API，您可以使用它来添加功能扩展以自定义您的服务器。
 
-## Download Plugin
+## 下载插件
 
 - Dev : https://github.com/Euphillya/Skyllia/actions
 - Alpha : https://github.com/Euphillya/Skyllia/releases
 
-## Compatible Plugin
+## 兼容的服务端
 
-- Folia: (that's why the plugin exists)
-- Paper and fork: To be tested with the addition of Folia's scheduler API to
-  Paper: [Move some Folia API to Paper for easy compat (#9360)](https://github.com/PaperMC/Paper/commit/d6d4c78e7d88f3fcd274bceab1e6b022224096ef)
-- Spigot : no !
-- Bukkit: no !
+- Folia：你猜猜为什么叫SkyFolia
+- Paper和fork：将使用Folia的调度程序API,目前还在测试：[将一些Folia API移动到Paper以能让Folia插件支持Paper - 原文为英文（＃9360）]（https://github.com/PaperMC/Paper/commit/d6d4c78e7d88f3fcd274bceab1e6b022224096ef）
+- Spigot, Bukkit：兼容不了一点。
 
-## Generation Island
+## 生成岛
 
-Each island will be generated on a single region file!
+每个岛屿将在单个区域文件上生成！
 
-## Configuration
+## 配置文件
+
+### 插件配置文件
 
 plugins/Skyllia/config.toml
 
