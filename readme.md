@@ -14,7 +14,7 @@ The plugin has an API that you can use to add feature extensions to customize yo
 - Dev : https://github.com/Euphillya/Skyllia/actions
 - Alpha : https://github.com/Euphillya/Skyllia/releases
 
-## Compatible Plugin
+## Compatible Software
 
 |                    Software                     |     Version      |
 |:-----------------------------------------------:|:----------------:|
