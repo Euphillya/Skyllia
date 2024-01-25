@@ -13,9 +13,13 @@ Skyllia是一个Skyblock插件，它将在Folia上运行。 该插件几乎没�
 
 ## 兼容的服务端
 
-- Folia：你猜猜为什么叫SkyFolia
-- Paper和fork：将使用Folia的调度程序API,目前还在测试：[将一些Folia API移动到Paper以能让Folia插件支持Paper - 原文为英文（＃9360）]（https://github.com/PaperMC/Paper/commit/d6d4c78e7d88f3fcd274bceab1e6b022224096ef）
-- Spigot, Bukkit：兼容不了一点。
+|                    服务端                     |     版本      |
+|:-----------------------------------------------:|:----------------:|
+|  [PaperMC](https://papermc.io/downloads/paper)  |  1.20.1-1.20.4   |
+|         [Purpur](https://purpurmc.org)          |  1.20.1-1.20.4   |
+|   [Folia](https://papermc.io/software/folia)    |  1.19.4-1.20.2   |
+|                     Spigot                      | 不支持~  |
+|                     Bukkit                      | 不支持哦~  |
 
 ## 生成岛
 
