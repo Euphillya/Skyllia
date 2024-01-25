@@ -16,13 +16,15 @@ The plugin has an API that you can use to add feature extensions to customize yo
 - Dev : https://github.com/Euphillya/Skyllia/actions
 - Alpha : https://github.com/Euphillya/Skyllia/releases
 
-## Compatible Plugin
+## Compatible Software
 
-- Folia: (that's why the plugin exists)
-- Paper and fork: To be tested with the addition of Folia's scheduler API to
-  Paper: [Move some Folia API to Paper for easy compat (#9360)](https://github.com/PaperMC/Paper/commit/d6d4c78e7d88f3fcd274bceab1e6b022224096ef)
-- Spigot : no !
-- Bukkit: no !
+|                    Software                     |     Version      |
+|:-----------------------------------------------:|:----------------:|
+|  [PaperMC](https://papermc.io/downloads/paper)  |  1.20.1-1.20.4   |
+|         [Purpur](https://purpurmc.org)          |  1.20.1-1.20.4   |
+|   [Folia](https://papermc.io/software/folia)    |  1.19.4-1.20.2   |
+|                     Spigot                      | Not supported !  |
+|                     Bukkit                      | Not supported !  |
 
 ## Generation Island
 
