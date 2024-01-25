@@ -196,3 +196,15 @@ Tplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/DemoteSubCommand
 bplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/PortailAlternativeFoliaEvent.java,4\6\4620ca956c0f21ebe427972dab382ff3813f02c7
 ~
 Nplugin/src/main/java/fr/euphyllia/skyllia/database/execute/MariaDBExecute.java,a\4\a44f0bb94eca6b1c1b0a2db192774780ba477327
+Ç
+Rplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/KickSubCommand.java,e\8\e8f59fce5deb43e562fc16dffbbbd47d41567404
+Å
+Qplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/BanSubCommand.java,c\0\c0afcf3420e017611556bcd5d73ba90dfe02e0ed
+v
+Fplugin/src/main/java/fr/euphyllia/skyllia/commands/SkylliaCommand.java,1\c\1cc1644f076a351ff1c40462814c2f00360fa783
+{
+Kplugin/src/main/java/fr/euphyllia/skyllia/commands/SubCommandInterface.java,1\7\17d5a36438b3d2e30a43e623372ce8ee46067691
+s
+Cplugin/src/main/java/fr/euphyllia/skyllia/commands/SubCommands.java,c\c\ccc0c9876d6f67afa82e95d95534d5d8358bb5c7
+É
+Splugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/UnbanSubCommand.java,f\d\fd1735da8d47a307749bca8b11d5a6e33ebb95d0

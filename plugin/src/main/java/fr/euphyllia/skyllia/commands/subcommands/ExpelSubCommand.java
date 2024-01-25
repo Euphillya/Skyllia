@@ -34,6 +34,27 @@ public class ExpelSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(ExpelSubCommand.class);
 
+    public static void expelPlayer(Main plugin, Island island, Player bPlayerToExpel, Player executor, boolean silent) {
+        Location bPlayerExpelLocation = bPlayerToExpel.getLocation();
+        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(bPlayerExpelLocation.getWorld().getName()))) {
+            if (!silent) LanguageToml.sendMessage(plugin, executor, LanguageToml.messageExpelPlayerFailedNotInIsland);
+            return;
+        }
+
+        int chunkLocX = bPlayerExpelLocation.getChunk().getX();
+        int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
+
+        Position islandPosition = island.getPosition();
+        Position playerRegionPosition = RegionUtils.getRegionInChunk(chunkLocX, chunkLocZ);
+
+        if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
+            if (!silent) LanguageToml.sendMessage(plugin, executor, LanguageToml.messageExpelPlayerFailedNotInIsland);
+            return;
+        }
+
+        PlayerUtils.teleportPlayerSpawn(plugin, bPlayerToExpel);
+    }
+
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -85,24 +106,8 @@ public class ExpelSubCommand implements SubCommandInterface {
                         return;
                     }
 
-                    Location bPlayerExpelLocation = bPlayerToExpel.getLocation();
-                    if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(bPlayerExpelLocation.getWorld().getName()))) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageExpelPlayerFailedNotInIsland);
-                        return;
-                    }
+                    expelPlayer(plugin, island, bPlayerToExpel, player, false);
 
-                    int chunkLocX = bPlayerExpelLocation.getChunk().getX();
-                    int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
-
-                    Position islandPosition = island.getPosition();
-                    Position playerRegionPosition = RegionUtils.getRegionInChunk(chunkLocX, chunkLocZ);
-
-                    if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageExpelPlayerFailedNotInIsland);
-                        return;
-                    }
-
-                    PlayerUtils.teleportPlayerSpawn(plugin, bPlayerToExpel);
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);

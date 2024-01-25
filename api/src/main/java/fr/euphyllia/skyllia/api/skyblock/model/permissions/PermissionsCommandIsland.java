@@ -18,6 +18,8 @@ public enum PermissionsCommandIsland implements Permissions {
     TP_WARP(512),
     EXPEL(1_024),
     MANAGE_PERMISSION(2_048),
+    BAN(4_096),
+    UNBAN(8_192),
     ;
 
 

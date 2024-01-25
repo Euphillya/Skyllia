@@ -23,21 +23,21 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class KickSubCommand implements SubCommandInterface {
+public class UnbanSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(KickSubCommand.class);
+    private final Logger logger = LogManager.getLogger(UnbanSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.kick")) {
+        if (!player.hasPermission("skyllia.island.command.unban")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickCommandNotEnoughArgs);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanCommandNotEnoughArgs);
             return true;
         }
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -56,32 +56,27 @@ public class KickSubCommand implements SubCommandInterface {
                     PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
                     PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                    if (!permissionManager.hasPermission(PermissionsCommandIsland.KICK)) {
+                    if (!permissionManager.hasPermission(PermissionsCommandIsland.UNBAN)) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                         return;
                     }
                 }
 
-                String playerKick = args[0];
-                Players players = island.getMember(playerKick);
+                String playerBan = args[0];
+                Players players = island.getMember(playerBan);
 
                 if (players == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
-                    return;
-                }
-
-                if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailedHighOrEqualsStatus);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanPlayerNotBanned);
                     return;
                 }
 
                 boolean isRemoved = island.removeMember(players);
                 if (isRemoved) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerSuccess);
-                    DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnBanPlayerSuccess);
                 } else {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailed);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanPlayerFailed);
                 }
+
             });
         } finally {
             executor.shutdown();

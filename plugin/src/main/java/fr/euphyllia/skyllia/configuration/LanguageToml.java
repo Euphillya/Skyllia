@@ -64,6 +64,7 @@ public class LanguageToml {
     public static String messageKickPlayerSuccess = "Le joueur a été viré de votre île.";
     public static String messageKickPlayerFailed = "Le joueur n'a pas pu être viré. Si le problème persiste, contacter un administrateur";
     public static String messageKickPlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas virer un joueur de votre rang ou d'un rang plus élevé.";
+    public static String messageBanCommandNotEnoughArgs = "La commande est incomplète : /skyllia ban <player>";
     public static String messageLeaveFailedIsOwnerIsland = "Vous ne pouvez pas quitter votre île, car vous être le propriétaire !";
     public static String messageLeaveSuccess = "Vous avez quitté votre île.";
     public static String messageLeavePlayerFailed = "Vous n'avez pas pu quitter votre île. Si le problème persiste, contacter un administrateur";
@@ -79,6 +80,7 @@ public class LanguageToml {
     public static String messageVisitCommandNotEnoughArgs = "Vous devez le nom de l'île que vous souhaitez visiter : /skyllia visit <player>";
     public static String messageVisitPlayerHasNotIsland = "Le joueur n'a pas d'île";
     public static String messageVisitIslandIsPrivate = "L'île est fermée.";
+    public static String messageVisitIslandPlayerBanned = "Vous êtes banni de l'ile.1";
     public static String messageVisitIslandSuccess = "Vous avez été téléporté sur l'île de %player%.";
     public static String messageExpelPlayerFailed = "Le joueur ne peut être expulser de votre île.";
     public static String messageExpelPlayerFailedNotInIsland = "Le joueur n'est pas sur votre île.";
@@ -92,6 +94,13 @@ public class LanguageToml {
     public static String messagePermissionsUpdateSuccess = "La permission a été mise à jour !";
     public static String messagePermissionsUpdateFailed = "Le changement n'a pas pu être réalisé.";
     public static String messagePermissionPlayerFailedHighOrEqualsStatus = "Vous ne pouvez pas modifier votre propres permissions ou les permissions des roles supérieur à vous.";
+    public static String messageBanImpossiblePlayerInIsland = "Le joueur ne peut pas être ban, car il est membre de votre île.";
+    public static String messageBanPlayerSuccess = "Le joueur a été banni de votre île.";
+    public static String messageKickCommandNotEnoughArgs = "La commande est incomplete : /skyllia kick <player>";
+    public static String messageUnbanCommandNotEnoughArgs = "La commande est incomplète : /skyllia unban <player>";
+    public static String messageUnbanPlayerNotBanned = "Le joueur n'est pas banni.";
+    public static String messageUnBanPlayerSuccess = "Le joueur a été débanni.";
+    public static String messageUnbanPlayerFailed = "Le joueur n'a pas été banni pour une raison inconnue.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -158,16 +167,16 @@ public class LanguageToml {
         return config.getInt(path);
     }
 
-    private static void accessIslandLanguage() {
+    private static void islandAccessLanguage() {
         messageAccessIslandOpen = getString("island.access.open", messageAccessIslandOpen);
         messageAccessIslandClose = getString("island.access.close", messageAccessIslandClose);
     }
 
-    private static void changeOwnerLanguage() {
+    private static void islandChangeOwnerLanguage() {
         messageTransfertSuccess = getString("island.transfert.success", messageTransfertSuccess);
     }
 
-    private static void changeStatusPlayerLanguage() {
+    private static void islandChangeStatusPlayerLanguage() {
         // Demote
         messageDemotePlayer = getString("island.demote.success", messageDemotePlayer);
         messageDemotePlayerFailed = getString("island.demote.fail", messageDemotePlayerFailed);
@@ -180,7 +189,13 @@ public class LanguageToml {
         messagePromotePlayerFailedLowOrEqualsStatus = getString("island.promote.fail-high-equals-status", messagePromotePlayerFailedLowOrEqualsStatus);
     }
 
-    private static void biomeLanguage() {
+    private static void islandBanLanguage() {
+        messageBanCommandNotEnoughArgs = getString("island.ban.not-enough-args", messageBanCommandNotEnoughArgs);
+        messageBanImpossiblePlayerInIsland = getString("island.ban.failed-player-in-island", messageBanImpossiblePlayerInIsland);
+        messageBanPlayerSuccess = getString("island.ban.success", messageBanPlayerSuccess);
+    }
+
+    private static void islandBiomeLanguage() {
         messageBiomeCommandNotEnoughArgs = getString("island.biome.not-enough-args", messageBiomeCommandNotEnoughArgs);
         messageBiomeOnlyIsland = getString("island.biome.only-island", messageBiomeOnlyIsland);
         messageBiomeNotExist = getString("island.biome.biome-not-exist", messageBiomeNotExist);
@@ -188,7 +203,7 @@ public class LanguageToml {
         messageBiomeChangeSuccess = getString("island.biome.success", messageBiomeChangeSuccess);
     }
 
-    private static void createIslandLanguage() {
+    private static void islandCreateLanguage() {
         messageIslandInProgress = getString("island.create.in-progress", messageIslandInProgress);
         messageIslandCreateFinish = getString("island.create.finish", messageIslandCreateFinish);
         messageIslandTypeNotExist = getString("island.create.type-no-exist", messageIslandTypeNotExist);
@@ -196,18 +211,18 @@ public class LanguageToml {
         messageIslandError = getString("island.create.error", messageIslandError);
     }
 
-    private static void deleteIslandLanguage() {
+    private static void islandDeleteLanguage() {
         messageOnlyOwnerCanDeleteIsland = getString("island.delete.only-owner", messageOnlyOwnerCanDeleteIsland);
         messageIslandDeleteSuccess = getString("island.delete.success", messageIslandDeleteSuccess);
     }
 
-    private static void expelIslandLanguage() {
+    private static void islandExpelLanguage() {
         messageExpelCommandNotEnoughArgs = getString("island.expel.not-enough-args", messageExpelCommandNotEnoughArgs);
         messageExpelPlayerFailed = getString("island.expel.player-failed", messageExpelPlayerFailed);
         messageExpelPlayerFailedNotInIsland = getString("island.expel.player-not-in-island", messageExpelPlayerFailedNotInIsland);
     }
 
-    private static void homeIslandLanguage() {
+    private static void islandHomeLanguage() {
         messageHomeIslandSuccess = getString("island.home.success", messageHomeIslandSuccess);
         messageHomeCreateSuccess = getString("island.home.set.success", messageHomeCreateSuccess);
     }
@@ -244,6 +259,7 @@ public class LanguageToml {
         messageKickPlayerSuccess = getString("island.kick.success", messageInviteJoinIsland);
         messageKickPlayerFailed = getString("island.kick.failed", messageKickPlayerFailed);
         messageKickPlayerFailedHighOrEqualsStatus = getString("island.kick.fail-high-equals-status", messageKickPlayerFailedHighOrEqualsStatus);
+        messageKickCommandNotEnoughArgs = getString("island.kick.not-enough-args", messageKickCommandNotEnoughArgs);
     }
 
     private static void islandLeaveLanguage() {
@@ -262,6 +278,13 @@ public class LanguageToml {
         messagePermissionPlayerFailedHighOrEqualsStatus = getString("island.permission.fail-high-equals-status", messagePermissionPlayerFailedHighOrEqualsStatus);
     }
 
+    private static void islandUnbanLanguage() {
+        messageUnbanCommandNotEnoughArgs = getString("island.unban.not-enough-args", messageUnbanCommandNotEnoughArgs);
+        messageUnbanPlayerNotBanned = getString("island.unban.player-not-banned", messageUnbanPlayerNotBanned);
+        messageUnBanPlayerSuccess = getString("island.unban.success", messageUnBanPlayerSuccess);
+        messageUnbanPlayerFailed = getString("island.unban.failed", messageUnbanPlayerFailed);
+    }
+
     private static void islandWarpLanguage() {
         messageWarpCommandNotEnoughArgs = getString("island.warp.not-enough-args", messageWarpCommandNotEnoughArgs);
         messageWarpCreateSuccess = getString("island.warp.success", messageWarpCreateSuccess);
@@ -276,6 +299,7 @@ public class LanguageToml {
         messageVisitPlayerHasNotIsland = getString("island.visit.player-not-island", messageVisitPlayerHasNotIsland);
         messageVisitIslandIsPrivate = getString("island.visit.island-not-open", messageVisitIslandIsPrivate);
         messageVisitIslandSuccess = getString("island.visit.success", messageVisitIslandSuccess);
+        messageVisitIslandPlayerBanned = getString("island.visit.player-banned", messageVisitIslandPlayerBanned);
     }
 
 

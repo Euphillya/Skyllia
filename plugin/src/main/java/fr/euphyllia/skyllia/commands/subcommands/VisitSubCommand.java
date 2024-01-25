@@ -2,6 +2,8 @@ package fr.euphyllia.skyllia.commands.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -64,6 +66,11 @@ public class VisitSubCommand implements SubCommandInterface {
                     if (!player.hasPermission("skyllia.island.command.visit.bypass")) {
                         if (island.isPrivateIsland()) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandIsPrivate);
+                            return;
+                        }
+                        Players memberIsland = island.getMember(player.getUniqueId());
+                        if (memberIsland != null && memberIsland.getRoleType().equals(RoleType.BAN)) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandPlayerBanned);
                             return;
                         }
                     }

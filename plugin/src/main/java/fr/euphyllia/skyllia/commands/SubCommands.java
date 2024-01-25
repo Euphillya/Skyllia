@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum SubCommands {
     ACCESS(new AccessSubCommand()),
+    BAN(new BanSubCommand()),
     BIOME(new SetBiomeSubCommand()),
     CREATE(new CreateSubCommand()),
     DELETE(new DeleteSubCommand()),
@@ -20,6 +21,7 @@ public enum SubCommands {
     TRANSFER(new TransferSubCommand()),
     SETHOME(new SetHomeSubCommand()),
     SETWARP(new SetWarpSubCommand()),
+    UNBAN(new UnbanSubCommand()),
     VISIT(new VisitSubCommand()),
     WARP(new WarpSubCommand());
 
