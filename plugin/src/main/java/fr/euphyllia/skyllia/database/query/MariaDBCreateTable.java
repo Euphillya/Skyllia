@@ -134,9 +134,9 @@ public class MariaDBCreateTable {
                     for (int i = 1; i < ConfigToml.maxIsland; i++) {
                         Position position = RegionUtils.getPositionNewIsland(i);
                         MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null);
-                        if (i % 1000 == 0) {
+                        /*if (i % 1000 == 0) {
                             logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
-                        }
+                        }*/
                     }
                 });
             } finally {

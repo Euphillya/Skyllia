@@ -20,7 +20,7 @@ The plugin has an API that you can use to add feature extensions to customize yo
 |:---------------------------------------------:|:---------------:|
 | [PaperMC](https://papermc.io/downloads/paper) |  1.20.1-1.20.4  |
 |        [Purpur](https://purpurmc.org)         |  1.20.1-1.20.4  |
-|  [Folia](https://papermc.io/software/folia)   |  1.19.4-1.20.4  |
+|  [Folia](https://papermc.io/software/folia)   |  1.19.4-1.20.2  |
 |                    Spigot                     | Not supported ! |
 |                    Bukkit                     | Not supported ! |
 
