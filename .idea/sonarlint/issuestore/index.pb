@@ -208,3 +208,9 @@ s
 Cplugin/src/main/java/fr/euphyllia/skyllia/commands/SubCommands.java,c\c\ccc0c9876d6f67afa82e95d95534d5d8358bb5c7
 É
 Splugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/UnbanSubCommand.java,f\d\fd1735da8d47a307749bca8b11d5a6e33ebb95d0
+M
+nms/v1_20_R3/build.gradle.kts,6\6\66f6b89775f4196374327a4ecc99b41711e6bfca
+Å
+Qnms/v1_20_R3/src/main/java/fr/euphyllia/skyllia/utils/nms/v1_20_R3/PlayerNMS.java,5\1\511fad92b795270200b7120b4d6034ad29bf0e1f
+Ä
+Pnms/v1_20_R3/src/main/java/fr/euphyllia/skyllia/utils/nms/v1_20_R3/WorldNMS.java,a\8\a890420dc92f6cbc863ec747393fe60d253464c6

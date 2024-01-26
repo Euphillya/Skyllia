@@ -80,7 +80,7 @@ public class LanguageToml {
     public static String messageVisitCommandNotEnoughArgs = "Vous devez le nom de l'île que vous souhaitez visiter : /skyllia visit <player>";
     public static String messageVisitPlayerHasNotIsland = "Le joueur n'a pas d'île";
     public static String messageVisitIslandIsPrivate = "L'île est fermée.";
-    public static String messageVisitIslandPlayerBanned = "Vous êtes banni de l'ile.1";
+    public static String messageVisitIslandPlayerBanned = "Vous êtes banni de l'ile.";
     public static String messageVisitIslandSuccess = "Vous avez été téléporté sur l'île de %player%.";
     public static String messageExpelPlayerFailed = "Le joueur ne peut être expulser de votre île.";
     public static String messageExpelPlayerFailedNotInIsland = "Le joueur n'est pas sur votre île.";
