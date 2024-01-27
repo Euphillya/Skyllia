@@ -47,7 +47,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
         }
 
         Location playerLocation = player.getLocation();
-        if (!WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName())) {
+        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
             sender.sendMessage("Vous n'êtes pas sur votre ile");
             return true;
         }
@@ -62,7 +62,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
             executor.execute(() -> {
                 try {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
                     if (island == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                         return;

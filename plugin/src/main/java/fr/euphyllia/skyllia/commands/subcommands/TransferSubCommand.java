@@ -41,7 +41,12 @@ public class TransferSubCommand implements SubCommandInterface {
                         player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
                         return;
                     }
-                    if (!island.getOwnerId().equals(player.getUniqueId())) {
+                    Players ownerIsland = skyblockManager.getOwnerByIslandID(island).join();
+                    if (ownerIsland == null) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                        return;
+                    }
+                    if (!ownerIsland.getMojangId().equals(player.getUniqueId())) {
                         player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageOnlyOwner));
                         return;
                     }
@@ -58,7 +63,6 @@ public class TransferSubCommand implements SubCommandInterface {
                     oldOwner.setRoleType(RoleType.MEMBER);
                     island.updateMember(oldOwner);
                     // Nouveau proprio
-                    island.setOwnerId(player.getUniqueId());
                     players.setRoleType(RoleType.OWNER);
                     island.updateMember(players);
                     player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageTransfertSuccess.replace("%new_owner%", players.getLastKnowName())));
@@ -68,7 +72,7 @@ public class TransferSubCommand implements SubCommandInterface {
                 executor.shutdown();
             }
         } catch (Exception e) {
-            logger.log(Level.FATAL, "", e);
+            logger.log(Level.FATAL, e.getMessage(), e);
         }
         return false;
     }

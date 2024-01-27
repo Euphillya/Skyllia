@@ -24,18 +24,30 @@ import java.util.concurrent.CompletableFuture;
 public class IslandDataQuery {
 
     private static final String SELECT_ISLAND_BY_OWNER = """
-            SELECT `island_type`, `island_id`, `uuid_owner`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`
-            FROM `%s`.`islands`
-            WHERE `uuid_owner` = ? AND `disable` = 0;
+            SELECT i.*
+            FROM `%s`.`islands` i
+            JOIN `%s`.`members_in_islands` mi ON i.`island_id` = mi.`island_id`
+            WHERE mi.`role` = 'OWNER'
+            AND mi.`uuid_player` = ?
+            AND i.`disable` = 0;
+            """;
+
+    private static final String SELECT_ISLAND_BY_PLAYER_ID = """
+            SELECT i.*
+            FROM `%s`.`islands` i
+            JOIN `%s`.`members_in_islands` mi ON i.`island_id` = mi.`island_id`
+            WHERE mi.`role` NOT IN ('BAN', 'VISITOR')
+            AND mi.`uuid_player` = ?
+            AND i.`disable` = 0 LIMIT 1;
             """;
     private static final String SELECT_ISLAND_BY_ISLAND_ID = """
-            SELECT `island_type`, `island_id`, `uuid_owner`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`
+            SELECT `island_type`, `island_id`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`
             FROM `%s`.`islands`
             WHERE `island_id` = ?;
             """;
     private static final String ADD_ISLANDS = """
                 INSERT INTO `%s`.`islands`
-                    SELECT ?, ?, ?, 0, S.region_x, S.region_z, ?, ?, current_timestamp()
+                    SELECT ?, ?, 0, S.region_x, S.region_z, ?, ?, current_timestamp()
                     FROM `%s`.`spiral` S
                     WHERE S.region_x NOT IN (SELECT region_x FROM `%s`.`islands` S2 WHERE S.region_x = S2.region_x AND S.region_z = S2.region_z AND S2.DISABLE = 0)
                         AND S.region_z NOT IN (SELECT region_z FROM `%s`.`islands` S2 WHERE S.region_x = S2.region_x AND S.region_z = S2.region_z AND S2.DISABLE = 0)
@@ -55,7 +67,7 @@ public class IslandDataQuery {
 
     public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_OWNER.formatted(this.databaseName), List.of(playerId), resultSet -> {
+        MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_OWNER.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
             try {
                 if (resultSet.next()) {
                     Island island = this.constructIslandQuery(resultSet);
@@ -65,7 +77,26 @@ public class IslandDataQuery {
                     completableFuture.complete(null);
                 }
             } catch (Exception e) {
-                logger.log(Level.FATAL, e);
+                logger.log(Level.FATAL, e.getMessage(), e);
+                completableFuture.complete(null);
+            }
+        }, null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId) {
+        CompletableFuture<Island> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_PLAYER_ID.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
+            try {
+                if (resultSet.next()) {
+                    Island island = this.constructIslandQuery(resultSet);
+                    completableFuture.complete(island);
+                    Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+                } else {
+                    completableFuture.complete(null);
+                }
+            } catch (Exception e) {
+                logger.log(Level.FATAL, e.getMessage(), e);
                 completableFuture.complete(null);
             }
         }, null);
@@ -76,10 +107,10 @@ public class IslandDataQuery {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             MariaDBExecute.executeQueryDML(this.api, ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
-                    futurIsland.getIslandType().name(), futurIsland.getId(), futurIsland.getOwnerId(), 1, futurIsland.getSize()
+                    futurIsland.getIslandType().name(), futurIsland.getId(), 1, futurIsland.getSize()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
-            logger.log(Level.FATAL, e);
+            logger.log(Level.FATAL, e.getMessage(), e);
             completableFuture.complete(false);
         }
         return completableFuture;
@@ -106,14 +137,13 @@ public class IslandDataQuery {
     private @Nullable Island constructIslandQuery(ResultSet resultSet) throws SQLException {
         String islandType = resultSet.getString("island_type");
         String islandId = resultSet.getString("island_id");
-        String ownerId = resultSet.getString("uuid_owner");
         int regionX = resultSet.getInt("region_x");
         int regionZ = resultSet.getInt("region_z");
         double size = resultSet.getDouble("size");
         Timestamp timestamp = resultSet.getTimestamp("create_time");
         Position position = new Position(regionX, regionZ);
         try {
-            return new IslandHook(this.api.getPlugin(), IslandUtils.getIslandType(islandType), UUID.fromString(islandId), UUID.fromString(ownerId), position, size, timestamp);
+            return new IslandHook(this.api.getPlugin(), IslandUtils.getIslandType(islandType), UUID.fromString(islandId), position, size, timestamp);
         } catch (MaxIslandSizeExceedException maxIslandSizeExceedException) {
             logger.log(Level.FATAL, maxIslandSizeExceedException);
             return null;

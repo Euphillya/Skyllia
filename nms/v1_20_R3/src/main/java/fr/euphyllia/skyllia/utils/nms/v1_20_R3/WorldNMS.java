@@ -62,6 +62,22 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         };
     }
 
+    private static void setRandom(ServerLevel serverLevel) {
+        try {
+            Class<?> clazz = serverLevel.getClass();
+
+            // Obtention du champ 'randomSpawnSelection'
+            Field randomSpawnSelectionField = clazz.getDeclaredField("randomSpawnSelection");
+            randomSpawnSelectionField.setAccessible(true);
+
+            ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
+            randomSpawnSelectionField.set(serverLevel, newValue);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
         //io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
@@ -196,7 +212,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         // Paper start - fix and optimise world upgrading
         if (console.options.has("forceUpgrade")) {
             net.minecraft.server.Main.convertWorldButItWorks(
-                    actualDimension,  worldSession, DataFixers.getDataFixer(), worlddimension.generator().getTypeNameForDataFixer(), console.options.has("eraseCache")
+                    actualDimension, worldSession, DataFixers.getDataFixer(), worlddimension.generator().getTypeNameForDataFixer(), console.options.has("eraseCache")
             );
         }
         // Paper end - fix and optimise world upgrading
@@ -240,22 +256,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         }
         for (final BlockPos blockPos : blockPosIterable) { // Fix memory issue client
             serverChunkCache.blockChanged(blockPos);
-        }
-    }
-
-    private static void setRandom(ServerLevel serverLevel) {
-        try {
-            Class<?> clazz = serverLevel.getClass();
-
-            // Obtention du champ 'randomSpawnSelection'
-            Field randomSpawnSelectionField = clazz.getDeclaredField("randomSpawnSelection");
-            randomSpawnSelectionField.setAccessible(true);
-
-            ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
-            randomSpawnSelectionField.set(serverLevel, newValue);
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

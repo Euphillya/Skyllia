@@ -28,7 +28,6 @@ public class IslandHook extends Island {
     private final Position position;
     private final UUID islandId;
     private final Timestamp createDate;
-    private final UUID ownerId;
     private final IslandType islandType;
     private double size;
 
@@ -36,16 +35,14 @@ public class IslandHook extends Island {
      * @param main       Plugin skyllia
      * @param islandType Type Island (config.toml)
      * @param islandId   Island ID
-     * @param ownerId    Owner Island
      * @param position   Position X/Z region File
      * @param size       Rayon Island
      * @param date       Create Date
      */
-    public IslandHook(Main main, IslandType islandType, UUID islandId, UUID ownerId, Position position, double size, Timestamp date) throws MaxIslandSizeExceedException {
+    public IslandHook(Main main, IslandType islandType, UUID islandId, Position position, double size, Timestamp date) throws MaxIslandSizeExceedException {
         this.plugin = main;
         this.islandType = islandType;
         this.islandId = islandId;
-        this.ownerId = ownerId;
         this.createDate = date;
         this.position = position;
         if (size >= (511 * ConfigToml.regionDistance) || size <= 1) {
@@ -164,17 +161,6 @@ public class IslandHook extends Island {
     @Override
     public boolean updateMember(Players member) {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
-    }
-
-    @Override
-    public UUID getOwnerId() {
-        return this.ownerId;
-    }
-
-    @Override
-    public void setOwnerId(UUID ownerId) {
-        // Todo ? a faire
-        throw new UnsupportedOperationException("pas encore implémenter");
     }
 
     @Override

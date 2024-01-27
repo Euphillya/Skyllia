@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -72,12 +74,16 @@ public class CreateSubCommand implements SubCommandInterface {
                         }
 
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandInProgress);
+                        UUID idIsland = UUID.randomUUID();
 
-                        island = skyblockManager.createIsland(player.getUniqueId(), islandType).join();
-                        if (island == null) {
+                        boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandType).join());
+                        if (!isCreate) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
                             return;
                         }
+
+                        island = skyblockManager.getIslandByIslandId(idIsland).join();
+                        Bukkit.getPluginManager().callEvent(new SkyblockCreateEvent(island, player.getUniqueId()));
 
                         Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(schematicWorld.worldName()), island.getPosition().x(), island.getPosition().z());
                         center.setY(schematicWorld.height()); // Fix
@@ -139,7 +145,7 @@ public class CreateSubCommand implements SubCommandInterface {
     }
 
     private void addOwnerIslandInMember(Island island, Player player) {
-        Players owners = new Players(player.getUniqueId(), player.getName(), island.getOwnerId(), RoleType.OWNER);
+        Players owners = new Players(player.getUniqueId(), player.getName(), island.getId(), RoleType.OWNER);
         island.updateMember(owners);
     }
 }

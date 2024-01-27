@@ -51,10 +51,6 @@ public abstract class Island {
 
     public abstract boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions);
 
-    public abstract UUID getOwnerId();
-
-    public abstract void setOwnerId(UUID ownerId);
-
     public abstract Position getPosition();
 
     public abstract IslandType getIslandType();

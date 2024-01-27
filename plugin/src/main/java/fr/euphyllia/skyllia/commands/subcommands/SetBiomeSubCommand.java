@@ -74,14 +74,13 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                         return;
                     }
 
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-
                     if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeOnlyIsland);
                         return;
                     }
 
-                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
                     if (island == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);

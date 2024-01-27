@@ -33,19 +33,28 @@ public class IslandMemberQuery {
 
     private static final String SELECT_MEMBER_ISLAND_MOJANG_ID = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
-                FROM`%s`.`members_in_islands`
+                FROM `%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `uuid_player` = ?;
             """;
 
     private static final String SELECT_MEMBER_ISLAND_MOJANG_NAME = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
-                FROM`%s`.`members_in_islands`
+                FROM `%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `player_name` = ?;
             """;
     private static final String MEMBERS_ISLAND = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
-                FROM`%s`.`members_in_islands`
+                FROM `%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `role` NOT IN ('BAN', 'VISITOR');
+            """;
+
+    private static final String OWNER_ISLAND = """
+            SELECT mi.*
+            FROM `%s`.`members_in_islands` mi
+            JOIN `%s`.`islands` i ON mi.`island_id` = i.`island_id`
+            WHERE mi.`island_id` = ?
+            AND mi.`role` = "OWNER"
+            AND i.disable = 0;
             """;
 
     private static final String ADD_MEMBER_CLEAR = """
@@ -141,6 +150,25 @@ public class IslandMemberQuery {
                         completableFuture.complete(null);
                     }
                 }, null);
+        return completableFuture;
+    }
+
+    public CompletableFuture<@Nullable Players> getOwnerInIslandId(Island island) {
+        CompletableFuture<Players> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQuery(this.api, OWNER_ISLAND.formatted(this.databaseName, this.databaseName), List.of(island.getId()), resultSet -> {
+            try {
+                if (resultSet.next()) {
+                    String ownerId = resultSet.getString("mi.uuid_player");
+                    String playerName = resultSet.getString("mi.player_name");
+                    Players players = new Players(UUID.fromString(ownerId), playerName, island.getId(), RoleType.OWNER);
+                    completableFuture.complete(players);
+                }
+                completableFuture.complete(null);
+            } catch (SQLException e) {
+                logger.log(Level.FATAL, e.getMessage(), e);
+                completableFuture.complete(null);
+            }
+        }, null);
         return completableFuture;
     }
 

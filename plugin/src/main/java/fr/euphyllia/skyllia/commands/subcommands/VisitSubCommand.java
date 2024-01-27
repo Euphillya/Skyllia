@@ -57,7 +57,7 @@ public class VisitSubCommand implements SubCommandInterface {
                     }
 
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(visitPlayerId).join();
+                    Island island = skyblockManager.getIslandByPlayerId(visitPlayerId).join();
                     if (island == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitPlayerHasNotIsland);
                         return;

@@ -25,14 +25,13 @@ public class MariaDBCreateTable {
             CREATE TABLE IF NOT EXISTS `%s`.`islands` (
             `island_type` CHAR(36) NOT NULL,
             `island_id` CHAR(36) NOT NULL,
-            `uuid_owner` CHAR(36) NOT NULL,
             `disable` TINYINT DEFAULT '0',
             `region_x` INT NOT NULL,
             `region_z` INT NOT NULL,
             `private` TINYINT DEFAULT '0',
             `size` DOUBLE NOT NULL,
             `create_time` TIMESTAMP,
-            PRIMARY KEY (`island_id`, `uuid_owner`, `region_x`, `region_z`)
+            PRIMARY KEY (`island_id`, `region_x`, `region_z`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
     private static final String CREATE_ISLANDS_MEMBERS = """
@@ -134,9 +133,6 @@ public class MariaDBCreateTable {
                     for (int i = 1; i < ConfigToml.maxIsland; i++) {
                         Position position = RegionUtils.getPositionNewIsland(i);
                         MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null);
-                        /*if (i % 1000 == 0) {
-                            logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
-                        }*/
                     }
                 });
             } finally {

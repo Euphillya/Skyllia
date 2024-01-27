@@ -49,7 +49,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
             executor.execute(() -> {
                 try {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
                     if (island == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                         return;

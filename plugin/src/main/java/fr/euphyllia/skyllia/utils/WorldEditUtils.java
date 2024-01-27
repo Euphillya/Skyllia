@@ -83,7 +83,7 @@ public class WorldEditUtils {
         Position position = island.getPosition();
 
         AtomicInteger delay = new AtomicInteger(1);
-        int regionSize = (32* ConfigToml.regionDistance) + 1; // une region à une taille de 32, mais un chunk n'est jamais au centre ! Donc je rajoute une marge d'erreur qui sera vérifier dans la spirale
+        int regionSize = (32 * ConfigToml.regionDistance) + 1; // une region à une taille de 32, mais un chunk n'est jamais au centre ! Donc je rajoute une marge d'erreur qui sera vérifier dans la spirale
         RegionUtils.spiralStartCenter(position, regionSize, chunKPosition -> {
             Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
                     plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), delay.getAndIncrement());

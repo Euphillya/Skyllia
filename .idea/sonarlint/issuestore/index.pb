@@ -216,3 +216,17 @@ Qnms/v1_20_R3/src/main/java/fr/euphyllia/skyllia/utils/nms/v1_20_R3/PlayerNMS.ja
 Pnms/v1_20_R3/src/main/java/fr/euphyllia/skyllia/utils/nms/v1_20_R3/WorldNMS.java,a\8\a890420dc92f6cbc863ec747393fe60d253464c6
 …
 Uplugin/src/main/java/fr/euphyllia/skyllia/database/query/MariaDBTransactionQuery.java,a\0\a024b793b6afc7285cf3a45a6efbcd97f9e6c009
+„
+Tplugin/src/main/java/fr/euphyllia/skyllia/database/query/exec/IslandMemberQuery.java,1\3\13496ef0c060295a14e67b2accc312b8893d4929
+ˆ
+Xplugin/src/main/java/fr/euphyllia/skyllia/database/query/exec/IslandPermissionQuery.java,d\4\d4d62b5a776178142e774845b811a8c7a365cfee
+~
+Nplugin/src/main/java/fr/euphyllia/skyllia/database/query/exec/IslandQuery.java,b\8\b8b9f0657a0cf207ed6e95e248522a99955b5ab0
+„
+Tplugin/src/main/java/fr/euphyllia/skyllia/database/query/exec/IslandUpdateQuery.java,e\1\e1f5de4acf485e39e2b4dd99990be48d7f8fd008
+ƒ
+Splugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/LeaveSubCommand.java,3\9\3978a12dcc9153d958ec2eb8d3fee190ecdcb2e4
+ˆ
+Xplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/PermissionSubCommand.java,7\0\70b1d146fcccb4dad5254b1b42b29d98bf41fd76
+…
+Uplugin/src/main/java/fr/euphyllia/skyllia/commands/subcommands/PromoteSubCommand.java,1\f\1fbe84988042cebe78b7c3d0f192980ff11d206c

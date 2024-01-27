@@ -88,7 +88,7 @@ public class InviteSubCommand implements SubCommandInterface {
     private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByOwner(ownerIsland.getUniqueId()).join();
+            Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
             if (island == null) {
                 LanguageToml.sendMessage(plugin, ownerIsland, LanguageToml.messagePlayerHasNotIsland);
                 return;
@@ -127,7 +127,7 @@ public class InviteSubCommand implements SubCommandInterface {
     private void acceptPlayer(Main plugin, Player playerWantJoin, String ownerIsland) {
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island islandPlayer = skyblockManager.getIslandByOwner(playerWantJoin.getUniqueId()).join();
+            Island islandPlayer = skyblockManager.getIslandByPlayerId(playerWantJoin.getUniqueId()).join();
             if (islandPlayer != null) {
                 LanguageToml.sendMessage(plugin, playerWantJoin, LanguageToml.messageInviteAlreadyIsland);
                 return;
@@ -159,7 +159,7 @@ public class InviteSubCommand implements SubCommandInterface {
     private void declinePlayer(Main plugin, Player playerWantDecline, String ownerIsland) {
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByOwner(playerWantDecline.getUniqueId()).join();
+            Island island = skyblockManager.getIslandByPlayerId(playerWantDecline.getUniqueId()).join();
             if (island == null) {
                 LanguageToml.sendMessage(plugin, playerWantDecline, LanguageToml.messagePlayerHasNotIsland);
                 return;

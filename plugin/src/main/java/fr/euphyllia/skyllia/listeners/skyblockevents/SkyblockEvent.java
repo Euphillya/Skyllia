@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.*;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
@@ -30,7 +31,7 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockCreate(final SkyblockCreateEvent event) {
-        this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getIsland().getOwnerId());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getOwnerId());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -57,7 +58,9 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockLoad(final SkyblockLoadEvent event) {
-        this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getIsland().getOwnerId());
+        Players players = this.api.getSkyblockManager().getOwnerByIslandID(event.getIsland()).join();
+        if (players == null) return;
+        this.api.getCacheManager().updateCacheIsland(event.getIsland(), players.getMojangId());
     }
 
     private void teleportOtherWorld(Player player, PlayerPrepareChangeWorldSkyblockEvent event, PermissionsIsland permissionsIsland) {
