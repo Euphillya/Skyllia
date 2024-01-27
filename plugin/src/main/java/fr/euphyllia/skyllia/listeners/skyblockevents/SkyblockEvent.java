@@ -70,7 +70,7 @@ public class SkyblockEvent implements Listener {
         }
         try {
             WorldConfig worldConfig = event.getWorldConfig();
-            if (!WorldUtils.isWorldSkyblock(worldConfig.netherPortalDestination())) {
+            if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(worldConfig.netherPortalDestination()))) {
                 logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(worldConfig.netherPortalDestination()));
                 return;
             }

@@ -27,7 +27,7 @@ public class CacheManager {
     }
 
     public void updateCache(SkyblockManager skyblockManager, Player bPlayer) {
-        Island pIsland = skyblockManager.getIslandByOwner(bPlayer.getUniqueId()).join();
+        Island pIsland = skyblockManager.getIslandByPlayerId(bPlayer.getUniqueId()).join();
         if (pIsland == null) {
             // ========= remove player
             PlayersInIslandCache.getIslandIdByPlayerId().remove(bPlayer.getUniqueId());

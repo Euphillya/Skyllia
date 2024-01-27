@@ -37,7 +37,7 @@ public class JoinEvent implements Listener {
             executor.execute(() -> {
                 Player player = playerJoinEvent.getPlayer();
                 SkyblockManager skyblockManager = this.api.getSkyblockManager();
-                Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+                Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
                 if (island == null) {
                     PlayerUtils.teleportPlayerSpawn(this.api.getPlugin(), player);
