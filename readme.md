@@ -1,5 +1,3 @@
-English | [中文](./readme_zh.md)
-
 ## Contact :
 
 [![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
