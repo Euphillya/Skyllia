@@ -8,7 +8,6 @@ import fr.euphyllia.skyllia.api.event.SkyblockDeleteWarpEvent;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;

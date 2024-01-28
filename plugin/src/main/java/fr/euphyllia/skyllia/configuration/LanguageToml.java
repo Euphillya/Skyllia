@@ -101,6 +101,8 @@ public class LanguageToml {
     public static String messageUnbanPlayerNotBanned = "Le joueur n'est pas banni.";
     public static String messageUnBanPlayerSuccess = "Le joueur a été débanni.";
     public static String messageUnbanPlayerFailed = "Le joueur n'a pas été banni pour une raison inconnue.";
+    public static String messageADeleteCommandNotEnoughArgs = "Il manque le nom du joueur.";
+    public static String messageADeleteNotConfirmedArgs = "Vous devez ajouter \"confirm\" à la fin de votre commandes";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -167,8 +169,6 @@ public class LanguageToml {
         return config.getInt(path);
     }
 
-    public static String messageADeleteCommandNotEnoughArgs = "Il manque le nom du joueur.";
-    public static String messageADeleteNotConfirmedArgs = "Vous devez ajouter \"confirm\" à la fin de votre commandes";
     private static void adminLanguage() {
         // forcedelete
         messageADeleteCommandNotEnoughArgs = getString("admin.commands.island.delete.not-enough-args", messageADeleteCommandNotEnoughArgs);

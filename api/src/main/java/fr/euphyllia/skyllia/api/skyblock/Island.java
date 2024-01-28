@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.api.skyblock;
 
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
-import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;

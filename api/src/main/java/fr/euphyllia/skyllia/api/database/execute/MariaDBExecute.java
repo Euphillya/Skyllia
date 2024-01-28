@@ -26,6 +26,7 @@ public class MariaDBExecute {
             logger.log(Level.FATAL, e.getMessage(), e);
         }
     }
+
     public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work) {
         try {
             executeQuery(pool, query, param, callback, work, false);

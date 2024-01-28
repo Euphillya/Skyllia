@@ -7,7 +7,6 @@ import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
-import fr.euphyllia.skyllia.utils.IslandUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
