@@ -106,7 +106,7 @@ public class IslandDataQuery {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
-                    futurIsland.getId(), 1, futurIsland.getSize(), futurIsland.getSize()
+                    futurIsland.getId(), 1, futurIsland.getSize(), futurIsland.getMaxMembers()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
