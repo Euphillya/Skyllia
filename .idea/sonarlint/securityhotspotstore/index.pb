@@ -302,3 +302,15 @@ Lplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SkylliaCommand.java,7
 Qplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SkylliaAdminCommand.java,7\3\73e95ed3de6af5128688a36d9a08375264fdbad1
 y
 Iplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SubCommands.java,9\0\90150f102b7b660c9a2d955e8c124e0c3effcd90
+å
+\plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetsizeSubCommands.java,8\4\8465410bf01c7c58f4c9c2d478162aef7204dbbf
+ê
+`plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/ForceDeleteSubCommands.java,7\2\727e6d67f400abf86622d6106203b3ccd1d4bc6d
+â
+Yplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/InfoSubCommands.java,c\1\c1e1ca091770cc424010513927dc179fe31e08d0
+í
+bplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetIslandTypeSubCommands.java,c\d\cd75695c3fc5a7cc5a765babc6bd76ad7fc4feba
+å
+\plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetSizeSubCommands.java,2\9\2954e867fe2081323790b93dc6a674cfc6ac0038
+~
+Nplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SubAdminCommands.java,f\e\fec05e08457d85918456ba08e484e775d46debd6
