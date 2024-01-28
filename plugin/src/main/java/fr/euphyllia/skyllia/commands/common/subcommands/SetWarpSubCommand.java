@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.commands.subcommands;
+package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -13,6 +13,7 @@ import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.RegionUtils;
+import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,20 +28,32 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class SetHomeSubCommand implements SubCommandInterface {
+public class SetWarpSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(SetHomeSubCommand.class);
+    private final Logger logger = LogManager.getLogger(SetWarpSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.sethome")) {
+        if (args.length < 1) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
+            return true;
+        }
+        if (!player.hasPermission("skyllia.island.command.setwarp")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
+
         Location playerLocation = player.getLocation();
+        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
+            sender.sendMessage("Vous n'êtes pas sur votre ile");
+            return true;
+        }
+
+        String warpName = args[0];
+
         int regionLocX = playerLocation.getChunk().getX();
         int regionLocZ = playerLocation.getChunk().getZ();
 
@@ -54,6 +67,18 @@ public class SetHomeSubCommand implements SubCommandInterface {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                         return;
                     }
+
+                    Players executorPlayer = island.getMember(player.getUniqueId());
+
+                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                        if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_WARP)) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                            return;
+                        }
+                    }
+
                     Position islandPosition = island.getPosition();
                     Position playerRegionPosition = RegionUtils.getRegionInChunk(regionLocX, regionLocZ);
 
@@ -62,20 +87,9 @@ public class SetHomeSubCommand implements SubCommandInterface {
                         return;
                     }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
-
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_HOME)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
-                        }
-                    }
-
-                    boolean updateOrCreateHome = island.addWarps("home", playerLocation, false);
-                    if (updateOrCreateHome) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeCreateSuccess);
+                    boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation, false);
+                    if (updateOrCreateWarps) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCreateSuccess);
                     } else {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                     }

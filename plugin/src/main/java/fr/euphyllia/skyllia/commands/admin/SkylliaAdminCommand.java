@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.commands;
+package fr.euphyllia.skyllia.commands.admin;
 
 import fr.euphyllia.skyllia.Main;
 import org.bukkit.command.Command;
@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SkylliaCommand implements CommandExecutor, TabCompleter {
+public class SkylliaAdminCommand implements CommandExecutor, TabCompleter {
 
     private final Main plugin;
 
-    public SkylliaCommand(Main main) {
+    public SkylliaAdminCommand(Main main) {
         this.plugin = main;
     }
 
@@ -25,7 +25,7 @@ public class SkylliaCommand implements CommandExecutor, TabCompleter {
         if (args.length != 0) {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
-            SubCommands subCommands = SubCommands.subCommandByName(subCommand);
+            SubAdminCommands subCommands = SubAdminCommands.subCommandByName(subCommand);
             if (subCommands == null) {
                 return false;
             }
@@ -38,14 +38,14 @@ public class SkylliaCommand implements CommandExecutor, TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
-            SubCommands[] subCommand = SubCommands.values();
-            for (SubCommands sub : subCommand) {
+            SubAdminCommands[] subCommand = SubAdminCommands.values();
+            for (SubAdminCommands sub : subCommand) {
                 tab.add(sub.name().toLowerCase());
             }
         } else {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
-            SubCommands subCommands = SubCommands.subCommandByName(subCommand);
+            SubAdminCommands subCommands = SubAdminCommands.subCommandByName(subCommand);
             if (subCommands != null) {
                 return subCommands.getSubCommandInterface().onTabComplete(this.plugin, sender, command, label, listArgs);
             }

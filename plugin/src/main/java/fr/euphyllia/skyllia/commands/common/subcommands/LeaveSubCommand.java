@@ -1,15 +1,11 @@
-package fr.euphyllia.skyllia.commands.subcommands;
+package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
-import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,23 +19,20 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class UnbanSubCommand implements SubCommandInterface {
+public class LeaveSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(UnbanSubCommand.class);
+    private final Logger logger = LogManager.getLogger(LeaveSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.unban")) {
+        if (!player.hasPermission("skyllia.island.command.leave")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-        if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanCommandNotEnoughArgs);
-            return true;
-        }
+
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
             executor.execute(() -> {
@@ -49,34 +42,19 @@ public class UnbanSubCommand implements SubCommandInterface {
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                     return;
                 }
-
-                Players executorPlayer = island.getMember(player.getUniqueId());
-
-                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                    if (!permissionManager.hasPermission(PermissionsCommandIsland.UNBAN)) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                        return;
-                    }
-                }
-
-                String playerBan = args[0];
-                Players players = island.getMember(playerBan);
-
-                if (players == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanPlayerNotBanned);
+                Players players = island.getMember(player.getUniqueId());
+                if (players.getRoleType().equals(RoleType.OWNER)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveFailedIsOwnerIsland);
                     return;
                 }
 
-                boolean isRemoved = island.removeMember(players);
-                if (isRemoved) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnBanPlayerSuccess);
+                boolean hasLeave = island.removeMember(players);
+                if (hasLeave) {
+                    DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveSuccess);
                 } else {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanPlayerFailed);
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeavePlayerFailed);
                 }
-
             });
         } finally {
             executor.shutdown();

@@ -4,7 +4,8 @@ package fr.euphyllia.skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
-import fr.euphyllia.skyllia.commands.SkylliaCommand;
+import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
+import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.listeners.bukkitevents.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
@@ -79,6 +80,17 @@ public class Main extends JavaPlugin {
     private void setupCommands() {
         SkylliaCommand sc = new SkylliaCommand(this);
         PluginCommand command = getServer().getPluginCommand("skyllia");
+        if (command == null) {
+            logger.log(Level.FATAL, "Command not put in plugin.yml");
+            return;
+        }
+        command.setExecutor(sc);
+        command.setTabCompleter(sc);
+    }
+
+    private void setupAdminCommands() {
+        SkylliaAdminCommand sc = new SkylliaAdminCommand(this);
+        PluginCommand command = getServer().getPluginCommand("skylliadmin");
         if (command == null) {
             logger.log(Level.FATAL, "Command not put in plugin.yml");
             return;

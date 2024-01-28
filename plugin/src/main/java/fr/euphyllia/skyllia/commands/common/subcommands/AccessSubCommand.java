@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.commands.subcommands;
+package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -12,38 +12,37 @@ import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
+import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class DelWarpSubCommand implements SubCommandInterface {
+public class AccessSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(DelWarpSubCommand.class);
+    private final Logger logger = LogManager.getLogger(AccessSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
-            return true;
-        }
-        if (!player.hasPermission("skyllia.island.command.delwarp")) {
+        if (!player.hasPermission("skyllia.island.command.access")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-
-        String warpName = args[0];
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
@@ -51,32 +50,42 @@ public class DelWarpSubCommand implements SubCommandInterface {
                 try {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+
                     if (island == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                         return;
                     }
 
-                    if (warpName.equalsIgnoreCase("home")) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandNotDeleteHome);
-                        return;
-                    }
-
                     Players executorPlayer = island.getMember(player.getUniqueId());
-
                     if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
                         PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+
                         PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.DEL_WARP)) {
+                        if (!permissionManager.hasPermission(PermissionsCommandIsland.ACCESS)) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                             return;
                         }
                     }
 
-                    boolean deleteWarp = island.delWarp(warpName);
-                    if (deleteWarp) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpDeleteSuccess);
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                    boolean statusAccessUpdate = !island.isPrivateIsland();
+
+                    boolean isUpdate = island.setPrivateIsland(statusAccessUpdate);
+                    if (isUpdate) {
+                        if (statusAccessUpdate) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandClose);
+                            ConfigToml.worldConfigs.forEach(worldConfig -> {
+                                RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().x(), island.getPosition().z(), entity -> {
+                                    Player playerInIsland = (Player) entity;
+                                    if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
+                                    Players players = island.getMember(playerInIsland.getUniqueId());
+                                    if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
+                                        PlayerUtils.teleportPlayerSpawn(plugin, playerInIsland);
+                                    }
+                                });
+                            });
+                        } else {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandOpen);
+                        }
                     }
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
@@ -86,17 +95,11 @@ public class DelWarpSubCommand implements SubCommandInterface {
         } finally {
             executor.shutdown();
         }
-
-
         return true;
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
-    }
-
-    private boolean isWorldIsland(String worldName) {
-        return ConfigToml.worldConfigs.stream().anyMatch(wc -> wc.name().equalsIgnoreCase(worldName));
+        return new ArrayList<>();
     }
 }

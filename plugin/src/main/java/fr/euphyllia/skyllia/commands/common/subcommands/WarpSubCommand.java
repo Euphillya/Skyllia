@@ -1,10 +1,11 @@
-package fr.euphyllia.skyllia.commands.subcommands;
+package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
@@ -24,29 +25,30 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class PromoteSubCommand implements SubCommandInterface {
+public class WarpSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(PromoteSubCommand.class);
+    private final Logger logger = LogManager.getLogger(WarpSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.promote")) {
+        if (args.length < 1) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
+            return true;
+        }
+        if (!player.hasPermission("skyllia.island.command.warp")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-        if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromoteCommandNotEnoughArgs);
-            return true;
-        }
+
+        String warpName = args[0];
+
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
             executor.execute(() -> {
                 try {
-                    String playerName = args[0];
-
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
                     if (island == null) {
@@ -58,34 +60,21 @@ public class PromoteSubCommand implements SubCommandInterface {
 
                     if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
                         PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
                         PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.PROMOTE)) {
+                        if (!permissionManager.hasPermission(PermissionsCommandIsland.TP_WARP)) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                             return;
                         }
                     }
 
-                    Players players = island.getMember(playerName);
-
-                    if (players == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                    WarpIsland warp = island.getWarpByName(warpName);
+                    if (warp == null) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpNotExist);
                         return;
                     }
 
-                    if (executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayerFailedLowOrEqualsStatus);
-                        return;
-                    }
-
-                    RoleType promoteResult = RoleType.getRoleById(players.getRoleType().getValue() + 1);
-                    if (promoteResult.getValue() == 0 || promoteResult.getValue() == RoleType.OWNER.getValue()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayerFailed.formatted(playerName));
-                        return;
-                    }
-                    players.setRoleType(promoteResult);
-                    island.updateMember(players);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayer.formatted(playerName));
+                    player.teleportAsync(warp.location());
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpTeleportSuccess);
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
@@ -94,6 +83,7 @@ public class PromoteSubCommand implements SubCommandInterface {
         } finally {
             executor.shutdown();
         }
+
 
         return true;
     }

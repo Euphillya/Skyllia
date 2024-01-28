@@ -1,6 +1,7 @@
-package fr.euphyllia.skyllia.commands;
+package fr.euphyllia.skyllia.commands.common;
 
-import fr.euphyllia.skyllia.commands.subcommands.*;
+import fr.euphyllia.skyllia.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.commands.common.subcommands.*;
 import org.jetbrains.annotations.NotNull;
 
 public enum SubCommands {

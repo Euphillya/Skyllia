@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.commands.subcommands;
+package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
