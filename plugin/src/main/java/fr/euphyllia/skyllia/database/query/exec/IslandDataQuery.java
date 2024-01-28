@@ -5,7 +5,7 @@ import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.database.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
 import fr.euphyllia.skyllia.utils.IslandUtils;
 import org.apache.logging.log4j.Level;
@@ -67,7 +67,7 @@ public class IslandDataQuery {
 
     public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_OWNER.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
+        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_OWNER.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
             try {
                 if (resultSet.next()) {
                     Island island = this.constructIslandQuery(resultSet);
@@ -86,7 +86,7 @@ public class IslandDataQuery {
 
     public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_PLAYER_ID.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
+        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_PLAYER_ID.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
             try {
                 if (resultSet.next()) {
                     Island island = this.constructIslandQuery(resultSet);
@@ -106,7 +106,7 @@ public class IslandDataQuery {
     public CompletableFuture<Boolean> insertIslands(Island futurIsland) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api, ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
                     futurIsland.getIslandType().name(), futurIsland.getId(), 1, futurIsland.getSize()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
@@ -118,7 +118,7 @@ public class IslandDataQuery {
 
     public CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(islandId), resultSet -> {
+        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(islandId), resultSet -> {
             try {
                 if (resultSet.next()) {
                     completableFuture.complete(this.constructIslandQuery(resultSet));

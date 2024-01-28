@@ -5,7 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import fr.euphyllia.skyllia.database.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,13 +38,9 @@ public class IslandPermissionQuery {
     public CompletableFuture<Boolean> updateIslandsPermission(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-        MariaDBExecute.executeQueryDML(this.api, UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
+        MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
                 List.of(island.getId(), permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
-                    if (i != 0) {
-                        completableFuture.complete(true);
-                    } else {
-                        completableFuture.complete(false);
-                    }
+                    completableFuture.complete(i != 0);
                 }, null);
 
         return completableFuture;
@@ -52,7 +48,7 @@ public class IslandPermissionQuery {
 
     public CompletableFuture<PermissionRoleIsland> getIslandPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
         CompletableFuture<PermissionRoleIsland> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
+        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
             try {
                 if (resultSet.next()) {
                     long flags = resultSet.getLong("flags");

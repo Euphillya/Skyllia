@@ -2,7 +2,7 @@ package fr.euphyllia.skyllia.database.query.exec;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.database.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +44,7 @@ public class IslandUpdateQuery {
     public CompletableFuture<Boolean> updateDisable(Island island, boolean disable) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api, UPDATE_DISABLE_ISLAND.formatted(this.databaseName), List.of(disable ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPDATE_DISABLE_ISLAND.formatted(this.databaseName), List.of(disable ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
         } catch (Exception ex) {
             logger.fatal("Error Disabled Island", ex);
             completableFuture.complete(false);
@@ -55,7 +55,7 @@ public class IslandUpdateQuery {
     public CompletableFuture<Boolean> updatePrivate(Island island, boolean privateIsland) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api, UPDATE_PRIVATE_ISLAND.formatted(this.databaseName), List.of(privateIsland ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPDATE_PRIVATE_ISLAND.formatted(this.databaseName), List.of(privateIsland ? 1 : 0, island.getId()), i -> completableFuture.complete(i != 0), null);
         } catch (Exception ex) {
             logger.fatal("Error Change Private/Public Island", ex);
             completableFuture.complete(false);
@@ -65,7 +65,7 @@ public class IslandUpdateQuery {
 
     public CompletableFuture<Boolean> isDisabledIsland(Island island) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_STATUS_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
+        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_STATUS_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
             try {
                 if (resultSet.next()) {
                     completableFuture.complete(resultSet.getInt("disable") == 1);
@@ -81,7 +81,7 @@ public class IslandUpdateQuery {
 
     public CompletableFuture<Boolean> isPrivateIsland(Island island) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api, SELECT_PRIVATE_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
+        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_PRIVATE_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
             try {
                 if (resultSet.next()) {
                     completableFuture.complete(resultSet.getInt("private") == 1);

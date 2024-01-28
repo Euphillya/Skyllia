@@ -1,9 +1,10 @@
-package fr.euphyllia.skyllia.database.sgbd;
+package fr.euphyllia.skyllia.api.database.sgbd;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.euphyllia.skyllia.configuration.section.MariaDBConfig;
-import fr.euphyllia.skyllia.database.model.DBConnect;
-import fr.euphyllia.skyllia.database.model.DBInterface;
+import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
+import fr.euphyllia.skyllia.api.database.model.DBConnect;
+import fr.euphyllia.skyllia.api.database.model.DBInterface;
+import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,14 +21,14 @@ public class MariaDB implements DBConnect, DBInterface {
     private boolean connected = false;
 
     public MariaDB(final MariaDBConfig configMariaDB) {
-        this.logger = LogManager.getLogger("fr.euphyllia.skyllia.database.sgbd.MariaDB");
+        this.logger = LogManager.getLogger(this);
         this.mariaDBConfig = configMariaDB;
         this.connected = false;
     }
 
 
     @Override
-    public boolean onLoad() {
+    public boolean onLoad() throws DatabaseException {
         this.pool = new HikariDataSource();
         this.pool.setDriverClassName("org.mariadb.jdbc.Driver");
         this.pool.setJdbcUrl("jdbc:mariadb://%s:%s/".formatted(mariaDBConfig.hostname(), mariaDBConfig.port()));
@@ -44,7 +45,8 @@ public class MariaDB implements DBConnect, DBInterface {
                 return true;
             }
         } catch (SQLException e) {
-            logger.log(Level.FATAL, e.getMessage());
+            logger.log(Level.FATAL, e.getMessage(), e);
+            throw new DatabaseException(e);
         }
         return false;
     }
@@ -62,12 +64,12 @@ public class MariaDB implements DBConnect, DBInterface {
     }
 
     @Override
-    public @Nullable Connection getConnection() {
+    public @Nullable Connection getConnection() throws DatabaseException {
         try {
             return pool.getConnection();
         } catch (SQLException e) {
-            logger.log(Level.FATAL, e.getMessage());
+            logger.log(Level.FATAL, e.getMessage(), e);
+            throw new DatabaseException(e);
         }
-        return null;
     }
 }

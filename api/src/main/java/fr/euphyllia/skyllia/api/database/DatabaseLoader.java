@@ -1,9 +1,9 @@
-package fr.euphyllia.skyllia.database;
+package fr.euphyllia.skyllia.api.database;
 
-import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.database.sgbd.MariaDB;
-import fr.euphyllia.skyllia.database.stream.AsciiStream;
-import fr.euphyllia.skyllia.database.stream.BinaryStream;
+import fr.euphyllia.skyllia.api.database.sgbd.MariaDB;
+import fr.euphyllia.skyllia.api.database.stream.AsciiStream;
+import fr.euphyllia.skyllia.api.database.stream.BinaryStream;
+import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -15,14 +15,12 @@ import java.util.concurrent.CompletableFuture;
 public class DatabaseLoader {
 
     private final MariaDB mariaDB;
-    private final Main plugin;
 
-    public DatabaseLoader(Main main, MariaDB mariaDB) {
-        this.plugin = main;
+    public DatabaseLoader(MariaDB mariaDB) {
         this.mariaDB = mariaDB;
     }
 
-    public boolean loadDatabase() {
+    public boolean loadDatabase() throws DatabaseException {
         if (mariaDB != null && !mariaDB.isConnected()) {
             return mariaDB.onLoad();
         }
@@ -36,7 +34,7 @@ public class DatabaseLoader {
     }
 
     @Nullable
-    public Connection getMariaDBConnection() {
+    public Connection getMariaDBConnection() throws DatabaseException {
         if (mariaDB != null && mariaDB.isConnected()) {
             return mariaDB.getConnection();
         }

@@ -4,8 +4,8 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.configuration.section.MariaDBConfig;
-import fr.euphyllia.skyllia.database.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
+import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -111,16 +111,16 @@ public class MariaDBCreateTable {
     public boolean init() throws DatabaseException {
         try {
             // DATABASE
-            MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database));
-            MariaDBExecute.executeQuery(api, CREATE_ISLANDS.formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_DATABASE.formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS.formatted(this.database));
             if (this.dbVersion <= 1) {
-                MariaDBExecute.executeQuery(api, "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
+                MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
             }
-            MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
-            MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
-            MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
-            MariaDBExecute.executeQuery(api, CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
-            MariaDBExecute.executeQuery(api, CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_MEMBERS.formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_WARP.formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_SPIRAL.formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
             int distancePerIsland = ConfigToml.regionDistance;
             if (distancePerIsland <= 0) {
                 logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
@@ -132,7 +132,7 @@ public class MariaDBCreateTable {
                 scheduledExecutorService.execute(() -> {
                     for (int i = 1; i < ConfigToml.maxIsland; i++) {
                         Position position = RegionUtils.getPositionNewIsland(i);
-                        MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null);
+                        MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null);
                     }
                 });
             } finally {

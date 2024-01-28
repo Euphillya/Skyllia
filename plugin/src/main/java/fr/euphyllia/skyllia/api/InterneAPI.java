@@ -8,11 +8,11 @@ import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
-import fr.euphyllia.skyllia.database.DatabaseLoader;
+import fr.euphyllia.skyllia.api.database.DatabaseLoader;
 import fr.euphyllia.skyllia.database.query.MariaDBCreateTable;
 import fr.euphyllia.skyllia.database.query.MariaDBTransactionQuery;
 import fr.euphyllia.skyllia.database.query.exec.IslandQuery;
-import fr.euphyllia.skyllia.database.sgbd.MariaDB;
+import fr.euphyllia.skyllia.api.database.sgbd.MariaDB;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -122,10 +122,9 @@ public class InterneAPI {
     }
 
     public boolean setupSGBD() throws DatabaseException {
-        MariaDB mariaDB;
         if (ConfigToml.mariaDBConfig != null) {
-            mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
-            this.database = new DatabaseLoader(this.plugin, mariaDB);
+            MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
+            this.database = new DatabaseLoader(mariaDB);
             if (!this.database.loadDatabase()) {
                 return false;
             }

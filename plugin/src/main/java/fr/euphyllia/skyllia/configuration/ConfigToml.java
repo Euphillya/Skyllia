@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicWorld;
-import fr.euphyllia.skyllia.configuration.section.MariaDBConfig;
+import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
