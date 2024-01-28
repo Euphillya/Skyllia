@@ -19,18 +19,29 @@ public class MariaDBExecute {
     private static final String DATABASE_NOT_FOUND_ERROR = "Cannot get connection to the database";
     private static final Logger logger = LogManager.getLogger(MariaDBExecute.class);
 
-    public static void executeQuery(DatabaseLoader pool, String query) throws SQLException {
-        executeQuery(pool, query, null, null, null);
+    public static void executeQuery(DatabaseLoader pool, String query) {
+        try {
+            executeQuery(pool, query, null, null, null, false);
+        } catch (DatabaseException e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+        }
+    }
+    public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work) {
+        try {
+            executeQuery(pool, query, param, callback, work, false);
+        } catch (DatabaseException e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+        }
     }
 
-    public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work) {
+    public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work, boolean ignoreError) throws DatabaseException {
         if (pool == null) {
-            throw new NullPointerException(DATABASE_NOT_FOUND_ERROR);
+            throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
         }
         try {
             Connection connection = pool.getMariaDBConnection();
             if (connection == null) {
-                throw new NullPointerException(DATABASE_NOT_FOUND_ERROR);
+                throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
             }
             if (work != null) {
                 work.run(connection);
@@ -42,7 +53,10 @@ public class MariaDBExecute {
             }
             connection.close();
         } catch (SQLException | DatabaseException exception) {
-            logger.log(Level.FATAL, "[MARIADB] - Query : %s".formatted(query), exception);
+            if (Boolean.FALSE.equals(ignoreError)) {
+                logger.log(Level.FATAL, "[MARIADB] - Query : %s".formatted(query), exception);
+                throw new DatabaseException(exception);
+            }
         }
     }
 

@@ -23,7 +23,6 @@ public class MariaDBCreateTable {
             """;
     private static final String CREATE_ISLANDS = """
             CREATE TABLE IF NOT EXISTS `%s`.`islands` (
-            `island_type` CHAR(36) NOT NULL,
             `island_id` CHAR(36) NOT NULL,
             `disable` TINYINT DEFAULT '0',
             `region_x` INT NOT NULL,
@@ -31,6 +30,7 @@ public class MariaDBCreateTable {
             `private` TINYINT DEFAULT '0',
             `size` DOUBLE NOT NULL,
             `create_time` TIMESTAMP,
+            `max_members` INT NOT NULL,
             PRIMARY KEY (`island_id`, `region_x`, `region_z`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
@@ -109,38 +109,38 @@ public class MariaDBCreateTable {
     }
 
     public boolean init() throws DatabaseException {
-        try {
-            // DATABASE
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_DATABASE.formatted(this.database));
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS.formatted(this.database));
-            if (this.dbVersion <= 1) {
-                MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
-            }
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_MEMBERS.formatted(this.database));
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_WARP.formatted(this.database));
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_SPIRAL.formatted(this.database));
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
-            int distancePerIsland = ConfigToml.regionDistance;
-            if (distancePerIsland <= 0) {
-                logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
-                        "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
-                return false;
-            }
-            ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
-            try {
-                scheduledExecutorService.execute(() -> {
-                    for (int i = 1; i < ConfigToml.maxIsland; i++) {
-                        Position position = RegionUtils.getPositionNewIsland(i);
-                        MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null);
-                    }
-                });
-            } finally {
-                scheduledExecutorService.shutdown();
-            }
-            return true;
-        } catch (SQLException exception) {
-            throw new DatabaseException(exception);
+        // DATABASE
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_DATABASE.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS.formatted(this.database));
+        if (this.dbVersion <= 1) {
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
         }
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_MEMBERS.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_WARP.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_SPIRAL.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
+        int distancePerIsland = ConfigToml.regionDistance;
+        if (distancePerIsland <= 0) {
+            logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
+                    "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
+            return false;
+        }
+        ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
+        try {
+            scheduledExecutorService.execute(() -> {
+                for (int i = 1; i < ConfigToml.maxIsland; i++) {
+                    Position position = RegionUtils.getPositionNewIsland(i);
+                    try {
+                        MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null, false);
+                    } catch (DatabaseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } finally {
+            scheduledExecutorService.shutdown();
+        }
+        return true;
     }
 }

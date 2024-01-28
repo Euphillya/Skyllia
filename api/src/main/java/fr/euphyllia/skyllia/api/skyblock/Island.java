@@ -53,7 +53,7 @@ public abstract class Island {
 
     public abstract Position getPosition();
 
-    public abstract IslandType getIslandType();
+    public abstract int getMaxMembers();
 
-    public abstract void setIslandType(IslandType islandType);
+    public abstract void setMaxMembers(int maxMembers);
 }

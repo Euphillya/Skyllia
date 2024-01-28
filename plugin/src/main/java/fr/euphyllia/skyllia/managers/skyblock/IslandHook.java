@@ -28,20 +28,20 @@ public class IslandHook extends Island {
     private final Position position;
     private final UUID islandId;
     private final Timestamp createDate;
-    private final IslandType islandType;
+    private final int maxMemberInIsland;
     private double size;
 
     /**
      * @param main       Plugin skyllia
-     * @param islandType Type Island (config.toml)
      * @param islandId   Island ID
+     * @param maxMembers Max Players In Island
      * @param position   Position X/Z region File
      * @param size       Rayon Island
      * @param date       Create Date
      */
-    public IslandHook(Main main, IslandType islandType, UUID islandId, Position position, double size, Timestamp date) throws MaxIslandSizeExceedException {
+    public IslandHook(Main main, UUID islandId, int maxMembers, Position position, double size, Timestamp date) throws MaxIslandSizeExceedException {
         this.plugin = main;
-        this.islandType = islandType;
+        this.maxMemberInIsland = maxMembers;
         this.islandId = islandId;
         this.createDate = date;
         this.position = position;
@@ -174,12 +174,12 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public IslandType getIslandType() {
-        return this.islandType;
+    public int getMaxMembers() {
+        return this.maxMemberInIsland;
     }
 
     @Override
-    public void setIslandType(IslandType islandType) {
-        throw new UnsupportedOperationException("pas encore implémenter");
+    public void setMaxMembers(int newMax) {
+
     }
 }

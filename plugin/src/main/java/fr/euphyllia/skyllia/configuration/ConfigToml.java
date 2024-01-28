@@ -36,7 +36,7 @@ public class ConfigToml {
     public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
-    public static int dbVersion = 1;
+    public static int dbVersion = 2;
     public static int regionDistance = -1;
     private static boolean verbose;
 

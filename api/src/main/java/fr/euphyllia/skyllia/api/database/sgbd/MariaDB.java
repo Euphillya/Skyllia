@@ -66,6 +66,9 @@ public class MariaDB implements DBConnect, DBInterface {
     @Override
     public @Nullable Connection getConnection() throws DatabaseException {
         try {
+            if (pool.isClosed()) {
+                return null;
+            }
             return pool.getConnection();
         } catch (SQLException e) {
             logger.log(Level.FATAL, e.getMessage(), e);

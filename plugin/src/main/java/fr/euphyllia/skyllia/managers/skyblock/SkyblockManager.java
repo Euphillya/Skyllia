@@ -32,8 +32,8 @@ public class SkyblockManager {
         try {
             Island futurIsland = new IslandHook(
                     this.plugin,
-                    islandType,
                     islandId,
+                    islandType.maxMembers(),
                     null,
                     islandType.rayon(),
                     null
