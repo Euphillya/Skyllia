@@ -40,13 +40,6 @@ public class SkyblockManager {
             );
             boolean create = this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().insertIslands(futurIsland).join();
             completableFuture.complete(create);
-            /*if (create) {
-                Island island = this.getIslandByOwner(playerId).join();
-                completableFuture.complete(island);
-            } else {
-                completableFuture.complete(null);
-            }*/
-
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             completableFuture.complete(null);
@@ -83,8 +76,6 @@ public class SkyblockManager {
     }
 
     public CompletableFuture<Boolean> addWarpsIsland(Island island, String name, Location playerLocation) {
-        // Todo ? Vérifier le nombre possible à créer
-        // Todo ? Egalement s'il a le droit
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().updateWarp(island, name, playerLocation);
     }
 

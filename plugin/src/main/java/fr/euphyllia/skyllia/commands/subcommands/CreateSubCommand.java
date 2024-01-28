@@ -75,13 +75,11 @@ public class CreateSubCommand implements SubCommandInterface {
 
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandInProgress);
                         UUID idIsland = UUID.randomUUID();
-
                         boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandType).join());
                         if (!isCreate) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
                             return;
                         }
-
                         island = skyblockManager.getIslandByIslandId(idIsland).join();
                         Bukkit.getPluginManager().callEvent(new SkyblockCreateEvent(island, player.getUniqueId()));
 
