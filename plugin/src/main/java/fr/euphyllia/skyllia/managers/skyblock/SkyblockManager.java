@@ -134,4 +134,12 @@ public class SkyblockManager {
     public CompletableFuture<@Nullable Players> getOwnerByIslandID(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getOwnerInIslandId(island);
     }
+
+    public CompletableFuture<Integer> getMaxMemberInIsland(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getMaxMemberInIsland(island);
+    }
+
+    public CompletableFuture<Boolean> setMaxMemberInIsland(Island island, int newValue) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setMaxMemberInIsland(island, newValue);
+    }
 }

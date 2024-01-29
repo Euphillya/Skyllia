@@ -54,5 +54,5 @@ public abstract class Island {
 
     public abstract int getMaxMembers();
 
-    public abstract void setMaxMembers(int maxMembers);
+    public abstract boolean setMaxMembers(int maxMembers);
 }

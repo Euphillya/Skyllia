@@ -103,6 +103,11 @@ public class LanguageToml {
     public static String messageUnbanPlayerFailed = "Le joueur n'a pas été banni pour une raison inconnue.";
     public static String messageADeleteCommandNotEnoughArgs = "Il manque le nom du joueur.";
     public static String messageADeleteNotConfirmedArgs = "Vous devez ajouter \"confirm\" à la fin de votre commandes";
+    public static String messageASetSizeCommandNotEnoughArgs = "La commande est incomplete : /skylladmin setsize <player/uuid> <number> confirm";
+    public static String messageASetSizeNotConfirmedArgs = "Vous devez ajouter l'argument \"confirm\" à la fin de votre commande.";
+    public static String messageASetSizeNAN = "Vous n'avez pas choisi un nombre entier.";
+    public static String messageASetSizeFailed = "Le changement n'a pas pu s'effectuer.";
+    public static String messageASetSizeSuccess = "Le nombre de personne sur l'ile a bien été changé.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -173,6 +178,12 @@ public class LanguageToml {
         // forcedelete
         messageADeleteCommandNotEnoughArgs = getString("admin.commands.island.delete.not-enough-args", messageADeleteCommandNotEnoughArgs);
         messageADeleteNotConfirmedArgs = getString("admin.commands.island.delete.no-confirm", messageADeleteNotConfirmedArgs);
+        // setMember
+        messageASetSizeCommandNotEnoughArgs = getString("admin.commands.island.setsize.not-enough-args", messageASetSizeCommandNotEnoughArgs);
+        messageASetSizeSuccess = getString("admin.commands.island.setsize.success", messageASetSizeSuccess);
+        messageASetSizeFailed = getString("admin.commands.island.setsize.failed", messageASetSizeFailed);
+        messageASetSizeNAN = getString("admin.commands.island.setsize.nan", messageASetSizeNAN);
+        messageASetSizeNotConfirmedArgs = getString("admin.commands.island.setsize.no-confirm", messageASetSizeNotConfirmedArgs);
 
     }
 

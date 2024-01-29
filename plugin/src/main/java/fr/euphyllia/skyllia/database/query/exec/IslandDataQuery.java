@@ -125,7 +125,7 @@ public class IslandDataQuery {
                     completableFuture.complete(null);
                 }
             } catch (Exception e) {
-                logger.log(Level.FATAL, e);
+                logger.log(Level.FATAL, e.getMessage(), e);
                 completableFuture.complete(null);
             }
         }, null);
@@ -147,5 +147,23 @@ public class IslandDataQuery {
             logger.log(Level.FATAL, maxIslandSizeExceedException);
             return null;
         }
+    }
+
+    public CompletableFuture<Integer> getMaxMemberInIsland(Island island) {
+        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
+            try {
+                if (resultSet.next()) {
+                    int maxMembers = resultSet.getInt("max_members");
+                    completableFuture.complete(maxMembers);
+                } else {
+                    completableFuture.complete(-1);
+                }
+            } catch (SQLException e) {
+                logger.log(Level.FATAL, e.getMessage(), e);
+                completableFuture.complete(-1);
+            }
+        }, null);
+        return completableFuture;
     }
 }

@@ -174,11 +174,16 @@ public class IslandHook extends Island {
 
     @Override
     public int getMaxMembers() {
-        return this.maxMemberInIsland;
+        int value = this.plugin.getInterneAPI().getSkyblockManager().getMaxMemberInIsland(this).join();
+        if (value == -1) {
+            return this.maxMemberInIsland;
+        } else {
+            return value;
+        }
     }
 
     @Override
-    public void setMaxMembers(int newMax) {
-
+    public boolean setMaxMembers(int newMax) {
+        return this.plugin.getInterneAPI().getSkyblockManager().setMaxMemberInIsland(this, newMax).join();
     }
 }

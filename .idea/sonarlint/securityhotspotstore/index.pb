@@ -150,8 +150,6 @@ Lplugin/src/main/java/fr/euphyllia/skyllia/utils/models/CallBackPosition.java,8
 Lplugin/src/main/java/fr/euphyllia/skyllia/utils/models/CallbackLocation.java,6\0\608ef76728d3a1364890c7e5124662f40c2bf27a
 z
 Jplugin/src/main/java/fr/euphyllia/skyllia/utils/models/CallbackEntity.java,f\e\fef2c69e9c89f4c930179056bf81b5c9c25d88eb
-
-Oplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/JoinEvent.java,d\6\d6dbf81bd45286faf3bcd36b076cf76a671ac0d6
 Å
 Qnms/v1_20_R1/src/main/java/fr/euphyllia/skyllia/utils/nms/v1_20_R1/PlayerNMS.java,5\9\5907a94b0a226516eb4eec7f49832495fcbe503d
 s
@@ -262,15 +260,11 @@ bplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetIslandT
 \plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetSizeSubCommands.java,2\9\2954e867fe2081323790b93dc6a674cfc6ac0038
 ~
 Nplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SubAdminCommands.java,f\e\fec05e08457d85918456ba08e484e775d46debd6
-Å
-Qplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/PlayerEvent.java,5\1\5177ea90ef88d1ce6d2525d359326e783ca62d4d
 Ü
 Vplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/JoinEvent.java,b\b\bb49f592a22da97a7de1add9318c62f985f913dc
 à
 Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/PlayerEvent.java,e\e\eea559fa258a886aeaa9e45f2a694769c195a943
 à
 Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/entity/DamageEvent.java,b\4\b469533806828aca8372933538b830c9a37ddc30
-Ñ
-Tplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/InventoryEvent.java,9\7\97118d2be7002e0d02108a74fed34708eb00cd68
 ã
 [plugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/InventoryEvent.java,a\1\a18f6c544299368d05b21d2c3b03c787274a4957
