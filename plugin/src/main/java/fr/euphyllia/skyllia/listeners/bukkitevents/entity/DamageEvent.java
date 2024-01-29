@@ -5,9 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -39,6 +37,8 @@ public class DamageEvent implements Listener {
                 ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_MONSTER, event);
             } else if (event.getEntity() instanceof Animals) {
                 ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_ANIMAL, event);
+            } else if (event.getEntity() instanceof NPC) {
+                ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_NPC, event);
             } else {
                 ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_UNKNOWN_ENTITY, event);
             }

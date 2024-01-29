@@ -19,6 +19,7 @@ public enum PermissionsIsland implements Permissions {
     USE_END_PORTAL(1_024),
     INTERACT_ENTITIES(2_048),
     KILL_UNKNOWN_ENTITY(4_096),
+    KILL_NPC(8_192),
     ;
 
     private final long permissionValue;
