@@ -1,6 +1,7 @@
 plugins {
     id("java-library")
     id("java")
+    id("maven-publish")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -29,6 +30,7 @@ allprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
     apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "maven-publish")
 
     repositories {
         mavenCentral()
