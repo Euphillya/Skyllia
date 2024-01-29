@@ -262,3 +262,15 @@ bplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetIslandT
 \plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetSizeSubCommands.java,2\9\2954e867fe2081323790b93dc6a674cfc6ac0038
 ~
 Nplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SubAdminCommands.java,f\e\fec05e08457d85918456ba08e484e775d46debd6
+
+Qplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/PlayerEvent.java,5\1\5177ea90ef88d1ce6d2525d359326e783ca62d4d
+†
+Vplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/JoinEvent.java,b\b\bb49f592a22da97a7de1add9318c62f985f913dc
+ˆ
+Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/PlayerEvent.java,e\e\eea559fa258a886aeaa9e45f2a694769c195a943
+ˆ
+Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/entity/DamageEvent.java,b\4\b469533806828aca8372933538b830c9a37ddc30
+„
+Tplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/InventoryEvent.java,9\7\97118d2be7002e0d02108a74fed34708eb00cd68
+‹
+[plugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/InventoryEvent.java,a\1\a18f6c544299368d05b21d2c3b03c787274a4957
