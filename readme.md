@@ -14,6 +14,24 @@ The plugin has an API that you can use to add feature extensions to customize yo
 - Dev : https://github.com/Euphillya/Skyllia/actions
 - Alpha : https://github.com/Euphillya/Skyllia/releases
 
+## API
+Gradle Groovy
+```groovy
+repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+}
+
+dependencies {
+    compileOnly("fr.euphyllia.skyllia:api:VERSION") 
+}
+```
+
 ## Compatible Software
 
 |                   Software                    |     Version     |
