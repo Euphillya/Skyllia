@@ -20,7 +20,7 @@ public enum PermissionsCommandIsland implements Permissions {
     MANAGE_PERMISSION(2_048),
     BAN(4_096),
     UNBAN(8_192),
-    TRUST(16_384),
+    MANAGE_TRUST(16_384),
     ;
 
 

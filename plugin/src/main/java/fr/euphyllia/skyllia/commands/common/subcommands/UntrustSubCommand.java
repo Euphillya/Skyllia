@@ -68,7 +68,7 @@ public class UntrustSubCommand implements SubCommandInterface {
                         PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
                         PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.TRUST)) {
+                        if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_TRUST)) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                             return;
                         }
