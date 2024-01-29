@@ -15,7 +15,9 @@ The plugin has an API that you can use to add feature extensions to customize yo
 - Alpha : https://github.com/Euphillya/Skyllia/releases
 
 ## API
+
 Gradle Groovy
+
 ```groovy
 repositories {
     maven {

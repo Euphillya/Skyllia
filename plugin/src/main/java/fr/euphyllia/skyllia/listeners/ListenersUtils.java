@@ -35,7 +35,12 @@ public class ListenersUtils {
             cancellable.setCancelled(true);
             return island;
         }
-        PermissionRoleIsland permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(island.getId(), players.getRoleType(), permissionsIsland.getPermissionType());
+        PermissionRoleIsland permissionRoleIsland;
+        if (PlayersInIslandCache.playerIsTrustedInIsland(island.getId(), player.getUniqueId())) {
+            permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(island.getId(), RoleType.MEMBER, permissionsIsland.getPermissionType());
+        } else {
+            permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(island.getId(), players.getRoleType(), permissionsIsland.getPermissionType());
+        }
         PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
         if (!permissionManager.hasPermission(permissionsIsland)) {
             cancellable.setCancelled(true);

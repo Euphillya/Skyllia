@@ -270,3 +270,7 @@ Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/entity/DamageE
 [plugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/InventoryEvent.java,a\1\a18f6c544299368d05b21d2c3b03c787274a4957
 Š
 Zplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/InteractEvent.java,4\f\4f8b7766b7c999e06ee617e41623ff91b75e1f3b
+Š
+Zplugin/src/main/java/fr/euphyllia/skyllia/commands/common/subcommands/TrustSubCommand.java,e\4\e484294215b6b1915a99474a764bdd9bfcbeb28f
+Œ
+\plugin/src/main/java/fr/euphyllia/skyllia/commands/common/subcommands/UntrustSubCommand.java,c\f\cf34801432bb459b2127111f7623b8d59c138a73

@@ -108,6 +108,11 @@ public class LanguageToml {
     public static String messageASetSizeNAN = "Vous n'avez pas choisi un nombre entier.";
     public static String messageASetSizeFailed = "Le changement n'a pas pu s'effectuer.";
     public static String messageASetSizeSuccess = "Le nombre de personne sur l'ile a bien été changé.";
+    public static String messageTrustSuccess = "Le joueur a été ajouté dans votre liste de confiance jusqu'au prochain redémarrage ou que vous l'enlevier directement. Sachez qu'une personne trust a autant de permission qu'un membre de votre île.";
+    public static String messageTrustCommandNotEnoughArgs = "La commande est incomplète : /skyllia trust <player>";
+    public static String messageUntrustFailed = "Une erreur s'est produite lors de la suppression de la personne dans votre liste de confiance. Etait-il bien en confiance sur votre île ?";
+    public static String messageUntrustSuccess = "Le membre ne fait dorénavant plus partie de vos confiances";
+    public static String messageUntrustCommandNotEnoughArgs = "La commande est incomplète : /skyllia untrust <player>";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -298,11 +303,22 @@ public class LanguageToml {
         messagePermissionPlayerFailedHighOrEqualsStatus = getString("island.permission.fail-high-equals-status", messagePermissionPlayerFailedHighOrEqualsStatus);
     }
 
+    private static void islandTrustLanguage() {
+        messageTrustSuccess = getString("island.trust.sucess", messageTrustSuccess);
+        messageTrustCommandNotEnoughArgs = getString("island.trust.not-enough-args", messageTrustCommandNotEnoughArgs);
+    }
+
     private static void islandUnbanLanguage() {
         messageUnbanCommandNotEnoughArgs = getString("island.unban.not-enough-args", messageUnbanCommandNotEnoughArgs);
         messageUnbanPlayerNotBanned = getString("island.unban.player-not-banned", messageUnbanPlayerNotBanned);
         messageUnBanPlayerSuccess = getString("island.unban.success", messageUnBanPlayerSuccess);
         messageUnbanPlayerFailed = getString("island.unban.failed", messageUnbanPlayerFailed);
+    }
+
+    private static void islandUntrustLanguage() {
+        messageUntrustCommandNotEnoughArgs = getString("island.untrust.not-enough-args", messageUntrustCommandNotEnoughArgs);
+        messageUntrustSuccess = getString("island.untrust.success", messageUntrustSuccess);
+        messageUntrustCommandNotEnoughArgs = getString("island.untrust.failed", messageUntrustCommandNotEnoughArgs);
     }
 
     private static void islandWarpLanguage() {

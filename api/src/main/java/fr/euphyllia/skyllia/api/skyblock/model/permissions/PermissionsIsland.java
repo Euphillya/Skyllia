@@ -20,8 +20,7 @@ public enum PermissionsIsland implements Permissions {
     INTERACT_ENTITIES(2_048),
     KILL_UNKNOWN_ENTITY(4_096),
     KILL_NPC(8_192),
-    INTERACT(16_384)
-    ;
+    INTERACT(16_384);
 
     private final long permissionValue;
 

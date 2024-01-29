@@ -20,9 +20,11 @@ public enum SubCommands {
     PERMISSION(new PermissionSubCommand()),
     PROMOTE(new PromoteSubCommand()),
     TRANSFER(new TransferSubCommand()),
+    TRUST(new TrustSubCommand()),
     SETHOME(new SetHomeSubCommand()),
     SETWARP(new SetWarpSubCommand()),
     UNBAN(new UnbanSubCommand()),
+    UNTRUST(new UntrustSubCommand()),
     VISIT(new VisitSubCommand()),
     WARP(new WarpSubCommand());
 
