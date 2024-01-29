@@ -3,14 +3,13 @@ package fr.euphyllia.skyllia.commands.admin;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.commands.admin.subcommands.ForceDeleteSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.InfoSubCommands;
-import fr.euphyllia.skyllia.commands.admin.subcommands.SetIslandTypeSubCommands;
+import fr.euphyllia.skyllia.commands.admin.subcommands.SetSizeSubCommands;
 import org.jetbrains.annotations.NotNull;
 
 public enum SubAdminCommands {
     FORCEDELETE(new ForceDeleteSubCommands()),
     INFO(new InfoSubCommands()),
-    SETISLANDTYPE(new SetIslandTypeSubCommands()),
-    SETSIZE(new SetIslandTypeSubCommands()),
+    SETSIZE(new SetSizeSubCommands()),
     ;
 
     private final SubCommandInterface commandInterface;
