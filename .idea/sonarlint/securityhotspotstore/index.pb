@@ -268,3 +268,5 @@ Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/PlayerE
 Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/entity/DamageEvent.java,b\4\b469533806828aca8372933538b830c9a37ddc30
 ‹
 [plugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/InventoryEvent.java,a\1\a18f6c544299368d05b21d2c3b03c787274a4957
+Š
+Zplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/InteractEvent.java,4\f\4f8b7766b7c999e06ee617e41623ff91b75e1f3b

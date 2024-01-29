@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.listeners.bukkitevents.BlockEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.PortailAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.entity.DamageEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.player.InteractEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.InventoryEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.JoinEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.PlayerEvent;
@@ -112,6 +113,7 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new InventoryEvent(this.interneAPI), this);
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
         pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
         if (this.interneAPI.isFolia()) {
             pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
         }
