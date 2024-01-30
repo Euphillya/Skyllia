@@ -252,8 +252,6 @@ Qplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SkylliaAdminCommand.ja
 \plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetsizeSubCommands.java,8\4\8465410bf01c7c58f4c9c2d478162aef7204dbbf
 ê
 `plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/ForceDeleteSubCommands.java,7\2\727e6d67f400abf86622d6106203b3ccd1d4bc6d
-â
-Yplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/InfoSubCommands.java,c\1\c1e1ca091770cc424010513927dc179fe31e08d0
 å
 \plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetSizeSubCommands.java,2\9\2954e867fe2081323790b93dc6a674cfc6ac0038
 ~

@@ -42,8 +42,8 @@ public class IslandHook extends Island {
         this.islandId = islandId;
         this.createDate = date;
         this.position = position;
-        if (size >= (511 * ConfigToml.regionDistance) || size <= 1) {
-            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted((511 * ConfigToml.regionDistance)));
+        if (size >= (255 * ConfigToml.regionDistance) || size <= 1) {
+            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted((255 * ConfigToml.regionDistance)));
         }
         this.size = size;
     }
@@ -65,8 +65,8 @@ public class IslandHook extends Island {
 
     @Override
     public boolean setSize(double rayon) throws MaxIslandSizeExceedException {
-        if (rayon >= (511 * ConfigToml.regionDistance) || rayon <= 1) {
-            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted(511 * ConfigToml.regionDistance)); // Fix https://github.com/Euphillya/skyllia/issues/9
+        if (rayon >= (255 * ConfigToml.regionDistance) || rayon <= 1) {
+            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted(255 * ConfigToml.regionDistance)); // Fix https://github.com/Euphillya/skyllia/issues/9
         }
         this.size = rayon;
         if (Boolean.TRUE.equals(this.plugin.getInterneAPI().getSkyblockManager().setSizeIsland(this, rayon).join())) {
