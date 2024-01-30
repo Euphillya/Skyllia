@@ -1,16 +1,10 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.commands.common.subcommands.DeleteSubCommand;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,29 +20,29 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class ForceDeleteSubCommands implements SubCommandInterface {
+public class SetMaxMembersSubCommands implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(ForceDeleteSubCommands.class);
-
+    private final Logger logger = LogManager.getLogger(SetMaxMembersSubCommands.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (!player.hasPermission("skyllia.admins.commands.island.delete")) {
+        if (!player.hasPermission("skyllia.admins.commands.island.setmaxmembers")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
-        if (args.length < 2) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageADeleteCommandNotEnoughArgs);
+        if (args.length < 3) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersCommandNotEnoughArgs);
             return true;
         }
         String playerName = args[0];
-        String confirm = args[1];
+        String changeValue = args[1];
+        String confirm = args[2];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageADeleteNotConfirmedArgs);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersNotConfirmedArgs);
             return true;
         }
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -68,40 +62,31 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                         return;
                     }
 
-                    boolean isDisabled = island.setDisable(true);
-                    if (isDisabled) {
-                        this.updatePlayer(plugin, skyblockManager, island);
-
-                        for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                            WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
-                        }
-
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
+                    int members = Integer.parseInt(changeValue);
+                    boolean updated = island.setMaxMembers(members);
+                    if (updated) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
                     } else {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeFailed);
+                    }
+
+                } catch (Exception e) {
+                    if (e instanceof NumberFormatException ignored) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersNAN);
+                    } else {
+                        logger.log(Level.FATAL, e.getMessage(), e);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                     }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                 }
             });
         } finally {
             executor.shutdown();
         }
-
         return true;
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return null;
-    }
-
-    private void updatePlayer(Main plugin, SkyblockManager skyblockManager, Island island) {
-        for (Players players : island.getMembers()) {
-            players.setRoleType(RoleType.VISITOR);
-            island.updateMember(players);
-            DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
-        }
     }
 }

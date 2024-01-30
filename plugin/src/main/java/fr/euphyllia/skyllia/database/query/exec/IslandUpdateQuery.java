@@ -22,9 +22,15 @@ public class IslandUpdateQuery {
                 WHERE `island_id` = ?;
             """;
 
-    private static final String UPDATE_SIZE_ISLAND = """
+    private static final String UPDATE_MEMBERS_ISLAND = """
                 UPDATE `%s`.islands
                 SET `max_members` = ?
+                WHERE `island_id` = ?;
+            """;
+
+    private static final String UPDATE_SIZE_ISLAND = """
+                UPDATE `%s`.islands
+                SET `size` = ?
                 WHERE `island_id` = ?;
             """;
 
@@ -104,8 +110,20 @@ public class IslandUpdateQuery {
     public CompletableFuture<Boolean> setMaxMemberInIsland(Island island, int newValue) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPDATE_MEMBERS_ISLAND.formatted(this.databaseName), List.of(
+                    newValue, island.getId()
+            ), i -> completableFuture.complete(i != 0), null);
+        } catch (Exception e) {
+            completableFuture.complete(false);
+        }
+        return completableFuture;
+    }
+
+    public CompletableFuture<Boolean> setSizeIsland(Island island, double newValue) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        try {
             MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPDATE_SIZE_ISLAND.formatted(this.databaseName), List.of(
-                    island.getId(), newValue
+                    newValue, island.getId()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
             completableFuture.complete(false);

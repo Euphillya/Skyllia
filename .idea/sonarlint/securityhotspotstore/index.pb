@@ -254,8 +254,6 @@ Qplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/SkylliaAdminCommand.ja
 `plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/ForceDeleteSubCommands.java,7\2\727e6d67f400abf86622d6106203b3ccd1d4bc6d
 ‰
 Yplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/InfoSubCommands.java,c\1\c1e1ca091770cc424010513927dc179fe31e08d0
-’
-bplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetIslandTypeSubCommands.java,c\d\cd75695c3fc5a7cc5a765babc6bd76ad7fc4feba
 Œ
 \plugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetSizeSubCommands.java,2\9\2954e867fe2081323790b93dc6a674cfc6ac0038
 ~
@@ -274,3 +272,7 @@ Zplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/Interac
 Zplugin/src/main/java/fr/euphyllia/skyllia/commands/common/subcommands/TrustSubCommand.java,e\4\e484294215b6b1915a99474a764bdd9bfcbeb28f
 Œ
 \plugin/src/main/java/fr/euphyllia/skyllia/commands/common/subcommands/UntrustSubCommand.java,c\f\cf34801432bb459b2127111f7623b8d59c138a73
+’
+bplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetMaxMembersSubCommands.java,e\6\e6f3fa7cab6d0c1142b07d696d4b3461d44ee011
+}
+Mapi/src/main/java/fr/euphyllia/skyllia/api/event/SkyblockChangeSizeEvent.java,e\3\e3286fee0eae04df37bf16f88040ef2a0511d02a

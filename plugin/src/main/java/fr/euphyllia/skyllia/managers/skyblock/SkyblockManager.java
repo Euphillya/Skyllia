@@ -142,4 +142,8 @@ public class SkyblockManager {
     public CompletableFuture<Boolean> setMaxMemberInIsland(Island island, int newValue) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setMaxMemberInIsland(island, newValue);
     }
+
+    public CompletableFuture<Boolean> setSizeIsland(Island island, double newValue) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setSizeIsland(island, newValue);
+    }
 }

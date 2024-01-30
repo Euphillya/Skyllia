@@ -31,7 +31,7 @@ public class InteractEvent implements Listener {
         if (player.hasPermission("skyllia.interact.bypass")) {
             return;
         }
-        ListenersUtils.checkPermission(player.getChunk(), player, PermissionsIsland.INTERACT, event);
+        ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.INTERACT, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -42,7 +42,7 @@ public class InteractEvent implements Listener {
         if (player.hasPermission("skyllia.interact_entity.bypass")) {
             return;
         }
-        ListenersUtils.checkPermission(event.getRightClicked().getChunk(), player, PermissionsIsland.INTERACT_ENTITIES, event);
+        ListenersUtils.checkPermission(event.getRightClicked().getLocation(), player, PermissionsIsland.INTERACT_ENTITIES, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -53,7 +53,7 @@ public class InteractEvent implements Listener {
         if (player.hasPermission("skyllia.interact_entity.bypass")) {
             return;
         }
-        ListenersUtils.checkPermission(event.getRightClicked().getChunk(), player, PermissionsIsland.INTERACT_ENTITIES, event);
+        ListenersUtils.checkPermission(event.getRightClicked().getLocation(), player, PermissionsIsland.INTERACT_ENTITIES, event);
     }
 
 }

@@ -66,6 +66,7 @@ public class Main extends JavaPlugin {
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
         this.setupCommands();
+        this.setupAdminCommands();
         this.loadListener();
         this.runCache();
         this.disabledConfig();

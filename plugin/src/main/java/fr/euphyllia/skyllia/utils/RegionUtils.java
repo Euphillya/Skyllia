@@ -2,9 +2,9 @@ package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.utils.models.CallBackPosition;
 import fr.euphyllia.skyllia.utils.models.CallbackEntity;
-import fr.euphyllia.skyllia.utils.models.CallbackLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -15,7 +15,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegionUtils {
 
@@ -62,44 +63,6 @@ public class RegionUtils {
             default -> throw new RuntimeException("A problem with the generation of the island position has occurred.");
         };
         return new Position(regionX, regionZ);
-    }
-
-    public static void editBlockRegion(World world, int regionX, int regionZ, Main plugin, CallbackLocation callback, int nbrPerSecond) {
-        Bukkit.getAsyncScheduler().runNow(plugin, t1 -> {
-            int minChunkX = regionX << 5;
-            int minChunkZ = regionZ << 5;
-
-            int minY = world.getMinHeight();
-            int maxY = world.getMaxHeight();
-
-
-            int maxChunkX = 32;
-            int maxChunkZ = 32;
-
-            for (int cx = 0; cx < maxChunkX; cx++) {
-                for (int cz = 0; cz < maxChunkZ; cz++) {
-                    int minX = (minChunkX + cx) << 4;
-                    int maxX = minX + 15;
-
-                    int minZ = (minChunkZ + cz) << 4;
-                    int maxZ = minZ + 15;
-                    int numberChunk = (cx * maxChunkX) + cz;
-                    int delayAfter = (numberChunk * 20) / nbrPerSecond;
-                    for (int x = minX; x <= maxX; x++) {
-                        for (int z = minZ; z <= maxZ; z++) {
-                            for (int y = minY; y <= maxY; y++) {
-                                Location loc = new Location(world, x, y, z);
-                                Bukkit.getAsyncScheduler().runDelayed(plugin, t2 -> {
-                                    if (callback != null) {
-                                        callback.run(loc);
-                                    }
-                                }, delayAfter, TimeUnit.MILLISECONDS);
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
 
     public static Vector getMinXRegion(World world, int regionX, int regionZ) {
@@ -162,19 +125,23 @@ public class RegionUtils {
         }
     }
 
-    public static void spiralStartCenter(Position islandRegion, int size, CallBackPosition callbackChunkPosition) {
+    public static void spiralStartCenter(Position islandRegion, double size, CallBackPosition callbackChunkPosition) {
         Position chunk = RegionUtils.getChunkCenterRegion(islandRegion.x(), islandRegion.z());
         int cx = chunk.x();
         int cz = chunk.z();
         int x = 0, z = 0;
         int dx = 0, dz = -1;
-        int maxI = size * size;
-
+        int maxI = (33 * ConfigToml.regionDistance) * (33 * ConfigToml.regionDistance);
+        List<Position> islandPositionWithRadius = RegionUtils.getRegionsInRadius(islandRegion, (int) Math.round(size));
+        List<Position> regionCleaned = new ArrayList<>();
         for (int i = 0; i < maxI; i++) {
             if ((-size / 2 <= x) && (x <= size / 2) && (-size / 2 <= z) && (z <= size / 2)) {
                 Position chunkPos = new Position(cx + x, cz + z);
                 Position region = RegionUtils.getRegionInChunk(chunkPos.x(), chunkPos.z());
-                if (islandRegion.x() == region.x() && (islandRegion.z() == region.z())) {
+                if (islandPositionWithRadius.contains(region)) {
+                    if (!regionCleaned.contains(region)) {
+                        regionCleaned.add(region);
+                    }
                     callbackChunkPosition.run(chunkPos);
                 }
             }
@@ -188,4 +155,35 @@ public class RegionUtils {
             z += dz;
         }
     }
+
+    public static boolean isBlockWithinRadius(Location center, int blockX, int blockZ, int radius) {
+        double dx = (double) center.getBlockX() - blockX;
+        double dz = (double) center.getBlockZ() - blockZ;
+        double distance = Math.sqrt(dx * dx + dz * dz);
+
+        return distance <= radius;
+    }
+
+    public static List<Position> getRegionsInRadius(Position position, int blockRadius) {
+        return getRegionsInRadius(position.x(), position.z(), blockRadius);
+    }
+
+    public static List<Position> getRegionsInRadius(int regionX, int regionZ, int blockRadius) {
+        int centerBlockX = (regionX << 9) + (int) OFFSET;
+        int centerBlockZ = (regionZ << 9) + (int) OFFSET;
+
+        List<Position> regions = new ArrayList<>();
+        int regionRadius = (blockRadius + (int) OFFSET) >> 9;
+
+        for (int x = -regionRadius; x <= regionRadius; x++) {
+            for (int z = -regionRadius; z <= regionRadius; z++) {
+                int regionXCoord = (centerBlockX >> 9) + x;
+                int regionZCoord = (centerBlockZ >> 9) + z;
+                regions.add(new Position(regionXCoord, regionZCoord));
+            }
+        }
+
+        return regions;
+    }
+
 }

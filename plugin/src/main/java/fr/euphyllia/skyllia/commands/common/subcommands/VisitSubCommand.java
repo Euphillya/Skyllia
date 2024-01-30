@@ -50,7 +50,12 @@ public class VisitSubCommand implements SubCommandInterface {
             executor.execute(() -> {
                 try {
                     String visitPlayer = args[0];
-                    UUID visitPlayerId = Bukkit.getPlayerUniqueId(visitPlayer);
+                    UUID visitPlayerId;
+                    try {
+                        visitPlayerId = UUID.fromString(visitPlayer);
+                    } catch (IllegalArgumentException ignored) {
+                        visitPlayerId = Bukkit.getPlayerUniqueId(visitPlayer);
+                    }
                     if (visitPlayerId == null) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
                         return;

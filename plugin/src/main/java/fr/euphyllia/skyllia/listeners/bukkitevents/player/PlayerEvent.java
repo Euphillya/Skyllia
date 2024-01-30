@@ -33,20 +33,20 @@ public class PlayerEvent implements Listener {
 
     public void onPlayerUseBucket(final PlayerBucketEvent event) {
         if (event.isCancelled()) return;
-        ListenersUtils.checkPermission(event.getBlock().getChunk(), event.getPlayer(), PermissionsIsland.BUCKETS, event);
+        ListenersUtils.checkPermission(event.getBlock().getLocation(), event.getPlayer(), PermissionsIsland.BUCKETS, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDropItem(final PlayerDropItemEvent event) {
         if (event.isCancelled()) return;
-        ListenersUtils.checkPermission(event.getItemDrop().getChunk(), event.getPlayer(), PermissionsIsland.DROP_ITEMS, event);
+        ListenersUtils.checkPermission(event.getItemDrop().getLocation(), event.getPlayer(), PermissionsIsland.DROP_ITEMS, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPickUpItemDropped(final EntityPickupItemEvent event) {
         if (event.isCancelled()) return;
         if (event.getEntity() instanceof Player player) {
-            ListenersUtils.checkPermission(event.getItem().getChunk(), player, PermissionsIsland.PICKUP_ITEMS, event);
+            ListenersUtils.checkPermission(event.getItem().getLocation(), player, PermissionsIsland.PICKUP_ITEMS, event);
         }
     }
 
@@ -54,6 +54,6 @@ public class PlayerEvent implements Listener {
     public void onPlayerUsePortal(final PlayerPortalEvent event) {
         if (event.isCancelled()) return;
         event.setCanCreatePortal(false);
-        ListenersUtils.checkPermission(event.getPlayer().getChunk(), event.getPlayer(), PermissionsIsland.USE_NETHER_PORTAL, event);
+        ListenersUtils.checkPermission(event.getPlayer().getLocation(), event.getPlayer(), PermissionsIsland.USE_NETHER_PORTAL, event);
     }
 }

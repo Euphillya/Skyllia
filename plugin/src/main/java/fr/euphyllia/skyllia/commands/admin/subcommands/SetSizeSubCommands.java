@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -41,7 +42,8 @@ public class SetSizeSubCommands implements SubCommandInterface {
         String playerName = args[0];
         String changeValue = args[1];
         String confirm = args[2];
-        if (confirm.equalsIgnoreCase("confirm")) {
+        System.out.println(Arrays.toString(args));
+        if (!confirm.equalsIgnoreCase("confirm")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeNotConfirmedArgs);
             return true;
         }
@@ -62,8 +64,8 @@ public class SetSizeSubCommands implements SubCommandInterface {
                         return;
                     }
 
-                    int members = Integer.parseInt(changeValue);
-                    boolean updated = island.setMaxMembers(members);
+                    double newSize = Double.parseDouble(changeValue);
+                    boolean updated = island.setSize(newSize);
                     if (updated) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
                     } else {

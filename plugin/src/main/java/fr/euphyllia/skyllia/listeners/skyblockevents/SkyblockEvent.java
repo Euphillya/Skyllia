@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
+import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.util.List;
 
 public class SkyblockEvent implements Listener {
 
@@ -63,8 +66,22 @@ public class SkyblockEvent implements Listener {
         this.api.getCacheManager().updateCacheIsland(event.getIsland(), players.getMojangId());
     }
 
+    @EventHandler
+    public void onSkyblockSize(final SkyblockChangeSizeEvent event) {
+        List<Players> players = event.getIsland().getMembers();
+        for (Players player : players) {
+            Player bPlayer = Bukkit.getPlayer(player.getMojangId());
+            if (bPlayer != null && bPlayer.isOnline() && (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(bPlayer.getWorld().getName())))) {
+                Location centerIsland = RegionUtils.getCenterRegion(bPlayer.getWorld(), event.getIsland().getPosition().x(), event.getIsland().getPosition().z());
+                this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), bPlayer, centerIsland, event.getSizeIsland(), 0, 0);
+
+
+            }
+        }
+    }
+
     private void teleportOtherWorld(Player player, PlayerPrepareChangeWorldSkyblockEvent event, PermissionsIsland permissionsIsland) {
-        Island island = ListenersUtils.checkPermission(player.getChunk(), player, permissionsIsland, event);
+        Island island = ListenersUtils.checkPermission(player.getLocation(), player, permissionsIsland, event);
         if (island == null) {
             return;
         }

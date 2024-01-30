@@ -113,6 +113,9 @@ public class LanguageToml {
     public static String messageUntrustFailed = "Une erreur s'est produite lors de la suppression de la personne dans votre liste de confiance. Etait-il bien en confiance sur votre île ?";
     public static String messageUntrustSuccess = "Le membre ne fait dorénavant plus partie de vos confiances";
     public static String messageUntrustCommandNotEnoughArgs = "La commande est incomplète : /skyllia untrust <player>";
+    public static String messageASetMaxMembersCommandNotEnoughArgs = "La commande est incomplète : /skyllia setmaxmembres value confirm";
+    public static String messageASetMaxMembersNotConfirmedArgs = "Vous n'avez pas ajouter le \"confirm\" à la fin";
+    public static String messageASetMaxMembersNAN = "Le nombre indiqué est incorrect.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -189,6 +192,10 @@ public class LanguageToml {
         messageASetSizeFailed = getString("admin.commands.island.setsize.failed", messageASetSizeFailed);
         messageASetSizeNAN = getString("admin.commands.island.setsize.nan", messageASetSizeNAN);
         messageASetSizeNotConfirmedArgs = getString("admin.commands.island.setsize.no-confirm", messageASetSizeNotConfirmedArgs);
+        // setSize
+        messageASetMaxMembersCommandNotEnoughArgs = getString("admin.commands.island.setmaxmembers.not-enough-args", messageASetMaxMembersCommandNotEnoughArgs);
+        messageASetMaxMembersNotConfirmedArgs = getString("admin.commands.island.setmaxmembers.no-confirm", messageASetMaxMembersNotConfirmedArgs);
+        messageASetMaxMembersNAN = getString("admin.commands.island.setmaxmembers.nan", messageASetMaxMembersNAN);
 
     }
 

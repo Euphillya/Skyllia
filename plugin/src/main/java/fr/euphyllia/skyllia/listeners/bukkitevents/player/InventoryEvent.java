@@ -27,75 +27,75 @@ public class InventoryEvent implements Listener {
         InventoryType inventoryType = event.getInventory().getType();
         switch (inventoryType) {
             case CHEST -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_CHEST, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CHEST, event);
             }
             case DISPENSER -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_DISPENSER, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_DISPENSER, event);
             }
             case DROPPER -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_DROPPER, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_DROPPER, event);
             }
             case FURNACE -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_FURNACE, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_FURNACE, event);
             }
             case WORKBENCH -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_WORKBENCH, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_WORKBENCH, event);
             }
             case ENCHANTING -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_ENCHANTING, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_ENCHANTING, event);
             }
             case BREWING -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_BREWING, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_BREWING, event);
             }
             case MERCHANT -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_MERCHANT, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_MERCHANT, event);
             }
             case ANVIL -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_ANVIL, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_ANVIL, event);
             }
             case SMITHING -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_SMITHING, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SMITHING, event);
             }
             case BEACON -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_BEACON, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_BEACON, event);
             }
             case HOPPER -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_HOPPER, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_HOPPER, event);
             }
             case SHULKER_BOX -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_SHULKER_BOX, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SHULKER_BOX, event);
             }
             case BARREL -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_BARREL, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_BARREL, event);
             }
             case BLAST_FURNACE -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_BLAST_FURNACE, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_BLAST_FURNACE, event);
             }
             case LECTERN -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_LECTERN, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_LECTERN, event);
             }
             case SMOKER -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_SMOKER, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SMOKER, event);
             }
             case LOOM -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_LOOM, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_LOOM, event);
             }
             case CARTOGRAPHY -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_CARTOGRAPHY, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CARTOGRAPHY, event);
             }
             case GRINDSTONE -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_GRINDSTONE, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_GRINDSTONE, event);
             }
             case STONECUTTER -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_STONECUTTER, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_STONECUTTER, event);
             }
             case SMITHING_NEW -> {
-                ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_SMITHING_NEW, event);
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SMITHING_NEW, event);
             }
             default -> {
                 // TODO sera remplace plus tard
                 if (inventoryType.name().equalsIgnoreCase("CRAFTER")) {
-                    ListenersUtils.checkPermission(player.getChunk(), player, PermissionsInventory.OPEN_CRAFTER, event);
+                    ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CRAFTER, event);
                 }
             }
         }

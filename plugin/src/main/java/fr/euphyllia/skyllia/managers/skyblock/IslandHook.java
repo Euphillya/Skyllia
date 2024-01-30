@@ -1,10 +1,7 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.event.SkyblockChangeAccessEvent;
-import fr.euphyllia.skyllia.api.event.SkyblockCreateWarpEvent;
-import fr.euphyllia.skyllia.api.event.SkyblockDeleteEvent;
-import fr.euphyllia.skyllia.api.event.SkyblockDeleteWarpEvent;
+import fr.euphyllia.skyllia.api.event.*;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -19,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class IslandHook extends Island {
@@ -66,11 +64,17 @@ public class IslandHook extends Island {
     }
 
     @Override
-    public void setSize(double rayon) throws MaxIslandSizeExceedException {
-        if (this.size >= (511 * ConfigToml.regionDistance) || this.size <= 1) {
+    public boolean setSize(double rayon) throws MaxIslandSizeExceedException {
+        if (rayon >= (511 * ConfigToml.regionDistance) || rayon <= 1) {
             throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! Must be between 2 and %s.".formatted(511 * ConfigToml.regionDistance)); // Fix https://github.com/Euphillya/skyllia/issues/9
         }
         this.size = rayon;
+        if (Boolean.TRUE.equals(this.plugin.getInterneAPI().getSkyblockManager().setSizeIsland(this, rayon).join())) {
+            CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, rayon)));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -117,9 +121,7 @@ public class IslandHook extends Island {
         if (skyblockRemoveEvent.isCancelled()) {
             return false;
         }
-        this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this, disable).join();
-
-        return disable;
+        return this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this, disable).join();
     }
 
     @Override

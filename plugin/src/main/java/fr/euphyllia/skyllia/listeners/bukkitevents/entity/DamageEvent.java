@@ -34,16 +34,16 @@ public class DamageEvent implements Listener {
             return;
         }
         if (event.getEntity() instanceof Player) {
-            ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.PVP, event);
+            ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.PVP, event);
         } else {
             if (event.getEntity() instanceof Monster) {
-                ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_MONSTER, event);
+                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_MONSTER, event);
             } else if (event.getEntity() instanceof Animals) {
-                ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_ANIMAL, event);
+                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_ANIMAL, event);
             } else if (event.getEntity() instanceof NPC) {
-                ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_NPC, event);
+                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_NPC, event);
             } else {
-                ListenersUtils.checkPermission(event.getEntity().getChunk(), damager, PermissionsIsland.KILL_UNKNOWN_ENTITY, event);
+                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_UNKNOWN_ENTITY, event);
             }
         }
     }

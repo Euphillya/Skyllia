@@ -13,13 +13,16 @@ import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.Nullable;
 
 public class ListenersUtils {
 
-    public static @Nullable Island checkPermission(Chunk chunk, Player player, Permissions permissionsIsland, Cancellable cancellable) {
+
+    public static @Nullable Island checkPermission(Location location, Player player, Permissions permissionsIsland, Cancellable cancellable) {
+        Chunk chunk = location.getChunk();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(chunk.getWorld().getName()))) {
             return null;
         }
@@ -28,6 +31,11 @@ public class ListenersUtils {
         if (island == null) {
             cancellable.setCancelled(true); // Sécurité !
             return null;
+        }
+        Position islandOriginPosition = island.getPosition();
+        if (!RegionUtils.isBlockWithinRadius(RegionUtils.getCenterRegion(chunk.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), (int) island.getSize())) {
+            cancellable.setCancelled(true); // ce n'est pas une ile.
+            return island;
         }
         Players players = PlayersInIslandCache.getPlayers(island.getId(), player.getUniqueId());
         if (players.getRoleType().equals(RoleType.OWNER)) return island;
