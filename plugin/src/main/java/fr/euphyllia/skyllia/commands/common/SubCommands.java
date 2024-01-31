@@ -13,6 +13,7 @@ public enum SubCommands {
     DELWARP(new DelWarpSubCommand()),
     DEMOTE(new DemoteSubCommand()),
     EXPEL(new ExpelSubCommand()),
+    GAMERULE(new GameRuleSubCommand()),
     HOME(new HomeSubCommand()),
     INVITE(new InviteSubCommand()),
     KICK(new KickSubCommand()),

@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -48,11 +49,18 @@ public abstract class Island {
 
     public abstract boolean updateMember(Players member);
 
+    @Deprecated(forRemoval = true)
     public abstract boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions);
+
+    public abstract boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions);
 
     public abstract Position getPosition();
 
     public abstract int getMaxMembers();
 
     public abstract boolean setMaxMembers(int maxMembers);
+
+    public abstract boolean updateGamerule(long gamerules);
+
+    public abstract long getGameRulePermission();
 }

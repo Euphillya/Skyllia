@@ -33,6 +33,13 @@ public class MariaDBCreateTable {
             PRIMARY KEY (`island_id`, `region_x`, `region_z`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
+    private static final String CREATE_GAMERULE_ISLANDS = """
+            CREATE TABLE IF NOT EXISTS `%s`.`islands_gamerule` (
+            `island_id` CHAR(36) NOT NULL,
+            `flags` INT UNSIGNED NOT NULL DEFAULT '0',
+            PRIMARY KEY (`island_id`,`flags`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
     private static final String CREATE_ISLANDS_MEMBERS = """
                 CREATE TABLE IF NOT EXISTS `%s`.`members_in_islands` (
                   `island_id` CHAR(36) NOT NULL,
@@ -119,6 +126,7 @@ public class MariaDBCreateTable {
         MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_SPIRAL.formatted(this.database));
         MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
         MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_GAMERULE_ISLANDS.formatted(this.database));
         int distancePerIsland = ConfigToml.regionDistance;
         if (distancePerIsland <= 0) {
             logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +

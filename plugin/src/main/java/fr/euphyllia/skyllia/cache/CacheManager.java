@@ -73,6 +73,8 @@ public class CacheManager {
             }
             // ============= permission role cache
             this.updatePermissionCacheIsland(island);
+            // ============= gamerule cache
+            this.updateGameRuleCacheIsland(island);
         });
     }
 
@@ -83,5 +85,10 @@ public class CacheManager {
                 PermissionRoleInIslandCache.addPermissionInIsland(island.getId(), roleType, permissionsType, permissionRoleIsland);
             }
         }
+    }
+
+    public void updateGameRuleCacheIsland(Island island) {
+        long valueGR = island.getGameRulePermission();
+        PermissionGameRuleInIslandCache.setPermissionInIsland(island.getId(), valueGR);
     }
 }

@@ -74,8 +74,6 @@ public class SkyblockEvent implements Listener {
             if (bPlayer != null && bPlayer.isOnline() && (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(bPlayer.getWorld().getName())))) {
                 Location centerIsland = RegionUtils.getCenterRegion(bPlayer.getWorld(), event.getIsland().getPosition().x(), event.getIsland().getPosition().z());
                 this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), bPlayer, centerIsland, event.getSizeIsland(), 0, 0);
-
-
             }
         }
     }
@@ -110,5 +108,9 @@ public class SkyblockEvent implements Listener {
         }
     }
 
+    @EventHandler
+    public void onSkyblockChangeGamerule(final SkyblockChangeGameRuleEvent event) {
+        this.api.getCacheManager().updateGameRuleCacheIsland(event.getIsland());
+    }
 
 }

@@ -9,11 +9,16 @@ import java.util.List;
 public enum GameRuleIsland {
     SPAWN_HOSTILE(1),
     SPAWN_PASSIVE(2),
-    HUMAN_EXPLOSION(4),
-    MOB_EXPLOSION(8),
-    ENDERMAN_PICK_BLOCK(16),
-    ZOMBIE_BREAK_DOORS(32),
+    SPAWN_UNKNOWN(4),
+    HUMAN_EXPLOSION(8),
+    MOB_EXPLOSION(16),
+    ENDERMAN_PICK_BLOCK(32),
     FIRE_SPREADING(64),
+    MOB_PICKUP_ITEMS(128),
+    UNKNOWN_EXPLOSION(256),
+    PASSIF_MOB_GRIEFING(512),
+    HOSTILE_MOB_GRIEFING(1_024),
+    UNKNOWN_MOB_GRIEFING(2_048),
     ;
 
     private final long permissionValue;

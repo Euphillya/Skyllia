@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -125,6 +126,14 @@ public class SkyblockManager {
 
     public CompletableFuture<PermissionRoleIsland> getPermissionIsland(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandPermission(islandId, permissionsType, roleType);
+    }
+
+    public CompletableFuture<Boolean> updateGamerule(Island island, long gameRuleIsland) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandGameRule(island, gameRuleIsland);
+    }
+
+    public CompletableFuture<Long> getGameRulePermission(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandGameRule(island);
     }
 
     public CompletableFuture<Boolean> deleteMember(Island island, Players oldMember) {

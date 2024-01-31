@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -28,34 +29,29 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class PermissionSubCommand implements SubCommandInterface {
+public class GameRuleSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(PermissionSubCommand.class);
+    private final Logger logger = LogManager.getLogger(GameRuleSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.permission")) {
+        if (!player.hasPermission("skyllia.island.command.gamerule")) {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-        if (args.length < 4) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionCommandNotEnoughArgs);
+        if (args.length < 2) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleCommandNotEnoughArgs);
             return true;
         }
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        String permissionsTypeRaw = args[0]; // ISLAND / COMMANDS / INVENTORY
-        String roleTypeRaw = args[1]; // ROLE TYPE
-        String permissionRaw = args[2]; // Permission
-        String valueRaw = args[3]; // true / false
+        String permissionRaw = args[0]; // Permission
+        String valueRaw = args[1]; // true / false
 
         try {
             executor.execute(() -> {
-                PermissionFormat permissionFormat = this.getPermissionFormat(plugin, player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
-                if (permissionFormat == null) return;
-
                 try {
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
@@ -70,28 +66,31 @@ public class PermissionSubCommand implements SubCommandInterface {
                         PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
                         PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_PERMISSION)) {
+                        if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_GAMERULE)) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                             return;
                         }
                     }
 
-                    if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
+                    GameRuleIsland gameRuleIsland;
+                    boolean enabledOrNot = Boolean.parseBoolean(valueRaw);
+                    try {
+                        gameRuleIsland = GameRuleIsland.valueOf(permissionRaw.toUpperCase());
+                    } catch (IllegalArgumentException exception) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleInvalid);
                         return;
                     }
 
-
-                    PermissionRoleIsland permissionsIsland = skyblockManager.getPermissionIsland(island.getId(), permissionFormat.permissionsType, permissionFormat.roleType).join();
-                    long flags = permissionsIsland.permission();
+                    long flags = island.getGameRulePermission();
                     PermissionManager permissionManager = new PermissionManager(flags);
-                    permissionManager.definePermission(permissionFormat.permissions.getPermissionValue(), permissionFormat.value);
-                    boolean updateIslandPermission = island.updatePermission(permissionFormat.permissionsType, permissionFormat.roleType, permissionManager.getPermissions());
-                    if (updateIslandPermission) {
-                        Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(island, permissionFormat.permissionsType, permissionFormat.roleType, permissionManager.getPermissions()));
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                    permissionManager.definePermission(gameRuleIsland.getPermissionValue(), enabledOrNot);
+
+                    boolean updateGameRuleIsland = island.updateGamerule(permissionManager.getPermissions());
+
+                    if (updateGameRuleIsland) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateSuccess);
                     } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateFailed);
                     }
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
@@ -130,39 +129,5 @@ public class PermissionSubCommand implements SubCommandInterface {
             return List.of("true", "false");
         }
         return new ArrayList<>();
-    }
-
-    private PermissionFormat getPermissionFormat(Main main, Entity entity, String permissionsTypeRaw, String roleTypeRaw, String permissionRaw, String valueRaw) {
-        PermissionsType permissionsType;
-        try {
-            permissionsType = PermissionsType.valueOf(permissionsTypeRaw.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionPermissionTypeInvalid);
-            return null;
-        }
-        RoleType roleType;
-        try {
-            roleType = RoleType.valueOf(roleTypeRaw.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionRoleTypeInvalid);
-            return null;
-        }
-        Permissions permissions;
-        try {
-            permissions = switch (permissionsType) {
-                case COMMANDS -> PermissionsCommandIsland.valueOf(permissionRaw.toUpperCase());
-                case ISLAND -> PermissionsIsland.valueOf(permissionRaw.toUpperCase());
-                case INVENTORY -> PermissionsInventory.valueOf(permissionRaw.toUpperCase());
-            };
-        } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionsPermissionsValueInvalid);
-            return null;
-        }
-        boolean value = Boolean.parseBoolean(valueRaw);
-        return new PermissionFormat(permissionsType, roleType, permissions, value);
-    }
-
-    private record PermissionFormat(PermissionsType permissionsType, RoleType roleType, Permissions permissions,
-                                    boolean value) {
     }
 }

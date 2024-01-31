@@ -7,7 +7,9 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.Permissions;
+import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.PositionIslandCache;
@@ -23,6 +25,32 @@ import org.jetbrains.annotations.Nullable;
 
 public class ListenersUtils {
 
+    public static @Nullable Island checkGameRuleIsland(Location location, GameRuleIsland gamerule, Cancellable cancellable) {
+        Chunk chunk = location.getChunk();
+        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(chunk.getWorld().getName()))) {
+            return null;
+        }
+        Position position = RegionUtils.getRegionInChunk(chunk.getX(), chunk.getZ());
+        Island island = PositionIslandCache.getIsland(position);
+        if (island == null) {
+            cancellable.setCancelled(true); // Sécurité !
+            return null;
+        }
+        Position islandOriginPosition = island.getPosition();
+        if (!RegionUtils.isBlockWithinRadius(RegionUtils.getCenterRegion(chunk.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), (int) island.getSize())) {
+            cancellable.setCancelled(true); // ce n'est pas une ile.
+            return island;
+        }
+        long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
+
+
+        PermissionManager permissionManager = new PermissionManager(permissionChecker);
+        if (!permissionManager.hasPermission(gamerule.getPermissionValue())) {
+            cancellable.setCancelled(true);
+            return island;
+        }
+        return island;
+    }
 
     public static @Nullable Island checkPermission(Location location, Player player, Permissions permissionsIsland, Cancellable cancellable) {
         Chunk chunk = location.getChunk();

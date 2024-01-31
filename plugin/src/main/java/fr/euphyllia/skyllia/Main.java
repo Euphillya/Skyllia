@@ -10,6 +10,11 @@ import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.listeners.bukkitevents.BlockEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.PortailAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.entity.DamageEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.BlockGameRuleEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.ExplosionEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.GriefingEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.MobSpawnEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.PickupEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyllia.managers.Managers;
@@ -116,6 +121,12 @@ public class Main extends JavaPlugin {
         if (this.interneAPI.isFolia()) {
             pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
         }
+        // GameRule Events
+        pluginManager.registerEvents(new BlockGameRuleEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new ExplosionEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new GriefingEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new MobSpawnEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new PickupEvent(this.interneAPI), this);
 
         // Skyblock Event
         pluginManager.registerEvents(new SkyblockEvent(this.interneAPI), this);

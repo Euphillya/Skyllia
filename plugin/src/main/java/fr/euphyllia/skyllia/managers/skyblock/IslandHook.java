@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.bukkit.Bukkit;
@@ -164,8 +165,13 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
     }
 
-    @Override
+    @Override @Deprecated(forRemoval = true)
     public boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions) {
+        return this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
+    }
+
+    @Override
+    public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
         return this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
     }
 
@@ -187,5 +193,21 @@ public class IslandHook extends Island {
     @Override
     public boolean setMaxMembers(int newMax) {
         return this.plugin.getInterneAPI().getSkyblockManager().setMaxMemberInIsland(this, newMax).join();
+    }
+
+    @Override
+    public boolean updateGamerule(long gameRuleIsland) {
+        boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updateGamerule(this, gameRuleIsland).join();
+        if (isUpdated) {
+            CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleIsland)));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public long getGameRulePermission() {
+        return this.plugin.getInterneAPI().getSkyblockManager().getGameRulePermission(this).join();
     }
 }

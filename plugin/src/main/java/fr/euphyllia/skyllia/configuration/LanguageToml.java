@@ -259,6 +259,18 @@ public class LanguageToml {
         messageHomeCreateSuccess = getString("island.home.set.success", messageHomeCreateSuccess);
     }
 
+    public static String messageGameRuleCommandNotEnoughArgs = "La commande est incomplète : /skyllia gamerule <GAMERULE> <true/false>";
+    public static String messageGameRuleInvalid = "La gamerule n'existe pas";
+    public static String messageGameRuleUpdateSuccess = "La gamerule a été mise à jour ";
+    public static String messageGameRuleUpdateFailed = "Une erreur s'est produite lors de la mise à jour de la gamerule";
+
+    private static void islandGameRuleLanguage() {
+        messageGameRuleCommandNotEnoughArgs = getString("island.gamerule.not-enough-args", messageGameRuleCommandNotEnoughArgs);
+        messageGameRuleInvalid = getString("island.gamerule.gamerule-invalid", messageGameRuleInvalid);
+        messageGameRuleUpdateSuccess =  getString("island.gamerule.success", messageGameRuleUpdateSuccess);
+        messageGameRuleUpdateFailed = getString("island.gamerule.failed", messageGameRuleUpdateFailed);
+    }
+
     private static void islandGenericLanguage() {
         messagePlayerHasNotIsland = getString("island.generic.player.no-island", messagePlayerHasNotIsland);
         messageIslandAlreadyExist = getString("island.generic.player.already-exist", messageIslandAlreadyExist);
