@@ -50,10 +50,4 @@ public class PlayerEvent implements Listener {
         }
     }
 
-    // Todo a dev sur paper
-    public void onPlayerUsePortal(final PlayerPortalEvent event) {
-        if (event.isCancelled()) return;
-        event.setCanCreatePortal(false);
-        ListenersUtils.checkPermission(event.getPlayer().getLocation(), event.getPlayer(), PermissionsIsland.USE_NETHER_PORTAL, event);
-    }
 }

@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.listeners.bukkitevents;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.PlayerPrepareChangeWorldSkyblockEvent;
+import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,21 +65,12 @@ public class PortailAlternativeFoliaEvent implements Listener {
         // Obtenez le bloc sur lequel le joueur se tient
         Executors.newSingleThreadScheduledExecutor().execute(() -> {
             if (blockType == Material.NETHER_PORTAL) {
-                callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
+                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
             }
             if (blockType == Material.END_PORTAL_FRAME) {
-                callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, world.getName());
+                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, world.getName());
             }
         });
 
-    }
-
-    private void callPlayerPrepareChangeWorldSkyblockEvent(Player player, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, String worldName) {
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(worldName))) {
-            return;
-        }
-        WorldConfig worldConfig = WorldUtils.getWorldConfig(worldName);
-        if (worldConfig == null) return;
-        Bukkit.getPluginManager().callEvent(new PlayerPrepareChangeWorldSkyblockEvent(player, worldConfig, portalType));
     }
 }

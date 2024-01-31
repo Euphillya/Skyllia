@@ -274,3 +274,5 @@ Zplugin/src/main/java/fr/euphyllia/skyllia/commands/common/subcommands/TrustSubC
 bplugin/src/main/java/fr/euphyllia/skyllia/commands/admin/subcommands/SetMaxMembersSubCommands.java,e\6\e6f3fa7cab6d0c1142b07d696d4b3461d44ee011
 }
 Mapi/src/main/java/fr/euphyllia/skyllia/api/event/SkyblockChangeSizeEvent.java,e\3\e3286fee0eae04df37bf16f88040ef2a0511d02a
+Š
+Zplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/player/TeleportEvent.java,3\e\3eb3470716c0ce164769accfd043271518663b4a

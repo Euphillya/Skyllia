@@ -1,5 +1,7 @@
 package fr.euphyllia.skyllia.listeners;
 
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.event.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
@@ -12,6 +14,7 @@ import fr.euphyllia.skyllia.cache.PositionIslandCache;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -55,5 +58,15 @@ public class ListenersUtils {
             return island;
         }
         return island;
+    }
+
+
+    public static void callPlayerPrepareChangeWorldSkyblockEvent(Player player, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, String worldName) {
+        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(worldName))) {
+            return;
+        }
+        WorldConfig worldConfig = WorldUtils.getWorldConfig(worldName);
+        if (worldConfig == null) return;
+        Bukkit.getPluginManager().callEvent(new PlayerPrepareChangeWorldSkyblockEvent(player, worldConfig, portalType));
     }
 }
