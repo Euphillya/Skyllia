@@ -116,6 +116,10 @@ public class LanguageToml {
     public static String messageASetMaxMembersCommandNotEnoughArgs = "La commande est incomplète : /skyllia setmaxmembres value confirm";
     public static String messageASetMaxMembersNotConfirmedArgs = "Vous n'avez pas ajouter le \"confirm\" à la fin";
     public static String messageASetMaxMembersNAN = "Le nombre indiqué est incorrect.";
+    public static String messageGameRuleCommandNotEnoughArgs = "La commande est incomplète : /skyllia gamerule <GAMERULE> <true/false>";
+    public static String messageGameRuleInvalid = "La gamerule n'existe pas";
+    public static String messageGameRuleUpdateSuccess = "La gamerule a été mise à jour ";
+    public static String messageGameRuleUpdateFailed = "Une erreur s'est produite lors de la mise à jour de la gamerule";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -259,15 +263,10 @@ public class LanguageToml {
         messageHomeCreateSuccess = getString("island.home.set.success", messageHomeCreateSuccess);
     }
 
-    public static String messageGameRuleCommandNotEnoughArgs = "La commande est incomplète : /skyllia gamerule <GAMERULE> <true/false>";
-    public static String messageGameRuleInvalid = "La gamerule n'existe pas";
-    public static String messageGameRuleUpdateSuccess = "La gamerule a été mise à jour ";
-    public static String messageGameRuleUpdateFailed = "Une erreur s'est produite lors de la mise à jour de la gamerule";
-
     private static void islandGameRuleLanguage() {
         messageGameRuleCommandNotEnoughArgs = getString("island.gamerule.not-enough-args", messageGameRuleCommandNotEnoughArgs);
         messageGameRuleInvalid = getString("island.gamerule.gamerule-invalid", messageGameRuleInvalid);
-        messageGameRuleUpdateSuccess =  getString("island.gamerule.success", messageGameRuleUpdateSuccess);
+        messageGameRuleUpdateSuccess = getString("island.gamerule.success", messageGameRuleUpdateSuccess);
         messageGameRuleUpdateFailed = getString("island.gamerule.failed", messageGameRuleUpdateFailed);
     }
 

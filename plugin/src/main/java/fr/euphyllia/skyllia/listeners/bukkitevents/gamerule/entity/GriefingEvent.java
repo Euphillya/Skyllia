@@ -12,8 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 
-import java.util.Locale;
-
 public class GriefingEvent implements Listener {
 
     private final InterneAPI api;

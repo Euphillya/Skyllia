@@ -2,18 +2,11 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.event.PlayerPrepareChangeWorldSkyblockEvent;
-import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.PlayerUtils;
-import fr.euphyllia.skyllia.utils.RegionUtils;
-import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -43,7 +36,7 @@ public class TeleportEvent implements Listener {
                 PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
                 if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
                     ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
-                    PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, destination.getWorld().getName());
+                            PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, destination.getWorld().getName());
                 } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
                     ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
                             PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, destination.getWorld().getName());

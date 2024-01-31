@@ -3,19 +3,15 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
-import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.BlockGameRuleEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 
-import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ExplosionEvent implements Listener {

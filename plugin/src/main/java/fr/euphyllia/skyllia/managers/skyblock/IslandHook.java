@@ -8,7 +8,6 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.bukkit.Bukkit;
@@ -165,7 +164,8 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
     }
 
-    @Override @Deprecated(forRemoval = true)
+    @Override
+    @Deprecated(forRemoval = true)
     public boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions) {
         return this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
     }
