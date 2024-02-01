@@ -11,6 +11,23 @@ Skyllia是一个Skyblock插件，它将在Folia上运行。 该插件几乎没�
 - Dev : https://github.com/Euphillya/Skyllia/actions
 - Alpha : https://github.com/Euphillya/Skyllia/releases
 
+## API
+
+```groovy
+repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+}
+
+dependencies {
+    compileOnly("fr.euphyllia.skyllia:api:VERSION") 
+}
+```
 ## 兼容的服务端
 
 |                    服务端                     |     版本      |
