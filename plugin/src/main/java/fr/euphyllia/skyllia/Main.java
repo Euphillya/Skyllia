@@ -72,6 +72,7 @@ public class Main extends JavaPlugin {
         this.loadListener();
         this.runCache();
         this.disabledConfig();
+        this.interneAPI.loadAPI();
     }
 
     @Override

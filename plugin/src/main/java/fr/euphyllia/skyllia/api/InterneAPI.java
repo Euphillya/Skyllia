@@ -14,6 +14,7 @@ import fr.euphyllia.skyllia.database.query.MariaDBCreateTable;
 import fr.euphyllia.skyllia.database.query.MariaDBTransactionQuery;
 import fr.euphyllia.skyllia.database.query.exec.IslandQuery;
 import fr.euphyllia.skyllia.managers.Managers;
+import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.Level;
@@ -190,5 +191,9 @@ public class InterneAPI {
 
     public PlayerNMS getPlayerNMS() {
         return this.playerNMS;
+    }
+
+    public void loadAPI() {
+        SkylliaAPI.setImplementation(new APISkyllia(this));
     }
 }
