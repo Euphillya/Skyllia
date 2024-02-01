@@ -1,17 +1,16 @@
 package fr.euphyllia.skyllia.database.query;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
+import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.configuration.section.MariaDBConfig;
-import fr.euphyllia.skyllia.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,16 +22,22 @@ public class MariaDBCreateTable {
             """;
     private static final String CREATE_ISLANDS = """
             CREATE TABLE IF NOT EXISTS `%s`.`islands` (
-            `island_type` CHAR(36) NOT NULL,
             `island_id` CHAR(36) NOT NULL,
-            `uuid_owner` CHAR(36) NOT NULL,
             `disable` TINYINT DEFAULT '0',
             `region_x` INT NOT NULL,
             `region_z` INT NOT NULL,
             `private` TINYINT DEFAULT '0',
             `size` DOUBLE NOT NULL,
             `create_time` TIMESTAMP,
-            PRIMARY KEY (`island_id`, `uuid_owner`, `region_x`, `region_z`)
+            `max_members` INT NOT NULL,
+            PRIMARY KEY (`island_id`, `region_x`, `region_z`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+    private static final String CREATE_GAMERULE_ISLANDS = """
+            CREATE TABLE IF NOT EXISTS `%s`.`islands_gamerule` (
+            `island_id` CHAR(36) NOT NULL,
+            `flags` INT UNSIGNED NOT NULL DEFAULT '0',
+            PRIMARY KEY (`island_id`,`flags`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
     private static final String CREATE_ISLANDS_MEMBERS = """
@@ -107,39 +112,42 @@ public class MariaDBCreateTable {
         }
         this.database = dbConfig.database();
         this.dbVersion = dbConfig.dbVersion();
-        try {
-            this.init();
-        } catch (SQLException e) {
-            logger.log(Level.FATAL, e);
-            throw new DatabaseException(e);
-        }
     }
 
-    private void init() throws SQLException {
+    public boolean init() throws DatabaseException {
         // DATABASE
-        MariaDBExecute.executeQuery(api, CREATE_DATABASE.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_ISLANDS.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_DATABASE.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS.formatted(this.database));
         if (this.dbVersion <= 1) {
-            MariaDBExecute.executeQuery(api, "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
+            MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
         }
-        MariaDBExecute.executeQuery(api, CREATE_ISLANDS_MEMBERS.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_ISLANDS_WARP.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_SPIRAL.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
-        MariaDBExecute.executeQuery(api, CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_MEMBERS.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_WARP.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_SPIRAL.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_GAMERULE_ISLANDS.formatted(this.database));
+        int distancePerIsland = ConfigToml.regionDistance;
+        if (distancePerIsland <= 0) {
+            logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
+                    "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
+            return false;
+        }
         ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
         try {
             scheduledExecutorService.execute(() -> {
                 for (int i = 1; i < ConfigToml.maxIsland; i++) {
                     Position position = RegionUtils.getPositionNewIsland(i);
-                    MariaDBExecute.executeQuery(api, INSERT_SPIRAL.formatted(this.database), List.of(i, position.x(), position.z()), null, null);
-                    if (i % 1000 == 0) {
-                        logger.log(Level.INFO, "Insertion en cours (" + i + "/" + ConfigToml.maxIsland + ")");
+                    try {
+                        MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null, false);
+                    } catch (DatabaseException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             });
         } finally {
             scheduledExecutorService.shutdown();
         }
+        return true;
     }
 }

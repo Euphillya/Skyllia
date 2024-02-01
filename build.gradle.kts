@@ -1,11 +1,12 @@
 plugins {
     id("java-library")
     id("java")
+    id("maven-publish")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "fr.euphyllia";
-version = "1.0-alpha.6";
+version = "1.0-RC3-SNAPSHOT";
 description = "Plugin Skyblock pour Folia / PaperMC";
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
@@ -18,6 +19,7 @@ dependencies {
     implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_20_R1", "reobf"))
     implementation(project(":nms:v1_20_R2", "reobf"))
+    //implementation(project(":nms:v1_20_R3", "reobf"))
     implementation(project(":plugin"))
 
     testImplementation(platform("org.junit:junit-bom:5.9.2"))
@@ -28,6 +30,7 @@ allprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
     apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "maven-publish")
 
     repositories {
         mavenCentral()
@@ -41,6 +44,15 @@ allprojects {
         compileJava {
             options.encoding = "UTF-8"
         }
+        processResources {
+            filesMatching("**/plugin.yml") {
+                expand(rootProject.project.properties)
+            }
+
+            // Always re-run this task
+            outputs.upToDateWhen { false }
+        }
+
     }
 }
 

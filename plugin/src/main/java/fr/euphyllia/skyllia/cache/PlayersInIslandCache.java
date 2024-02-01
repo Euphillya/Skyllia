@@ -16,6 +16,7 @@ public class PlayersInIslandCache {
     private static final Logger logger = LogManager.getLogger(PlayersInIslandCache.class);
     private static final ConcurrentHashMap<UUID, CopyOnWriteArrayList<Players>> listPlayersInIsland = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, UUID> islandIdByPlayerId = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, CopyOnWriteArrayList<UUID>> listTrustedPlayerByIslandId = new ConcurrentHashMap<>();
 
     public static Players getPlayers(UUID islandId, UUID playerId) {
         List<Players> playersInIsland = listPlayersInIsland.getOrDefault(islandId, new CopyOnWriteArrayList<>());
@@ -40,5 +41,31 @@ public class PlayersInIslandCache {
 
     public static void add(UUID islandId, CopyOnWriteArrayList<Players> members) {
         listPlayersInIsland.put(islandId, members);
+    }
+
+    public static CopyOnWriteArrayList<UUID> getPlayersListTrusted(UUID islandId) {
+        return listTrustedPlayerByIslandId.getOrDefault(islandId, new CopyOnWriteArrayList<>());
+    }
+
+    public static void addPlayerTrustedInIsland(UUID islandId, UUID playerId) {
+        CopyOnWriteArrayList<UUID> listPlayer = getPlayersListTrusted(islandId);
+        listPlayer.add(playerId);
+        listTrustedPlayerByIslandId.put(islandId, listPlayer);
+    }
+
+    public static boolean removePlayerTrustedInIsland(UUID islandId, UUID playerId) {
+        CopyOnWriteArrayList<UUID> listPlayer = getPlayersListTrusted(islandId);
+        boolean isRemoved = listPlayer.remove(playerId);
+        if (isRemoved) {
+            listTrustedPlayerByIslandId.put(islandId, listPlayer);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean playerIsTrustedInIsland(UUID islandId, UUID playerId) {
+        CopyOnWriteArrayList<UUID> listPlayer = getPlayersListTrusted(islandId);
+        return listPlayer.contains(playerId);
     }
 }

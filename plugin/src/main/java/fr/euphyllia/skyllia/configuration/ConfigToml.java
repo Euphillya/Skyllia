@@ -3,10 +3,10 @@ package fr.euphyllia.skyllia.configuration;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.ImmutableMap;
+import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicWorld;
-import fr.euphyllia.skyllia.configuration.section.MariaDBConfig;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +36,8 @@ public class ConfigToml {
     public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
-    public static int dbVersion = 1;
+    public static int dbVersion = 2;
+    public static int regionDistance = -1;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -179,14 +180,15 @@ public class ConfigToml {
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
             String key = parentConfig + entry.getKey();
             String skyblockEnvironment = getString(key + ".environment", World.Environment.NORMAL.name());
-            String netherPortalTeleport = getString(key + ".nether-portal-", "sky-overworld");
+            String netherPortalTeleport = getString(key + ".nether-portal", "sky-overworld");
             String endPortalTeleport = getString(key + ".end-portal-tp", "sky-overworld");
             worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, netherPortalTeleport, endPortalTeleport));
         }
     }
 
-    private static void maxIle() {
+    private static void configs() {
         maxIsland = getInt("config.max-island", maxIsland);
+        regionDistance = getInt("config.region-distance-per-island", regionDistance);
     }
 
     private static void typeIsland() {

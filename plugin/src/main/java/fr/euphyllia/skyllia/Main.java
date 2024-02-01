@@ -4,9 +4,18 @@ package fr.euphyllia.skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
-import fr.euphyllia.skyllia.commands.SkylliaCommand;
+import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
+import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.listeners.bukkitevents.*;
+import fr.euphyllia.skyllia.listeners.bukkitevents.BlockEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.PortailAlternativeFoliaEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.entity.DamageEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.BlockGameRuleEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.ExplosionEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.GriefingEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.MobSpawnEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.PickupEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyllia.managers.Managers;
 import org.apache.logging.log4j.Level;
@@ -51,7 +60,7 @@ public class Main extends JavaPlugin {
                 return;
             }
         } catch (DatabaseException | IOException exception) {
-            this.logger.log(Level.FATAL, exception);
+            this.logger.log(Level.FATAL, exception, exception);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -59,6 +68,7 @@ public class Main extends JavaPlugin {
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
         this.setupCommands();
+        this.setupAdminCommands();
         this.loadListener();
         this.runCache();
         this.disabledConfig();
@@ -87,6 +97,17 @@ public class Main extends JavaPlugin {
         command.setTabCompleter(sc);
     }
 
+    private void setupAdminCommands() {
+        SkylliaAdminCommand sc = new SkylliaAdminCommand(this);
+        PluginCommand command = getServer().getPluginCommand("skylliadmin");
+        if (command == null) {
+            logger.log(Level.FATAL, "Command not put in plugin.yml");
+            return;
+        }
+        command.setExecutor(sc);
+        command.setTabCompleter(sc);
+    }
+
     private void loadListener() {
         PluginManager pluginManager = getServer().getPluginManager();
         // Bukkit Events
@@ -94,9 +115,18 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new BlockEvent(this.interneAPI), this);
         pluginManager.registerEvents(new InventoryEvent(this.interneAPI), this);
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.2
         if (this.interneAPI.isFolia()) {
             pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
         }
+        // GameRule Events
+        pluginManager.registerEvents(new BlockGameRuleEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new ExplosionEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new GriefingEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new MobSpawnEvent(this.interneAPI), this);
+        pluginManager.registerEvents(new PickupEvent(this.interneAPI), this);
 
         // Skyblock Event
         pluginManager.registerEvents(new SkyblockEvent(this.interneAPI), this);

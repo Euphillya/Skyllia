@@ -25,13 +25,10 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
-import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -82,8 +79,7 @@ public class WorldEditUtils {
         Position position = island.getPosition();
 
         AtomicInteger delay = new AtomicInteger(1);
-        int regionSize = 33; // une region à une taille de 32, mais un chunk n'est jamais au centre ! Donc je rajoute une marge d'erreur qui sera vérifier dans la spirale
-        RegionUtils.spiralStartCenter(position, regionSize, chunKPosition -> {
+        RegionUtils.spiralStartCenter(position, island.getSize(), chunKPosition -> {
             Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
                     plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), delay.getAndIncrement());
         });
@@ -109,63 +105,6 @@ public class WorldEditUtils {
             }, delay.getAndIncrement());
         }
         return completableFuture;
-    }
-
-    private static List<CuboidRegion> getMiniCuboidRegions(World world, org.bukkit.World w, Island island, int regionSize) {
-        if (world == null) {
-            world = BukkitAdapter.adapt(w);
-        }
-
-        Vector vmin = RegionUtils.getMinXRegion(w, island.getPosition().x(), island.getPosition().z());
-        Vector vmax = RegionUtils.getMaxXRegion(w, island.getPosition().x(), island.getPosition().z());
-
-        int minX = (int) vmin.getX();
-        int minY = (int) vmin.getY();
-        int minZ = (int) vmin.getZ();
-        int maxX = (int) vmax.getX();
-        int maxY = (int) vmax.getY();
-        int maxZ = (int) vmax.getZ();
-
-        List<CuboidRegion> miniRegions = new ArrayList<>();
-
-        for (int x = minX; x < maxX; x += regionSize) {
-            for (int z = minZ; z < maxZ; z += regionSize) {
-                int endX = Math.min(x + (regionSize - 1), maxX);
-                int endZ = Math.min(z + (regionSize - 1), maxZ);
-
-                BlockVector3 minRegion = BlockVector3.at(x, minY, z);
-                BlockVector3 maxRegion = BlockVector3.at(endX, maxY, endZ);
-
-                miniRegions.add(new CuboidRegion(world, minRegion, maxRegion));
-            }
-        }
-
-        return miniRegions;
-    }
-
-    private static CuboidRegion getCuboidRegion(World world, org.bukkit.World w, Island island) {
-        if (world == null) {
-            world = BukkitAdapter.adapt(w);
-        }
-
-        Vector vmin = RegionUtils.getMinXRegion(w, island.getPosition().x(), island.getPosition().z());
-        Vector vmax = RegionUtils.getMaxXRegion(w, island.getPosition().x(), island.getPosition().z());
-
-        BlockVector3 minRegion = BlockVector3.at(vmin.getX(), vmin.getY(), vmin.getZ());
-        BlockVector3 maxRegion = BlockVector3.at(vmax.getX(), vmax.getY(), vmax.getZ());
-
-        return new CuboidRegion(world, minRegion, maxRegion);
-    }
-
-    private static CuboidRegion getCuboidRegionWithRayon(World world, org.bukkit.World w, Island island, double rayon) {
-        if (world == null) {
-            world = BukkitAdapter.adapt(w);
-        }
-        Location center = RegionUtils.getCenterRegion(w, island.getPosition().x(), island.getPosition().z());
-        BlockVector3 minRegion = BlockVector3.at(center.getBlockX() - rayon, world.getMinY(), center.getBlockZ() + rayon);
-        BlockVector3 maxRegion = BlockVector3.at(center.getBlockX() + rayon, world.getMaxY(), center.getBlockZ() - rayon);
-
-        return new CuboidRegion(world, minRegion, maxRegion);
     }
 
     public enum Type {

@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
@@ -12,7 +11,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,32 +27,28 @@ public class SkyblockManager {
         this.plugin = main;
     }
 
-    public CompletableFuture<@Nullable Island> createIsland(UUID playerId, IslandType islandType) {
-        CompletableFuture<Island> completableFuture = new CompletableFuture<>();
+    public CompletableFuture<@Nullable Boolean> createIsland(UUID islandId, IslandType islandType) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            UUID idIsland = UUID.randomUUID();
             Island futurIsland = new IslandHook(
                     this.plugin,
-                    islandType,
-                    idIsland,
-                    playerId,
+                    islandId,
+                    islandType.maxMembers(),
                     null,
                     islandType.rayon(),
                     null
             );
             boolean create = this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().insertIslands(futurIsland).join();
-            if (create) {
-                Island island = this.getIslandByOwner(playerId).join();
-                SkyblockCreateEvent skyblockCreateEvent = new SkyblockCreateEvent(island);
-                Bukkit.getPluginManager().callEvent(skyblockCreateEvent);
-                completableFuture.complete(skyblockCreateEvent.getIsland());
-            }
-
+            completableFuture.complete(create);
         } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage());
+            logger.log(Level.FATAL, e.getMessage(), e);
             completableFuture.complete(null);
         }
         return completableFuture;
+    }
+
+    public CompletableFuture<Island> getIslandByIslandId(UUID islandId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByIslandId(islandId);
     }
 
     public CompletableFuture<Boolean> disableIsland(Island island, boolean disableValue) {
@@ -77,9 +71,11 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByOwnerId(playerId);
     }
 
+    public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByPlayerId(playerId);
+    }
+
     public CompletableFuture<Boolean> addWarpsIsland(Island island, String name, Location playerLocation) {
-        // Todo ? Vérifier le nombre possible à créer
-        // Todo ? Egalement s'il a le droit
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().updateWarp(island, name, playerLocation);
     }
 
@@ -131,7 +127,31 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandPermission(islandId, permissionsType, roleType);
     }
 
+    public CompletableFuture<Boolean> updateGamerule(Island island, long gameRuleIsland) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandGameRule(island, gameRuleIsland);
+    }
+
+    public CompletableFuture<Long> getGameRulePermission(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandGameRule(island);
+    }
+
     public CompletableFuture<Boolean> deleteMember(Island island, Players oldMember) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMember(island, oldMember);
+    }
+
+    public CompletableFuture<@Nullable Players> getOwnerByIslandID(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getOwnerInIslandId(island);
+    }
+
+    public CompletableFuture<Integer> getMaxMemberInIsland(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getMaxMemberInIsland(island);
+    }
+
+    public CompletableFuture<Boolean> setMaxMemberInIsland(Island island, int newValue) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setMaxMemberInIsland(island, newValue);
+    }
+
+    public CompletableFuture<Boolean> setSizeIsland(Island island, double newValue) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setSizeIsland(island, newValue);
     }
 }

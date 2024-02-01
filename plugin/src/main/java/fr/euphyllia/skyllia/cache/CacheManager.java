@@ -5,13 +5,16 @@ import fr.euphyllia.skyllia.api.annotation.Information;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
+import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 
@@ -27,7 +30,7 @@ public class CacheManager {
     }
 
     public void updateCache(SkyblockManager skyblockManager, Player bPlayer) {
-        Island pIsland = skyblockManager.getIslandByOwner(bPlayer.getUniqueId()).join();
+        Island pIsland = skyblockManager.getIslandByPlayerId(bPlayer.getUniqueId()).join();
         if (pIsland == null) {
             // ========= remove player
             PlayersInIslandCache.getIslandIdByPlayerId().remove(bPlayer.getUniqueId());
@@ -45,7 +48,10 @@ public class CacheManager {
 
             PlayersInIslandCache.delete(island.getId());
             // ============= position island cache
-            PositionIslandCache.delete(island.getPosition());
+            List<Position> islandPositionWithRadius = RegionUtils.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
+            for (Position possiblePosition : islandPositionWithRadius) {
+                PositionIslandCache.delete(possiblePosition);
+            }
             // ============= permission role cache
             for (RoleType roleType : RoleType.values()) {
                 for (PermissionsType permissionsType : PermissionsType.values()) {
@@ -61,9 +67,14 @@ public class CacheManager {
             PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());
             PlayersInIslandCache.add(island.getId(), island.getMembers());
             // ============= position island cache
-            PositionIslandCache.add(island.getPosition(), island);
+            List<Position> islandPositionWithRadius = RegionUtils.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
+            for (Position possiblePosition : islandPositionWithRadius) {
+                PositionIslandCache.add(possiblePosition, island);
+            }
             // ============= permission role cache
             this.updatePermissionCacheIsland(island);
+            // ============= gamerule cache
+            this.updateGameRuleCacheIsland(island);
         });
     }
 
@@ -74,5 +85,10 @@ public class CacheManager {
                 PermissionRoleInIslandCache.addPermissionInIsland(island.getId(), roleType, permissionsType, permissionRoleIsland);
             }
         }
+    }
+
+    public void updateGameRuleCacheIsland(Island island) {
+        long valueGR = island.getGameRulePermission();
+        PermissionGameRuleInIslandCache.setPermissionInIsland(island.getId(), valueGR);
     }
 }

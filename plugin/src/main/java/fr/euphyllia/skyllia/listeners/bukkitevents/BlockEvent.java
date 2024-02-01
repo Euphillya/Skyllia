@@ -23,12 +23,12 @@ public class BlockEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreakOnIsland(final BlockBreakEvent event) {
         if (event.isCancelled()) return;
-        ListenersUtils.checkPermission(event.getBlock().getChunk(), event.getPlayer(), PermissionsIsland.BLOCK_BREAK, event);
+        ListenersUtils.checkPermission(event.getBlock().getLocation(), event.getPlayer(), PermissionsIsland.BLOCK_BREAK, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlaceOnIsland(final BlockPlaceEvent event) {
         if (event.isCancelled()) return;
-        ListenersUtils.checkPermission(event.getBlock().getChunk(), event.getPlayer(), PermissionsIsland.BLOCK_PLACE, event);
+        ListenersUtils.checkPermission(event.getBlock().getLocation(), event.getPlayer(), PermissionsIsland.BLOCK_PLACE, event);
     }
 }

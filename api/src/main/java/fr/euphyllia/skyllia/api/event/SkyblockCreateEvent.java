@@ -5,6 +5,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 /**
  * Appelé quand l'île est créée. <br />
  */
@@ -12,10 +14,12 @@ public class SkyblockCreateEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
     private final Island island;
+    private final UUID owner;
 
-    public SkyblockCreateEvent(Island islandCreate) {
+    public SkyblockCreateEvent(Island islandCreate, UUID owner) {
         super(true);
         this.island = islandCreate;
+        this.owner = owner;
     }
 
 
@@ -30,5 +34,9 @@ public class SkyblockCreateEvent extends Event {
 
     public Island getIsland() {
         return this.island;
+    }
+
+    public UUID getOwnerId() {
+        return this.owner;
     }
 }

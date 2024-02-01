@@ -1,5 +1,5 @@
 name: "Skyllia"
-version: "1.0-alpha.6"
+version: ${version}
 main: fr.euphyllia.skyllia.Main
 api-version: 1.19
 author: Euphyllia
@@ -15,5 +15,7 @@ commands:
     description: "Plugin Island"
     aliases:
       - island
-      - skyfolia // oldb
       - is
+  skylliadmin:
+    description: "Commandes pour les administrateur"
+    permission: "skyllia.admins.commands"
