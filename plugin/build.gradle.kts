@@ -4,7 +4,7 @@ dependencies {
     implementation(project(":nms:v1_19_R3"))
     implementation(project(":nms:v1_20_R1"))
     implementation(project(":nms:v1_20_R2"))
-    //implementation(project(":nms:v1_20_R3"))
+    implementation(project(":nms:v1_20_R3"))
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
     implementation("com.electronwill.night-config:toml:3.6.7")
     implementation("com.google.guava:guava:33.0.0-jre")

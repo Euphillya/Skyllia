@@ -59,4 +59,4 @@ UUID islandId = playerIsland.getId();
 
 ## Generation Island
 
-Each island will be generated on a single region file with distance region configurable !
+Each island will be generated on a single region file with distance region configurable!

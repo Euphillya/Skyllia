@@ -176,10 +176,10 @@ public class InterneAPI {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.PlayerNMS();
             }
-            /*case "v1_20_R3" -> {
+            case "v1_20_R3" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
-            }*/
+            }
             default ->
                     throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(versionMC));
         }
