@@ -34,6 +34,19 @@ dependencies {
 }
 ```
 
+Example :
+
+```java
+
+import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.skyblock.Island;
+
+import java.util.UUID;
+
+Island playerIsland = SkylliaAPI.getIslandByPlayerId(player.getUniqueId()).join();
+UUID islandId = playerIsland.getId();
+```
+
 ## Compatible Software
 
 |                   Software                    |     Version     |
