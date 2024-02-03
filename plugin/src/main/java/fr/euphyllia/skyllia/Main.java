@@ -80,6 +80,8 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         this.logger.log(Level.INFO, "Plugin Off");
+        getServer().getGlobalRegionScheduler().cancelTasks(this);
+        getServer().getAsyncScheduler().cancelTasks(this);
         if (this.interneAPI.getDatabaseLoader() != null) {
             this.interneAPI.getDatabaseLoader().closeDatabase();
         }
