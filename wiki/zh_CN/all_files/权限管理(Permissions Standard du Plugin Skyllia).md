@@ -32,6 +32,7 @@
 - 修改权限的命令：`/skyllia permissions <type> <ban/visitor/member/moderator/co_owner/owner> <permissions> <true/false>`。
 
 <type>中的内容可以是
+
 - DEMOTE：允许玩家根据等级降级成员。
 - PROMOTE：允许玩家根据等级晋升成员。
 - KICK：允许玩家根据等级排除成员。

@@ -7,8 +7,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsInventory;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;

@@ -102,7 +102,7 @@ public class IslandPermissionQuery {
     public CompletableFuture<Boolean> updateIslandGameRule(Island island, long value) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_GAMERULES_ISLANDS.formatted(this.databaseName), List.of(island.getId(), value, value), var1 -> {
-            completableFuture.complete(var1 == 0);
+            completableFuture.complete(var1 != 0);
         }, null);
         return completableFuture;
     }

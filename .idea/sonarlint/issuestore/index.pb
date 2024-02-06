@@ -306,3 +306,5 @@ X
 (gradle/wrapper/gradle-wrapper.properties,f\b\fbe448ebfc3eb2d4e308f6b8b043666f5b57235e
 ;
 jitpack.yml,3\f\3f384c5ac91d01ea9ab11981ab87f1d958f63284
+<
+readme_zh.md,3\d\3d0b8dfa89c2a5e99e704c101a95ba7ef501a9f1
