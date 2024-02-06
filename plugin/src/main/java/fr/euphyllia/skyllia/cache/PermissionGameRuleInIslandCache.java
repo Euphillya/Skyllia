@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PermissionGameRuleInIslandCache {
     private static final Logger logger = LogManager.getLogger(PermissionGameRuleInIslandCache.class);
-    private static ConcurrentHashMap<UUID, Long> gameruleByIslandId;
+    private static ConcurrentHashMap<UUID, Long> gameruleByIslandId = new ConcurrentHashMap<>();
 
 
     public static void setPermissionInIsland(UUID islandId, Long permission) {
