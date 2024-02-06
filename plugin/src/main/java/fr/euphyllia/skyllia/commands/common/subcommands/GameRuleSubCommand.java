@@ -107,25 +107,9 @@ public class GameRuleSubCommand implements SubCommandInterface {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.stream(PermissionsType.values()).map(Enum::name).toList();
+            return Arrays.stream(GameRuleIsland.values()).map(Enum::name).toList();
         }
         if (args.length == 2) {
-            return Arrays.stream(RoleType.values()).map(Enum::name).toList();
-        }
-        if (args.length == 3) {
-            PermissionsType permissionsType;
-            try {
-                permissionsType = PermissionsType.valueOf(args[0].toUpperCase());
-            } catch (IllegalArgumentException e) {
-                return new ArrayList<>();
-            }
-            return switch (permissionsType) {
-                case COMMANDS -> Arrays.stream(PermissionsCommandIsland.values()).map(Enum::name).toList();
-                case ISLAND -> Arrays.stream(PermissionsIsland.values()).map(Enum::name).toList();
-                case INVENTORY -> Arrays.stream(PermissionsInventory.values()).map(Enum::name).toList();
-            };
-        }
-        if (args.length == 4) {
             return List.of("true", "false");
         }
         return new ArrayList<>();
