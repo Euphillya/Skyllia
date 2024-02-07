@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.skyblockevents;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.*;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -85,13 +86,21 @@ public class SkyblockEvent implements Listener {
         }
         try {
             WorldConfig worldConfig = event.getWorldConfig();
-            if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(worldConfig.netherPortalDestination()))) {
-                logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(worldConfig.netherPortalDestination()));
+            PortalConfig portalConfig;
+            if (permissionsIsland.equals(PermissionsIsland.USE_NETHER_PORTAL)) {
+                portalConfig = worldConfig.netherPortal();
+            } else if (permissionsIsland.equals(PermissionsIsland.USE_END_PORTAL)) {
+                portalConfig = worldConfig.endPortal();
+            } else {
                 return;
             }
-            World world = Bukkit.getWorld(worldConfig.netherPortalDestination());
+            if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalConfig.direction()))) {
+                logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(portalConfig.direction()));
+                return;
+            }
+            World world = Bukkit.getWorld(portalConfig.direction());
             if (world == null) {
-                logger.log(Level.ERROR, "The %s world is not loaded or not exist!".formatted(worldConfig.netherPortalDestination()));
+                logger.log(Level.ERROR, "The %s world is not loaded or not exist!".formatted(portalConfig.direction()));
                 return;
             }
             Location playerLocation = player.getLocation();

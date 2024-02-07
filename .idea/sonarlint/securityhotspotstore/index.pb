@@ -308,3 +308,5 @@ X
 jitpack.yml,3\f\3f384c5ac91d01ea9ab11981ab87f1d958f63284
 <
 readme_zh.md,3\d\3d0b8dfa89c2a5e99e704c101a95ba7ef501a9f1
+z
+Japi/src/main/java/fr/euphyllia/skyllia/api/configuration/PortalConfig.java,9\c\9cb17b74a637e5073d947f8ba2cb5c0266fb50eb

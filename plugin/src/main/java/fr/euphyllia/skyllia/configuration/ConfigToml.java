@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
+import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicWorld;
@@ -45,8 +46,8 @@ public class ConfigToml {
         config.load();
         verbose = getBoolean("verbose", false);
 
-        version = getInt("config-version", 1);
-        set("config-version", 1);
+        version = getInt("config-version", 2);
+        set("config-version", 2);
         if (verbose) {
             logger.log(Level.INFO, "Lecture des config");
         }
@@ -75,6 +76,10 @@ public class ConfigToml {
 
     private static void set(@NotNull String path, Object val) {
         config.set(path, val);
+    }
+
+    private static void remove(@NotNull String path) {
+        config.remove(path);
     }
 
     private static String getString(@NotNull String path, String def) {
@@ -180,9 +185,21 @@ public class ConfigToml {
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
             String key = parentConfig + entry.getKey();
             String skyblockEnvironment = getString(key + ".environment", World.Environment.NORMAL.name());
-            String netherPortalTeleport = getString(key + ".nether-portal", "sky-overworld");
-            String endPortalTeleport = getString(key + ".end-portal-tp", "sky-overworld");
-            worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment, netherPortalTeleport, endPortalTeleport));
+            if (version < 1) {
+                String oldValue = getString(key + ".nether-portal", "sky-overworld");
+                set(key + ".portal-nether.direction", oldValue);
+                remove(key + ".nether-portal");
+                oldValue = getString(key + ".end-portal-tp", "sky-overworld");
+                set(key + ".portal-end.direction", oldValue);
+                remove(key + ".end-portal-tp");
+            }
+            String portalNetherDirection = getString(key + ".portal-nether.direction", "sky-overworld");
+            boolean portalNetherEnabled = getBoolean(key + ".portal-nether.enabled", true);
+            String portalEndDirection = getString(key + ".portal-end.direction", "sky-overworld");
+            boolean portalEndEnabled = getBoolean(key + ".portal-end.enabled", true);
+            worldConfigs.add(new WorldConfig(entry.getKey(), skyblockEnvironment,
+                    new PortalConfig(portalNetherEnabled, portalNetherDirection),
+                    new PortalConfig(portalEndEnabled, portalEndDirection)));
         }
     }
 
