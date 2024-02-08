@@ -80,15 +80,12 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
-        if (true) {
-            throw new UnsupportedOperationException("Pas encore supporté !");
-        }
         //io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
         fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS.ensureGlobalTickThread();
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
         Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
-        //Preconditions.checkState(!this.console.isIteratingOverLevels, "Cannot create a world while worlds are being ticked"); // Paper - Cat - Temp disable. We'll see how this goes.
+        Preconditions.checkState(!console.isIteratingOverLevels, "Cannot create a world while worlds are being ticked"); // Paper - Cat - Temp disable. We'll see how this goes.
         Preconditions.checkArgument(creator != null, "WorldCreator cannot be null");
 
         String name = creator.name();
@@ -100,12 +97,10 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         // Paper start
         World worldByKey = craftServer.getWorld(creator.key());
         if (world != null || worldByKey != null) {
-            if (world == worldByKey) {
+            if (world != worldByKey) {
                 return WorldFeedback.Feedback.WORLD_DUPLICATED.toFeedbackWorld();
             }
-            throw new IllegalArgumentException("Cannot create a world with key " + creator.key() + " and name " + name + " one (or both) already match a world that exists");
         }
-        // Paper end
 
         if ((folder.exists()) && (!folder.isDirectory())) {
             return WorldFeedback.Feedback.WORLD_FOLDER_INVALID.toFeedbackWorld();
@@ -188,7 +183,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
             DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(GsonHelper.parse((creator.generatorSettings().isEmpty()) ? "{}" : creator.generatorSettings()), creator.type().name().toLowerCase(Locale.ROOT));
 
-            worldsettings = new LevelSettings(name, GameType.byId(craftServer.getDefaultGameMode().getValue()), hardcore, Difficulty.EASY, false, new GameRules(), worldloader_a.dataConfiguration());
+            worldsettings = new LevelSettings(name, getGameType(GameMode.SURVIVAL), hardcore, Difficulty.EASY, false, new GameRules(), worldloader_a.dataConfiguration());
             worlddimensions = properties.create(worldloader_a.datapackWorldgen());
 
             WorldDimensions.Complete worlddimensions_b = worlddimensions.bake(iregistry);
