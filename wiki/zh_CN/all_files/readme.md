@@ -36,7 +36,7 @@ dependencies {
 |:---------------------------------------------:|:-------------:|
 | [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.20.4 |
 |        [Purpur](https://purpurmc.org)         | 1.20.1-1.20.4 |
-|  [Folia](https://papermc.io/software/folia)   | 1.19.4-1.20.2 |
+|  [Folia](https://papermc.io/software/folia)   | 1.19.4-1.20.4 |
 |                    Spigot                     |     不支持~      |
 |                    Bukkit                     |     不支持哦~     |
 

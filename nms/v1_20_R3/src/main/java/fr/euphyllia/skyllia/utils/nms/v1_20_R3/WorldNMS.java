@@ -62,20 +62,15 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         };
     }
 
-    private static void setRandom(ServerLevel serverLevel) {
-        try {
-            Class<?> clazz = serverLevel.getClass();
+    private static void setRandom(ServerLevel serverLevel) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> clazz = serverLevel.getClass();
 
-            // Obtention du champ 'randomSpawnSelection'
-            Field randomSpawnSelectionField = clazz.getDeclaredField("randomSpawnSelection");
-            randomSpawnSelectionField.setAccessible(true);
+        // Obtention du champ 'randomSpawnSelection'
+        Field randomSpawnSelectionField = clazz.getDeclaredField("randomSpawnSelection");
+        randomSpawnSelectionField.setAccessible(true);
 
-            ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
-            randomSpawnSelectionField.set(serverLevel, newValue);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
+        randomSpawnSelectionField.set(serverLevel, newValue);
     }
 
     @Override
@@ -226,7 +221,12 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(11),
                 worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
-        setRandom(internal);
+
+        try {
+            setRandom(internal);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         console.addLevel(internal);
 
