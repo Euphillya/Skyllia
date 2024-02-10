@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.api.event;
+package fr.euphyllia.skyllia.api.event.players;
 
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import org.bukkit.entity.Player;

@@ -134,8 +134,6 @@ m
 =plugin/src/main/java/fr/euphyllia/skyllia/api/InterneAPI.java,2\f\2f61143f201d1b5b0223c753fea6faf653a38450
 y
 Iplugin/src/main/java/fr/euphyllia/skyllia/configuration/LanguageToml.java,b\7\b72133bcde33d3b8d28d9030735a580437d5134f
-;
-Skyllia.iml,c\e\cebc4d20d815a0a18c6b9de8b86e3f0d0e25bd54
 €
 Pplugin/src/main/java/fr/euphyllia/skyllia/managers/skyblock/SkyblockManager.java,1\e\1ede0f1f7719999bb0ecff527724bf00bddda2a5
 ‚
@@ -306,7 +304,9 @@ X
 (gradle/wrapper/gradle-wrapper.properties,f\b\fbe448ebfc3eb2d4e308f6b8b043666f5b57235e
 ;
 jitpack.yml,3\f\3f384c5ac91d01ea9ab11981ab87f1d958f63284
-<
-readme_zh.md,3\d\3d0b8dfa89c2a5e99e704c101a95ba7ef501a9f1
 z
 Japi/src/main/java/fr/euphyllia/skyllia/api/configuration/PortalConfig.java,9\c\9cb17b74a637e5073d947f8ba2cb5c0266fb50eb
+“
+capi/src/main/java/fr/euphyllia/skyllia/api/event/players/PlayerPrepareChangeWorldSkyblockEvent.java,c\a\ca2c6964a1bedc799a9be0802b768c5e6a80da4d
+†
+Vapi/src/main/java/fr/euphyllia/skyllia/api/event/players/PlayerTeleportSpawnEvent.java,f\c\fc1cb6087df65e42a47f08eabd6c1c8d27e288ee
