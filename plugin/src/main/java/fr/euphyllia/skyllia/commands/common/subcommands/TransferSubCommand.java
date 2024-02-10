@@ -47,14 +47,14 @@ public class TransferSubCommand implements SubCommandInterface {
                         return;
                     }
                     if (!ownerIsland.getMojangId().equals(player.getUniqueId())) {
-                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageOnlyOwner));
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwner);
                         return;
                     }
 
                     String newOwner = args[0];
                     Players players = island.getMember(newOwner);
                     if (players == null || !players.getRoleType().equals(RoleType.MEMBER) || !players.getRoleType().equals(RoleType.MODERATOR)) {
-                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageNotMember));
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageNotMember);
                         return;
                     }
 
@@ -65,7 +65,7 @@ public class TransferSubCommand implements SubCommandInterface {
                     // Nouveau proprio
                     players.setRoleType(RoleType.OWNER);
                     island.updateMember(players);
-                    player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messageTransfertSuccess.replace("%new_owner%", players.getLastKnowName())));
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageTransfertSuccess.replace("%new_owner%", players.getLastKnowName()));
                     // msg ok
                 });
             } finally {
