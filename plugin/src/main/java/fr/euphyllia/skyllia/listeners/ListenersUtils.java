@@ -45,7 +45,7 @@ public class ListenersUtils {
 
 
         PermissionManager permissionManager = new PermissionManager(permissionChecker);
-        if (!permissionManager.hasPermission(gamerule.getPermissionValue())) {
+        if (permissionManager.hasPermission(gamerule.getPermissionValue())) {
             cancellable.setCancelled(true);
             return island;
         }

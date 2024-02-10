@@ -41,11 +41,11 @@ public class ExplosionEvent implements Listener {
         EntityType causeExplosion = event.getEntityType();
         Location location = event.getLocation();
         if (explosionByHumanEntity.contains(causeExplosion)) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.HUMAN_EXPLOSION, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_HUMAN_EXPLOSION, event);
         } else if (explosionByMobEntity.contains(causeExplosion)) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.MOB_EXPLOSION, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_MOB_EXPLOSION, event);
         } else {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.UNKNOWN_EXPLOSION, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_UNKNOWN_EXPLOSION, event);
         }
     }
 }

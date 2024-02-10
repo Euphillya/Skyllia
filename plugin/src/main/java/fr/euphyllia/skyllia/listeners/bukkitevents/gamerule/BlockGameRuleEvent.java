@@ -23,12 +23,12 @@ public class BlockGameRuleEvent implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onFireSpreadingBlock(BlockSpreadEvent event) {
         if (event.isCancelled()) return;
-        ListenersUtils.checkGameRuleIsland(event.getBlock().getLocation(), GameRuleIsland.FIRE_SPREADING, event);
+        ListenersUtils.checkGameRuleIsland(event.getBlock().getLocation(), GameRuleIsland.DISABLE_FIRE_SPREADING, event);
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onFireSpread(BlockBurnEvent event) {
         if (event.isCancelled()) return;
-        ListenersUtils.checkGameRuleIsland(event.getBlock().getLocation(), GameRuleIsland.FIRE_SPREADING, event);
+        ListenersUtils.checkGameRuleIsland(event.getBlock().getLocation(), GameRuleIsland.DISABLE_FIRE_SPREADING, event);
     }
 }

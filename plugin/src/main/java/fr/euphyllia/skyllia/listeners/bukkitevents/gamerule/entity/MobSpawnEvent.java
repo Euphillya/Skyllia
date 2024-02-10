@@ -36,11 +36,11 @@ public class MobSpawnEvent implements Listener {
         EntityType entityType = event.getType();
         Location location = event.getSpawnLocation();
         if (EntityUtils.isMonster(entityType)) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.SPAWN_HOSTILE, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_SPAWN_HOSTILE, event);
         } else if (EntityUtils.isPassif(entityType)) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.SPAWN_PASSIVE, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_SPAWN_PASSIVE, event);
         } else {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.SPAWN_UNKNOWN, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_SPAWN_UNKNOWN, event);
         }
     }
 
@@ -51,11 +51,11 @@ public class MobSpawnEvent implements Listener {
         Entity entity = event.getEntity();
         Location location = event.getLocation();
         if (entity instanceof Monster) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.SPAWN_HOSTILE, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_SPAWN_HOSTILE, event);
         } else if (entity instanceof Animals || entity instanceof Ambient) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.SPAWN_PASSIVE, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_SPAWN_PASSIVE, event);
         } else {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.SPAWN_UNKNOWN, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_SPAWN_UNKNOWN, event);
         }
     }
 }

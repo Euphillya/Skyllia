@@ -27,13 +27,13 @@ public class GriefingEvent implements Listener {
         Entity entity = event.getEntity();
         Location location = event.getBlock().getLocation();
         if (entity instanceof Enderman) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.ENDERMAN_PICK_BLOCK, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_ENDERMAN_PICK_BLOCK, event);
         } else if (entity instanceof AbstractVillager || entity instanceof Animals) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.PASSIF_MOB_GRIEFING, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_PASSIF_MOB_GRIEFING, event);
         } else if (entity instanceof Monster) {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.HOSTILE_MOB_GRIEFING, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_HOSTILE_MOB_GRIEFING, event);
         } else {
-            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.UNKNOWN_MOB_GRIEFING, event);
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_UNKNOWN_MOB_GRIEFING, event);
         }
     }
 }
