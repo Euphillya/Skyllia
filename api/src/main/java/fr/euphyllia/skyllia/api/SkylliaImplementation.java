@@ -15,7 +15,7 @@ public interface SkylliaImplementation {
 
     public CompletableFuture<@NotNull Island> getIslandByIslandId(UUID islandId);
 
-    public @NotNull Island getIslandByPosition(Position position);
+    public @Nullable Island getIslandByPosition(Position position);
 
-    public @NotNull Island getIslandByChunk(Chunk chunk);
+    public @Nullable Island getIslandByChunk(Chunk chunk);
 }

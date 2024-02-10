@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.cache.PositionIslandCache;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.bukkit.Chunk;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -32,12 +33,12 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
-    public @NotNull Island getIslandByPosition(Position position) {
+    public @Nullable Island getIslandByPosition(Position position) {
         return PositionIslandCache.getIsland(position);
     }
 
     @Override
-    public @NotNull Island getIslandByChunk(Chunk chunk) {
+    public @Nullable Island getIslandByChunk(Chunk chunk) {
         Position position = RegionUtils.getRegionInChunk(chunk.getX(), chunk.getZ());
         return PositionIslandCache.getIsland(position);
     }

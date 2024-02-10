@@ -25,11 +25,11 @@ public final class SkylliaAPI {
         return implementation.getIslandByIslandId(islandId);
     }
 
-    public static @Nullable @NotNull Island getIslandByPosition(Position position) {
+    public static @Nullable Island getIslandByPosition(Position position) {
         return implementation.getIslandByPosition(position);
     }
 
-    public static @Nullable @NotNull Island getIslandByChunk(Chunk chunk) {
+    public static @Nullable Island getIslandByChunk(Chunk chunk) {
         return implementation.getIslandByChunk(chunk);
     }
 }
