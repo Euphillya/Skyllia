@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.event.SkyblockChangePermissionEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
@@ -9,12 +8,12 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -53,10 +52,9 @@ public class PermissionSubCommand implements SubCommandInterface {
 
         try {
             executor.execute(() -> {
-                PermissionFormat permissionFormat = this.getPermissionFormat(plugin, player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
-                if (permissionFormat == null) return;
-
                 try {
+                    PermissionFormat permissionFormat = this.getPermissionFormat(plugin, player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
+                    if (permissionFormat == null) return;
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
                     if (island == null) {
@@ -65,33 +63,36 @@ public class PermissionSubCommand implements SubCommandInterface {
                     }
 
                     Players executorPlayer = island.getMember(player.getUniqueId());
+                    if (permissionFormat.permissions != null) {
+                        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_PERMISSION)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                            if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_PERMISSION)) {
+                                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                                return;
+                            }
+                        }
+                        if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
                             return;
                         }
-                    }
 
-                    if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
-                        return;
-                    }
-
-
-                    PermissionRoleIsland permissionsIsland = skyblockManager.getPermissionIsland(island.getId(), permissionFormat.permissionsType, permissionFormat.roleType).join();
-                    long flags = permissionsIsland.permission();
-                    PermissionManager permissionManager = new PermissionManager(flags);
-                    permissionManager.definePermission(permissionFormat.permissions.getPermissionValue(), permissionFormat.value);
-                    boolean updateIslandPermission = island.updatePermission(permissionFormat.permissionsType, permissionFormat.roleType, permissionManager.getPermissions());
-                    if (updateIslandPermission) {
-                        Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(island, permissionFormat.permissionsType, permissionFormat.roleType, permissionManager.getPermissions()));
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                        if (updatePermissions(skyblockManager, island, permissionFormat)) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                        } else {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                        }
                     } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                        // RESET !
+                        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwner);
+                        }
+                        if (resetPermission(island, permissionFormat)) {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                        } else {
+                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                        }
                     }
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
@@ -120,11 +121,13 @@ public class PermissionSubCommand implements SubCommandInterface {
             } catch (IllegalArgumentException e) {
                 return new ArrayList<>();
             }
-            return switch (permissionsType) {
+            List<String> permissionValues = new ArrayList<>(switch (permissionsType) {
                 case COMMANDS -> Arrays.stream(PermissionsCommandIsland.values()).map(Enum::name).toList();
                 case ISLAND -> Arrays.stream(PermissionsIsland.values()).map(Enum::name).toList();
                 case INVENTORY -> Arrays.stream(PermissionsInventory.values()).map(Enum::name).toList();
-            };
+            });
+            permissionValues.add(0, "RESET");
+            return permissionValues;
         }
         if (args.length == 4) {
             return List.of("true", "false");
@@ -147,19 +150,40 @@ public class PermissionSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionRoleTypeInvalid);
             return null;
         }
-        Permissions permissions;
+        Permissions permissions = null;
         try {
-            permissions = switch (permissionsType) {
-                case COMMANDS -> PermissionsCommandIsland.valueOf(permissionRaw.toUpperCase());
-                case ISLAND -> PermissionsIsland.valueOf(permissionRaw.toUpperCase());
-                case INVENTORY -> PermissionsInventory.valueOf(permissionRaw.toUpperCase());
-            };
+            if (!permissionRaw.equalsIgnoreCase("RESET")) {
+                permissions = switch (permissionsType) {
+                    case COMMANDS -> PermissionsCommandIsland.valueOf(permissionRaw.toUpperCase());
+                    case ISLAND -> PermissionsIsland.valueOf(permissionRaw.toUpperCase());
+                    case INVENTORY -> PermissionsInventory.valueOf(permissionRaw.toUpperCase());
+                };
+            }
         } catch (IllegalArgumentException e) {
             LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionsPermissionsValueInvalid);
             return null;
         }
         boolean value = Boolean.parseBoolean(valueRaw);
         return new PermissionFormat(permissionsType, roleType, permissions, value);
+    }
+
+    private boolean updatePermissions(SkyblockManager skyblockManager, Island island, PermissionFormat permissionFormat) {
+        PermissionRoleIsland permissionsIsland = skyblockManager.getPermissionIsland(island.getId(), permissionFormat.permissionsType, permissionFormat.roleType).join();
+        long flags = permissionsIsland.permission();
+        PermissionManager permissionManager = new PermissionManager(flags);
+        permissionManager.definePermission(permissionFormat.permissions.getPermissionValue(), permissionFormat.value);
+        return island.updatePermission(permissionFormat.permissionsType, permissionFormat.roleType, permissionManager.getPermissions());
+    }
+
+    private boolean resetPermission(Island island, PermissionFormat permissionFormat) {
+        PermissionsType permissionsType = permissionFormat.permissionsType;
+        RoleType roleType = permissionFormat.roleType;
+        long value = switch (permissionsType) {
+            case INVENTORY -> PermissionsToml.flagsRoleDefaultPermissionInventory.getOrDefault(roleType, 0L);
+            case COMMANDS -> PermissionsToml.flagsRoleDefaultPermissionsCommandIsland.getOrDefault(roleType, 0L);
+            case ISLAND -> PermissionsToml.flagsRoleDefaultPermissionsIsland.getOrDefault(roleType, 0L);
+        };
+        return island.updatePermission(permissionsType, roleType, value);
     }
 
     private record PermissionFormat(PermissionsType permissionsType, RoleType roleType, Permissions permissions,

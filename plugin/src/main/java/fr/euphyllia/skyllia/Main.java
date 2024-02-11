@@ -57,6 +57,10 @@ public class Main extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
+            if (!this.interneAPI.setupConfigPermissions(this.getDataFolder(), "permissions.toml")) {
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
             if (!this.interneAPI.setupSGBD()) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;

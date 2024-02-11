@@ -312,3 +312,5 @@ Wplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/blocks/BlockEv
 hplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/folia/PortailAlternativeFoliaEvent.java,9\d\9d7650d4988bd8c358756465ac73158ff1891d1d
 ˆ
 Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/blocks/PistonEvent.java,4\a\4a505b42504b9ff09482ce3d9d45d335d86426d2
+|
+Lplugin/src/main/java/fr/euphyllia/skyllia/configuration/PermissionsToml.java,d\9\d9ba700f48d77cd1597f4abea861f311722677b9

@@ -8,9 +8,11 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicWorld;
+import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.IslandUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
@@ -88,6 +90,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         center.setY(schematicWorld.height()); // Fix
                         this.pasteSchematic(plugin, island, center, schematicWorld);
                         this.setFirstHome(island, center);
+                        this.setPermissionsRole(island);
                         this.teleportPlayerIsland(plugin, player, center);
                         this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(island, player);
@@ -153,5 +156,13 @@ public class CreateSubCommand implements SubCommandInterface {
     private void addOwnerIslandInMember(Island island, Player player) {
         Players owners = new Players(player.getUniqueId(), player.getName(), island.getId(), RoleType.OWNER);
         island.updateMember(owners);
+    }
+
+    private void setPermissionsRole(Island island) {
+        for (RoleType roleType : RoleType.values()) {
+            island.updatePermission(PermissionsType.ISLAND, roleType, PermissionsToml.flagsRoleDefaultPermissionsIsland.get(roleType));
+            island.updatePermission(PermissionsType.COMMANDS, roleType, PermissionsToml.flagsRoleDefaultPermissionsCommandIsland.get(roleType));
+            island.updatePermission(PermissionsType.INVENTORY, roleType, PermissionsToml.flagsRoleDefaultPermissionInventory.get(roleType));
+        }
     }
 }

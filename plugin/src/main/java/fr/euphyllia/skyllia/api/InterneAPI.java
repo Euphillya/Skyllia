@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.database.query.MariaDBCreateTable;
 import fr.euphyllia.skyllia.database.query.MariaDBTransactionQuery;
 import fr.euphyllia.skyllia.database.query.exec.IslandQuery;
@@ -100,8 +101,22 @@ public class InterneAPI {
 
         try {
             ConfigToml.init(configFile);
-        } catch (Exception databaseException) {
-            logger.log(Level.FATAL, databaseException);
+        } catch (Exception ex) {
+            logger.log(Level.FATAL, ex.getMessage(), ex);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean setupConfigPermissions(File dataFolder, String fileName) throws IOException {
+        File configFile = this.checkFileExist(dataFolder, fileName);
+        if (configFile == null) {
+            return false;
+        }
+        try {
+            PermissionsToml.init(configFile);
+        } catch (Exception ex) {
+            logger.log(Level.FATAL, ex.getMessage(), ex);
             return false;
         }
         return true;
@@ -115,8 +130,8 @@ public class InterneAPI {
 
         try {
             LanguageToml.init(configFile);
-        } catch (Exception databaseException) {
-            logger.log(Level.FATAL, databaseException);
+        } catch (Exception ex) {
+            logger.log(Level.FATAL, ex.getMessage(), ex);
             return false;
         }
         return true;
