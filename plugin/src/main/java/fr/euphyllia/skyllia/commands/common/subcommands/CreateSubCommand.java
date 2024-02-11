@@ -46,6 +46,7 @@ public class CreateSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
+        GameMode olgGM = player.getGameMode();
         player.setGameMode(GameMode.SPECTATOR);
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
@@ -87,7 +88,8 @@ public class CreateSubCommand implements SubCommandInterface {
                         center.setY(schematicWorld.height()); // Fix
                         this.pasteSchematic(plugin, island, center, schematicWorld);
                         this.setFirstHome(island, center);
-                        this.restoreGameMode(plugin, player, center);
+                        this.teleportPlayerIsland(plugin, player, center);
+                        this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(island, player);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, center, island.getSize(), 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
@@ -97,6 +99,7 @@ public class CreateSubCommand implements SubCommandInterface {
                     }
                 } catch (Exception e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
+                    this.restoreGameMode(plugin, player, olgGM);
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
                 }
             });
@@ -131,10 +134,15 @@ public class CreateSubCommand implements SubCommandInterface {
         }
     }
 
-    private void restoreGameMode(Main plugin, Player player, Location center) {
+    private void restoreGameMode(Main plugin, Player player, GameMode gameMode) {
+        player.getScheduler().run(plugin, t -> {
+            player.setGameMode(gameMode);
+        }, null);
+    }
+
+    private void teleportPlayerIsland(Main plugin, Player player, Location center) {
         player.getScheduler().run(plugin, t -> {
             player.teleportAsync(center);
-            player.setGameMode(GameMode.SURVIVAL);
         }, null);
     }
 
