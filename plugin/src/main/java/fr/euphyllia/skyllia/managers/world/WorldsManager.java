@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import fr.euphyllia.skyllia.utils.generators.VoidWorldGen;
+import net.kyori.adventure.util.TriState;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +34,7 @@ public class WorldsManager {
             worldCreator.type(WorldType.FLAT);
             worldCreator.seed(new Random(System.currentTimeMillis()).nextLong());
             worldCreator.environment(World.Environment.valueOf(worldConfig.environment().toUpperCase()));
+            worldCreator.keepSpawnLoaded(TriState.TRUE); // Toujours chargé le monde ! Prévenir du crash avec le PlayerRespawnLogic
             World w;
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia

@@ -308,3 +308,5 @@ Japi/src/main/java/fr/euphyllia/skyllia/api/configuration/PortalConfig.java,9\c
 capi/src/main/java/fr/euphyllia/skyllia/api/event/players/PlayerPrepareChangeWorldSkyblockEvent.java,c\a\ca2c6964a1bedc799a9be0802b768c5e6a80da4d
 †
 Vapi/src/main/java/fr/euphyllia/skyllia/api/event/players/PlayerTeleportSpawnEvent.java,f\c\fc1cb6087df65e42a47f08eabd6c1c8d27e288ee
+{
+Kapi/src/main/java/fr/euphyllia/skyllia/api/database/stream/AsciiStream.java,4\0\40e0953f0167503f3785c99c22648e5a7eca2805
