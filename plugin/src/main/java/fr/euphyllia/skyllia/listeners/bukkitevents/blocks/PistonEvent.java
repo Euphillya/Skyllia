@@ -52,7 +52,7 @@ public class PistonEvent implements Listener {
                 return;
             }
             Position islandOriginPosition = island.getPosition();
-            if (ListenersUtils.checkBlockInIsland(islandOriginPosition, location, (int) island.getSize(), event)) {
+            if (ListenersUtils.checkBlockInIsland(islandOriginPosition, location, island.getSize(), event)) {
                 return;
             }
         }
@@ -72,7 +72,7 @@ public class PistonEvent implements Listener {
                 return;
             }
             Position islandOriginPosition = island.getPosition();
-            if (ListenersUtils.checkBlockInIsland(islandOriginPosition, location, (int) island.getSize(), event)) {
+            if (ListenersUtils.checkBlockInIsland(islandOriginPosition, location, island.getSize(), event)) {
                 return;
             }
         }

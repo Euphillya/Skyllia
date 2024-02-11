@@ -156,7 +156,7 @@ public class RegionUtils {
         }
     }
 
-    public static boolean isBlockWithinRadius(Location center, int blockX, int blockZ, int radius) {
+    public static boolean isBlockWithinRadius(Location center, int blockX, int blockZ, double radius) {
         double dx = (double) center.getBlockX() - blockX;
         double dz = (double) center.getBlockZ() - blockZ;
         double distance = Math.sqrt(dx * dx + dz * dz);
