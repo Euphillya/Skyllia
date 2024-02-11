@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PermissionsCommandIsland implements Permissions {
-    DEFAULT(0),
+    //DEFAULT(0),
     DEMOTE(1),
     PROMOTE(2),
     KICK(4),

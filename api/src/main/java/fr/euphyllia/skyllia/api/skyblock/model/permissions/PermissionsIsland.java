@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PermissionsIsland implements Permissions {
-    DEFAULT(0),
+    //DEFAULT(0),
     BLOCK_BREAK(1),
     BLOCK_PLACE(2),
     BUCKETS(4),

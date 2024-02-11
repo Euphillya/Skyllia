@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PermissionsInventory implements Permissions {
-    DEFAULT(0),
+    //DEFAULT(0),
     OPEN_CHEST(1),
     OPEN_ANVIL(2),
     OPEN_WORKBENCH(4),
