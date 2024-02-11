@@ -52,7 +52,7 @@ public class InterneAPI {
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager);
         try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.RegionScheduler");
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
             this.useFolia = true;
         } catch (ClassNotFoundException ignored) {
             this.useFolia = false;
