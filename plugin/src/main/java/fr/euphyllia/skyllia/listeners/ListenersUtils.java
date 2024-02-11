@@ -24,25 +24,20 @@ import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.Nullable;
 
 public class ListenersUtils {
-
     public static @Nullable Island checkGameRuleIsland(Location location, GameRuleIsland gamerule, Cancellable cancellable) {
         Chunk chunk = location.getChunk();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(chunk.getWorld().getName()))) {
             return null;
         }
-        Position position = RegionUtils.getRegionInChunk(chunk.getX(), chunk.getZ());
-        Island island = PositionIslandCache.getIsland(position);
+        Island island = checkChunkIsIsland(chunk, cancellable);
         if (island == null) {
-            cancellable.setCancelled(true); // Sécurité !
             return null;
         }
         Position islandOriginPosition = island.getPosition();
-        if (!RegionUtils.isBlockWithinRadius(RegionUtils.getCenterRegion(chunk.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), (int) island.getSize())) {
-            cancellable.setCancelled(true); // ce n'est pas une ile.
+        if (checkBlockInIsland(islandOriginPosition, location, (int) island.getSize(), cancellable)) {
             return island;
         }
         long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
-
 
         PermissionManager permissionManager = new PermissionManager(permissionChecker);
         if (permissionManager.hasPermission(gamerule.getPermissionValue())) {
@@ -57,15 +52,12 @@ public class ListenersUtils {
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(chunk.getWorld().getName()))) {
             return null;
         }
-        Position position = RegionUtils.getRegionInChunk(chunk.getX(), chunk.getZ());
-        Island island = PositionIslandCache.getIsland(position);
+        Island island = checkChunkIsIsland(chunk, cancellable);
         if (island == null) {
-            cancellable.setCancelled(true); // Sécurité !
             return null;
         }
         Position islandOriginPosition = island.getPosition();
-        if (!RegionUtils.isBlockWithinRadius(RegionUtils.getCenterRegion(chunk.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), (int) island.getSize())) {
-            cancellable.setCancelled(true); // ce n'est pas une ile.
+        if (checkBlockInIsland(islandOriginPosition, location, (int) island.getSize(), cancellable)) {
             return island;
         }
         Players players = PlayersInIslandCache.getPlayers(island.getId(), player.getUniqueId());
@@ -86,6 +78,24 @@ public class ListenersUtils {
             return island;
         }
         return island;
+    }
+
+    public static Island checkChunkIsIsland(Chunk chunk, Cancellable cancellable) {
+        Position position = RegionUtils.getRegionInChunk(chunk.getX(), chunk.getZ());
+        Island island = PositionIslandCache.getIsland(position);
+        if (island == null) {
+            cancellable.setCancelled(true); // Sécurité !
+            return null;
+        }
+        return island;
+    }
+
+    public static boolean checkBlockInIsland(Position islandOriginPosition, Location location, int islandSize, Cancellable cancellable) {
+        if (!RegionUtils.isBlockWithinRadius(RegionUtils.getCenterRegion(location.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), (int) islandSize / 2)) {
+            cancellable.setCancelled(true); // ce n'est pas une ile.
+            return true;
+        }
+        return false;
     }
 
 

@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.bukkitevents;
+package fr.euphyllia.skyllia.listeners.bukkitevents.folia;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;

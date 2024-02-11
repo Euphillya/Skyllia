@@ -64,7 +64,7 @@ public class TeleportEvent implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            ListenersUtils.checkPermission(event.getPlayer().getLocation(), event.getPlayer(), PermissionsIsland.USE_END_PORTAL, event);
+            ListenersUtils.checkPermission(location, event.getPlayer(), PermissionsIsland.USE_END_PORTAL, event);
         } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
             Location location = event.getPlayer().getLocation();
             WorldConfig worldConfig = WorldUtils.getWorldConfig(location.getWorld().getName());
@@ -74,7 +74,7 @@ public class TeleportEvent implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            ListenersUtils.checkPermission(event.getPlayer().getLocation(), event.getPlayer(), PermissionsIsland.USE_NETHER_PORTAL, event);
+            ListenersUtils.checkPermission(location, event.getPlayer(), PermissionsIsland.USE_NETHER_PORTAL, event);
         }
 
     }

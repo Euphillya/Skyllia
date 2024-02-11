@@ -7,9 +7,10 @@ import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.listeners.bukkitevents.BlockEvent;
-import fr.euphyllia.skyllia.listeners.bukkitevents.PortailAlternativeFoliaEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.BlockEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.entity.DamageEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.folia.PortailAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.BlockGameRuleEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.ExplosionEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.GriefingEvent;
@@ -123,6 +124,7 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
         pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
         pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.2
+        pluginManager.registerEvents(new PistonEvent(this.interneAPI), this);
         if (this.interneAPI.isFolia()) {
             pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
         }
