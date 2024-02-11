@@ -75,7 +75,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
-        System.out.println("chargé le monde");
         //io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
         fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS.ensureGlobalTickThread();
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
