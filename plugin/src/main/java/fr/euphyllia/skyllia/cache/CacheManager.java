@@ -41,12 +41,13 @@ public class CacheManager {
 
     public void deleteCacheIsland(Island island) {
         Executors.newSingleThreadScheduledExecutor().execute(() -> {
+            UUID islandId = island.getId();
             // ============= player cache
             for (Players players : island.getMembers()) {
-                PlayersInIslandCache.getIslandIdByPlayerId().remove(players.getMojangId(), island.getId());
+                PlayersInIslandCache.getIslandIdByPlayerId().remove(players.getMojangId(), islandId);
             }
 
-            PlayersInIslandCache.delete(island.getId());
+            PlayersInIslandCache.delete(islandId);
             // ============= position island cache
             List<Position> islandPositionWithRadius = RegionUtils.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
             for (Position possiblePosition : islandPositionWithRadius) {
@@ -55,9 +56,11 @@ public class CacheManager {
             // ============= permission role cache
             for (RoleType roleType : RoleType.values()) {
                 for (PermissionsType permissionsType : PermissionsType.values()) {
-                    PermissionRoleInIslandCache.deletePermissionInIsland(island.getId(), roleType, permissionsType);
+                    PermissionRoleInIslandCache.deletePermissionInIsland(islandId, roleType, permissionsType);
                 }
             }
+            // =========== supprimer cache gamerule
+            PermissionGameRuleInIslandCache.deleteGameruleByIslandId(islandId);
         });
     }
 
@@ -89,6 +92,6 @@ public class CacheManager {
 
     public void updateGameRuleCacheIsland(Island island) {
         long valueGR = island.getGameRulePermission();
-        PermissionGameRuleInIslandCache.setPermissionInIsland(island.getId(), valueGR);
+        PermissionGameRuleInIslandCache.setGameruleByIslandId(island.getId(), valueGR);
     }
 }

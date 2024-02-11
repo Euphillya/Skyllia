@@ -11,12 +11,16 @@ public class PermissionGameRuleInIslandCache {
     private static ConcurrentHashMap<UUID, Long> gameruleByIslandId = new ConcurrentHashMap<>();
 
 
-    public static void setPermissionInIsland(UUID islandId, Long permission) {
+    public static void setGameruleByIslandId(UUID islandId, Long permission) {
         gameruleByIslandId.put(islandId, permission);
     }
 
     public static Long getGameruleInIsland(UUID islandId) {
         return gameruleByIslandId.getOrDefault(islandId, -1L);
+    }
+
+    public static void deleteGameruleByIslandId(UUID islandId) {
+        gameruleByIslandId.remove(islandId);
     }
 }
 
