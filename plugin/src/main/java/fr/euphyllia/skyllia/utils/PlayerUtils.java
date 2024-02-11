@@ -28,7 +28,7 @@ public class PlayerUtils {
     }
 
     @Deprecated(forRemoval = true, since = "1.0-RC4")
-    private static @Nullable  Location getSpawnLocationEssentials(Player player) {
+    private static @Nullable Location getSpawnLocationEssentials(Player player) {
         EssentialsSpawn essentialsSpawn = (EssentialsSpawn) Bukkit.getPluginManager().getPlugin("EssentialsSpawn");
         Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
         if (essentialsSpawn != null && essentialsSpawn.isEnabled() && essentials != null && essentials.isEnabled()) {

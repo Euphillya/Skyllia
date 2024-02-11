@@ -40,7 +40,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("fr.euphyllia.skyllia:api:VERSION") 
+    compileOnly("fr.euphyllia.skyllia:api:VERSION")
 }
 ```
 

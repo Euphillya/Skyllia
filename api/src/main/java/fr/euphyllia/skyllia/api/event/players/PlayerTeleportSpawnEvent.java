@@ -22,6 +22,10 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
         this.finalLocation = location;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
     public Player getPlayer() {
         return this.bPlayer;
     }
@@ -32,10 +36,6 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
 
     public void setFinalLocation(Location finalLocation) {
         this.finalLocation = finalLocation;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlerList;
     }
 
     @Override

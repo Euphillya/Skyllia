@@ -34,8 +34,6 @@ v
 Fapi/src/main/java/fr/euphyllia/skyllia/api/annotation/Information.java,c\b\cbe408f78ed32bc530d98a7aaa3a27621cbaa741
 y
 Iapi/src/main/java/fr/euphyllia/skyllia/api/configuration/WorldConfig.java,c\3\c3278e222ccf68f0796d5af47ca189701eb4bf9a
-‹
-[api/src/main/java/fr/euphyllia/skyllia/api/event/PlayerPrepareChangeWorldSkyblockEvent.java,5\0\502dc727de2b84a401a8420867386d64a2ea14bf
 ƒ
 Sapi/src/main/java/fr/euphyllia/skyllia/api/event/SkyblockChangePermissionEvent.java,5\8\58b51dc646ec87a0e7c0374ec73406a6cc774c37
 y
