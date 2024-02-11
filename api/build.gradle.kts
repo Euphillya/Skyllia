@@ -7,7 +7,7 @@ dependencies {
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.0-RC3.2";
+version = "1.0-RC3.3";
 
 publishing {
     repositories {
