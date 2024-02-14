@@ -1,6 +1,18 @@
+## 文档
+
+- FR_FR : https://github.com/Euphillya/Skyllia/wiki
+- EN_EN : not yet available
+- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_CN/all_files
+
 ## 联系我们 :
 
 [![在Discord上与我们联系](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
+
+## Wiki
+
+- FR_FR : https://github.com/Euphillya/Skyllia/wiki
+- EN_EN : not yet available
+- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_CN/all_files
 
 ## Skyllia是什么
 
