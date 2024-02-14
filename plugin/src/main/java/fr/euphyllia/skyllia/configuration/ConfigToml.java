@@ -185,7 +185,7 @@ public class ConfigToml {
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
             String key = parentConfig + entry.getKey();
             String skyblockEnvironment = getString(key + ".environment", World.Environment.NORMAL.name());
-            if (version < 1) {
+            if (version < 2) {
                 String oldValue = getString(key + ".nether-portal", "sky-overworld");
                 set(key + ".portal-nether.direction", oldValue);
                 remove(key + ".nether-portal");
