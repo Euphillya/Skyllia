@@ -3,9 +3,8 @@ plugins {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
+    paperweight.foliaDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
-    compileOnly(project(":nms:v1_20_R2"))
 }
 
 tasks {

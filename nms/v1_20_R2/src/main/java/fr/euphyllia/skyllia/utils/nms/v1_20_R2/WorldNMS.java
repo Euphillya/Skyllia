@@ -61,17 +61,9 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         };
     }
 
-    public static void addWorldTemp(ServerLevel internal) {
-        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
-    }
-
-    public static void ensureGlobalTickThread() {
-        io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
-    }
-
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
-        ensureGlobalTickThread();
+        io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
 
