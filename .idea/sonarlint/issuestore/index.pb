@@ -62,8 +62,6 @@ _api/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/permissions/Permissio
 \api/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/permissions/PermissionsIsland.java,a\8\a86a238e258a567ad2280497ee624361490ac60b
 Š
 Zapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/permissions/PermissionsType.java,8\2\82f2b260bb3d5db3a584aecd9299cc2c2b6597fd
-y
-Iapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/IslandType.java,7\2\72bc8423a5b8e3c6bd759d24c5d926e6295d2aba
 w
 Gapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/Position.java,a\4\a466889a816e088109316910e24e34da9f3a6f06
 ƒ
@@ -316,3 +314,5 @@ Lplugin/src/main/java/fr/euphyllia/skyllia/configuration/PermissionsToml.java,d
 Oapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/SchematicSetting.java,f\2\f28961381a95ea47fc54b2d1bf989e6844bd9079
 z
 Jplugin/src/main/java/fr/euphyllia/skyllia/configuration/model/MariaDB.java,d\5\d5c6382c2c4b6c03ffeaa8997e3334f7f96bef81
+}
+Mapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/IslandSettings.java,9\3\9338a6e8bad18dadafc6b17c61b3b0624b08ce59

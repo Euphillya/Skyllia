@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.utils;
 
-import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.jetbrains.annotations.NotNull;
@@ -11,13 +11,13 @@ import java.util.Map;
 
 public class IslandUtils {
 
-    @Deprecated(forRemoval = true) // Todo C'est un vieux truc qu'utiliser la version beta qui sera prochainement enlever et remplacer !
-    public static @Nullable IslandType getIslandType(String name) {
+    public static @Nullable IslandSettings getIslandSettings(String name) {
         try {
             if (name == null) {
-                return ConfigToml.islandTypes.values().stream().toList().get(0);
+                return ConfigToml.islandSettingsMap.getOrDefault(ConfigToml.defaultSchematicKey,
+                        ConfigToml.islandSettingsMap.values().stream().toList().get(0));
             } else {
-                return ConfigToml.islandTypes.getOrDefault(name, getIslandType(null));
+                return ConfigToml.islandSettingsMap.getOrDefault(name, getIslandSettings(null));
             }
         } catch (Exception e) {
             return null;

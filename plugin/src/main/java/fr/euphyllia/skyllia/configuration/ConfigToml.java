@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
-import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.configuration.model.MariaDB;
 import org.apache.logging.log4j.Level;
@@ -31,7 +31,7 @@ public class ConfigToml {
     public static MariaDBConfig mariaDBConfig;
     public static List<WorldConfig> worldConfigs = new ArrayList<>();
     public static int maxIsland = 100_000_000;
-    public static Map<String, IslandType> islandTypes = new HashMap<>();
+    public static Map<String, IslandSettings> islandSettingsMap = new HashMap<>();
     public static boolean clearInventoryWhenDeleteIsland = true;
     public static boolean clearEnderChestWhenDeleteIsland = true;
     public static boolean resetExperiencePlayerWhenDeleteIsland = true;
@@ -46,8 +46,8 @@ public class ConfigToml {
         config.load();
         verbose = getBoolean("verbose", false);
 
-        version = getInt("config-version", 2);
-        set("config-version", 2);
+        version = getInt("config-version", 3);
+        set("config-version", 3);
         if (verbose) {
             logger.log(Level.INFO, "Lecture des config");
         }
@@ -199,17 +199,38 @@ public class ConfigToml {
     }
 
     private static void typeIsland() {
-        HashMap<String, ?> islandTypesHashMap = new HashMap<>(getMap("island-types"));
-        String parentConfig = "island-types.";
-        if (islandTypesHashMap.isEmpty()) {
-            islandTypesHashMap.putIfAbsent("example", null);
+        HashMap<String, ?> islandSettingsMaps = new HashMap<>(getMap("island-settings"));
+        String settingsParent = "island-settings.";
+        if (islandSettingsMaps.isEmpty()) {
+            islandSettingsMaps.putIfAbsent("example", null);
         }
-        for (Map.Entry<String, ?> entry : islandTypesHashMap.entrySet()) {
-            String key = parentConfig + entry.getKey();
+        if (version < 3) {
+            HashMap<String, ?> islandTypesHashMap = new HashMap<>(getMap("island-types"));
+            String parentConfig = "island-types.";
+            if (islandTypesHashMap.isEmpty()) {
+                islandTypesHashMap.putIfAbsent("example", null);
+            }
+            for (Map.Entry<String, ?> entry : islandTypesHashMap.entrySet()) {
+                String key = parentConfig + entry.getKey();
+
+                int maxMembersOV = getInt(key + ".max-members", 3);
+                set(settingsParent + entry.getKey() + ".max-members", maxMembersOV);
+
+                String nameOV = getString(key + ".name", entry.getKey());
+                set(settingsParent + entry.getKey() + ".name", nameOV);
+
+                double rayonOV = getDouble(key + ".size", 50D);
+                set(settingsParent + entry.getKey() + ".size", rayonOV);
+            }
+            remove("island-types");
+        }
+
+        for (Map.Entry<String, ?> entry : islandSettingsMaps.entrySet()) {
+            String key = settingsParent + entry.getKey();
             int maxMembers = getInt(key + ".max-members", 3);
             String name = getString(key + ".name", entry.getKey());
             double rayon = getDouble(key + ".size", 50D);
-            islandTypes.put(name, new IslandType(name, maxMembers, rayon));
+            islandSettingsMap.put(name, new IslandSettings(name, maxMembers, rayon));
         }
     }
 

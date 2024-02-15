@@ -5,7 +5,7 @@ import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
@@ -29,7 +29,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -66,9 +69,9 @@ public class CreateSubCommand implements SubCommandInterface {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandSchemNotExist);
                             return;
                         }
-                        IslandType islandType = IslandUtils.getIslandType(ConfigToml.defaultSchematicKey); // Todo Rework un jour
+                        IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
 
-                        if (islandType == null) {
+                        if (islandSettings == null) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandTypeNotExist);
                             return;
                         }
@@ -80,7 +83,7 @@ public class CreateSubCommand implements SubCommandInterface {
 
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandInProgress);
                         UUID idIsland = UUID.randomUUID();
-                        boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandType).join());
+                        boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings).join());
                         if (!isCreate) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
                             return;

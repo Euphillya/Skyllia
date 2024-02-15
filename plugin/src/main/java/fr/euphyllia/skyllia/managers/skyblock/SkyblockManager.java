@@ -3,7 +3,7 @@ package fr.euphyllia.skyllia.managers.skyblock;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
+import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
@@ -27,7 +27,7 @@ public class SkyblockManager {
         this.plugin = main;
     }
 
-    public CompletableFuture<@Nullable Boolean> createIsland(UUID islandId, IslandType islandType) {
+    public CompletableFuture<@Nullable Boolean> createIsland(UUID islandId, IslandSettings islandType) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             Island futurIsland = new IslandHook(
