@@ -7,7 +7,8 @@ import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
-import fr.euphyllia.skyllia.api.skyblock.model.SchematicWorld;
+import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
+import fr.euphyllia.skyllia.configuration.model.MariaDB;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,10 +35,9 @@ public class ConfigToml {
     public static boolean clearInventoryWhenDeleteIsland = true;
     public static boolean clearEnderChestWhenDeleteIsland = true;
     public static boolean resetExperiencePlayerWhenDeleteIsland = true;
-    public static Map<String, SchematicWorld> schematicWorldMap = new HashMap<>();
+    public static Map<String, Map<String, SchematicSetting>> schematicWorldMap = new HashMap<>();
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
-    public static int dbVersion = 2;
     public static int regionDistance = -1;
     private static boolean verbose;
 
@@ -78,11 +78,11 @@ public class ConfigToml {
         config.set(path, val);
     }
 
-    private static void remove(@NotNull String path) {
+    protected static void remove(@NotNull String path) {
         config.remove(path);
     }
 
-    private static String getString(@NotNull String path, String def) {
+    protected static String getString(@NotNull String path, String def) {
         Object tryIt = config.get(path);
         if (tryIt == null && def != null) {
             set(path, def);
@@ -91,7 +91,7 @@ public class ConfigToml {
         return config.get(path);
     }
 
-    private static Boolean getBoolean(@NotNull String path, boolean def) {
+    protected static Boolean getBoolean(@NotNull String path, boolean def) {
         Object tryIt = config.get(path);
         if (tryIt == null) {
             set(path, def);
@@ -100,13 +100,13 @@ public class ConfigToml {
         return config.get(path);
     }
 
-    private static Double getDouble(@NotNull String path, Double def) {
+    protected static Double getDouble(@NotNull String path, Double def) {
         Object tryIt = config.get(path);
         if (tryIt == null) {
             set(path, def);
             return def;
         }
-        if (tryIt instanceof Double) { // Fix issue https://github.com/Euphillya/skyllia/issues/9
+        if (tryIt instanceof Double) {
             return config.get(path);
         } else if (tryIt instanceof Integer) {
             return (double) config.getInt(path);
@@ -117,7 +117,7 @@ public class ConfigToml {
 
     }
 
-    private static Integer getInt(@NotNull String path, Integer def) {
+    protected static Integer getInt(@NotNull String path, Integer def) {
         Object tryIt = config.get(path);
         if (tryIt == null) {
             set(path, def);
@@ -126,7 +126,7 @@ public class ConfigToml {
         return config.getInt(path);
     }
 
-    private static <T> List getList(@NotNull String path, T def) {
+    protected static <T> List getList(@NotNull String path, T def) {
         Object tryIt = config.get(path);
         if (tryIt == null) {
             set(path, def);
@@ -135,7 +135,7 @@ public class ConfigToml {
         return config.get(path);
     }
 
-    private static Long getLong(@NotNull String path, Long def) {
+    protected static Long getLong(@NotNull String path, Long def) {
         Object tryIt = config.get(path);
         if (tryIt == null) {
             set(path, def);
@@ -163,17 +163,7 @@ public class ConfigToml {
     }
 
     private static void initMariaDB() {
-        String path = "sgbd.mariadb.%s";
-        String hostname = getString(path.formatted("hostname"), "127.0.0.1");
-        String port = getString(path.formatted("host"), "3306");
-        String username = getString(path.formatted("username"), "admin");
-        String password = getString(path.formatted("password"), "azerty123@");
-        boolean useSSL = getBoolean(path.formatted("useSSL"), false);
-        int maxPool = getInt(path.formatted("maxPool"), 5);
-        int timeOut = getInt(path.formatted("timeOut"), 500);
-        String database = getString(path.formatted("database"), "sky_folia");
-        dbVersion = getInt(path.formatted("version"), dbVersion);
-        mariaDBConfig = new MariaDBConfig(hostname, port, username, password, useSSL, maxPool, timeOut, database, dbVersion);
+        mariaDBConfig = new MariaDB().getConstructor();
     }
 
     private static void worlds() {
@@ -230,20 +220,27 @@ public class ConfigToml {
             islandStarter.putIfAbsent("example-schem", null);
         }
         for (Map.Entry<String, ?> entry : islandStarter.entrySet()) {
-            String key = parentConfig + entry.getKey();
+            String namekey = entry.getKey();
+            String key = parentConfig + namekey;
             HashMap<String, ?> worldSchem = new HashMap<>(getMap(key + ".worlds"));
             String childrenConfig = key + ".worlds.";
             if (worldSchem.isEmpty()) {
                 worldSchem.put("sky-overworld", null);
             }
+
             for (Map.Entry<String, ?> islandStarterEntry : worldSchem.entrySet()) {
-                String isKey = childrenConfig + islandStarterEntry.getKey();
-                String schematicFile = getString(isKey + ".schematic", "./schematics/default.schem");
+                Map<String, SchematicSetting> keySchematicsByName = schematicWorldMap.getOrDefault(namekey, new HashMap<>()); // Nom du monde - Schematic
                 String worldName = islandStarterEntry.getKey();
-                String name = getString(isKey + ".name", entry.getKey());
+                String isKey = childrenConfig + worldName;
+                String schematicFile = getString(isKey + ".schematic", "./schematics/default.schem");
                 double height = getDouble(isKey + ".height", 64D);
-                SchematicWorld schematicWorld = new SchematicWorld(name, worldName, height, schematicFile);
-                schematicWorldMap.put(name.toLowerCase(), schematicWorld);
+                SchematicSetting schematicSetting = new SchematicSetting(height, schematicFile);
+                if (keySchematicsByName.get(worldName) != null) {
+                    log(Level.ERROR, "Your %s type has the same world twice: %s ! It will be ignored!".formatted(namekey, worldName));
+                    continue;
+                }
+                keySchematicsByName.put(worldName, schematicSetting);
+                schematicWorldMap.put(namekey, keySchematicsByName);
             }
         }
     }

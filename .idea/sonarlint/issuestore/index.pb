@@ -70,8 +70,6 @@ Gapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/Position.java,a\4\a4
 Sapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/PermissionRoleIsland.java,b\5\b5183b4d671ff3af46dcf5cedb159a6ba78c792d
 w
 Gapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/RoleType.java,7\2\729d6ad975e003588822628143977acce1607d39
-}
-Mapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/SchematicWorld.java,d\1\d142f01eacebd140047d626be23ed2df3127fe5c
 y
 Iapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/WarpIsland.java,7\f\7f4f409c55fe9284d61022d0c579b1aaddf268ce
 o
@@ -314,3 +312,7 @@ hplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/folia/PortailA
 Xplugin/src/main/java/fr/euphyllia/skyllia/listeners/bukkitevents/blocks/PistonEvent.java,4\a\4a505b42504b9ff09482ce3d9d45d335d86426d2
 |
 Lplugin/src/main/java/fr/euphyllia/skyllia/configuration/PermissionsToml.java,d\9\d9ba700f48d77cd1597f4abea861f311722677b9
+
+Oapi/src/main/java/fr/euphyllia/skyllia/api/skyblock/model/SchematicSetting.java,f\2\f28961381a95ea47fc54b2d1bf989e6844bd9079
+z
+Jplugin/src/main/java/fr/euphyllia/skyllia/configuration/model/MariaDB.java,d\5\d5c6382c2c4b6c03ffeaa8997e3334f7f96bef81

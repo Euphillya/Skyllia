@@ -18,7 +18,7 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.skyblock.model.SchematicWorld;
+import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +47,7 @@ public class WorldEditUtils {
         return Type.UNDEFINED;
     }
 
-    public static void pasteSchematicWE(InterneAPI api, Location loc, SchematicWorld schematicWorld) {
+    public static void pasteSchematicWE(InterneAPI api, Location loc, SchematicSetting schematicWorld) {
         try {
             File file = new File(api.getPlugin().getDataFolder() + File.separator + schematicWorld.schematicFile());
             ClipboardFormat format = cachedIslandSchematic.getOrDefault(file, ClipboardFormats.findByFile(file));

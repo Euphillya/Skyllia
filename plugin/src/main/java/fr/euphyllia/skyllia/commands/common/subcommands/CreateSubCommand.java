@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandType;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.SchematicWorld;
+import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -29,9 +29,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -58,20 +56,24 @@ public class CreateSubCommand implements SubCommandInterface {
                     Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
                     if (island == null) {
-                        SchematicWorld schematicWorld = IslandUtils.getSchematic(args.length == 0 ? null : args[0]);
-                        if (schematicWorld == null) {
+
+                        String schemKey = args.length == 0 ? "" : args[0];
+                        if (schemKey.isEmpty()) {
+                            schemKey = ConfigToml.schematicWorldMap.keySet().iterator().next();
+                        }
+                        Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
+                        if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandSchemNotExist);
                             return;
                         }
-
-                        IslandType islandType = IslandUtils.getIslandType(ConfigToml.defaultSchematicKey);
+                        IslandType islandType = IslandUtils.getIslandType(ConfigToml.defaultSchematicKey); // Todo Rework un jour
 
                         if (islandType == null) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandTypeNotExist);
                             return;
                         }
 
-                        if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schematicWorld.key()))) {
+                        if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
                             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
                             return;
                         }
@@ -86,17 +88,25 @@ public class CreateSubCommand implements SubCommandInterface {
                         island = skyblockManager.getIslandByIslandId(idIsland).join();
                         Bukkit.getPluginManager().callEvent(new SkyblockCreateEvent(island, player.getUniqueId()));
 
-                        Location center = RegionUtils.getCenterRegion(Bukkit.getWorld(schematicWorld.worldName()), island.getPosition().x(), island.getPosition().z());
-                        center.setY(schematicWorld.height()); // Fix
-                        this.pasteSchematic(plugin, island, center, schematicWorld);
-                        this.setFirstHome(island, center);
-                        this.setPermissionsRole(island);
-                        this.teleportPlayerIsland(plugin, player, center);
-                        this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
-                        this.addOwnerIslandInMember(island, player);
-                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, center, island.getSize(), 0, 0);
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
-                        Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+                        boolean isFirstIteration = true;
+                        for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
+                            String worldName = entry.getKey();
+                            SchematicSetting schematicSetting = entry.getValue();
+                            Location centerPaste = RegionUtils.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
+                            centerPaste.setY(schematicSetting.height());
+                            this.pasteSchematic(plugin, island, centerPaste, schematicSetting);
+                            if (isFirstIteration) {
+                                this.setFirstHome(island, centerPaste);
+                                this.setPermissionsRole(island);
+                                this.teleportPlayerIsland(plugin, player, centerPaste);
+                                this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
+                                this.addOwnerIslandInMember(island, player);
+                                plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.getSize(), 0, 0);
+                                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
+                                Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+                                isFirstIteration = false;
+                            }
+                        }
                     } else {
                         new HomeSubCommand().onCommand(plugin, sender, command, label, args);
                     }
@@ -123,7 +133,7 @@ public class CreateSubCommand implements SubCommandInterface {
         }
     }
 
-    private void pasteSchematic(Main plugin, Island island, Location center, SchematicWorld schematicWorld) {
+    private void pasteSchematic(Main plugin, Island island, Location center, SchematicSetting schematicWorld) {
         switch (WorldEditUtils.worldEditVersion()) {
             case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
                 WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
