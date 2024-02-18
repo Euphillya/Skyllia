@@ -8,11 +8,11 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +55,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
                         return;
                     }
                     Position islandPosition = island.getPosition();
-                    Position playerRegionPosition = RegionUtils.getRegionInChunk(regionLocX, regionLocZ);
+                    Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
 
                     if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);

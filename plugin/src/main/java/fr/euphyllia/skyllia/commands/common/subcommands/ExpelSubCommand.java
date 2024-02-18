@@ -8,12 +8,12 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
-import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +45,7 @@ public class ExpelSubCommand implements SubCommandInterface {
         int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
 
         Position islandPosition = island.getPosition();
-        Position playerRegionPosition = RegionUtils.getRegionInChunk(chunkLocX, chunkLocZ);
+        Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
 
         if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
             if (!silent) LanguageToml.sendMessage(plugin, executor, LanguageToml.messageExpelPlayerFailedNotInIsland);

@@ -16,7 +16,7 @@ public class Managers {
 
     public void init() {
         if (this.worldsManager != null) {
-            Bukkit.getGlobalRegionScheduler().run(this.api.getPlugin(), task -> this.worldsManager.initWorld());
+            Bukkit.getGlobalRegionScheduler().execute(this.api.getPlugin(), this.worldsManager::initWorld);
         }
     }
 }

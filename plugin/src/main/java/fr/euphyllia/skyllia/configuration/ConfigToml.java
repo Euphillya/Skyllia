@@ -30,7 +30,7 @@ public class ConfigToml {
     public static int version;
     public static MariaDBConfig mariaDBConfig;
     public static List<WorldConfig> worldConfigs = new ArrayList<>();
-    public static int maxIsland = 100_000_000;
+    public static int maxIsland = 500_000;
     public static Map<String, IslandSettings> islandSettingsMap = new HashMap<>();
     public static boolean clearInventoryWhenDeleteIsland = true;
     public static boolean clearEnderChestWhenDeleteIsland = true;
@@ -49,12 +49,12 @@ public class ConfigToml {
         version = getInt("config-version", 3);
         set("config-version", 3);
         if (verbose) {
-            logger.log(Level.INFO, "Lecture des config");
+            logger.log(Level.INFO, "Reading configurations");
         }
         try {
             readConfig(ConfigToml.class, null);
         } catch (Exception e) {
-            logger.log(Level.FATAL, "Erreur de lecture !", e);
+            logger.log(Level.FATAL, "Reading error!", e);
         }
     }
 

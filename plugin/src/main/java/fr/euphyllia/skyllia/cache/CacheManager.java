@@ -8,8 +8,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.entity.Player;
@@ -49,7 +49,7 @@ public class CacheManager {
 
             PlayersInIslandCache.delete(islandId);
             // ============= position island cache
-            List<Position> islandPositionWithRadius = RegionUtils.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
+            List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
             for (Position possiblePosition : islandPositionWithRadius) {
                 PositionIslandCache.delete(possiblePosition);
             }
@@ -70,7 +70,7 @@ public class CacheManager {
             PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());
             PlayersInIslandCache.add(island.getId(), island.getMembers());
             // ============= position island cache
-            List<Position> islandPositionWithRadius = RegionUtils.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
+            List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
             for (Position possiblePosition : islandPositionWithRadius) {
                 PositionIslandCache.add(possiblePosition, island);
             }

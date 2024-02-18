@@ -9,12 +9,12 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.Permissions;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.PositionIslandCache;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
-import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -81,7 +81,7 @@ public class ListenersUtils {
     }
 
     public static Island checkChunkIsIsland(Chunk chunk, Cancellable cancellable) {
-        Position position = RegionUtils.getRegionInChunk(chunk.getX(), chunk.getZ());
+        Position position = RegionHelper.getRegionInChunk(chunk.getX(), chunk.getZ());
         Island island = PositionIslandCache.getIsland(position);
         if (island == null) {
             cancellable.setCancelled(true); // Sécurité !
@@ -91,7 +91,7 @@ public class ListenersUtils {
     }
 
     public static boolean checkBlockInIsland(Position islandOriginPosition, Location location, double islandSize, Cancellable cancellable) {
-        if (!RegionUtils.isBlockWithinRadius(RegionUtils.getCenterRegion(location.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), islandSize / 2)) {
+        if (!RegionHelper.isBlockWithinRadius(RegionHelper.getCenterRegion(location.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), islandSize / 2)) {
             cancellable.setCancelled(true); // ce n'est pas une ile.
             return true;
         }

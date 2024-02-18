@@ -9,13 +9,13 @@ import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.IslandUtils;
-import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -95,7 +95,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
                             String worldName = entry.getKey();
                             SchematicSetting schematicSetting = entry.getValue();
-                            Location centerPaste = RegionUtils.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
+                            Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
                             centerPaste.setY(schematicSetting.height());
                             this.pasteSchematic(plugin, island, centerPaste, schematicSetting);
                             if (isFirstIteration) {

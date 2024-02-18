@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.utils.models.CallBackPosition;
 import fr.euphyllia.skyllia.utils.models.CallbackEntity;
@@ -13,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +22,6 @@ public class RegionUtils {
 
     private static final Logger logger = LogManager.getLogger(RegionUtils.class);
     private static final double OFFSET = 256D;
-
-    public static Location getCenterRegion(World w, int regionX, int regionZ) {
-        double rx = (regionX << 9) + OFFSET;
-        double rz = (regionZ << 9) + OFFSET;
-        return new Location(w, rx, 0.0d, rz);
-    }
-
-    public static Position getChunkCenterRegion(int regionX, int regionZ) {
-        int chunkX = (regionX << 9) + (int) OFFSET;
-        int chunkZ = (regionZ << 9) + (int) OFFSET;
-
-        return new Position(chunkX >> 4, chunkZ >> 4);
-    }
 
     public static Position getPositionNewIsland(int start) {
         double r = Math.floor((Math.sqrt(start + 1d) - 1) / 2) + 1;
@@ -65,39 +52,6 @@ public class RegionUtils {
         return new Position(regionX, regionZ);
     }
 
-    public static Vector getMinXRegion(World world, int regionX, int regionZ) {
-        int minX = regionX << 9;
-        int minZ = regionZ << 9;
-        int minY = world.getMinHeight();
-
-        return new Vector(minX, minY, minZ);
-    }
-
-    public static Vector getMaxXRegion(World world, int regionX, int regionZ) {
-        Vector min = getMinXRegion(world, regionX, regionZ);
-
-        int maxX = min.getBlockX() + 511;
-        int maxZ = min.getBlockZ() + 511;
-        int maxY = world.getMaxHeight();
-
-        return new Vector(maxX, maxY, maxZ);
-    }
-
-    public static Position getRegionWithLocation(int locX, int locZ) {
-        return getRegionInChunk(locX >> 4, locZ >> 4);
-    }
-
-    public static Position getRegionInChunk(Position chunk) {
-        return getRegionInChunk(chunk.x(), chunk.z());
-    }
-
-    public static Position getRegionInChunk(int chunkX, int chunkZ) {
-        int regionX = chunkX >> 5;
-        int regionZ = chunkZ >> 5;
-        return new Position(regionX, regionZ);
-    }
-
-
     public static void getEntitiesInRegion(Main plugin, EntityType entityType, World world, int regionX, int regionZ, CallbackEntity callbackEntity) {
         int minChunkX = regionX << 5; // Calcul de la coordonnée X minimale du chunk
         int minChunkZ = regionZ << 5; // Calcul de la coordonnée Z minimale du chunk
@@ -126,18 +80,18 @@ public class RegionUtils {
     }
 
     public static void spiralStartCenter(Position islandRegion, double size, CallBackPosition callbackChunkPosition) {
-        Position chunk = RegionUtils.getChunkCenterRegion(islandRegion.x(), islandRegion.z());
+        Position chunk = RegionHelper.getChunkCenterRegion(islandRegion.x(), islandRegion.z());
         int cx = chunk.x();
         int cz = chunk.z();
         int x = 0, z = 0;
         int dx = 0, dz = -1;
         int maxI = (33 * ConfigToml.regionDistance) * (33 * ConfigToml.regionDistance);
-        List<Position> islandPositionWithRadius = RegionUtils.getRegionsInRadius(islandRegion, (int) Math.round(size));
+        List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(islandRegion, (int) Math.round(size));
         List<Position> regionCleaned = new ArrayList<>();
         for (int i = 0; i < maxI; i++) {
             if ((-size / 2 <= x) && (x <= size / 2) && (-size / 2 <= z) && (z <= size / 2)) {
                 Position chunkPos = new Position(cx + x, cz + z);
-                Position region = RegionUtils.getRegionInChunk(chunkPos.x(), chunkPos.z());
+                Position region = RegionHelper.getRegionInChunk(chunkPos.x(), chunkPos.z());
                 if (islandPositionWithRadius.contains(region)) {
                     if (!regionCleaned.contains(region)) {
                         regionCleaned.add(region);
@@ -156,6 +110,40 @@ public class RegionUtils {
         }
     }
 
+
+    @Deprecated(forRemoval = true)
+    public static Location getCenterRegion(World w, int regionX, int regionZ) {
+        double rx = (regionX << 9) + OFFSET;
+        double rz = (regionZ << 9) + OFFSET;
+        return new Location(w, rx, 0.0d, rz);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static Position getChunkCenterRegion(int regionX, int regionZ) {
+        int chunkX = (regionX << 9) + (int) OFFSET;
+        int chunkZ = (regionZ << 9) + (int) OFFSET;
+
+        return new Position(chunkX >> 4, chunkZ >> 4);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static Position getRegionInChunk(int chunkX, int chunkZ) {
+        int regionX = chunkX >> 5;
+        int regionZ = chunkZ >> 5;
+        return new Position(regionX, regionZ);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static Position getRegionInChunk(Position chunk) {
+        return getRegionInChunk(chunk.x(), chunk.z());
+    }
+
+    @Deprecated(forRemoval = true)
+    public static Position getRegionWithLocation(int locX, int locZ) {
+        return getRegionInChunk(locX >> 4, locZ >> 4);
+    }
+
+    @Deprecated(forRemoval = true)
     public static boolean isBlockWithinRadius(Location center, int blockX, int blockZ, double radius) {
         double dx = (double) center.getBlockX() - blockX;
         double dz = (double) center.getBlockZ() - blockZ;
@@ -164,10 +152,12 @@ public class RegionUtils {
         return distance <= radius;
     }
 
+    @Deprecated(forRemoval = true)
     public static List<Position> getRegionsInRadius(Position position, int blockRadius) {
         return getRegionsInRadius(position.x(), position.z(), blockRadius);
     }
 
+    @Deprecated(forRemoval = true)
     public static List<Position> getRegionsInRadius(int regionX, int regionZ, int blockRadius) {
         int centerBlockX = (regionX << 9) + (int) OFFSET;
         int centerBlockZ = (regionZ << 9) + (int) OFFSET;
@@ -185,5 +175,4 @@ public class RegionUtils {
 
         return regions;
     }
-
 }

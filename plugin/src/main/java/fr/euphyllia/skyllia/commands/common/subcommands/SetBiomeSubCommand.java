@@ -8,12 +8,12 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.CommandCacheExecution;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.RegionUtils;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -100,7 +100,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                     }
 
                     Position islandPosition = island.getPosition();
-                    Position playerRegionPosition = RegionUtils.getRegionInChunk(chunkLocX, chunkLocZ);
+                    Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
 
                     if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);
