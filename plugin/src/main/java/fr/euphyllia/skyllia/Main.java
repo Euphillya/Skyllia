@@ -4,6 +4,8 @@ package fr.euphyllia.skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -87,6 +89,9 @@ public class Main extends JavaPlugin {
         this.logger.log(Level.INFO, "Plugin Off");
         getServer().getGlobalRegionScheduler().cancelTasks(this);
         getServer().getAsyncScheduler().cancelTasks(this);
+        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE).cancelAllTask();
+        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.LEGACY).cancelAllTask();
+        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.FOLIA).cancelAllTask();
         if (this.interneAPI.getDatabaseLoader() != null) {
             this.interneAPI.getDatabaseLoader().closeDatabase();
         }
@@ -144,10 +149,11 @@ public class Main extends JavaPlugin {
     }
 
     private void runCache() {
-        ScheduledExecutorService executors = Executors.newScheduledThreadPool(2);
-        executors.scheduleAtFixedRate(() -> {
-            Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
-        }, 0, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
+        this.interneAPI.getSchedulerTask()
+                .getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+                .runAtFixedRate(SchedulerType.ASYNC, 0, ConfigToml.updateCacheTimer * 20L, schedulerTask -> {
+                    Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
+                });
     }
 
     private void disabledConfig() {

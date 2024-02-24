@@ -36,10 +36,10 @@ public class MariaDBExecute {
     }
 
     public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work, boolean ignoreError) throws DatabaseException {
-        if (pool == null) {
-            throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
-        }
         try {
+            if (pool == null) {
+                throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
+            }
             Connection connection = pool.getMariaDBConnection();
             if (connection == null) {
                 throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
@@ -55,7 +55,6 @@ public class MariaDBExecute {
             connection.close();
         } catch (SQLException | DatabaseException exception) {
             if (Boolean.FALSE.equals(ignoreError)) {
-                logger.log(Level.FATAL, "[MARIADB] - Query : %s".formatted(query), exception);
                 throw new DatabaseException(exception);
             }
         }

@@ -5,6 +5,8 @@ import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
@@ -136,21 +138,19 @@ public class MariaDBCreateTable {
                     "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
             return false;
         }
-        ExecutorService scheduledExecutorService = Executors.newCachedThreadPool();
-        try {
-            scheduledExecutorService.execute(() -> {
-                for (int i = 1; i < ConfigToml.maxIsland; i++) {
-                    Position position = RegionUtils.getPositionNewIsland(i);
-                    try {
-                        MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null, false);
-                    } catch (DatabaseException e) {
-                        throw new RuntimeException(e);
+
+        this.api.getSchedulerTask()
+                .getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+                .runDelayed(SchedulerType.ASYNC, 1, schedulerTask -> {
+                    for (int i = 1; i < ConfigToml.maxIsland; i++) {
+                        Position position = RegionUtils.getPositionNewIsland(i);
+                        try {
+                            MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null, false);
+                        } catch (DatabaseException e) {
+                            return; // ignore
+                        }
                     }
-                }
-            });
-        } finally {
-            scheduledExecutorService.shutdown();
-        }
+                });
         return true;
     }
 }

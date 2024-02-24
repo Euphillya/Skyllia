@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -34,21 +35,22 @@ import java.nio.file.Path;
 
 public class InterneAPI {
 
-    private final Logger logger;
+    private final Logger logger = LogManager.getLogger(this);;
     private final Main plugin;
     private final SkyblockManager skyblockManager;
     private @Nullable DatabaseLoader database;
     private MariaDBTransactionQuery transaction;
     private DatabaseLoader databaseLoader;
     private Managers managers;
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
     private boolean useFolia = false;
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
+    private final SchedulerTask schedulerTask;
 
     public InterneAPI(Main plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
-        this.logger = LogManager.getLogger("fr.euphyllia.skyllia.api.InterneAPI");
+        this.schedulerTask = new SchedulerTask(plugin);
         this.setVersionNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager);
@@ -210,5 +212,9 @@ public class InterneAPI {
 
     public void loadAPI() {
         SkylliaAPI.setImplementation(new APISkyllia(this));
+    }
+
+    public SchedulerTask getSchedulerTask() {
+        return this.schedulerTask;
     }
 }
