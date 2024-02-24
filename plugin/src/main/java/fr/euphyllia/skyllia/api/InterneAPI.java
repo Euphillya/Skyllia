@@ -35,18 +35,19 @@ import java.nio.file.Path;
 
 public class InterneAPI {
 
-    private final Logger logger = LogManager.getLogger(this);;
+    private final Logger logger = LogManager.getLogger(this);
+    ;
     private final Main plugin;
     private final SkyblockManager skyblockManager;
+    private final CacheManager cacheManager;
+    private final SchedulerTask schedulerTask;
     private @Nullable DatabaseLoader database;
     private MariaDBTransactionQuery transaction;
     private DatabaseLoader databaseLoader;
     private Managers managers;
-    private final CacheManager cacheManager;
     private boolean useFolia = false;
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
-    private final SchedulerTask schedulerTask;
 
     public InterneAPI(Main plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;

@@ -1,9 +1,7 @@
 package fr.euphyllia.skyllia.api.utils.scheduler.legacy;
 
 import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerTaskInter;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 

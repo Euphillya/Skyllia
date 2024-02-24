@@ -43,7 +43,7 @@ public class ExecutorsScheduler implements Scheduler {
             ExecutorsSchedulerTask executorsScheduler = new ExecutorsSchedulerTask(plugin, executorService);
             mapSchedulerTask.put(executorsScheduler.getTaskId(), executorsScheduler);
             callBack.run(executorsScheduler);
-        }, initialDelayTicks*50, periodTicks*50, TimeUnit.MILLISECONDS);
+        }, initialDelayTicks * 50, periodTicks * 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ExecutorsScheduler implements Scheduler {
             ExecutorsSchedulerTask executorsScheduler = new ExecutorsSchedulerTask(plugin, executorService);
             mapSchedulerTask.put(executorsScheduler.getTaskId(), executorsScheduler);
             callBack.run(executorsScheduler);
-        }, delayTicks*50,  TimeUnit.MILLISECONDS);
+        }, delayTicks * 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
