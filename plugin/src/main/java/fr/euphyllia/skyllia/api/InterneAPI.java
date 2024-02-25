@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public class InterneAPI {
 
@@ -168,26 +169,26 @@ public class InterneAPI {
     }
 
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
-        final String versionMC = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        switch (versionMC) {
-            case "v1_19_R3" -> {
+        final String[] bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-");
+        switch (bukkitVersion[0]) {
+            case "1.19.4" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.PlayerNMS();
             }
-            case "v1_20_R1" -> {
+            case "1.20", "1.20.1" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
             }
-            case "v1_20_R2" -> {
+            case "1.20.2" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.PlayerNMS();
             }
-            case "v1_20_R3" -> {
+            case "1.20.3", "1.20.4" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
             }
             default ->
-                    throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(versionMC));
+                    throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(bukkitVersion[0]));
         }
     }
 

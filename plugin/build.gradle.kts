@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly("dev.folia:folia-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
     implementation(project(":api"))
     implementation(project(":nms:v1_19_R3"))
     implementation(project(":nms:v1_20_R1"))
