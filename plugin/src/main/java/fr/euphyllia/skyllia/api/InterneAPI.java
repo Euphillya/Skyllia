@@ -53,7 +53,7 @@ public class InterneAPI {
         this.schedulerTask = new SchedulerTask(plugin);
         this.setVersionNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
-        this.cacheManager = new CacheManager(this.skyblockManager);
+        this.cacheManager = new CacheManager(this.skyblockManager, this);
     }
 
     public @Nullable DatabaseLoader getDatabaseLoader() {

@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class SetMaxMembersSubCommands implements SubCommandInterface {
 
@@ -45,42 +43,35 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersNotConfirmedArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    UUID playerId;
-                    try {
-                        playerId = UUID.fromString(playerName);
-                    } catch (IllegalArgumentException ignored) {
-                        playerId = Bukkit.getPlayerUniqueId(playerName);
-                    }
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(playerId).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            UUID playerId;
+            try {
+                playerId = UUID.fromString(playerName);
+            } catch (IllegalArgumentException ignored) {
+                playerId = Bukkit.getPlayerUniqueId(playerName);
+            }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByOwner(playerId).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    int members = Integer.parseInt(changeValue);
-                    boolean updated = island.setMaxMembers(members);
-                    if (updated) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeFailed);
-                    }
+            int members = Integer.parseInt(changeValue);
+            boolean updated = island.setMaxMembers(members);
+            if (updated) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
+            } else {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeFailed);
+            }
 
-                } catch (Exception e) {
-                    if (e instanceof NumberFormatException ignored) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersNAN);
-                    } else {
-                        logger.log(Level.FATAL, e.getMessage(), e);
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                    }
-                }
-            });
-        } finally {
-            executor.shutdown();
+        } catch (Exception e) {
+            if (e instanceof NumberFormatException ignored) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersNAN);
+            } else {
+                logger.log(Level.FATAL, e.getMessage(), e);
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            }
         }
         return true;
     }

@@ -23,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class ForceDeleteSubCommands implements SubCommandInterface {
 
@@ -51,42 +49,35 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageADeleteNotConfirmedArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    UUID playerId;
-                    try {
-                        playerId = UUID.fromString(playerName);
-                    } catch (IllegalArgumentException ignored) {
-                        playerId = Bukkit.getPlayerUniqueId(playerName);
-                    }
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(playerId).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            UUID playerId;
+            try {
+                playerId = UUID.fromString(playerName);
+            } catch (IllegalArgumentException ignored) {
+                playerId = Bukkit.getPlayerUniqueId(playerName);
+            }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByOwner(playerId).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    boolean isDisabled = island.setDisable(true);
-                    if (isDisabled) {
-                        this.updatePlayer(plugin, skyblockManager, island);
+            boolean isDisabled = island.setDisable(true);
+            if (isDisabled) {
+                this.updatePlayer(plugin, skyblockManager, island);
 
-                        for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                            WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
-                        }
-
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
+                    WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
                 }
-            });
-        } finally {
-            executor.shutdown();
+
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
+            } else {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            }
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
 
         return true;

@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class SetSizeSubCommands implements SubCommandInterface {
 
@@ -45,42 +43,35 @@ public class SetSizeSubCommands implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeNotConfirmedArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    UUID playerId;
-                    try {
-                        playerId = UUID.fromString(playerName);
-                    } catch (IllegalArgumentException ignored) {
-                        playerId = Bukkit.getPlayerUniqueId(playerName);
-                    }
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(playerId).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            UUID playerId;
+            try {
+                playerId = UUID.fromString(playerName);
+            } catch (IllegalArgumentException ignored) {
+                playerId = Bukkit.getPlayerUniqueId(playerName);
+            }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByOwner(playerId).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    double newSize = Double.parseDouble(changeValue);
-                    boolean updated = island.setSize(newSize);
-                    if (updated) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeFailed);
-                    }
+            double newSize = Double.parseDouble(changeValue);
+            boolean updated = island.setSize(newSize);
+            if (updated) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
+            } else {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeFailed);
+            }
 
-                } catch (Exception e) {
-                    if (e instanceof NumberFormatException ignored) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeNAN);
-                    } else {
-                        logger.log(Level.FATAL, e.getMessage(), e);
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                    }
-                }
-            });
-        } finally {
-            executor.shutdown();
+        } catch (Exception e) {
+            if (e instanceof NumberFormatException ignored) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeNAN);
+            } else {
+                logger.log(Level.FATAL, e.getMessage(), e);
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            }
         }
         return true;
     }

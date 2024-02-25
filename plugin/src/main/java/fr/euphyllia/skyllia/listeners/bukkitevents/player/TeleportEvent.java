@@ -5,6 +5,8 @@ import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +17,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class TeleportEvent implements Listener {
     private final InterneAPI api;
@@ -32,22 +31,18 @@ public class TeleportEvent implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.execute(() -> {
-                Location destination = event.getTo();
-                PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
-                if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
-                    ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
-                            PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, destination.getWorld().getName());
-                } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
-                    ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
-                            PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, destination.getWorld().getName());
-                }
-            });
-        } finally {
-            executor.shutdown();
-        }
+        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+                .execute(SchedulerType.ASYNC, schedulerTask -> {
+                    Location destination = event.getTo();
+                    PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
+                    if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
+                        ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
+                                PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, destination.getWorld().getName());
+                    } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
+                        ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
+                                PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, destination.getWorld().getName());
+                    }
+                });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

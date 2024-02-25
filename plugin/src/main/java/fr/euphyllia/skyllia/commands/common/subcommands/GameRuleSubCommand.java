@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class GameRuleSubCommand implements SubCommandInterface {
 
@@ -44,7 +42,6 @@ public class GameRuleSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleCommandNotEnoughArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         String permissionRaw = args[0]; // Permission
         String valueRaw = args[1]; // true / false
         try {
