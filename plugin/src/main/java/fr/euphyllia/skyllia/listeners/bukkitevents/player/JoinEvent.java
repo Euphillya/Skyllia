@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
@@ -31,7 +32,7 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onLoadIslandInJoinEvent(PlayerJoinEvent playerJoinEvent) {
-        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                 .execute(SchedulerType.ASYNC, schedulerTask -> {
                     Player player = playerJoinEvent.getPlayer();
                     SkyblockManager skyblockManager = this.api.getSkyblockManager();
@@ -52,13 +53,13 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
-        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                 .execute(SchedulerType.ASYNC, schedulerTask -> {
                     Player player = playerLoginEvent.getPlayer();
                     boolean exist = this.api.getSkyblockManager().checkClearMemberExist(player.getUniqueId()).join();
                     if (!exist) return;
                     this.api.getSkyblockManager().deleteClearMember(player.getUniqueId());
-                    this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                    SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                             .execute(SchedulerType.ENTITY, player, schedulerTask1 -> {
                                 if (ConfigToml.clearInventoryWhenDeleteIsland) {
                                     player.getInventory().clear();

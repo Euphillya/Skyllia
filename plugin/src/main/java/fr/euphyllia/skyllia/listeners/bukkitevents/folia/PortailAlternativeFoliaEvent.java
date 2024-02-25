@@ -62,7 +62,7 @@ public class PortailAlternativeFoliaEvent implements Listener {
             return;
         }
         // Obtenez le bloc sur lequel le joueur se tient
-        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                 .execute(SchedulerType.ASYNC, schedulerTask -> {
                     if (blockType == Material.NETHER_PORTAL) {
                         ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());

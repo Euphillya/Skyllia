@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
@@ -113,7 +114,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 for (Players players : island.getMembers()) {
                     Player bPlayer = Bukkit.getPlayer(players.getMojangId());
                     if (bPlayer != null && bPlayer.isOnline()) {
-                        plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                                 .execute(SchedulerType.ENTITY, player, schedulerTask -> {
                                     player.getWorld().refreshChunk(chunkLocX, chunkLocZ);
                                 });

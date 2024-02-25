@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LegacyScheduler implements Scheduler {
 
+    private final ConcurrentHashMap<Integer, SchedulerTaskInter> mapSchedulerTask = new ConcurrentHashMap<>();
     private Plugin plugin;
-    private ConcurrentHashMap<Integer, SchedulerTaskInter> mapSchedulerTask = new ConcurrentHashMap<>();
 
     public LegacyScheduler(Plugin pluginBukkit) {
         this.plugin = pluginBukkit;

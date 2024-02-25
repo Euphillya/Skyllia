@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
@@ -65,7 +66,7 @@ public class RegionUtils {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
                 final int chunkX = x;
                 final int chunkZ = z;
-                plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                         .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(world, chunkX, chunkZ), 1, schedulerTask -> {
                             Chunk chunk = world.getChunkAt(chunkX, chunkZ);
                             if (chunk.isLoaded()) {

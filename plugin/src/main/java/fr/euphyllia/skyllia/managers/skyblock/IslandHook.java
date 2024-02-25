@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.*;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -71,7 +72,7 @@ public class IslandHook extends Island {
         }
         this.size = rayon;
         if (Boolean.TRUE.equals(this.plugin.getInterneAPI().getSkyblockManager().setSizeIsland(this, rayon).join())) {
-            this.plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                     .execute(SchedulerType.ASYNC, schedulerTask -> {
                         Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, rayon));
                     });
@@ -178,7 +179,7 @@ public class IslandHook extends Island {
     public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
         if (isUpdated) {
-            this.plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                     .execute(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions)));
             return true;
         } else {
@@ -210,7 +211,7 @@ public class IslandHook extends Island {
     public boolean updateGamerule(long gameRuleIsland) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updateGamerule(this, gameRuleIsland).join();
         if (isUpdated) {
-            this.plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                     .execute(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleIsland)));
             return true;
         } else {

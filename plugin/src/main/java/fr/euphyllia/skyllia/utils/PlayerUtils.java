@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.utils;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.spawn.EssentialsSpawn;
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.players.PlayerTeleportSpawnEvent;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class PlayerUtils {
 
     public static void teleportPlayerSpawn(Main main, Player player) {
-        main.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                 .execute(SchedulerType.ENTITY, player, schedulerTask -> {
                     Location spawnLocation = getSpawnLocationEssentials(player); // Todo Sera supprimer à l'avenir, je veux utiliser le point de dépendance possible !
                     if (spawnLocation == null) {

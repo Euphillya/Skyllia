@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.admin;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import org.bukkit.command.Command;
@@ -31,8 +32,7 @@ public class SkylliaAdminCommand implements CommandExecutor, TabCompleter {
             if (subCommands == null) {
                 return false;
             }
-            plugin.getInterneAPI()
-                    .getSchedulerTask()
+            SkylliaAPI.getSchedulerTask()
                     .getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                     .execute(SchedulerType.ASYNC, schedulerTask -> {
                         subCommands.getSubCommandInterface().onCommand(this.plugin, sender, command, label, listArgs);

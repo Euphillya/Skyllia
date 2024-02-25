@@ -47,7 +47,6 @@ import org.bukkit.generator.WorldInfo;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,17 +59,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             case ADVENTURE -> GameType.ADVENTURE;
             case SPECTATOR -> GameType.SPECTATOR;
         };
-    }
-
-    private static void setRandom(ServerLevel serverLevel) throws NoSuchFieldException, IllegalAccessException {
-        Class<?> clazz = serverLevel.getClass();
-
-        // Obtention du champ 'randomSpawnSelection'
-        Field randomSpawnSelectionField = clazz.getDeclaredField("randomSpawnSelection");
-        randomSpawnSelectionField.setAccessible(true);
-
-        ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
-        randomSpawnSelectionField.set(serverLevel, newValue);
     }
 
     @Override

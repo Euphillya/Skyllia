@@ -85,8 +85,8 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         this.logger.log(Level.INFO, "Plugin Off");
-        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE).cancelAllTask();
-        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT).cancelAllTask();
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE).cancelAllTask();
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT).cancelAllTask();
         getServer().getGlobalRegionScheduler().cancelTasks(this);
         getServer().getAsyncScheduler().cancelTasks(this);
         if (this.interneAPI.getDatabaseLoader() != null) {
@@ -146,7 +146,7 @@ public class Main extends JavaPlugin {
     }
 
     private void runCache() {
-        this.interneAPI.getSchedulerTask()
+        SkylliaAPI.getSchedulerTask()
                 .getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                 .runAtFixedRate(SchedulerType.ASYNC, 0, ConfigToml.updateCacheTimer * 20L, schedulerTask -> {
                     Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));

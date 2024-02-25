@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -34,7 +35,7 @@ public class DeleteSubCommand implements SubCommandInterface {
         Player bPlayer = Bukkit.getPlayer(players.getMojangId());
         if (bPlayer != null && bPlayer.isOnline()) {
             PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
-            plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                     .execute(SchedulerType.ENTITY, bPlayer, schedulerTask -> {
                         if (ConfigToml.clearInventoryWhenDeleteIsland) {
                             bPlayer.getInventory().clear();

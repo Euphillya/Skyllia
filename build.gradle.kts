@@ -16,6 +16,9 @@ val essentialsRepo = "https://repo.essentialsx.net/releases"
 
 
 dependencies {
+    implementation(project(":nms:v1_19_R1", "reobf"))
+    implementation(project(":nms:v1_19_R2", "reobf"))
+    implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_20_R1", "reobf"))
     implementation(project(":nms:v1_20_R2", "reobf"))

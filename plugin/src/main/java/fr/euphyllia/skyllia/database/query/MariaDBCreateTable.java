@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.database.query;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
@@ -137,7 +138,7 @@ public class MariaDBCreateTable {
             return false;
         }
 
-        this.api.getSchedulerTask()
+        SkylliaAPI.getSchedulerTask()
                 .getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                 .runDelayed(SchedulerType.ASYNC, 1, schedulerTask -> {
                     for (int i = 1; i < ConfigToml.maxIsland; i++) {

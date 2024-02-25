@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.skyblockevents;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.*;
@@ -108,13 +109,11 @@ public class SkyblockEvent implements Listener {
             }
             Location playerLocation = player.getLocation();
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
-            this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                     .execute(SchedulerType.REGION, futurLocation, schedulerTask -> {
                         if (WorldUtils.isSafeLocation(futurLocation)) {
-                            this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                                    .execute(SchedulerType.ENTITY, player, playerTask -> {
-                                        player.teleportAsync(futurLocation);
-                                    });
+                            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                                    .execute(SchedulerType.ENTITY, player, playerTask -> player.teleportAsync(futurLocation));
                         } else {
                             LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
                         }

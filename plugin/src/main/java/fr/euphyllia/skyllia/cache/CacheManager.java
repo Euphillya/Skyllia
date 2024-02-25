@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.cache;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.annotation.Experimental;
 import fr.euphyllia.skyllia.api.annotation.Information;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -44,7 +45,7 @@ public class CacheManager {
     }
 
     public void deleteCacheIsland(Island island) {
-        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                 .execute(SchedulerType.ASYNC, schedulerTask -> {
                     UUID islandId = island.getId();
                     // ============= player cache
@@ -70,7 +71,7 @@ public class CacheManager {
     }
 
     public void updateCacheIsland(Island island, UUID playerId) {
-        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
                 .execute(SchedulerType.ASYNC, schedulerTask -> {
                     // ============= player cache
                     PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -39,8 +40,7 @@ public class HomeSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-        plugin.getInterneAPI()
-                .getSchedulerTask()
+        SkylliaAPI.getSchedulerTask()
                 .getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                 .execute(SchedulerType.ENTITY, player, schedulerTask -> player.setGameMode(GameMode.SPECTATOR));
 
@@ -54,8 +54,7 @@ public class HomeSubCommand implements SubCommandInterface {
 
             WarpIsland warpIsland = island.getWarpByName("home");
             double rayon = island.getSize();
-            plugin.getInterneAPI()
-                    .getSchedulerTask()
+            SkylliaAPI.getSchedulerTask()
                     .getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                     .execute(SchedulerType.ENTITY, player, schedulerTask -> {
                         Location loc;

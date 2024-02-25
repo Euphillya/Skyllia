@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.utils.nms.v1_20_R1;
+package fr.euphyllia.skyllia.utils.nms.v1_19_R1;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
@@ -14,13 +14,13 @@ public class PlayerNMS extends fr.euphyllia.skyllia.api.utils.nms.PlayerNMS {
         SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                 .execute(SchedulerType.ENTITY, player, schedulerTask -> {
                     final net.minecraft.world.level.border.WorldBorder worldBorderPlayer = new net.minecraft.world.level.border.WorldBorder();
-                    worldBorderPlayer.world = ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) centerBorder.getWorld()).getHandle();
+                    worldBorderPlayer.world = ((org.bukkit.craftbukkit.v1_19_R1.CraftWorld) centerBorder.getWorld()).getHandle();
                     worldBorderPlayer.setCenter(centerBorder.getBlockX(), centerBorder.getBlockZ());
                     worldBorderPlayer.setSize(borderSize);
                     worldBorderPlayer.setWarningBlocks(warningBlocks);
                     worldBorderPlayer.setWarningTime(warningTime);
                     final net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket updateWorldBorderPacket = new net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket(worldBorderPlayer);
-                    org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer craftPlayer = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) player);
+                    org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer craftPlayer = ((org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer) player);
                     craftPlayer.getHandle().connection.send(updateWorldBorderPacket);
                 });
     }
