@@ -17,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
-// Todo ? Pas essayer
 public class TransferSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(TransferSubCommand.class);
@@ -31,46 +28,39 @@ public class TransferSubCommand implements SubCommandInterface {
             if (!(sender instanceof Player player)) {
                 return true;
             }
-            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-            try {
-                executor.execute(() -> {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
-                    if (island == null) {
-                        player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
-                        return;
-                    }
-                    Players ownerIsland = skyblockManager.getOwnerByIslandID(island).join();
-                    if (ownerIsland == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                        return;
-                    }
-                    if (!ownerIsland.getMojangId().equals(player.getUniqueId())) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwner);
-                        return;
-                    }
-
-                    String newOwner = args[0];
-                    Players players = island.getMember(newOwner);
-                    if (players == null || !players.getRoleType().equals(RoleType.MEMBER) || !players.getRoleType().equals(RoleType.MODERATOR)) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageNotMember);
-                        return;
-                    }
-
-                    // Enlever le proprio
-                    Players oldOwner = island.getMember(player.getUniqueId());
-                    oldOwner.setRoleType(RoleType.MEMBER);
-                    island.updateMember(oldOwner);
-                    // Nouveau proprio
-                    players.setRoleType(RoleType.OWNER);
-                    island.updateMember(players);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageTransfertSuccess.replace("%new_owner%", players.getLastKnowName()));
-                    // msg ok
-                });
-            } finally {
-                executor.shutdown();
+            if (island == null) {
+                player.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(LanguageToml.messagePlayerHasNotIsland));
+                return true;
             }
+            Players ownerIsland = skyblockManager.getOwnerByIslandID(island).join();
+            if (ownerIsland == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                return true;
+            }
+            if (!ownerIsland.getMojangId().equals(player.getUniqueId())) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwner);
+                return true;
+            }
+
+            String newOwner = args[0];
+            Players players = island.getMember(newOwner);
+            if (players == null || !players.getRoleType().equals(RoleType.MEMBER) || !players.getRoleType().equals(RoleType.MODERATOR)) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageNotMember);
+                return true;
+            }
+
+            // Enlever le proprio
+            Players oldOwner = island.getMember(player.getUniqueId());
+            oldOwner.setRoleType(RoleType.MEMBER);
+            island.updateMember(oldOwner);
+            // Nouveau proprio
+            players.setRoleType(RoleType.OWNER);
+            island.updateMember(players);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageTransfertSuccess.replace("%new_owner%", players.getLastKnowName()));
+            // msg ok
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
         }

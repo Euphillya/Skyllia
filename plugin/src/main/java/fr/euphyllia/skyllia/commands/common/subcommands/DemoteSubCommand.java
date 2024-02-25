@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class DemoteSubCommand implements SubCommandInterface {
 
@@ -41,58 +39,51 @@ public class DemoteSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemoteCommandNotEnoughArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    String playerName = args[0];
+            String playerName = args[0];
 
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
+            Players executorPlayer = island.getMember(player.getUniqueId());
 
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.DEMOTE)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
-                        }
-                    }
-
-                    Players players = island.getMember(playerName);
-
-                    if (players == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
-                        return;
-                    }
-
-                    if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayerFailedHighOrEqualsStatus);
-                        return;
-                    }
-
-                    RoleType demoteResult = RoleType.getRoleById(players.getRoleType().getValue() - 1);
-                    if (demoteResult.getValue() == 0 || demoteResult.getValue() == -1) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayerFailed.formatted(playerName));
-                        return;
-                    }
-                    players.setRoleType(demoteResult);
-                    island.updateMember(players);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayer.formatted(playerName));
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                if (!permissionManager.hasPermission(PermissionsCommandIsland.DEMOTE)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    return true;
                 }
-            });
-        } finally {
-            executor.shutdown();
+            }
+
+            Players players = island.getMember(playerName);
+
+            if (players == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                return true;
+            }
+
+            if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayerFailedHighOrEqualsStatus);
+                return true;
+            }
+
+            RoleType demoteResult = RoleType.getRoleById(players.getRoleType().getValue() - 1);
+            if (demoteResult.getValue() == 0 || demoteResult.getValue() == -1) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayerFailed.formatted(playerName));
+                return true;
+            }
+            players.setRoleType(demoteResult);
+            island.updateMember(players);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayer.formatted(playerName));
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
 
         return true;

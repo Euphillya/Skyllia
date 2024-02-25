@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class KickSubCommand implements SubCommandInterface {
 
@@ -40,51 +38,44 @@ public class KickSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickCommandNotEnoughArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.execute(() -> {
-                SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                if (island == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                    return;
-                }
+        SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        if (island == null) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            return true;
+        }
 
-                Players executorPlayer = island.getMember(player.getUniqueId());
+        Players executorPlayer = island.getMember(player.getUniqueId());
 
-                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                    if (!permissionManager.hasPermission(PermissionsCommandIsland.KICK)) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                        return;
-                    }
-                }
+            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+            if (!permissionManager.hasPermission(PermissionsCommandIsland.KICK)) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                return true;
+            }
+        }
 
-                String playerKick = args[0];
-                Players players = island.getMember(playerKick);
+        String playerKick = args[0];
+        Players players = island.getMember(playerKick);
 
-                if (players == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
-                    return;
-                }
+        if (players == null) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+            return true;
+        }
 
-                if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailedHighOrEqualsStatus);
-                    return;
-                }
+        if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailedHighOrEqualsStatus);
+            return true;
+        }
 
-                boolean isRemoved = island.removeMember(players);
-                if (isRemoved) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerSuccess);
-                    DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
-                } else {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailed);
-                }
-            });
-        } finally {
-            executor.shutdown();
+        boolean isRemoved = island.removeMember(players);
+        if (isRemoved) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerSuccess);
+            DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
+        } else {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailed);
         }
         return true;
     }

@@ -59,13 +59,13 @@ UUID islandId = playerIsland.getId();
 
 ## Compatible Software
 
-|                   Software                    |     Version     |
-|:---------------------------------------------:|:---------------:|
-| [PaperMC](https://papermc.io/downloads/paper) |  1.20.1-1.20.4  |
-|        [Purpur](https://purpurmc.org)         |  1.20.1-1.20.4  |
-|  [Folia](https://papermc.io/software/folia)   |  1.19.4-1.20.4  |
-|                    Spigot                     | Not supported ! |
-|                    Bukkit                     | Not supported ! |
+|                   Software                    |    Version    |
+|:---------------------------------------------:|:-------------:|
+| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.20.4 |
+|        [Purpur](https://purpurmc.org)         | 1.20.1-1.20.4 |
+|  [Folia](https://papermc.io/software/folia)   | 1.19.4-1.20.4 |
+|                    Spigot                     | Coming soon ! |
+|                    Bukkit                     | Coming soon ! |
 
 ## Generation Island
 

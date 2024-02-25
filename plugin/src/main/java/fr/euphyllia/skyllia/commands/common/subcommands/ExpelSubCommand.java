@@ -27,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class ExpelSubCommand implements SubCommandInterface {
 
@@ -68,53 +66,46 @@ public class ExpelSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageExpelCommandNotEnoughArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+            Players executorPlayer = island.getMember(player.getUniqueId());
+            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.EXPEL)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
-                        }
-                    }
-
-                    String playerToExpel = args[0];
-                    Player bPlayerToExpel = Bukkit.getPlayerExact(playerToExpel);
-                    if (bPlayerToExpel == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
-                        return;
-                    }
-                    if (!bPlayerToExpel.isOnline()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotConnected);
-                        return;
-                    }
-                    if (bPlayerToExpel.hasPermission("skyllia.island.command.expel.bypass")) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageExpelPlayerFailed);
-                        return;
-                    }
-
-                    expelPlayer(plugin, island, bPlayerToExpel, player, false);
-
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                if (!permissionManager.hasPermission(PermissionsCommandIsland.EXPEL)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    return true;
                 }
-            });
-        } finally {
-            executor.shutdown();
+            }
+
+            String playerToExpel = args[0];
+            Player bPlayerToExpel = Bukkit.getPlayerExact(playerToExpel);
+            if (bPlayerToExpel == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                return true;
+            }
+            if (!bPlayerToExpel.isOnline()) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotConnected);
+                return true;
+            }
+            if (bPlayerToExpel.hasPermission("skyllia.island.command.expel.bypass")) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageExpelPlayerFailed);
+                return true;
+            }
+
+            expelPlayer(plugin, island, bPlayerToExpel, player, false);
+
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
 
         return true;

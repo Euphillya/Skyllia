@@ -3,12 +3,14 @@ package fr.euphyllia.skyllia.utils;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.MultipleRecords;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.utils.models.CallBackPosition;
 import fr.euphyllia.skyllia.utils.models.CallbackEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -63,18 +65,19 @@ public class RegionUtils {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
                 final int chunkX = x;
                 final int chunkZ = z;
-                Bukkit.getRegionScheduler().run(plugin, world, chunkX, chunkZ, task -> {
-                    Chunk chunk = world.getChunkAt(chunkX, chunkZ);
-                    if (chunk.isLoaded()) {
-                        // Traitement du chunk chargé
-                        Entity[] listEntities = chunk.getEntities();
-                        for (Entity entity : listEntities) {
-                            if (entityType == entity.getType() || entityType == null) {
-                                callbackEntity.run(entity);
+                plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                        .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(world, chunkX, chunkZ), 1, schedulerTask -> {
+                            Chunk chunk = world.getChunkAt(chunkX, chunkZ);
+                            if (chunk.isLoaded()) {
+                                // Traitement du chunk chargé
+                                Entity[] listEntities = chunk.getEntities();
+                                for (Entity entity : listEntities) {
+                                    if (entityType == entity.getType() || entityType == null) {
+                                        callbackEntity.run(entity);
+                                    }
+                                }
                             }
-                        }
-                    }
-                });
+                        });
             }
         }
     }

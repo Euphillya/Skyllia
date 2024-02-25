@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class InviteSubCommand implements SubCommandInterface {
 
@@ -45,35 +43,30 @@ public class InviteSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageInviteCommandNotEnoughArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            String type = args[0];
-            if (type.equalsIgnoreCase("add")) {
-                if (args.length < 2) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageInviteAddCommandNotEnoughArgs);
-                    return true;
-                }
-                String playerOrOwner = args[1];
-                executor.execute(() -> invitePlayer(plugin, player, playerOrOwner));
-            } else if (type.equalsIgnoreCase("accept")) {
-                if (args.length < 2) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageInviteAcceptCommandNotEnoughArgs);
-                    return true;
-                }
-                String playerOrOwner = args[1];
-                executor.execute(() -> acceptPlayer(plugin, player, playerOrOwner));
-            } else if (type.equalsIgnoreCase("decline")) {
-                if (args.length < 2) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageInviteDeclineCommandNotEnoughArgs);
-                    return true;
-                }
-                String playerOrOwner = args[1];
-                executor.execute(() -> declinePlayer(plugin, player, playerOrOwner));
+        String type = args[0];
+        if (type.equalsIgnoreCase("add")) {
+            if (args.length < 2) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageInviteAddCommandNotEnoughArgs);
+                return true;
             }
-            return false;
-        } finally {
-            executor.shutdown();
+            String playerOrOwner = args[1];
+            invitePlayer(plugin, player, playerOrOwner);
+        } else if (type.equalsIgnoreCase("accept")) {
+            if (args.length < 2) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageInviteAcceptCommandNotEnoughArgs);
+                return true;
+            }
+            String playerOrOwner = args[1];
+            acceptPlayer(plugin, player, playerOrOwner);
+        } else if (type.equalsIgnoreCase("decline")) {
+            if (args.length < 2) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageInviteDeclineCommandNotEnoughArgs);
+                return true;
+            }
+            String playerOrOwner = args[1];
+            declinePlayer(plugin, player, playerOrOwner);
         }
+        return true;
     }
 
     @Override

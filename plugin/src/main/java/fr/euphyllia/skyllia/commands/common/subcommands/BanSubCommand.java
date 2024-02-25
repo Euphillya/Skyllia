@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class BanSubCommand implements SubCommandInterface {
 
@@ -41,51 +39,44 @@ public class BanSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanCommandNotEnoughArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.execute(() -> {
-                SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                if (island == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                    return;
-                }
-
-                Players executorPlayer = island.getMember(player.getUniqueId());
-
-                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                    if (!permissionManager.hasPermission(PermissionsCommandIsland.BAN)) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                        return;
-                    }
-                }
-
-                String playerBan = args[0];
-                Players players = island.getMember(playerBan);
-
-                if (players != null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanImpossiblePlayerInIsland);
-                    return;
-                }
-
-                Player bPlayerBan = Bukkit.getPlayerExact(playerBan);
-                if (bPlayerBan == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
-                    return;
-                }
-
-                players = new Players(bPlayerBan.getUniqueId(), playerBan, island.getId(), RoleType.BAN);
-
-                island.updateMember(players);
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanPlayerSuccess);
-                ExpelSubCommand.expelPlayer(plugin, island, bPlayerBan, player, true);
-            });
-        } finally {
-            executor.shutdown();
+        SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        if (island == null) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            return true;
         }
+
+        Players executorPlayer = island.getMember(player.getUniqueId());
+
+        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+
+            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+            if (!permissionManager.hasPermission(PermissionsCommandIsland.BAN)) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                return true;
+            }
+        }
+
+        String playerBan = args[0];
+        Players players = island.getMember(playerBan);
+
+        if (players != null) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanImpossiblePlayerInIsland);
+            return true;
+        }
+
+        Player bPlayerBan = Bukkit.getPlayerExact(playerBan);
+        if (bPlayerBan == null) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+            return true;
+        }
+
+        players = new Players(bPlayerBan.getUniqueId(), playerBan, island.getId(), RoleType.BAN);
+
+        island.updateMember(players);
+        LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanPlayerSuccess);
+        ExpelSubCommand.expelPlayer(plugin, island, bPlayerBan, player, true);
         return true;
     }
 

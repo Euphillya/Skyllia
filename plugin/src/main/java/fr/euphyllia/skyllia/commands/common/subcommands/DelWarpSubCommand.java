@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class DelWarpSubCommand implements SubCommandInterface {
 
@@ -45,48 +43,40 @@ public class DelWarpSubCommand implements SubCommandInterface {
 
         String warpName = args[0];
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    if (warpName.equalsIgnoreCase("home")) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandNotDeleteHome);
-                        return;
-                    }
+            if (warpName.equalsIgnoreCase("home")) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandNotDeleteHome);
+                return true;
+            }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
+            Players executorPlayer = island.getMember(player.getUniqueId());
 
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.DEL_WARP)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
-                        }
-                    }
-
-                    boolean deleteWarp = island.delWarp(warpName);
-                    if (deleteWarp) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpDeleteSuccess);
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                if (!permissionManager.hasPermission(PermissionsCommandIsland.DEL_WARP)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    return true;
                 }
-            });
-        } finally {
-            executor.shutdown();
-        }
+            }
 
+            boolean deleteWarp = island.delWarp(warpName);
+            if (deleteWarp) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpDeleteSuccess);
+            } else {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            }
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+        }
 
         return true;
     }

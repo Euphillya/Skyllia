@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.api.utils.scheduler;
 
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.utils.scheduler.executors.ExecutorsScheduler;
 import fr.euphyllia.skyllia.api.utils.scheduler.folia.FoliaScheduler;
 import fr.euphyllia.skyllia.api.utils.scheduler.legacy.LegacyScheduler;
@@ -21,14 +22,18 @@ public class SchedulerTask {
     }
 
     public Scheduler getScheduler(SchedulerSoft schedulerSoft) {
-        return switch (schedulerSoft) {
-            case NATIVE -> this.executorsScheduler;
-            case LEGACY -> this.legacyScheduler;
-            case FOLIA -> this.foliaScheduler;
-        };
+        if (schedulerSoft == SchedulerSoft.NATIVE) {
+            return this.executorsScheduler;
+        } else if (schedulerSoft == SchedulerSoft.MINECRAFT) {
+            if (SkylliaAPI.isFolia()) {
+                return this.foliaScheduler;
+            }
+            return this.legacyScheduler;
+        }
+        throw new UnsupportedOperationException();
     }
 
     public enum SchedulerSoft {
-        NATIVE, LEGACY, FOLIA
+        NATIVE, MINECRAFT
     }
 }

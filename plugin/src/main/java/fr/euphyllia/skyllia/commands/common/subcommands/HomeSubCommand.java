@@ -4,6 +4,8 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -22,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class HomeSubCommand implements SubCommandInterface {
 
@@ -39,22 +39,25 @@ public class HomeSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
+        plugin.getInterneAPI()
+                .getSchedulerTask()
+                .getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                .execute(SchedulerType.ENTITY, player, schedulerTask -> player.setGameMode(GameMode.SPECTATOR));
 
-        player.setGameMode(GameMode.SPECTATOR);
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    WarpIsland warpIsland = island.getWarpByName("home");
-                    double rayon = island.getSize();
-                    player.getScheduler().run(plugin, scheduledTask1 -> {
+            WarpIsland warpIsland = island.getWarpByName("home");
+            double rayon = island.getSize();
+            plugin.getInterneAPI()
+                    .getSchedulerTask()
+                    .getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                    .execute(SchedulerType.ENTITY, player, schedulerTask -> {
                         Location loc;
                         if (warpIsland == null) {
                             loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().x(), island.getPosition().z());
@@ -65,14 +68,10 @@ public class HomeSubCommand implements SubCommandInterface {
                         player.setGameMode(GameMode.SURVIVAL);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);
-                    }, null);
-                } catch (Exception exception) {
-                    logger.log(Level.FATAL, exception.getMessage(), exception);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                }
-            });
-        } finally {
-            executor.shutdown();
+                    });
+        } catch (Exception exception) {
+            logger.log(Level.FATAL, exception.getMessage(), exception);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;
     }

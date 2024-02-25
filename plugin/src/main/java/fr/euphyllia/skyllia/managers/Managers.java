@@ -1,8 +1,9 @@
 package fr.euphyllia.skyllia.managers;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.managers.world.WorldsManager;
-import org.bukkit.Bukkit;
 
 public class Managers {
 
@@ -15,8 +16,9 @@ public class Managers {
     }
 
     public void init() {
-        if (this.worldsManager != null) {
-            Bukkit.getGlobalRegionScheduler().execute(this.api.getPlugin(), this.worldsManager::initWorld);
-        }
+        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                .execute(SchedulerType.GLOBAL, schedulerTask -> {
+                    this.worldsManager.initWorld();
+                });
     }
 }

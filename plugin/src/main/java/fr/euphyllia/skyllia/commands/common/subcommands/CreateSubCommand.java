@@ -10,6 +10,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -33,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class CreateSubCommand implements SubCommandInterface {
 
@@ -50,77 +50,72 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        player.setGameMode(GameMode.SPECTATOR);
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
+                    player.setGameMode(GameMode.SPECTATOR);
+                });
+
         try {
-            executor.execute(() -> {
-                try {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
-
-                    if (island == null) {
-
-                        String schemKey = args.length == 0 ? "" : args[0];
-                        if (schemKey.isEmpty()) {
-                            schemKey = ConfigToml.schematicWorldMap.keySet().iterator().next();
-                        }
-                        Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
-                        if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandSchemNotExist);
-                            return;
-                        }
-                        IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
-
-                        if (islandSettings == null) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandTypeNotExist);
-                            return;
-                        }
-
-                        if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
-                        }
-
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandInProgress);
-                        UUID idIsland = UUID.randomUUID();
-                        boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings).join());
-                        if (!isCreate) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
-                            return;
-                        }
-                        island = skyblockManager.getIslandByIslandId(idIsland).join();
-                        Bukkit.getPluginManager().callEvent(new SkyblockCreateEvent(island, player.getUniqueId()));
-
-                        boolean isFirstIteration = true;
-                        for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
-                            String worldName = entry.getKey();
-                            SchematicSetting schematicSetting = entry.getValue();
-                            Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
-                            centerPaste.setY(schematicSetting.height());
-                            this.pasteSchematic(plugin, island, centerPaste, schematicSetting);
-                            if (isFirstIteration) {
-                                this.setFirstHome(island, centerPaste);
-                                this.setPermissionsRole(island);
-                                this.teleportPlayerIsland(plugin, player, centerPaste);
-                                this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
-                                this.addOwnerIslandInMember(island, player);
-                                plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.getSize(), 0, 0);
-                                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
-                                Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
-                                isFirstIteration = false;
-                            }
-                        }
-                    } else {
-                        new HomeSubCommand().onCommand(plugin, sender, command, label, args);
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    this.restoreGameMode(plugin, player, olgGM);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+            if (island == null) {
+                String schemKey = args.length == 0 ? "" : args[0];
+                if (schemKey.isEmpty()) {
+                    schemKey = ConfigToml.schematicWorldMap.keySet().iterator().next();
                 }
-            });
-        } finally {
-            executor.shutdown();
+                Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
+                if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandSchemNotExist);
+                    return true;
+                }
+                IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
+
+                if (islandSettings == null) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandTypeNotExist);
+                    return true;
+                }
+
+                if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    return true;
+                }
+
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandInProgress);
+                UUID idIsland = UUID.randomUUID();
+                boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings).join());
+                if (!isCreate) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
+                    return true;
+                }
+                island = skyblockManager.getIslandByIslandId(idIsland).join();
+                Bukkit.getPluginManager().callEvent(new SkyblockCreateEvent(island, player.getUniqueId()));
+
+                boolean isFirstIteration = true;
+                for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
+                    String worldName = entry.getKey();
+                    SchematicSetting schematicSetting = entry.getValue();
+                    Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
+                    centerPaste.setY(schematicSetting.height());
+                    this.pasteSchematic(plugin, island, centerPaste, schematicSetting);
+                    if (isFirstIteration) {
+                        this.setFirstHome(island, centerPaste);
+                        this.setPermissionsRole(island);
+                        this.teleportPlayerIsland(plugin, player, centerPaste);
+                        this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
+                        this.addOwnerIslandInMember(island, player);
+                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.getSize(), 0, 0);
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
+                        Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+                        isFirstIteration = false;
+                    }
+                }
+            } else {
+                new HomeSubCommand().onCommand(plugin, sender, command, label, args);
+            }
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            this.restoreGameMode(plugin, player, olgGM);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;
     }
@@ -138,28 +133,32 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private void pasteSchematic(Main plugin, Island island, Location center, SchematicSetting schematicWorld) {
         switch (WorldEditUtils.worldEditVersion()) {
-            case WORLD_EDIT -> Bukkit.getServer().getRegionScheduler().run(plugin, center, t -> {
-                WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
-            });
+            case WORLD_EDIT ->
+                    plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                            .execute(SchedulerType.REGION, center, schedulerTask -> {
+                                WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
+                            });
             case FAST_ASYNC_WORLD_EDIT ->
                     WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
             case UNDEFINED -> {
                 island.setDisable(true); // Désactiver l'ile !
-                throw new RuntimeException("Unsupported Plugin Paste");
+                throw new UnsupportedOperationException();
             }
         }
     }
 
     private void restoreGameMode(Main plugin, Player player, GameMode gameMode) {
-        player.getScheduler().run(plugin, t -> {
-            player.setGameMode(gameMode);
-        }, null);
+        plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
+                    player.setGameMode(gameMode);
+                });
     }
 
     private void teleportPlayerIsland(Main plugin, Player player, Location center) {
-        player.getScheduler().run(plugin, t -> {
-            player.teleportAsync(center);
-        }, null);
+        plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
+                    player.teleportAsync(center);
+                });
     }
 
     private boolean setFirstHome(Island island, Location center) {

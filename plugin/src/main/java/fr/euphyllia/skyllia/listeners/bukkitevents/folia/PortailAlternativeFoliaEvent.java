@@ -1,7 +1,10 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.folia;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -15,8 +18,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.world.PortalCreateEvent;
-
-import java.util.concurrent.Executors;
 
 public class PortailAlternativeFoliaEvent implements Listener {
 
@@ -44,7 +45,7 @@ public class PortailAlternativeFoliaEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTouchPortal(final PlayerMoveEvent event) {
         if (event.isCancelled()) return;
-        if (!this.api.isFolia()) {
+        if (!SkylliaAPI.isFolia()) {
             return;
         }
         Player player = event.getPlayer();
@@ -61,14 +62,14 @@ public class PortailAlternativeFoliaEvent implements Listener {
             return;
         }
         // Obtenez le bloc sur lequel le joueur se tient
-        Executors.newSingleThreadScheduledExecutor().execute(() -> {
-            if (blockType == Material.NETHER_PORTAL) {
-                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
-            }
-            if (blockType == Material.END_PORTAL_FRAME) {
-                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, world.getName());
-            }
-        });
-
+        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+                .execute(SchedulerType.ASYNC, schedulerTask -> {
+                    if (blockType == Material.NETHER_PORTAL) {
+                        ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
+                    }
+                    if (blockType == Material.END_PORTAL_FRAME) {
+                        ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, world.getName());
+                    }
+                });
     }
 }

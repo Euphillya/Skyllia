@@ -45,7 +45,6 @@ public class InterneAPI {
     private MariaDBTransactionQuery transaction;
     private DatabaseLoader databaseLoader;
     private Managers managers;
-    private boolean useFolia = false;
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
 
@@ -55,18 +54,7 @@ public class InterneAPI {
         this.setVersionNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager);
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            this.useFolia = true;
-        } catch (ClassNotFoundException ignored) {
-            this.useFolia = false;
-        }
     }
-
-    public boolean isFolia() {
-        return this.useFolia;
-    }
-
 
     public @Nullable DatabaseLoader getDatabaseLoader() {
         return this.database;

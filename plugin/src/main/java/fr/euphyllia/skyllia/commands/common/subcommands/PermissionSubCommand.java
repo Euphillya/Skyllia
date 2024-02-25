@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class PermissionSubCommand implements SubCommandInterface {
 
@@ -44,64 +42,56 @@ public class PermissionSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionCommandNotEnoughArgs);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         String permissionsTypeRaw = args[0]; // ISLAND / COMMANDS / INVENTORY
         String roleTypeRaw = args[1]; // ROLE TYPE
         String permissionRaw = args[2]; // Permission
         String valueRaw = args[3]; // true / false
 
         try {
-            executor.execute(() -> {
-                try {
-                    PermissionFormat permissionFormat = this.getPermissionFormat(plugin, player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
-                    if (permissionFormat == null) return;
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
+            PermissionFormat permissionFormat = this.getPermissionFormat(plugin, player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
+            if (permissionFormat == null) return true;
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
+
+            Players executorPlayer = island.getMember(player.getUniqueId());
+            if (permissionFormat.permissions != null) {
+                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+
+                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                    if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_PERMISSION)) {
+                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                        return true;
                     }
-
-                    Players executorPlayer = island.getMember(player.getUniqueId());
-                    if (permissionFormat.permissions != null) {
-                        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                            if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_PERMISSION)) {
-                                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                                return;
-                            }
-                        }
-                        if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
-                            return;
-                        }
-
-                        if (updatePermissions(skyblockManager, island, permissionFormat)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
-                        } else {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
-                        }
-                    } else {
-                        // RESET !
-                        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwner);
-                        }
-                        if (resetPermission(island, permissionFormat)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
-                        } else {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                }
+                if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
+                    return true;
                 }
 
-            });
-        } finally {
-            executor.shutdown();
+                if (updatePermissions(skyblockManager, island, permissionFormat)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                } else {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                }
+            } else {
+                // RESET !
+                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwner);
+                }
+                if (resetPermission(island, permissionFormat)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                } else {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;
     }

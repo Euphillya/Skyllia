@@ -9,6 +9,8 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -106,13 +108,17 @@ public class SkyblockEvent implements Listener {
             }
             Location playerLocation = player.getLocation();
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
-            Bukkit.getRegionScheduler().run(this.api.getPlugin(), futurLocation, task -> {
-                if (WorldUtils.isSafeLocation(futurLocation)) {
-                    player.getScheduler().run(this.api.getPlugin(), task1 -> player.teleportAsync(futurLocation), null);
-                } else {
-                    LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
-                }
-            });
+            this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                    .execute(SchedulerType.REGION, futurLocation, schedulerTask -> {
+                        if (WorldUtils.isSafeLocation(futurLocation)) {
+                            this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                                    .execute(SchedulerType.ENTITY, player, playerTask -> {
+                                        player.teleportAsync(futurLocation);
+                                    });
+                        } else {
+                            LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
+                        }
+                    });
         } catch (Exception e) {
             logger.log(Level.ERROR, e.getMessage(), e);
         }

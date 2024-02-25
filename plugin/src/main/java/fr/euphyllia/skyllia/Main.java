@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia;
 
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
@@ -69,7 +70,7 @@ public class Main extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-
+        this.interneAPI.loadAPI();
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
         this.setupCommands();
@@ -77,18 +78,17 @@ public class Main extends JavaPlugin {
         this.loadListener();
         this.runCache();
         this.disabledConfig();
-        this.interneAPI.loadAPI();
-        new Metrics(this, 20874);
+
+        new Metrics(this.interneAPI, 20874);
     }
 
     @Override
     public void onDisable() {
         this.logger.log(Level.INFO, "Plugin Off");
+        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE).cancelAllTask();
+        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT).cancelAllTask();
         getServer().getGlobalRegionScheduler().cancelTasks(this);
         getServer().getAsyncScheduler().cancelTasks(this);
-        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE).cancelAllTask();
-        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.LEGACY).cancelAllTask();
-        this.interneAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.FOLIA).cancelAllTask();
         if (this.interneAPI.getDatabaseLoader() != null) {
             this.interneAPI.getDatabaseLoader().closeDatabase();
         }
@@ -129,9 +129,9 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
         pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
         pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.2
+        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.4
         pluginManager.registerEvents(new PistonEvent(this.interneAPI), this);
-        if (this.interneAPI.isFolia()) {
+        if (SkylliaAPI.isFolia()) {
             pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
         }
         // GameRule Events
@@ -154,7 +154,7 @@ public class Main extends JavaPlugin {
     }
 
     private void disabledConfig() {
-        if (this.getInterneAPI().isFolia()) {
+        if (SkylliaAPI.isFolia()) {
             if (Bukkit.getAllowNether()) {
                 logger.log(Level.WARN, "Disable nether in server.properties to disable nether portals!");
             }

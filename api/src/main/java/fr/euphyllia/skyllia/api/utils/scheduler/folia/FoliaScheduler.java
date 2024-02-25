@@ -1,9 +1,6 @@
 package fr.euphyllia.skyllia.api.utils.scheduler.folia;
 
-import fr.euphyllia.skyllia.api.utils.scheduler.model.Scheduler;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerCallBack;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerTaskInter;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -148,6 +145,9 @@ public class FoliaScheduler implements Scheduler {
 
     @Override
     public void execute(@NotNull SchedulerType schedulerType, SchedulerCallBack callBack) {
+        if (schedulerType.equals(SchedulerType.ENTITY) || schedulerType.equals(SchedulerType.REGION)) {
+            throw new UnsupportedOperationException();
+        }
         this.execute(schedulerType, null, null, callBack);
     }
 
@@ -171,6 +171,10 @@ public class FoliaScheduler implements Scheduler {
                     });
                 } else if (chunkOrLocOrEntity instanceof Chunk chunk) {
                     Bukkit.getRegionScheduler().execute(this.plugin, chunk.getWorld(), chunk.getX(), chunk.getZ(), () -> {
+                        callBack.run(null);
+                    });
+                } else if (chunkOrLocOrEntity instanceof MultipleRecords.WorldChunk worldChunk) {
+                    Bukkit.getRegionScheduler().execute(this.plugin, worldChunk.world(), worldChunk.chunkX(), worldChunk.chunkZ(), () -> {
                         callBack.run(null);
                     });
                 } else {

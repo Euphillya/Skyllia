@@ -14,7 +14,6 @@ import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -27,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class AccessSubCommand implements SubCommandInterface {
 
@@ -44,56 +41,44 @@ public class AccessSubCommand implements SubCommandInterface {
             return true;
         }
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.execute(() -> {
-                try {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+        if (island == null) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            return true;
+        }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+        Players executorPlayer = island.getMember(player.getUniqueId());
+        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.ACCESS)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
+            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+            if (!permissionManager.hasPermission(PermissionsCommandIsland.ACCESS)) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                return true;
+            }
+        }
+
+        boolean statusAccessUpdate = !island.isPrivateIsland();
+
+        boolean isUpdate = island.setPrivateIsland(statusAccessUpdate);
+        if (isUpdate) {
+            if (statusAccessUpdate) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandClose);
+                ConfigToml.worldConfigs.forEach(worldConfig -> {
+                    RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().x(), island.getPosition().z(), entity -> {
+                        Player playerInIsland = (Player) entity;
+                        if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
+                        Players players = island.getMember(playerInIsland.getUniqueId());
+                        if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
+                            PlayerUtils.teleportPlayerSpawn(plugin, playerInIsland);
                         }
-                    }
-
-                    boolean statusAccessUpdate = !island.isPrivateIsland();
-
-                    boolean isUpdate = island.setPrivateIsland(statusAccessUpdate);
-                    if (isUpdate) {
-                        if (statusAccessUpdate) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandClose);
-                            ConfigToml.worldConfigs.forEach(worldConfig -> {
-                                RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().x(), island.getPosition().z(), entity -> {
-                                    Player playerInIsland = (Player) entity;
-                                    if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
-                                    Players players = island.getMember(playerInIsland.getUniqueId());
-                                    if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
-                                        PlayerUtils.teleportPlayerSpawn(plugin, playerInIsland);
-                                    }
-                                });
-                            });
-                        } else {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandOpen);
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                }
-            });
-        } finally {
-            executor.shutdown();
+                    });
+                });
+            } else {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandOpen);
+            }
         }
         return true;
     }

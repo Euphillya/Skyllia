@@ -3,6 +3,8 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
@@ -18,9 +20,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 public class JoinEvent implements Listener {
 
     private final InterneAPI api;
@@ -32,55 +31,49 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onLoadIslandInJoinEvent(PlayerJoinEvent playerJoinEvent) {
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.execute(() -> {
-                Player player = playerJoinEvent.getPlayer();
-                SkyblockManager skyblockManager = this.api.getSkyblockManager();
-                Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+                .execute(SchedulerType.ASYNC, schedulerTask -> {
+                    Player player = playerJoinEvent.getPlayer();
+                    SkyblockManager skyblockManager = this.api.getSkyblockManager();
+                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
-                if (island == null) {
-                    PlayerUtils.teleportPlayerSpawn(this.api.getPlugin(), player);
-                } else {
-                    this.api.updateCache(player);
-                    World world = player.getLocation().getWorld();
-                    if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
-                        Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
-                        this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+                    if (island == null) {
+                        PlayerUtils.teleportPlayerSpawn(this.api.getPlugin(), player);
+                    } else {
+                        this.api.updateCache(player);
+                        World world = player.getLocation().getWorld();
+                        if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
+                            Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+                            this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+                        }
                     }
-                }
-            });
-        } finally {
-            executor.shutdown();
-        }
+                });
     }
 
     @EventHandler
     public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.execute(() -> {
-                Player player = playerLoginEvent.getPlayer();
-                boolean exist = this.api.getSkyblockManager().checkClearMemberExist(player.getUniqueId()).join();
-                if (!exist) return;
-                this.api.getSkyblockManager().deleteClearMember(player.getUniqueId());
-                player.getScheduler().run(this.api.getPlugin(), t -> {
-                    if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                        player.getInventory().clear();
-                    }
-                    if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                        player.getEnderChest().clear();
-                    }
-                    if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                        player.setTotalExperience(0);
-                        player.sendExperienceChange(0, 0); // Mise à jour du packet
-                    }
-                    player.setGameMode(GameMode.SURVIVAL);
-                }, null);
-            });
-        } finally {
-            executor.shutdown();
-        }
+        this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
+                .execute(SchedulerType.ASYNC, schedulerTask -> {
+                    Player player = playerLoginEvent.getPlayer();
+                    boolean exist = this.api.getSkyblockManager().checkClearMemberExist(player.getUniqueId()).join();
+                    if (!exist) return;
+                    this.api.getSkyblockManager().deleteClearMember(player.getUniqueId());
+                    this.api.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                            .execute(SchedulerType.ENTITY, player, schedulerTask1 -> {
+                                if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                                    player.getInventory().clear();
+                                }
+                                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                                    player.getEnderChest().clear();
+                                }
+                                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                                    player.setTotalExperience(0);
+                                    player.sendExperienceChange(0, 0); // Mise à jour du packet
+                                }
+                                player.setGameMode(GameMode.SURVIVAL);
+                            });
+                });
+
     }
 
 }

@@ -9,6 +9,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.cache.CommandCacheExecution;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -31,8 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class SetBiomeSubCommand implements SubCommandInterface {
 
@@ -61,76 +61,69 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         int chunkLocZ = playerLocation.getChunk().getZ();
         String selectBiome = args[0];
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        CommandCacheExecution.addCommandExecute(player.getUniqueId(), "biome");
         try {
-            executor.execute(() -> {
-                CommandCacheExecution.addCommandExecute(player.getUniqueId(), "biome");
-                try {
-                    Biome biome;
-                    try {
-                        biome = Biome.valueOf(selectBiome.toUpperCase());
-                    } catch (IllegalArgumentException e) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeNotExist.formatted(selectBiome));
-                        return;
-                    }
+            Biome biome;
+            try {
+                biome = Biome.valueOf(selectBiome.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeNotExist.formatted(selectBiome));
+                return true;
+            }
 
-                    if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeOnlyIsland);
-                        return;
-                    }
+            if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeOnlyIsland);
+                return true;
+            }
 
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
+            Players executorPlayer = island.getMember(player.getUniqueId());
 
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_BIOME)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
-                        }
-                    }
-
-                    Position islandPosition = island.getPosition();
-                    Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
-
-                    if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);
-                        return;
-                    }
-
-                    World world = player.getWorld();
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeInProgress);
-
-                    boolean biomeChanged = WorldEditUtils.changeBiomeChunk(plugin, world, biome, new Position(chunkLocX, chunkLocZ)).join();
-                    if (biomeChanged) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeSuccess);
-                        for (Players players : island.getMembers()) {
-                            Player bPlayer = Bukkit.getPlayer(players.getMojangId());
-                            if (bPlayer != null && bPlayer.isOnline()) {
-                                player.getScheduler().run(plugin, task -> {
-                                    player.getWorld().refreshChunk(chunkLocX, chunkLocZ);
-                                }, null);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-
+                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_BIOME)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    return true;
                 }
-            });
-        } finally {
-            executor.shutdown();
-            CommandCacheExecution.removeCommandExec(player.getUniqueId(), "biome");
+            }
+
+            Position islandPosition = island.getPosition();
+            Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
+
+            if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);
+                return true;
+            }
+
+            World world = player.getWorld();
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeInProgress);
+
+            boolean biomeChanged = WorldEditUtils.changeBiomeChunk(plugin, world, biome, new Position(chunkLocX, chunkLocZ)).join();
+            if (biomeChanged) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeSuccess);
+                for (Players players : island.getMembers()) {
+                    Player bPlayer = Bukkit.getPlayer(players.getMojangId());
+                    if (bPlayer != null && bPlayer.isOnline()) {
+                        plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
+                                    player.getWorld().refreshChunk(chunkLocX, chunkLocZ);
+                                });
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+
         }
 
         return true;

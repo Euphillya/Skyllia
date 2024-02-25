@@ -19,6 +19,9 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.MultipleRecords;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,8 +83,10 @@ public class WorldEditUtils {
 
         AtomicInteger delay = new AtomicInteger(1);
         RegionUtils.spiralStartCenter(position, island.getSize(), chunKPosition -> {
-            Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
-                    plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), delay.getAndIncrement());
+            plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                    .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(w, chunKPosition.x(), chunKPosition.z()), delay.getAndIncrement(), t -> {
+                        plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition);
+                    });
         });
     }
 
@@ -97,12 +102,13 @@ public class WorldEditUtils {
         AtomicInteger delay = new AtomicInteger(1);
         for (BlockVector3 blockVector3 : selection) {
             Location blockLocation = new Location(world, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ());
-            Bukkit.getRegionScheduler().runDelayed(plugin, blockLocation, scheduledTask -> {
-                blockLocation.getBlock().setBiome(biome);
-                if (progressChange.getAndIncrement() == totalChange) {
-                    completableFuture.complete(true);
-                }
-            }, delay.getAndIncrement());
+            plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                    .runDelayed(SchedulerType.REGION, blockLocation, delay.getAndIncrement(), schedulerTask -> {
+                        blockLocation.getBlock().setBiome(biome);
+                        if (progressChange.getAndIncrement() == totalChange) {
+                            completableFuture.complete(true);
+                        }
+                    });
         }
         return completableFuture;
     }

@@ -47,57 +47,49 @@ public class GameRuleSubCommand implements SubCommandInterface {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         String permissionRaw = args[0]; // Permission
         String valueRaw = args[1]; // true / false
-
         try {
-            executor.execute(() -> {
-                try {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
+            Players executorPlayer = island.getMember(player.getUniqueId());
 
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                        if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_GAMERULE)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
-                            return;
-                        }
-                    }
-
-                    GameRuleIsland gameRuleIsland;
-                    boolean enabledOrNot = Boolean.parseBoolean(valueRaw);
-                    try {
-                        gameRuleIsland = GameRuleIsland.valueOf(permissionRaw.toUpperCase());
-                    } catch (IllegalArgumentException exception) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleInvalid);
-                        return;
-                    }
-
-                    long flags = island.getGameRulePermission();
-                    PermissionManager permissionManager = new PermissionManager(flags);
-                    permissionManager.definePermission(gameRuleIsland.getPermissionValue(), enabledOrNot);
-
-                    boolean updateGameRuleIsland = island.updateGamerule(permissionManager.getPermissions());
-
-                    if (updateGameRuleIsland) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateSuccess);
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateFailed);
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+                if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_GAMERULE)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    return true;
                 }
+            }
 
-            });
-        } finally {
-            executor.shutdown();
+            GameRuleIsland gameRuleIsland;
+            boolean enabledOrNot = Boolean.parseBoolean(valueRaw);
+            try {
+                gameRuleIsland = GameRuleIsland.valueOf(permissionRaw.toUpperCase());
+            } catch (IllegalArgumentException exception) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleInvalid);
+                return true;
+            }
+
+            long flags = island.getGameRulePermission();
+            PermissionManager permissionManager = new PermissionManager(flags);
+            permissionManager.definePermission(gameRuleIsland.getPermissionValue(), enabledOrNot);
+
+            boolean updateGameRuleIsland = island.updateGamerule(permissionManager.getPermissions());
+
+            if (updateGameRuleIsland) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateSuccess);
+            } else {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateFailed);
+            }
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;
     }

@@ -5,6 +5,8 @@ import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -23,8 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class DeleteSubCommand implements SubCommandInterface {
 
@@ -34,19 +34,20 @@ public class DeleteSubCommand implements SubCommandInterface {
         Player bPlayer = Bukkit.getPlayer(players.getMojangId());
         if (bPlayer != null && bPlayer.isOnline()) {
             PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
-            bPlayer.getScheduler().run(plugin, t -> {
-                if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                    bPlayer.getInventory().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    bPlayer.getEnderChest().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    bPlayer.setTotalExperience(0);
-                    bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
-                }
-                bPlayer.setGameMode(GameMode.SURVIVAL);
-            }, null);
+            plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                    .execute(SchedulerType.ENTITY, bPlayer, schedulerTask -> {
+                        if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                            bPlayer.getInventory().clear();
+                        }
+                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                            bPlayer.getEnderChest().clear();
+                        }
+                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                            bPlayer.setTotalExperience(0);
+                            bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
+                        }
+                        bPlayer.setGameMode(GameMode.SURVIVAL);
+                    });
         } else {
             skyblockManager.addClearMemberNextLogin(players.getMojangId());
         }
@@ -61,46 +62,38 @@ public class DeleteSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                        return;
-                    }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                return true;
+            }
 
-                    Players executorPlayer = island.getMember(player.getUniqueId());
+            Players executorPlayer = island.getMember(player.getUniqueId());
 
-                    if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
-                        return;
-                    }
+            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
+                return true;
+            }
 
 
-                    boolean isDisabled = island.setDisable(true);
-                    if (isDisabled) {
-                        this.updatePlayer(plugin, skyblockManager, island);
+            boolean isDisabled = island.setDisable(true);
+            if (isDisabled) {
+                this.updatePlayer(plugin, skyblockManager, island);
 
-                        for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                            WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
-                        }
-
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
-                    } else {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
+                    WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
                 }
-            });
-        } finally {
-            executor.shutdown();
-        }
 
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
+            } else {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            }
+        } catch (Exception e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+        }
         return true;
     }
 

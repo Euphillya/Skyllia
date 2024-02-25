@@ -1,10 +1,12 @@
 package fr.euphyllia.skyllia.utils;
 
+import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -26,18 +28,20 @@ import java.util.zip.GZIPOutputStream;
 public class Metrics {
 
     private final Plugin plugin;
+    private final InterneAPI api;
 
     private final MetricsBase metricsBase;
 
     /**
      * Creates a new Metrics instance.
      *
-     * @param plugin    Your plugin instance.
-     * @param serviceId The id of the service. It can be found at <a
-     *                  href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
+     * @param interneAPI API Interne
+     * @param serviceId  The id of the service. It can be found at <a
+     *                   href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
-    public Metrics(JavaPlugin plugin, int serviceId) {
-        this.plugin = plugin;
+    public Metrics(InterneAPI interneAPI, int serviceId) {
+        this.api = interneAPI;
+        this.plugin = this.api.getPlugin();
         // Get the config file
         File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
         File configFile = new File(bStatsFolder, "config.yml");
@@ -77,9 +81,9 @@ public class Metrics {
                         enabled,
                         this::appendPlatformData,
                         this::appendServiceData,
-                        submitDataTask -> Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
-                            submitDataTask.run();
-                        }),
+                        submitDataTask -> this.api.getSchedulerTask()
+                                .getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                                .execute(SchedulerType.GLOBAL, schedulerTask -> submitDataTask.run()),
                         plugin::isEnabled,
                         (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                         (message) -> this.plugin.getLogger().log(Level.INFO, message),

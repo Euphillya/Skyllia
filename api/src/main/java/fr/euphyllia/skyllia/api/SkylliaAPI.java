@@ -32,4 +32,13 @@ public final class SkylliaAPI {
     public static @Nullable Island getIslandByChunk(Chunk chunk) {
         return implementation.getIslandByChunk(chunk);
     }
+
+    public static boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
+    }
 }

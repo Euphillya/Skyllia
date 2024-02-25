@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class LeaveSubCommand implements SubCommandInterface {
 
@@ -33,31 +31,24 @@ public class LeaveSubCommand implements SubCommandInterface {
             return true;
         }
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        try {
-            executor.execute(() -> {
-                SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-                if (island == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
-                    return;
-                }
-                Players players = island.getMember(player.getUniqueId());
-                if (players.getRoleType().equals(RoleType.OWNER)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveFailedIsOwnerIsland);
-                    return;
-                }
+        SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        if (island == null) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            return true;
+        }
+        Players players = island.getMember(player.getUniqueId());
+        if (players.getRoleType().equals(RoleType.OWNER)) {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveFailedIsOwnerIsland);
+            return true;
+        }
 
-                boolean hasLeave = island.removeMember(players);
-                if (hasLeave) {
-                    DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveSuccess);
-                } else {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeavePlayerFailed);
-                }
-            });
-        } finally {
-            executor.shutdown();
+        boolean hasLeave = island.removeMember(players);
+        if (hasLeave) {
+            DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveSuccess);
+        } else {
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeavePlayerFailed);
         }
         return true;
     }

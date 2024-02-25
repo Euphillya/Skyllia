@@ -6,6 +6,8 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
+import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -24,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class VisitSubCommand implements SubCommandInterface {
 
@@ -45,43 +45,41 @@ public class VisitSubCommand implements SubCommandInterface {
             return true;
         }
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
-            executor.execute(() -> {
-                try {
-                    String visitPlayer = args[0];
-                    UUID visitPlayerId;
-                    try {
-                        visitPlayerId = UUID.fromString(visitPlayer);
-                    } catch (IllegalArgumentException ignored) {
-                        visitPlayerId = Bukkit.getPlayerUniqueId(visitPlayer);
-                    }
-                    if (visitPlayerId == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
-                        return;
-                    }
+            String visitPlayer = args[0];
+            UUID visitPlayerId;
+            try {
+                visitPlayerId = UUID.fromString(visitPlayer);
+            } catch (IllegalArgumentException ignored) {
+                visitPlayerId = Bukkit.getPlayerUniqueId(visitPlayer);
+            }
+            if (visitPlayerId == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                return true;
+            }
 
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    Island island = skyblockManager.getIslandByPlayerId(visitPlayerId).join();
-                    if (island == null) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitPlayerHasNotIsland);
-                        return;
-                    }
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(visitPlayerId).join();
+            if (island == null) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitPlayerHasNotIsland);
+                return true;
+            }
 
-                    if (!player.hasPermission("skyllia.island.command.visit.bypass")) {
-                        if (island.isPrivateIsland()) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandIsPrivate);
-                            return;
-                        }
-                        Players memberIsland = island.getMember(player.getUniqueId());
-                        if (memberIsland != null && memberIsland.getRoleType().equals(RoleType.BAN)) {
-                            LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandPlayerBanned);
-                            return;
-                        }
-                    }
+            if (!player.hasPermission("skyllia.island.command.visit.bypass")) {
+                if (island.isPrivateIsland()) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandIsPrivate);
+                    return true;
+                }
+                Players memberIsland = island.getMember(player.getUniqueId());
+                if (memberIsland != null && memberIsland.getRoleType().equals(RoleType.BAN)) {
+                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandPlayerBanned);
+                    return true;
+                }
+            }
 
-                    WarpIsland warpIsland = island.getWarpByName("home");
-                    player.getScheduler().run(plugin, scheduledTask1 -> {
+            WarpIsland warpIsland = island.getWarpByName("home");
+            plugin.getInterneAPI().getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                    .execute(SchedulerType.ENTITY, player, schedulerTask -> {
                         player.setGameMode(GameMode.SPECTATOR);
                         Location loc;
                         if (warpIsland == null) {
@@ -93,14 +91,10 @@ public class VisitSubCommand implements SubCommandInterface {
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                         player.setGameMode(GameMode.SURVIVAL);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
-                    }, null);
-                } catch (Exception exception) {
-                    logger.log(Level.FATAL, exception.getMessage(), exception);
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
-                }
-            });
-        } finally {
-            executor.shutdown();
+                    });
+        } catch (Exception exception) {
+            logger.log(Level.FATAL, exception.getMessage(), exception);
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;
     }
