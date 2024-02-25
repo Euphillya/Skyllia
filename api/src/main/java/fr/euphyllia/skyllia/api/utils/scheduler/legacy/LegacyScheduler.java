@@ -34,13 +34,13 @@ public class LegacyScheduler implements Scheduler {
     @Override
     public void runAtFixedRate(@NotNull SchedulerType schedulerType, @Nullable Object chunkOrLocOrEntity, @Nullable Runnable retired, long initialDelayTicks, long periodTicks, SchedulerCallBack callBack) {
         if (schedulerType.equals(SchedulerType.ASYNC)) {
-            Bukkit.getScheduler().runTaskTimer(this.plugin, task -> {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, task -> {
                 SchedulerTaskInter schedulerTask = new LegacySchedulerTask(task);
                 mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
                 callBack.run(schedulerTask);
             }, initialDelayTicks, periodTicks);
         } else {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, task -> {
+            Bukkit.getScheduler().runTaskTimer(this.plugin, task -> {
                 SchedulerTaskInter schedulerTask = new LegacySchedulerTask(task);
                 mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
                 callBack.run(schedulerTask);
@@ -61,13 +61,13 @@ public class LegacyScheduler implements Scheduler {
     @Override
     public void runDelayed(@NotNull SchedulerType schedulerType, @Nullable Object chunkOrLocOrEntity, @Nullable Runnable retired, long delayTicks, SchedulerCallBack callBack) {
         if (schedulerType.equals(SchedulerType.ASYNC)) {
-            Bukkit.getScheduler().runTaskLater(this.plugin, task -> {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, task -> {
                 SchedulerTaskInter schedulerTask = new LegacySchedulerTask(task);
                 mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
                 callBack.run(schedulerTask);
             }, delayTicks);
         } else {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, task -> {
+            Bukkit.getScheduler().runTaskLater(this.plugin, task -> {
                 SchedulerTaskInter schedulerTask = new LegacySchedulerTask(task);
                 mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
                 callBack.run(schedulerTask);
@@ -88,11 +88,11 @@ public class LegacyScheduler implements Scheduler {
     @Override
     public void execute(@NotNull SchedulerType schedulerType, @Nullable Object chunkOrLocOrEntity, @Nullable Runnable retired, SchedulerCallBack callBack) {
         if (schedulerType.equals(SchedulerType.ASYNC)) {
-            Bukkit.getScheduler().runTask(this.plugin, () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
                 callBack.run(null);
             });
         } else {
-            Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+            Bukkit.getScheduler().runTask(this.plugin, () -> {
                 callBack.run(null);
             });
         }

@@ -34,11 +34,11 @@ public class WorldsManager {
             worldCreator.type(WorldType.FLAT);
             worldCreator.seed(new Random(System.currentTimeMillis()).nextLong());
             worldCreator.environment(World.Environment.valueOf(worldConfig.environment().toUpperCase()));
-            worldCreator.keepSpawnLoaded(TriState.TRUE); // Toujours chargé le monde ! Prévenir du crash avec le PlayerRespawnLogic
             World w;
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia
             } catch (Exception ignored) {
+                worldCreator.keepSpawnLoaded(TriState.TRUE); // Toujours chargé le monde ! Prévenir du crash avec le PlayerRespawnLogic
                 WorldFeedback.FeedbackWorld feedbackWorld = null;
                 feedbackWorld = WorldUtils.addWorld(this.api, worldCreator);
                 if (feedbackWorld.feedback == WorldFeedback.Feedback.SUCCESS) {
