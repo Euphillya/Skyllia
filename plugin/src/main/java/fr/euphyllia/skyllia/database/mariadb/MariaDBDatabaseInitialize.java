@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.database.query.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class MariaDBCreateTable {
+public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
     private static final String CREATE_DATABASE = """
             CREATE DATABASE IF NOT EXISTS `%s`;
@@ -105,7 +106,7 @@ public class MariaDBCreateTable {
     private final InterneAPI api;
     private final int dbVersion;
 
-    public MariaDBCreateTable(InterneAPI interneAPI) throws DatabaseException {
+    public MariaDBDatabaseInitialize(InterneAPI interneAPI) throws DatabaseException {
         this.api = interneAPI;
         MariaDBConfig dbConfig = ConfigToml.mariaDBConfig;
         if (dbConfig == null) {
@@ -115,6 +116,7 @@ public class MariaDBCreateTable {
         this.dbVersion = dbConfig.dbVersion();
     }
 
+    @Override
     public boolean init() throws DatabaseException {
         // DATABASE
         MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_DATABASE.formatted(this.database));

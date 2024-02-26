@@ -12,8 +12,6 @@ import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.database.IslandQuery;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBCreateTable;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBTransactionQuery;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -40,7 +38,6 @@ public class InterneAPI {
     private final SkyblockManager skyblockManager;
     private final CacheManager cacheManager;
     private @Nullable DatabaseLoader database;
-    private MariaDBTransactionQuery transaction;
     private DatabaseLoader databaseLoader;
     private Managers managers;
     private WorldNMS worldNMS;
@@ -132,16 +129,14 @@ public class InterneAPI {
             if (!this.database.loadDatabase()) {
                 return false;
             }
-            boolean start = new MariaDBCreateTable(this).init();
-            this.transaction = new MariaDBTransactionQuery();
-            return start;
+            return getIslandQuery().getDatabaseInitializeQuery().init();
         } else {
             return false;
         }
     }
 
     public IslandQuery getIslandQuery() {
-        return new IslandQuery(this, this.transaction.getDatabaseName());
+        return new IslandQuery(this, ConfigToml.mariaDBConfig.database());
     }
 
     public Main getPlugin() {
