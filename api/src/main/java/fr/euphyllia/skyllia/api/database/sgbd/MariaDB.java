@@ -18,9 +18,9 @@ public class MariaDB implements DBConnect, DBInterface {
 
     private final Logger logger = LogManager.getLogger(MariaDB.class);
     private final MariaDBConfig mariaDBConfig;
+    private final String absolutePathSqlite;
     private HikariDataSource pool;
     private boolean connected = false;
-    private final String absolutePathSqlite;
 
     public MariaDB(String absolutePath, final MariaDBConfig configMariaDB) {
         this.absolutePathSqlite = absolutePath;
