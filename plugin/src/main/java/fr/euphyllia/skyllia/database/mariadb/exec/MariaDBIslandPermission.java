@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.database.query.exec;
+package fr.euphyllia.skyllia.database.mariadb.exec;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.database.query.IslandPermissionQuery;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class IslandPermissionQuery {
+public class MariaDBIslandPermission extends IslandPermissionQuery {
     private static final String UPSERT_PERMISSIONS_ISLANDS = """
             INSERT INTO `%s`.`islands_permissions`
             (`island_id`, `type`, `role`, `flags`)
@@ -44,7 +45,7 @@ public class IslandPermissionQuery {
     private final InterneAPI api;
     private final String databaseName;
 
-    public IslandPermissionQuery(InterneAPI api, String databaseName) {
+    public MariaDBIslandPermission(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
     }

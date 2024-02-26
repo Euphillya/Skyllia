@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api.database.sgbd;
 
 import com.zaxxer.hikari.HikariDataSource;
+import fr.euphyllia.skyllia.api.configuration.DatabaseType;
 import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.database.model.DBConnect;
 import fr.euphyllia.skyllia.api.database.model.DBInterface;
@@ -15,13 +16,14 @@ import java.sql.SQLException;
 
 public class MariaDB implements DBConnect, DBInterface {
 
-    private final Logger logger;
+    private final Logger logger = LogManager.getLogger(MariaDB.class);
     private final MariaDBConfig mariaDBConfig;
     private HikariDataSource pool;
     private boolean connected = false;
+    private final String absolutePathSqlite;
 
-    public MariaDB(final MariaDBConfig configMariaDB) {
-        this.logger = LogManager.getLogger(this);
+    public MariaDB(String absolutePath, final MariaDBConfig configMariaDB) {
+        this.absolutePathSqlite = absolutePath;
         this.mariaDBConfig = configMariaDB;
         this.connected = false;
     }
@@ -30,18 +32,26 @@ public class MariaDB implements DBConnect, DBInterface {
     @Override
     public boolean onLoad() throws DatabaseException {
         this.pool = new HikariDataSource();
-        this.pool.setDriverClassName("org.mariadb.jdbc.Driver");
-        this.pool.setJdbcUrl("jdbc:mariadb://%s:%s/".formatted(mariaDBConfig.hostname(), mariaDBConfig.port()));
-        this.pool.setUsername(mariaDBConfig.user());
-        this.pool.setPassword(mariaDBConfig.pass());
+        if (mariaDBConfig.databaseType().equals(DatabaseType.MARIADB)) {
+            this.pool.setDriverClassName("org.mariadb.jdbc.Driver");
+            this.pool.setJdbcUrl("jdbc:mariadb://%s:%s/".formatted(mariaDBConfig.hostname(), mariaDBConfig.port()));
+            this.pool.setUsername(mariaDBConfig.user());
+            this.pool.setPassword(mariaDBConfig.pass());
+            this.pool.setConnectionTimeout(mariaDBConfig.timeOut());
+        } else if (mariaDBConfig.databaseType().equals(DatabaseType.SQLITE)) {
+            this.pool.setDriverClassName("org.sqlite.JDBC");
+            this.pool.setJdbcUrl("jdbc:sqlite:%s/%s.sqlite".formatted(absolutePathSqlite, mariaDBConfig.database()));
+        } else {
+            throw new DatabaseException("DATABASE SELECT NOT SUPPORTED !");
+        }
+
         this.pool.setMaximumPoolSize(mariaDBConfig.maxPool());
         this.pool.setMinimumIdle(mariaDBConfig.maxPool());
-        this.pool.setConnectionTimeout(mariaDBConfig.timeOut());
 
         try (Connection connection = pool.getConnection()) {
             if (connection.isValid(1)) {
                 this.connected = true;
-                this.logger.log(Level.INFO, "MariaDB pool initialized (" + mariaDBConfig.maxPool() + ")");
+                this.logger.log(Level.INFO, "%s pool initialized (%s)".formatted(mariaDBConfig.databaseType().name(), mariaDBConfig.maxPool()));
                 return true;
             }
         } catch (SQLException e) {

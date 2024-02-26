@@ -11,9 +11,9 @@ import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
-import fr.euphyllia.skyllia.database.query.MariaDBCreateTable;
-import fr.euphyllia.skyllia.database.query.MariaDBTransactionQuery;
-import fr.euphyllia.skyllia.database.query.exec.IslandQuery;
+import fr.euphyllia.skyllia.database.mariadb.MariaDBCreateTable;
+import fr.euphyllia.skyllia.database.mariadb.MariaDBTransactionQuery;
+import fr.euphyllia.skyllia.database.IslandQuery;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -125,9 +125,9 @@ public class InterneAPI {
         return true;
     }
 
-    public boolean setupSGBD() throws DatabaseException {
+    public boolean setupSGBD(File dataFolder) throws DatabaseException {
         if (ConfigToml.mariaDBConfig != null) {
-            MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
+            MariaDB mariaDB = new MariaDB(dataFolder.getAbsolutePath(), ConfigToml.mariaDBConfig);
             this.database = new DatabaseLoader(mariaDB);
             if (!this.database.loadDatabase()) {
                 return false;

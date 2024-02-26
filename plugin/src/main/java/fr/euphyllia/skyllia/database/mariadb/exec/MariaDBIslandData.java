@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.database.query.exec;
+package fr.euphyllia.skyllia.database.mariadb.exec;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.database.query.IslandDataQuery;
 import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class IslandDataQuery {
+public class MariaDBIslandData extends IslandDataQuery {
 
     private static final String SELECT_ISLAND_BY_OWNER = """
             SELECT i.*
@@ -59,7 +60,7 @@ public class IslandDataQuery {
     private final InterneAPI api;
     private final String databaseName;
 
-    public IslandDataQuery(InterneAPI api, String databaseName) {
+    public MariaDBIslandData(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
     }

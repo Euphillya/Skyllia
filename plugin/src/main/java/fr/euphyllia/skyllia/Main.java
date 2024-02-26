@@ -48,6 +48,7 @@ public class Main extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+        this.interneAPI.loadAPI();
         try {
             if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml")) {
                 Bukkit.getPluginManager().disablePlugin(this);
@@ -61,7 +62,7 @@ public class Main extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            if (!this.interneAPI.setupSGBD()) {
+            if (!this.interneAPI.setupSGBD(this.getDataFolder())) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
@@ -70,7 +71,6 @@ public class Main extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        this.interneAPI.loadAPI();
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
         this.setupCommands();

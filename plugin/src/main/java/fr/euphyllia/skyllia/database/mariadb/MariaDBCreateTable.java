@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.database.query;
+package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;

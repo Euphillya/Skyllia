@@ -1,9 +1,10 @@
-package fr.euphyllia.skyllia.database.query.exec;
+package fr.euphyllia.skyllia.database.mariadb.exec;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.database.query.IslandWarpQuery;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class IslandWarpQuery {
+public class MariaDBIslandWarp extends IslandWarpQuery {
 
     private static final String SELECT_WARP_NAME = """
                 SELECT iw.`world_name`, iw.`x`, iw.`y`, iw.`z`, iw.`pitch`, iw.`yaw`
@@ -47,7 +48,7 @@ public class IslandWarpQuery {
     private final InterneAPI api;
     private final String databaseName;
 
-    public IslandWarpQuery(InterneAPI api, String databaseName) {
+    public MariaDBIslandWarp(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
     }

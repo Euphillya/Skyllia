@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.database.query;
+package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.apache.logging.log4j.LogManager;

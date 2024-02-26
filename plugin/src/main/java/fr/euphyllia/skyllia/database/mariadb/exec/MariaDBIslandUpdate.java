@@ -1,15 +1,16 @@
-package fr.euphyllia.skyllia.database.query.exec;
+package fr.euphyllia.skyllia.database.mariadb.exec;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.database.query.IslandUpdateQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class IslandUpdateQuery {
+public class MariaDBIslandUpdate extends IslandUpdateQuery {
 
     private static final String SELECT_STATUS_ISLAND = """
                 SELECT `disable`
@@ -48,7 +49,7 @@ public class IslandUpdateQuery {
     private final InterneAPI api;
     private final String databaseName;
 
-    public IslandUpdateQuery(InterneAPI api, String databaseName) {
+    public MariaDBIslandUpdate(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
     }
