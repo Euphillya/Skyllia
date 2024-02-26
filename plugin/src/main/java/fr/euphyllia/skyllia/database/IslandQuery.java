@@ -22,6 +22,7 @@ public class IslandQuery {
     public IslandQuery(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
+        this.init();
     }
 
     private void init() {
