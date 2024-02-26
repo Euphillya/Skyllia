@@ -1,7 +1,7 @@
 ## Wiki
 
 - FR_FR : https://github.com/Euphillya/Skyllia/wiki
-- EN_EN : not yet available
+- EN_EN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/en_en/all_files
 - ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_CN/all_files
 
 ## Contact :
@@ -32,10 +32,6 @@ Gradle Groovy
 repositories {
     maven {
         url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-        }
     }
 }
 
@@ -59,13 +55,12 @@ UUID islandId = playerIsland.getId();
 
 ## Compatible Software
 
-|                   Software                    |    Version    |
-|:---------------------------------------------:|:-------------:|
-| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.20.4 |
-|        [Purpur](https://purpurmc.org)         | 1.20.1-1.20.4 |
-|  [Folia](https://papermc.io/software/folia)   | 1.19.4-1.20.4 |
-|                    Spigot                     | Coming soon ! |
-|                    Bukkit                     | Coming soon ! |
+|                      Software                       |    Version    |
+|:---------------------------------------------------:|:-------------:|
+|    [PaperMC](https://papermc.io/downloads/paper)    |  1.17-1.20.4  |
+|           [Purpur](https://purpurmc.org)            |  1.17-1.20.4  |
+|     [Folia](https://papermc.io/software/folia)      | 1.19.4-1.20.4 |
+| [Spigot](https://www.spigotmc.org)(Not Recommended) |  1.17-1.20.4  |
 
 ## Generation Island
 

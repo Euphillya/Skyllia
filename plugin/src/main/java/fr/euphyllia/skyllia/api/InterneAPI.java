@@ -167,6 +167,18 @@ public class InterneAPI {
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
         final String[] bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-");
         switch (bukkitVersion[0]) {
+            case "1.17", "1.17.1" -> {
+                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_17_R1.WorldNMS();
+                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_17_R1.PlayerNMS();
+            }
+            case "1.18", "1.18.1" -> {
+                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R1.WorldNMS();
+                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R1.PlayerNMS();
+            }
+            case "1.18.2" -> {
+                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R2.WorldNMS();
+                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R2.PlayerNMS();
+            }
             case "1.19.4" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.PlayerNMS();
