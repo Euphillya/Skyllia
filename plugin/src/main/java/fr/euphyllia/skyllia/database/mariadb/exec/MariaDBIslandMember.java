@@ -71,7 +71,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
             DELETE FROM `%s`.`player_clear`
                 WHERE `uuid_player` = ?;
             """;
-    private final Logger logger = LogManager.getLogger(IslandMemberQuery.class);
+    private final Logger logger = LogManager.getLogger(MariaDBIslandMember.class);
     private final InterneAPI api;
     private final String databaseName;
 

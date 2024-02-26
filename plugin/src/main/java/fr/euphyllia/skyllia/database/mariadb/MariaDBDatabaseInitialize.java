@@ -101,7 +101,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
                 (id, region_x, region_z)
                 VALUES(?, ?, ?);
             """;
-    private final Logger logger = LogManager.getLogger(this);
+    private final Logger logger = LogManager.getLogger(MariaDBDatabaseInitialize.class);
     private final String database;
     private final InterneAPI api;
     private final int dbVersion;

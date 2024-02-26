@@ -41,7 +41,7 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
             FROM `%s`.`islands_gamerule`
             WHERE `island_id` = ?;
             """;
-    private final Logger logger = LogManager.getLogger(IslandPermissionQuery.class);
+    private final Logger logger = LogManager.getLogger(MariaDBIslandPermission.class);
     private final InterneAPI api;
     private final String databaseName;
 

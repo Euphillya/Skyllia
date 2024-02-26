@@ -55,7 +55,7 @@ public class MariaDBIslandData extends IslandDataQuery {
                         S.id
                 LIMIT 1;
             """;
-    private final Logger logger = LogManager.getLogger(IslandDataQuery.class);
+    private final Logger logger = LogManager.getLogger(MariaDBIslandData.class);
 
     private final InterneAPI api;
     private final String databaseName;

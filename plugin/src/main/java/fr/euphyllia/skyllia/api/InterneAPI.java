@@ -122,9 +122,9 @@ public class InterneAPI {
         return true;
     }
 
-    public boolean setupSGBD(File dataFolder) throws DatabaseException {
+    public boolean setupSGBD() throws DatabaseException {
         if (ConfigToml.mariaDBConfig != null) {
-            MariaDB mariaDB = new MariaDB(dataFolder.getAbsolutePath(), ConfigToml.mariaDBConfig);
+            MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
             this.database = new DatabaseLoader(mariaDB);
             if (!this.database.loadDatabase()) {
                 return false;

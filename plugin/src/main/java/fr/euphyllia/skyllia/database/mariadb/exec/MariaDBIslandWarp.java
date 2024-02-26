@@ -44,7 +44,7 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
             DELETE FROM `%s`.`islands_warp`
             WHERE `island_id` = ? AND `warp_name` = ?;
             """;
-    private final Logger logger = LogManager.getLogger(IslandWarpQuery.class);
+    private final Logger logger = LogManager.getLogger(MariaDBIslandWarp.class);
     private final InterneAPI api;
     private final String databaseName;
 

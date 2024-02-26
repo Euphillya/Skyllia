@@ -7,7 +7,6 @@ import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.database.mariadb.MariaDBDatabaseInitialize;
 import fr.euphyllia.skyllia.database.mariadb.exec.*;
 import fr.euphyllia.skyllia.database.query.*;
-import fr.euphyllia.skyllia.database.sqlite.SqliteDatabaseInitialize;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,9 +43,6 @@ public class IslandQuery {
                 this.islandWarpQuery = new MariaDBIslandWarp(api, databaseName);
                 this.islandMemberQuery = new MariaDBIslandMember(api, databaseName);
                 this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
-            }
-            case SQLITE -> {
-                this.databaseInitializeQuery = new SqliteDatabaseInitialize(this.api);
             }
         }
     }

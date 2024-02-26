@@ -45,7 +45,7 @@ public class MariaDBIslandUpdate extends IslandUpdateQuery {
                 SET `private` = ?
                 WHERE `island_id` = ?;
             """;
-    private final Logger logger = LogManager.getLogger(IslandUpdateQuery.class);
+    private final Logger logger = LogManager.getLogger(MariaDBIslandUpdate.class);
     private final InterneAPI api;
     private final String databaseName;
 

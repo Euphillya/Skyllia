@@ -18,12 +18,10 @@ public class MariaDB implements DBConnect, DBInterface {
 
     private final Logger logger = LogManager.getLogger(MariaDB.class);
     private final MariaDBConfig mariaDBConfig;
-    private final String absolutePathSqlite;
     private HikariDataSource pool;
     private boolean connected = false;
 
-    public MariaDB(String absolutePath, final MariaDBConfig configMariaDB) {
-        this.absolutePathSqlite = absolutePath;
+    public MariaDB(final MariaDBConfig configMariaDB) {
         this.mariaDBConfig = configMariaDB;
         this.connected = false;
     }
@@ -38,9 +36,6 @@ public class MariaDB implements DBConnect, DBInterface {
             this.pool.setUsername(mariaDBConfig.user());
             this.pool.setPassword(mariaDBConfig.pass());
             this.pool.setConnectionTimeout(mariaDBConfig.timeOut());
-        } else if (mariaDBConfig.databaseType().equals(DatabaseType.SQLITE)) {
-            this.pool.setDriverClassName("org.sqlite.JDBC");
-            this.pool.setJdbcUrl("jdbc:sqlite:%s/%s.sqlite".formatted(absolutePathSqlite, mariaDBConfig.database()));
         } else {
             throw new DatabaseException("DATABASE SELECT NOT SUPPORTED !");
         }
