@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.configuration.ConfigInitializer;
 import fr.euphyllia.skyllia.api.database.DatabaseLoader;
 import fr.euphyllia.skyllia.api.database.sgbd.MariaDB;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
@@ -9,8 +10,6 @@ import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
-import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.database.IslandQuery;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
@@ -78,43 +77,14 @@ public class InterneAPI {
         return configFile;
     }
 
-    public boolean setupConfigs(File dataFolder, String fileName) throws IOException {
+    public boolean setupConfigs(File dataFolder, String fileName, ConfigInitializer initializer) throws IOException {
         File configFile = this.checkFileExist(dataFolder, fileName);
         if (configFile == null) {
             return false;
         }
 
         try {
-            ConfigToml.init(configFile);
-        } catch (Exception ex) {
-            logger.log(Level.FATAL, ex.getMessage(), ex);
-            return false;
-        }
-        return true;
-    }
-
-    public boolean setupConfigPermissions(File dataFolder, String fileName) throws IOException {
-        File configFile = this.checkFileExist(dataFolder, fileName);
-        if (configFile == null) {
-            return false;
-        }
-        try {
-            PermissionsToml.init(configFile);
-        } catch (Exception ex) {
-            logger.log(Level.FATAL, ex.getMessage(), ex);
-            return false;
-        }
-        return true;
-    }
-
-    public boolean setupConfigLanguage(File dataFolder, String fileName) throws IOException {
-        File configFile = this.checkFileExist(dataFolder, fileName);
-        if (configFile == null) {
-            return false;
-        }
-
-        try {
-            LanguageToml.init(configFile);
+            initializer.initConfig(configFile);
         } catch (Exception ex) {
             logger.log(Level.FATAL, ex.getMessage(), ex);
             return false;
@@ -206,4 +176,5 @@ public class InterneAPI {
     public void loadAPI() {
         SkylliaAPI.setImplementation(this.plugin, new APISkyllia(this));
     }
+
 }

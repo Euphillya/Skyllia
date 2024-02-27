@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigToml {
     private static final Logger logger = LogManager.getLogger(ConfigToml.class);
@@ -31,18 +32,18 @@ public class ConfigToml {
     public static MariaDBConfig mariaDBConfig;
     public static List<WorldConfig> worldConfigs = new ArrayList<>();
     public static int maxIsland = 500_000;
-    public static Map<String, IslandSettings> islandSettingsMap = new HashMap<>();
+    public static ConcurrentHashMap<String, IslandSettings> islandSettingsMap = new ConcurrentHashMap<>();
     public static boolean clearInventoryWhenDeleteIsland = true;
     public static boolean clearEnderChestWhenDeleteIsland = true;
     public static boolean resetExperiencePlayerWhenDeleteIsland = true;
-    public static Map<String, Map<String, SchematicSetting>> schematicWorldMap = new HashMap<>();
+    public static ConcurrentHashMap<String, ConcurrentHashMap<String, SchematicSetting>> schematicWorldMap = new ConcurrentHashMap<>();
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
     public static int regionDistance = -1;
     private static boolean verbose;
 
     public static void init(File configFile) {
-        config = CommentedFileConfig.builder(configFile).autosave().build();
+        config = CommentedFileConfig.builder(configFile).sync().autosave().build();
         config.load();
         verbose = getBoolean("verbose", false);
 
@@ -169,7 +170,7 @@ public class ConfigToml {
     private static void worlds() {
         HashMap<String, ?> worldsMaps = new HashMap<>(getMap("worlds"));
         if (worldsMaps.isEmpty()) {
-            worldsMaps.put("sky-overworld", null);
+            worldsMaps.putIfAbsent("sky-overworld", null);
         }
         String parentConfig = "worlds.";
         for (Map.Entry<String, ?> entry : worldsMaps.entrySet()) {
@@ -250,7 +251,7 @@ public class ConfigToml {
             }
 
             for (Map.Entry<String, ?> islandStarterEntry : worldSchem.entrySet()) {
-                Map<String, SchematicSetting> keySchematicsByName = schematicWorldMap.getOrDefault(namekey, new HashMap<>()); // Nom du monde - Schematic
+                ConcurrentHashMap<String, SchematicSetting> keySchematicsByName = schematicWorldMap.getOrDefault(namekey, new ConcurrentHashMap<>()); // Nom du monde - Schematic
                 String worldName = islandStarterEntry.getKey();
                 String isKey = childrenConfig + worldName;
                 String schematicFile = getString(isKey + ".schematic", "./schematics/default.schem");

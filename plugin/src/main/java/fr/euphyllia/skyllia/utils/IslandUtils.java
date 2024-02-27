@@ -6,8 +6,8 @@ import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IslandUtils {
 
@@ -26,7 +26,7 @@ public class IslandUtils {
 
     public static Map<String, SchematicSetting> getSchematic(@NotNull String name) {
         try {
-            return ConfigToml.schematicWorldMap.getOrDefault(name.toLowerCase(), new HashMap<>());
+            return ConfigToml.schematicWorldMap.getOrDefault(name.toLowerCase(), new ConcurrentHashMap<>());
         } catch (Exception e) {
             return null;
         }

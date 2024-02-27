@@ -29,7 +29,7 @@ public class PermissionsToml {
     private static boolean verbose;
 
     public static void init(File configFile) {
-        config = CommentedFileConfig.builder(configFile).autosave().build();
+        config = CommentedFileConfig.builder(configFile).sync().autosave().build();
         config.load();
         verbose = getBoolean("verbose", false);
 

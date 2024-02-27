@@ -23,7 +23,7 @@ public class IslandQuery {
     private IslandMemberQuery islandMemberQuery;
     private IslandPermissionQuery islandPermissionQuery;
 
-    public IslandQuery(InterneAPI api, String databaseName){
+    public IslandQuery(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
         try {

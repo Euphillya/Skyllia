@@ -10,6 +10,8 @@ import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.BlockEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.entity.DamageEvent;
@@ -50,15 +52,15 @@ public class Main extends JavaPlugin {
         }
         this.interneAPI.loadAPI();
         try {
-            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml")) {
+            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml", ConfigToml::init)) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            if (!this.interneAPI.setupConfigLanguage(this.getDataFolder(), "language.toml")) {
+            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "language.toml", LanguageToml::init)) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
-            if (!this.interneAPI.setupConfigPermissions(this.getDataFolder(), "permissions.toml")) {
+            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "permissions.toml", PermissionsToml::init)) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
