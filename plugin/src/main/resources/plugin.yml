@@ -1,7 +1,7 @@
 name: "Skyllia"
 version: ${version}
 main: fr.euphyllia.skyllia.Main
-api-version: 1.18
+api-version: 1.17
 author: Euphyllia
 description: "Plugin Skyblock pour Folia / PaperMC"
 folia-supported: true
