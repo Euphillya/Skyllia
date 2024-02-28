@@ -61,6 +61,12 @@ public class FoliaScheduler implements Scheduler {
                         mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
                         callBack.run(schedulerTask);
                     }, initialDelayTicks, periodTicks);
+                } else if (chunkOrLocOrEntity instanceof MultipleRecords.WorldChunk worldChunk) {
+                    Bukkit.getRegionScheduler().runAtFixedRate(this.plugin, worldChunk.world(), worldChunk.chunkX(), worldChunk.chunkZ(), task -> {
+                        SchedulerTaskInter schedulerTask = new FoliaSchedulerTask(task);
+                        mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
+                        callBack.run(schedulerTask);
+                    }, initialDelayTicks, periodTicks);
                 } else {
                     throw new RuntimeException("Object can only be Location or Chunk");
                 }
@@ -116,6 +122,12 @@ public class FoliaScheduler implements Scheduler {
                     }, delayTicks);
                 } else if (chunkOrLocOrEntity instanceof Chunk chunk) {
                     Bukkit.getRegionScheduler().runDelayed(this.plugin, chunk.getWorld(), chunk.getX(), chunk.getZ(), task -> {
+                        SchedulerTaskInter schedulerTask = new FoliaSchedulerTask(task);
+                        mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
+                        callBack.run(schedulerTask);
+                    }, delayTicks);
+                } else if (chunkOrLocOrEntity instanceof MultipleRecords.WorldChunk worldChunk) {
+                    Bukkit.getRegionScheduler().runDelayed(this.plugin, worldChunk.world(), worldChunk.chunkX(), worldChunk.chunkZ(), task -> {
                         SchedulerTaskInter schedulerTask = new FoliaSchedulerTask(task);
                         mapSchedulerTask.put(schedulerTask.getTaskId(), schedulerTask);
                         callBack.run(schedulerTask);
