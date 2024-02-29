@@ -7,8 +7,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -83,10 +83,9 @@ public class DelWarpSubCommand implements SubCommandInterface {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (sender.hasPermission("skyllia.island.command.delwarp") && sender instanceof Player player) {
+            return CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+        }
         return null;
-    }
-
-    private boolean isWorldIsland(String worldName) {
-        return ConfigToml.worldConfigs.stream().anyMatch(wc -> wc.name().equalsIgnoreCase(worldName));
     }
 }

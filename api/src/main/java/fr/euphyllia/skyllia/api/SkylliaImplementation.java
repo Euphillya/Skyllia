@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface SkylliaImplementation {
 
-    public @Nullable CompletableFuture<@NotNull Island> getIslandByPlayerId(UUID playerUniqueId);
+    public CompletableFuture<@NotNull Island> getIslandByPlayerId(UUID playerUniqueId);
 
     public CompletableFuture<@NotNull Island> getIslandByIslandId(UUID islandId);
 

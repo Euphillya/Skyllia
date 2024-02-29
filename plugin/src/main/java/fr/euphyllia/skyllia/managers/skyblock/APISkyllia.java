@@ -7,7 +7,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.PositionIslandCache;
 import org.bukkit.Chunk;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -23,12 +22,12 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
-    public CompletableFuture<@NotNull Island> getIslandByPlayerId(UUID playerUniqueId) {
+    public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerUniqueId) {
         return this.interneAPI.getSkyblockManager().getIslandByPlayerId(playerUniqueId);
     }
 
     @Override
-    public CompletableFuture<@NotNull Island> getIslandByIslandId(UUID islandId) {
+    public CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
         return this.interneAPI.getSkyblockManager().getIslandByIslandId(islandId);
     }
 

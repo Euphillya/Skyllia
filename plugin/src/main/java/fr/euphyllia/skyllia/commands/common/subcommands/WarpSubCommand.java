@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
@@ -81,6 +82,9 @@ public class WarpSubCommand implements SubCommandInterface {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (sender.hasPermission("skyllia.island.command.warp") && sender instanceof Player player) {
+            return CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+        }
         return null;
     }
 }

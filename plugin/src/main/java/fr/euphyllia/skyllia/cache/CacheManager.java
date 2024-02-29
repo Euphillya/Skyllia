@@ -2,8 +2,6 @@ package fr.euphyllia.skyllia.cache;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.annotation.Experimental;
-import fr.euphyllia.skyllia.api.annotation.Information;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
@@ -21,8 +19,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
-@Experimental
-@Information("Je n'ai pas tester encore cette fonctionnalité")
 public class CacheManager {
 
     private final Logger logger = LogManager.getLogger(CacheManager.class);

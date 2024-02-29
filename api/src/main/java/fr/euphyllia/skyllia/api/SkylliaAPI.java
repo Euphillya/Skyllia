@@ -5,7 +5,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import org.bukkit.Chunk;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -21,11 +20,11 @@ public final class SkylliaAPI {
         schedulerTask = new SchedulerTask(plugin);
     }
 
-    public static @Nullable CompletableFuture<@NotNull Island> getIslandByPlayerId(UUID playerUniqueId) {
+    public static CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerUniqueId) {
         return implementation.getIslandByPlayerId(playerUniqueId);
     }
 
-    public static @Nullable CompletableFuture<@NotNull Island> getIslandByIslandId(UUID islandId) {
+    public static @Nullable CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
         return implementation.getIslandByIslandId(islandId);
     }
 
