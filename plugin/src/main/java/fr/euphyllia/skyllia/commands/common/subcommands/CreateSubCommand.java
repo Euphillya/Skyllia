@@ -13,6 +13,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
+import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -125,7 +126,11 @@ public class CreateSubCommand implements SubCommandInterface {
     public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
             List<String> nameSchem = new ArrayList<>();
-            ConfigToml.schematicWorldMap.forEach((key, schematicWorld) -> nameSchem.add(key));
+            ConfigToml.schematicWorldMap.forEach((key, schematicWorld) -> {
+                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, key))) {
+                    nameSchem.add(key);
+                }
+            });
             return nameSchem;
         } else {
             return new ArrayList<>();
