@@ -12,9 +12,9 @@
 
 [![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
 
-## Plugin Skyblock for Folia
+## Plugin Skyblock for Minecraft
 
-Skyllia is a Skyblock plugin that will essentially run on Folia.
+Skyllia is a Skyblock plugin that will essentially run on Folia, but work on Spigot and Paper (1.17+).
 The plugin will have very little innovative functionality, and it's not my intention at all that there should be
 external features (like quests, for example).
 The plugin has an API that you can use to add feature extensions to customize your server.
@@ -22,7 +22,7 @@ The plugin has an API that you can use to add feature extensions to customize yo
 ## Download Plugin
 
 - Dev : https://github.com/Euphillya/Skyllia/actions
-- Alpha : https://github.com/Euphillya/Skyllia/releases
+- Releases Versions : https://modrinth.com/plugin/skyllia
 
 ## API
 
