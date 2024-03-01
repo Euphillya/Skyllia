@@ -40,6 +40,7 @@ public class ConfigToml {
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
     public static int regionDistance = -1;
+    public static boolean deleteChunkPerimeterIsland = false;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -197,6 +198,7 @@ public class ConfigToml {
     private static void configs() {
         maxIsland = getInt("config.max-island", maxIsland);
         regionDistance = getInt("config.region-distance-per-island", regionDistance);
+        deleteChunkPerimeterIsland = getBoolean("config.optimization.delete-chunk-perimeter-island", deleteChunkPerimeterIsland);
     }
 
     private static void typeIsland() {

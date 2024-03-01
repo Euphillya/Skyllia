@@ -66,4 +66,14 @@ public class RegionHelper {
 
         return regions;
     }
+
+    public static int getNumberChunkTotalInRayon(int rayon) {
+        int chunksParCote = (rayon << 1) >> 4; // (rayon * 2) / 16
+        return chunksParCote * chunksParCote;
+    }
+
+    public static int getNumberChunkTotalInPerimeter(int perimenter) {
+        int chunksParCote = perimenter >> 4; // perimenter / 16
+        return chunksParCote * chunksParCote;
+    }
 }

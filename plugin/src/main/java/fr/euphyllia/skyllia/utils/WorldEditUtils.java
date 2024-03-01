@@ -20,9 +20,11 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import fr.euphyllia.skyllia.api.utils.scheduler.model.MultipleRecords;
 import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,9 +83,14 @@ public class WorldEditUtils {
             throw new RuntimeException("World is not loaded or not exist");
         }
         Position position = island.getPosition();
-
+        AtomicInteger chunkDeleted = new AtomicInteger(0);
+        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getNumberChunkTotalInPerimeter((int) island.getSize() + 16)); // add secure distance 1 chunk
         AtomicInteger delay = new AtomicInteger(1);
+        boolean deleteChunkPerimeterIsland = ConfigToml.deleteChunkPerimeterIsland;
         RegionUtils.spiralStartCenter(position, island.getSize(), chunKPosition -> {
+            if (deleteChunkPerimeterIsland && chunkDeleted.getAndAdd(1) >= numberChunkInIsland.get()) {
+                return;
+            }
             SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
                     .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(w, chunKPosition.x(), chunKPosition.z()), delay.getAndIncrement(), t -> {
                         plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition);
