@@ -13,7 +13,7 @@ val paperRepo = "https://repo.papermc.io/repository/maven-public/";
 val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
 val engineHubRepo = "https://maven.enginehub.org/repo/";
 val essentialsRepo = "https://repo.essentialsx.net/releases"
-val energieRepo = "https://maven.pkg.github.com/Euphillya/Skyllia";
+val jitpack = "https://jitpack.io";
 
 dependencies {
     implementation(project(":nms:v1_17_R1", "reobf"))
@@ -44,18 +44,11 @@ allprojects {
         maven(sonatypeRepo)
         maven(engineHubRepo)
         maven(essentialsRepo)
-        maven(energieRepo)
-        maven {
-            url = uri(energieRepo)
-            credentials {
-                username = System.getenv("GITHUB_USERNAME") ?: (System.getenv("USERNAME") ?: "")
-                password = System.getenv("GITHUB_TOKEN") ?: (System.getenv("TOKEN") ?: "")
-            }
-        }
+        maven(jitpack)
     }
 
     dependencies {
-        implementation("fr.euphyllia:energie:1.0.0")
+        implementation("com.github.Euphillya:Energie:26cdee42f4")
     }
 
     tasks {
