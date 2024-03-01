@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.event.PrepareSkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
@@ -11,6 +12,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,13 +31,19 @@ public class SkyblockManager {
 
     public CompletableFuture<@Nullable Boolean> createIsland(UUID islandId, IslandSettings islandType) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        PrepareSkyblockCreateEvent prepareSkyblockCreateEvent = new PrepareSkyblockCreateEvent(islandId, islandType);
+        Bukkit.getPluginManager().callEvent(prepareSkyblockCreateEvent);
+        if (prepareSkyblockCreateEvent.isCancelled()) {
+            completableFuture.complete(false);
+            return completableFuture;
+        }
         try {
             Island futurIsland = new IslandHook(
                     this.plugin,
-                    islandId,
-                    islandType.maxMembers(),
+                    prepareSkyblockCreateEvent.getIslandId(),
+                    prepareSkyblockCreateEvent.getIslandSettings().maxMembers(),
                     null,
-                    islandType.rayon(),
+                    prepareSkyblockCreateEvent.getIslandSettings().rayon(),
                     null
             );
             boolean create = this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().insertIslands(futurIsland).join();
