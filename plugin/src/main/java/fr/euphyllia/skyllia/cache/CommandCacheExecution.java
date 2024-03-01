@@ -9,25 +9,25 @@ public class CommandCacheExecution {
 
     private static final ConcurrentHashMap<UUID, List<String>> commandAlreadyExecution = new ConcurrentHashMap<>();
 
-    public static boolean isAlreadyExecute(UUID playerId, String command) {
-        List<String> listCmd = commandAlreadyExecution.getOrDefault(playerId, null);
+    public static boolean isAlreadyExecute(UUID uuid, String command) {
+        List<String> listCmd = commandAlreadyExecution.getOrDefault(uuid, null);
         if (listCmd == null) return false;
         return listCmd.contains(command);
     }
 
-    public static void addCommandExecute(UUID playerId, String command) {
-        List<String> listCmd = commandAlreadyExecution.getOrDefault(playerId, null);
+    public static void addCommandExecute(UUID uuid, String command) {
+        List<String> listCmd = commandAlreadyExecution.getOrDefault(uuid, null);
         if (listCmd == null) {
             listCmd = new ArrayList<>();
         }
         listCmd.add(command);
-        commandAlreadyExecution.put(playerId, listCmd);
+        commandAlreadyExecution.put(uuid, listCmd);
     }
 
-    public static void removeCommandExec(UUID playerId, String command) {
-        List<String> listCmd = commandAlreadyExecution.getOrDefault(playerId, null);
+    public static void removeCommandExec(UUID uuid, String command) {
+        List<String> listCmd = commandAlreadyExecution.getOrDefault(uuid, null);
         if (listCmd == null) return;
         listCmd.remove(command);
-        commandAlreadyExecution.put(playerId, listCmd);
+        commandAlreadyExecution.put(uuid, listCmd);
     }
 }

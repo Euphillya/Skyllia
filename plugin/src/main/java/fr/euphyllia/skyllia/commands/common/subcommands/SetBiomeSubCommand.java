@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class SetBiomeSubCommand implements SubCommandInterface {
 
@@ -52,17 +53,12 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeCommandNotEnoughArgs);
             return true;
         }
-        if (CommandCacheExecution.isAlreadyExecute(player.getUniqueId(), "biome")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageCommandAlreadyExecution);
-            return true;
-        }
 
         Location playerLocation = player.getLocation();
         int chunkLocX = playerLocation.getChunk().getX();
         int chunkLocZ = playerLocation.getChunk().getZ();
         String selectBiome = args[0];
 
-        CommandCacheExecution.addCommandExecute(player.getUniqueId(), "biome");
         try {
             Biome biome;
             try {
@@ -84,6 +80,12 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
+            final UUID islandId = island.getId();
+            if (CommandCacheExecution.isAlreadyExecute(islandId, "biome")) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageCommandAlreadyExecution);
+                return true;
+            }
+            CommandCacheExecution.addCommandExecute(islandId, "biome");
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
@@ -120,6 +122,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                                 });
                     }
                 }
+                CommandCacheExecution.removeCommandExec(islandId, "biome");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
