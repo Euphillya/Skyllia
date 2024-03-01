@@ -48,8 +48,8 @@ allprojects {
         maven {
             url = uri(energieRepo)
             credentials {
-                username = System.getenv("GITHUB_USERNAME") ?: ""
-                password = System.getenv("GITHUB_TOKEN") ?: ""
+                username = System.getenv("GITHUB_USERNAME") ?: (System.getenv("USERNAME") ?: "")
+                password = System.getenv("GITHUB_TOKEN") ?: (System.getenv("TOKEN") ?: "")
             }
         }
     }
