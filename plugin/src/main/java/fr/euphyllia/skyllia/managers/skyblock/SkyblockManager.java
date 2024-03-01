@@ -29,7 +29,7 @@ public class SkyblockManager {
         this.plugin = main;
     }
 
-    public CompletableFuture<@Nullable Boolean> createIsland(UUID islandId, IslandSettings islandType) {
+    public CompletableFuture<Boolean> createIsland(UUID islandId, IslandSettings islandType) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         PrepareSkyblockCreateEvent prepareSkyblockCreateEvent = new PrepareSkyblockCreateEvent(islandId, islandType);
         Bukkit.getPluginManager().callEvent(prepareSkyblockCreateEvent);
@@ -50,7 +50,7 @@ public class SkyblockManager {
             completableFuture.complete(create);
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            completableFuture.complete(null);
+            completableFuture.complete(false);
         }
         return completableFuture;
     }
