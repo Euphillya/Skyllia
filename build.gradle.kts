@@ -48,7 +48,7 @@ allprojects {
     }
 
     dependencies {
-        implementation("com.github.Euphillya:Energie:26cdee42f4")
+        implementation("com.github.Euphillya:Energie:5d4157c0ea")
     }
 
     tasks {
