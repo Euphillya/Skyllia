@@ -110,18 +110,9 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             World world = player.getWorld();
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeInProgress);
 
-            boolean biomeChanged = WorldEditUtils.changeBiomeChunk(plugin, world, biome, new Position(chunkLocX, chunkLocZ)).join();
+            boolean biomeChanged = WorldEditUtils.changeBiomeChunk(plugin, world, biome, island).join();
             if (biomeChanged) {
                 LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeSuccess);
-                for (Players players : island.getMembers()) {
-                    Player bPlayer = Bukkit.getPlayer(players.getMojangId());
-                    if (bPlayer != null && bPlayer.isOnline()) {
-                        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
-                                    player.getWorld().refreshChunk(chunkLocX, chunkLocZ);
-                                });
-                    }
-                }
                 CommandCacheExecution.removeCommandExec(islandId, "biome");
             }
         } catch (Exception e) {

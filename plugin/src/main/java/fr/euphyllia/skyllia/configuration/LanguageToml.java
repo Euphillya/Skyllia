@@ -48,7 +48,7 @@ public class LanguageToml {
     public static String messageBiomeOnlyIsland = "La commande ne peut être exécuté seulement sur une île";
     public static String messageBiomeNotExist = "Le biome %s n'existe pas.";
     public static String messageBiomeChangeInProgress = "Changement de biome en cours. Veuillez notez que ça prends du temps... Un message vous avertira quand le processus sera achevé.";
-    public static String messageBiomeChangeSuccess = "Le changement de biome dans le chunk où vous étiez est terminé !";
+    public static String messageBiomeChangeSuccess = "Le changement de biome dans le chunk où vous étiez est terminé ! Vous devez quitter et revenir sur votre île pour voir le changement.";
     public static String messageInviteAlreadyIsland = "Vous êtes déjà sur une île !";
     public static String messageInviteCommandNotEnoughArgs = "La commande n'est pas complète : /skyllia invite <add/accept/decline> <player/island_owner>";
     public static String messageInviteAcceptCommandNotEnoughArgs = "Vous devez préciser sur quel île vous souhaiter rejoindre : /skyllia invite accept <island_owner>";

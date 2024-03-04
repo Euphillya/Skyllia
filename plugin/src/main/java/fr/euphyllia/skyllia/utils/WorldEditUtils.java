@@ -18,6 +18,7 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,25 +100,35 @@ public class WorldEditUtils {
         });
     }
 
-    public static CompletableFuture<Boolean> changeBiomeChunk(Main plugin, org.bukkit.World world, Biome biome, Position position) {
+    public static CompletableFuture<Boolean> changeBiomeChunk(Main plugin, org.bukkit.World world, Biome biome, Island island) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        int blockX = position.x() << 4;
-        int blockZ = position.z() << 4;
-        BlockVector3 pos1 = BlockVector3.at(blockX, world.getMinHeight(), blockZ);
-        BlockVector3 pos2 = BlockVector3.at(blockX + 15, world.getMaxHeight(), blockZ + 15);
-        CuboidRegion selection = new CuboidRegion(pos1, pos2);
-        long totalChange = selection.getVolume();
-        AtomicLong progressChange = new AtomicLong(0);
+        if (world == null) {
+            throw new RuntimeException("World is not loaded or not exist");
+        }
+        Position position = island.getPosition();
         AtomicInteger delay = new AtomicInteger(1);
-        for (BlockVector3 blockVector3 : selection) {
-            Location blockLocation = new Location(world, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ());
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                    .runDelayed(SchedulerType.REGION, blockLocation, delay.getAndIncrement(), schedulerTask -> {
-                        blockLocation.getBlock().setBiome(biome);
-                        if (progressChange.getAndIncrement() == totalChange) {
-                            completableFuture.complete(true);
-                        }
-                    });
+        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getNumberChunkTotalInPerimeter((int) island.getSize() + 16)); // add secure distance 1 chunk
+        AtomicInteger chunkModified = new AtomicInteger(0);
+        try {
+            RegionUtils.spiralStartCenter(position, island.getSize(), chunKPosition -> {
+                if (chunkModified.getAndAdd(1) >= numberChunkInIsland.get()) {
+                    completableFuture.complete(true);
+                    return;
+                }
+                SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
+                        .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(world, chunKPosition.x(), chunKPosition.z()), delay.getAndIncrement(), t -> {
+                            for (int x = 0; x < 16; x++) {
+                                for (int z = 0; z < 16; z++) {
+                                    for (int y = 0; y < world.getMaxHeight(); y++) {
+                                        Location blockLocation = new Location(world, (chunKPosition.x() << 4) + x, y, (chunKPosition.z() << 4) + z);
+                                        blockLocation.getBlock().setBiome(biome);
+                                    }
+                                }
+                            }
+                        });
+            });
+        } finally {
+            completableFuture.complete(true);
         }
         return completableFuture;
     }
