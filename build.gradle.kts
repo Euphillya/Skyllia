@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java-library")
     id("java")
@@ -49,6 +51,10 @@ allprojects {
 
     dependencies {
         implementation("com.github.Euphillya:Energie:5d4157c0ea")
+    }
+
+    tasks.withType<ShadowJar> {
+        relocate("fr.euphyllia.energie", "fr.euphyllia.skyllia.dependency.energie")
     }
 
     tasks {
