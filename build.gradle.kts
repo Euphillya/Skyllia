@@ -14,7 +14,6 @@ description = "Plugin Skyblock pour Folia / PaperMC";
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
 val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
 val engineHubRepo = "https://maven.enginehub.org/repo/";
-val essentialsRepo = "https://repo.essentialsx.net/releases"
 val jitpack = "https://jitpack.io";
 
 dependencies {
@@ -45,7 +44,6 @@ allprojects {
         maven(paperRepo)
         maven(sonatypeRepo)
         maven(engineHubRepo)
-        maven(essentialsRepo)
         maven(jitpack)
     }
 

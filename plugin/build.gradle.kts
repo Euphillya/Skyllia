@@ -15,6 +15,4 @@ dependencies {
     implementation("com.google.guava:guava:33.0.0-jre")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9") { isTransitive = false }
     compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") { isTransitive = false }
-    compileOnly("net.essentialsx:EssentialsXSpawn:2.19.7") { isTransitive = false }
-    compileOnly("net.essentialsx:EssentialsX:2.19.7") { isTransitive = false }
 }
