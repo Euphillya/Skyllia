@@ -1,9 +1,9 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.energie.Energie;
+import fr.euphyllia.energie.model.Scheduler;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
 import org.bukkit.Chunk;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -14,13 +14,11 @@ import java.util.concurrent.CompletableFuture;
 public final class SkylliaAPI {
 
     private static SkylliaImplementation implementation;
-    private static SchedulerTask schedulerTask;
     private static Energie energie;
 
     public static void setImplementation(Plugin plugin, SkylliaImplementation skylliaImplementation) {
         implementation = skylliaImplementation;
-        schedulerTask = new SchedulerTask(plugin);
-        energie = new fr.euphyllia.energie.Energie(plugin);
+        energie = new Energie(plugin);
     }
 
     public static CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerUniqueId) {
@@ -39,21 +37,14 @@ public final class SkylliaAPI {
         return implementation.getIslandByChunk(chunk);
     }
 
-    @Deprecated
-    public static SchedulerTask getSchedulerTask() {
-        return schedulerTask;
+    public static Scheduler getScheduler() {
+        return energie.getScheduler(Energie.SchedulerSoft.MINECRAFT);
     }
-
-    public static Energie getEnergieTask() {
-        return energie;
+    public static Scheduler getNativeScheduler() {
+        return energie.getScheduler(Energie.SchedulerSoft.NATIVE);
     }
 
     public static boolean isFolia() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
+        return Energie.isFolia();
     }
 }

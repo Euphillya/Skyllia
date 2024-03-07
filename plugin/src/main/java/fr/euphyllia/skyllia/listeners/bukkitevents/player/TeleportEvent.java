@@ -1,13 +1,12 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,8 +31,8 @@ public class TeleportEvent implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                .execute(SchedulerType.ASYNC, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler()
+                .runTask(SchedulerType.ASYNC, schedulerTask -> {
                     Location destination = event.getTo();
                     PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
                     if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {

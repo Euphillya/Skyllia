@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -7,8 +8,6 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -79,8 +78,8 @@ public class VisitSubCommand implements SubCommandInterface {
             }
 
             WarpIsland warpIsland = island.getWarpByName("home");
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                    .execute(SchedulerType.ENTITY, player, schedulerTask -> {
+            SkylliaAPI.getScheduler()
+                    .runTask(SchedulerType.SYNC, player, schedulerTask -> {
                         player.setGameMode(GameMode.SPECTATOR);
                         Location loc;
                         if (warpIsland == null) {
@@ -92,7 +91,7 @@ public class VisitSubCommand implements SubCommandInterface {
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                         player.setGameMode(GameMode.SURVIVAL);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
-                    });
+                    }, null);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);

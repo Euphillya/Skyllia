@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
@@ -11,8 +12,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -52,10 +51,10 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
+        SkylliaAPI.getScheduler()
+                .runTask(SchedulerType.SYNC, player, schedulerTask -> {
                     player.setGameMode(GameMode.SPECTATOR);
-                });
+                }, null);
 
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
@@ -139,8 +138,8 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private void pasteSchematic(Main plugin, Island island, Location center, SchematicSetting schematicWorld) {
         switch (WorldEditUtils.worldEditVersion()) {
-            case WORLD_EDIT -> SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                    .execute(SchedulerType.REGION, center, schedulerTask -> {
+            case WORLD_EDIT -> SkylliaAPI.getScheduler()
+                    .runTask(SchedulerType.SYNC, center, schedulerTask -> {
                         WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
                     });
             case FAST_ASYNC_WORLD_EDIT ->
@@ -153,17 +152,17 @@ public class CreateSubCommand implements SubCommandInterface {
     }
 
     private void restoreGameMode(Main plugin, Player player, GameMode gameMode) {
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
+        SkylliaAPI.getScheduler()
+                .runTask(SchedulerType.SYNC, player, schedulerTask -> {
                     player.setGameMode(gameMode);
-                });
+                }, null);
     }
 
     private void teleportPlayerIsland(Main plugin, Player player, Location center) {
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                .execute(SchedulerType.ENTITY, player, schedulerTask -> {
-                    player.teleportAsync(center);
-                });
+        SkylliaAPI.getScheduler()
+                .runTask(SchedulerType.SYNC, player, schedulerTask -> {
+                    player.teleportAsync(center.add(0.5,0,0.5));
+                }, null);
     }
 
     private boolean setFirstHome(Island island, Location center) {

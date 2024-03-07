@@ -1,9 +1,8 @@
 package fr.euphyllia.skyllia.managers;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.managers.world.WorldsManager;
 
 public class Managers {
@@ -17,8 +16,8 @@ public class Managers {
     }
 
     public void init() {
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                .execute(SchedulerType.GLOBAL, schedulerTask -> {
+        SkylliaAPI.getScheduler()
+                .runTask(SchedulerType.GLOBAL, schedulerTask -> {
                     this.worldsManager.initWorld();
                 });
     }
