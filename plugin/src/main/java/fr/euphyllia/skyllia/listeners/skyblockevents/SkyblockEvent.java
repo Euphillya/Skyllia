@@ -110,12 +110,10 @@ public class SkyblockEvent implements Listener {
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
             SkylliaAPI.getScheduler().runTask(SchedulerType.SYNC, futurLocation, schedulerTask -> {
                         if (WorldUtils.isSafeLocation(futurLocation)) {
-                            Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
                             SkylliaAPI.getScheduler()
                                     .runTask(SchedulerType.SYNC, player, playerTask -> {
                                         player.teleportAsync(futurLocation);
-                                        this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
-                                    }, null);
+                                        }, null);
                         } else {
                             LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
                         }

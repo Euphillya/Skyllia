@@ -161,7 +161,7 @@ public class CreateSubCommand implements SubCommandInterface {
     private void teleportPlayerIsland(Main plugin, Player player, Location center) {
         SkylliaAPI.getScheduler()
                 .runTask(SchedulerType.SYNC, player, schedulerTask -> {
-                    player.teleportAsync(center.add(0.5,0,0.5));
+                    player.teleportAsync(center);
                 }, null);
     }
 
