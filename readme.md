@@ -2,7 +2,7 @@
 
 - FR_FR : https://github.com/Euphillya/Skyllia/wiki
 - EN_EN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/en_en/all_files
-- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_CN/all_files
+- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_cn/all_files
 
 ## Contact :
 
