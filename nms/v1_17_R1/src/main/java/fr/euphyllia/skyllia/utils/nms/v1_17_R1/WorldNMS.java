@@ -10,6 +10,8 @@ import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 
 public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
@@ -36,6 +38,10 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
         final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);
         final Iterable<BlockPos> blockPosIterable = BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinBuildHeight(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxBuildHeight() - 1, chunkPos.getMaxBlockZ());
+        for (Entity entity : serverLevel.getChunkEntities(position.x(), position.z())) {
+            if (entity instanceof Player) continue;
+            entity.remove();
+        }
         for (final BlockPos blockPos : blockPosIterable) {
             levelChunk.removeBlockEntity(blockPos);
             serverLevel.setBlock(blockPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 16);
