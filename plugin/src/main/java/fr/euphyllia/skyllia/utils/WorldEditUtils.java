@@ -90,9 +90,9 @@ public class WorldEditUtils {
                 return;
             }
             SkylliaAPI.getScheduler()
-                    .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(w, chunKPosition.x(), chunKPosition.z()), delay.getAndIncrement(), t -> {
+                    .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(w, chunKPosition.x(), chunKPosition.z()), t -> {
                         plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition);
-                    });
+                    }, delay.getAndIncrement());
         });
     }
 
@@ -112,7 +112,7 @@ public class WorldEditUtils {
                     return;
                 }
                 SkylliaAPI.getScheduler()
-                        .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(world, chunKPosition.x(), chunKPosition.z()), delay.getAndIncrement(), t -> {
+                        .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(world, chunKPosition.x(), chunKPosition.z()), t -> {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
                                     for (int y = 0; y < world.getMaxHeight(); y++) {
@@ -121,7 +121,7 @@ public class WorldEditUtils {
                                     }
                                 }
                             }
-                        });
+                        }, delay.getAndIncrement());
             });
         } finally {
             completableFuture.complete(true);
