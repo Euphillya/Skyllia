@@ -1,13 +1,12 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -35,8 +34,8 @@ public class DeleteSubCommand implements SubCommandInterface {
         Player bPlayer = Bukkit.getPlayer(players.getMojangId());
         if (bPlayer != null && bPlayer.isOnline()) {
             PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                    .execute(SchedulerType.ENTITY, bPlayer, schedulerTask -> {
+            SkylliaAPI.getScheduler()
+                    .runTask(SchedulerType.SYNC, bPlayer, schedulerTask -> {
                         if (ConfigToml.clearInventoryWhenDeleteIsland) {
                             bPlayer.getInventory().clear();
                         }
@@ -48,7 +47,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                             bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
                         }
                         bPlayer.setGameMode(GameMode.SURVIVAL);
-                    });
+                    }, null);
         } else {
             skyblockManager.addClearMemberNextLogin(players.getMojangId());
         }

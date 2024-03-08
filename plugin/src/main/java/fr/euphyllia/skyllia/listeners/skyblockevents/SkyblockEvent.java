@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.listeners.skyblockevents;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
@@ -10,8 +11,6 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -109,11 +108,12 @@ public class SkyblockEvent implements Listener {
             }
             Location playerLocation = player.getLocation();
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                    .execute(SchedulerType.REGION, futurLocation, schedulerTask -> {
+            SkylliaAPI.getScheduler().runTask(SchedulerType.SYNC, futurLocation, schedulerTask -> {
                         if (WorldUtils.isSafeLocation(futurLocation)) {
-                            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                                    .execute(SchedulerType.ENTITY, player, playerTask -> player.teleportAsync(futurLocation));
+                            SkylliaAPI.getScheduler()
+                                    .runTask(SchedulerType.SYNC, player, playerTask -> {
+                                        player.teleportAsync(futurLocation);
+                                        }, null);
                         } else {
                             LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
                         }

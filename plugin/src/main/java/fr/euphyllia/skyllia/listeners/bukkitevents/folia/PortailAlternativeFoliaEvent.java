@@ -1,10 +1,9 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.folia;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -62,8 +61,8 @@ public class PortailAlternativeFoliaEvent implements Listener {
             return;
         }
         // Obtenez le bloc sur lequel le joueur se tient
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                .execute(SchedulerType.ASYNC, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler()
+                .runTask(SchedulerType.ASYNC, schedulerTask -> {
                     if (blockType == Material.NETHER_PORTAL) {
                         ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
                     }

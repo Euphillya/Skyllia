@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.*;
@@ -10,8 +11,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -72,8 +71,8 @@ public class IslandHook extends Island {
         }
         this.size = rayon;
         if (Boolean.TRUE.equals(this.plugin.getInterneAPI().getSkyblockManager().setSizeIsland(this, rayon).join())) {
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                    .execute(SchedulerType.ASYNC, schedulerTask -> {
+            SkylliaAPI.getNativeScheduler()
+                    .runTask(SchedulerType.ASYNC, schedulerTask -> {
                         Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, rayon));
                     });
             return true;
@@ -179,8 +178,8 @@ public class IslandHook extends Island {
     public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
         if (isUpdated) {
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                    .execute(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions)));
+            SkylliaAPI.getNativeScheduler()
+                    .runTask(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions)));
             return true;
         } else {
             return false;
@@ -211,8 +210,8 @@ public class IslandHook extends Island {
     public boolean updateGamerule(long gameRuleIsland) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updateGamerule(this, gameRuleIsland).join();
         if (isUpdated) {
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                    .execute(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleIsland)));
+            SkylliaAPI.getNativeScheduler()
+                    .runTask(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleIsland)));
             return true;
         } else {
             return false;

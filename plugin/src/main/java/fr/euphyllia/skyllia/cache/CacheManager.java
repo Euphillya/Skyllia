@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.cache;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -9,8 +10,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,8 +40,8 @@ public class CacheManager {
     }
 
     public void deleteCacheIsland(Island island) {
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                .execute(SchedulerType.ASYNC, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler()
+                .runTask(SchedulerType.ASYNC, schedulerTask -> {
                     UUID islandId = island.getId();
                     // ============= player cache
                     for (Players players : island.getMembers()) {
@@ -67,8 +66,8 @@ public class CacheManager {
     }
 
     public void updateCacheIsland(Island island, UUID playerId) {
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                .execute(SchedulerType.ASYNC, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler()
+                .runTask(SchedulerType.ASYNC, schedulerTask -> {
                     // ============= player cache
                     PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());
                     PlayersInIslandCache.add(island.getId(), island.getMembers());

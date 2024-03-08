@@ -1,11 +1,10 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
@@ -32,8 +31,8 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onLoadIslandInJoinEvent(PlayerJoinEvent playerJoinEvent) {
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                .execute(SchedulerType.ASYNC, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler()
+                .runTask(SchedulerType.ASYNC, schedulerTask -> {
                     Player player = playerJoinEvent.getPlayer();
                     SkyblockManager skyblockManager = this.api.getSkyblockManager();
                     Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
@@ -53,14 +52,14 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
-        SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                .execute(SchedulerType.ASYNC, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler()
+                .runTask(SchedulerType.ASYNC, schedulerTask -> {
                     Player player = playerLoginEvent.getPlayer();
                     boolean exist = this.api.getSkyblockManager().checkClearMemberExist(player.getUniqueId()).join();
                     if (!exist) return;
                     this.api.getSkyblockManager().deleteClearMember(player.getUniqueId());
-                    SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                            .execute(SchedulerType.ENTITY, player, schedulerTask1 -> {
+                    SkylliaAPI.getScheduler()
+                            .runTask(SchedulerType.SYNC, player, schedulerTask1 -> {
                                 if (ConfigToml.clearInventoryWhenDeleteIsland) {
                                     player.getInventory().clear();
                                 }
@@ -72,7 +71,7 @@ public class JoinEvent implements Listener {
                                     player.sendExperienceChange(0, 0); // Mise à jour du packet
                                 }
                                 player.setGameMode(GameMode.SURVIVAL);
-                            });
+                            }, null);
                 });
 
     }

@@ -1,9 +1,8 @@
 package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -82,9 +81,8 @@ public class Metrics {
                         enabled,
                         this::appendPlatformData,
                         this::appendServiceData,
-                        submitDataTask -> SkylliaAPI.getSchedulerTask()
-                                .getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                                .execute(SchedulerType.GLOBAL, schedulerTask -> submitDataTask.run()),
+                        submitDataTask -> SkylliaAPI.getScheduler()
+                                .runTask(SchedulerType.SYNC, schedulerTask -> submitDataTask.run()),
                         plugin::isEnabled,
                         (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                         (message) -> this.plugin.getLogger().log(Level.INFO, message),

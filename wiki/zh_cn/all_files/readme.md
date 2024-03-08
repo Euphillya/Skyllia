@@ -2,7 +2,7 @@
 
 - FR_FR : https://github.com/Euphillya/Skyllia/wiki
 - EN_EN : not yet available
-- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_CN/all_files
+- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_cn/all_files
 
 ## 联系我们 :
 
@@ -12,7 +12,7 @@
 
 - FR_FR : https://github.com/Euphillya/Skyllia/wiki
 - EN_EN : not yet available
-- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_CN/all_files
+- ZH_CN : https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_cn/all_files
 
 ## Skyllia是什么
 

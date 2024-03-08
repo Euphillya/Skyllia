@@ -1,13 +1,12 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.database.query.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.utils.RegionUtils;
@@ -140,9 +139,8 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             return false;
         }
 
-        SkylliaAPI.getSchedulerTask()
-                .getScheduler(SchedulerTask.SchedulerSoft.NATIVE)
-                .runDelayed(SchedulerType.ASYNC, 1, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler()
+                .runDelayed(SchedulerType.ASYNC, schedulerTask -> {
                     for (int i = 1; i < ConfigToml.maxIsland; i++) {
                         Position position = RegionUtils.getPositionNewIsland(i);
                         try {
@@ -151,7 +149,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
                             return; // ignore
                         }
                     }
-                });
+                }, 1);
         return true;
     }
 }

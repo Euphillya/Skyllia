@@ -14,17 +14,15 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
+import fr.euphyllia.energie.model.MultipleRecords;
+import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.api.utils.scheduler.SchedulerTask;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.MultipleRecords;
-import fr.euphyllia.skyllia.api.utils.scheduler.model.SchedulerType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -32,14 +30,12 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.LinkedHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class WorldEditUtils {
 
@@ -93,10 +89,10 @@ public class WorldEditUtils {
             if (deleteChunkPerimeterIsland && chunkDeleted.getAndAdd(1) >= numberChunkInIsland.get()) {
                 return;
             }
-            SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                    .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(w, chunKPosition.x(), chunKPosition.z()), delay.getAndIncrement(), t -> {
+            SkylliaAPI.getScheduler()
+                    .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(w, chunKPosition.x(), chunKPosition.z()), t -> {
                         plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition);
-                    });
+                    }, delay.getAndIncrement());
         });
     }
 
@@ -115,8 +111,8 @@ public class WorldEditUtils {
                     completableFuture.complete(true);
                     return;
                 }
-                SkylliaAPI.getSchedulerTask().getScheduler(SchedulerTask.SchedulerSoft.MINECRAFT)
-                        .runDelayed(SchedulerType.REGION, new MultipleRecords.WorldChunk(world, chunKPosition.x(), chunKPosition.z()), delay.getAndIncrement(), t -> {
+                SkylliaAPI.getScheduler()
+                        .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(world, chunKPosition.x(), chunKPosition.z()), t -> {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
                                     for (int y = 0; y < world.getMaxHeight(); y++) {
@@ -125,7 +121,7 @@ public class WorldEditUtils {
                                     }
                                 }
                             }
-                        });
+                        }, delay.getAndIncrement());
             });
         } finally {
             completableFuture.complete(true);
