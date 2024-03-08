@@ -92,11 +92,11 @@ public class InventoryEvent implements Listener {
             case SMITHING_NEW -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SMITHING_NEW, event);
             }
+            case CRAFTER -> {
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CRAFTER, event);
+            }
             default -> {
-                // TODO sera remplace plus tard
-                if (inventoryType.name().equalsIgnoreCase("CRAFTER")) {
-                    ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CRAFTER, event);
-                }
+
             }
         }
     }
