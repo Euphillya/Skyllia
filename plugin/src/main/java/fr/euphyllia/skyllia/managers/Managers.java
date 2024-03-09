@@ -17,7 +17,7 @@ public class Managers {
 
     public void init() {
         SkylliaAPI.getScheduler()
-                .runTask(SchedulerType.GLOBAL, schedulerTask -> {
+                .runTask(SchedulerType.SYNC, schedulerTask -> {
                     this.worldsManager.initWorld();
                 });
     }
