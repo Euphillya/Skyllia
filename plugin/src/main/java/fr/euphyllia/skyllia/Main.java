@@ -147,7 +147,7 @@ public class Main extends JavaPlugin {
     }
 
     private void runCache() {
-        SkylliaAPI.getNativeScheduler().scheduleSyncRepeating(SchedulerType.ASYNC, schedulerTask -> {
+        SkylliaAPI.getNativeScheduler().runAtFixedRate(SchedulerType.ASYNC, schedulerTask -> {
                     Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
                 }, 0, ConfigToml.updateCacheTimer * 20L);
     }
