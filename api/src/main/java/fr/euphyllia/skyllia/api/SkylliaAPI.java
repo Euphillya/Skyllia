@@ -5,7 +5,9 @@ import fr.euphyllia.energie.model.Scheduler;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -40,11 +42,20 @@ public final class SkylliaAPI {
     public static Scheduler getScheduler() {
         return energie.getScheduler(Energie.SchedulerSoft.MINECRAFT);
     }
+
     public static Scheduler getNativeScheduler() {
         return energie.getScheduler(Energie.SchedulerSoft.NATIVE);
     }
 
     public static boolean isFolia() {
         return Energie.isFolia();
+    }
+
+    public @NotNull Boolean isWorldSkyblock(String name) {
+        return implementation.isWorldSkyblock(name);
+    }
+
+    public @NotNull Boolean isWorldSkyblock(World world) {
+        return implementation.isWorldSkyblock(world);
     }
 }

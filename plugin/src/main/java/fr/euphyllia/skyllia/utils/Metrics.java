@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.utils;
 
-import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.energie.model.SchedulerType;
+import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;

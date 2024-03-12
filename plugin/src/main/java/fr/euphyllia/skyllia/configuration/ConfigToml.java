@@ -41,6 +41,7 @@ public class ConfigToml {
     public static int updateCacheTimer = 60;
     public static int regionDistance = -1;
     public static boolean deleteChunkPerimeterIsland = false;
+    public static boolean suppressWarningNetherEndEnabled = false;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -199,6 +200,7 @@ public class ConfigToml {
         maxIsland = getInt("config.max-island", maxIsland);
         regionDistance = getInt("config.region-distance-per-island", regionDistance);
         deleteChunkPerimeterIsland = getBoolean("config.optimization.delete-chunk-perimeter-island", deleteChunkPerimeterIsland);
+        suppressWarningNetherEndEnabled = getBoolean("config.suppress-warning-nether-end-world-enabled", suppressWarningNetherEndEnabled);
     }
 
     private static void typeIsland() {

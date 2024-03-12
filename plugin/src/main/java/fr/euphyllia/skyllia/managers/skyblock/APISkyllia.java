@@ -6,7 +6,10 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.PositionIslandCache;
+import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -40,5 +43,15 @@ public final class APISkyllia implements SkylliaImplementation {
     public @Nullable Island getIslandByChunk(Chunk chunk) {
         Position position = RegionHelper.getRegionInChunk(chunk.getX(), chunk.getZ());
         return PositionIslandCache.getIsland(position);
+    }
+
+    @Override
+    public @NotNull Boolean isWorldSkyblock(String name) {
+        return WorldUtils.isWorldSkyblock(name);
+    }
+
+    @Override
+    public @NotNull Boolean isWorldSkyblock(World world) {
+        return WorldUtils.isWorldSkyblock(world.getName());
     }
 }

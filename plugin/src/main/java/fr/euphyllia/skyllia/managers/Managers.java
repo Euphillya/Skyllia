@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.managers;
 
-import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.energie.model.SchedulerType;
+import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.managers.world.WorldsManager;
 

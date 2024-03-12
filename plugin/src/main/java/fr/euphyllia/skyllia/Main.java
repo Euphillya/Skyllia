@@ -148,12 +148,17 @@ public class Main extends JavaPlugin {
 
     private void runCache() {
         SkylliaAPI.getNativeScheduler().runAtFixedRate(SchedulerType.ASYNC, schedulerTask -> {
-                    Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
-                }, 0, ConfigToml.updateCacheTimer * 20L);
+            Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
+        }, 0, ConfigToml.updateCacheTimer * 20L);
     }
 
     private void disabledConfig() {
-        if (SkylliaAPI.isFolia()) {
+        /*
+          Since 1.20.3, there is a gamerule that allows you to increase the number of ticks between entering a portal and teleporting.
+          This makes the configuration possibly useless.
+          BUT just in case, I leave the message enabled by default.
+         */
+        if (SkylliaAPI.isFolia() && !ConfigToml.suppressWarningNetherEndEnabled) { // D
             if (Bukkit.getAllowNether()) {
                 logger.log(Level.WARN, "Disable nether in server.properties to disable nether portals!");
             }

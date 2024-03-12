@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.api.event;
 
-import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

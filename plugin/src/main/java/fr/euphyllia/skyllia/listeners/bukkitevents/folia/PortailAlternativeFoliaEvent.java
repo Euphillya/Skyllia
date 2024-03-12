@@ -44,9 +44,6 @@ public class PortailAlternativeFoliaEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTouchPortal(final PlayerMoveEvent event) {
         if (event.isCancelled()) return;
-        if (!SkylliaAPI.isFolia()) {
-            return;
-        }
         Player player = event.getPlayer();
         Location location = player.getLocation();
         Material blockType = location.getBlock().getType();
