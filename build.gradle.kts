@@ -48,7 +48,7 @@ allprojects {
     }
 
     dependencies {
-        implementation("com.github.Euphillya:Energie:5659f25e22")
+        implementation("com.github.Euphillya:Energie:1.1.4")
     }
 
     tasks.withType<ShadowJar> {
