@@ -26,7 +26,7 @@ public class MariaDB extends ConfigToml {
 
     private String port() {
         String port = "3306";
-        if (dbVersion < 3 ) {
+        if (dbVersion < 3) {
             port = getString(path.formatted("host"), port);
             remove(path.formatted("host"));
         }
