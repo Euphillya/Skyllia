@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class InviteSubCommand implements SubCommandInterface {
 
@@ -74,6 +75,8 @@ public class InviteSubCommand implements SubCommandInterface {
         List<String> value = new ArrayList<>();
         if (args.length == 1) {
             return List.of("accept", "decline", "add");
+        } else if (args.length == 2) {
+            return Bukkit.getOnlinePlayers().stream().map(CommandSender::getName).collect(Collectors.toList());
         }
         return value;
     }
