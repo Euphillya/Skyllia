@@ -38,11 +38,10 @@ public class RegionHelper {
     }
 
     public static boolean isBlockWithinRadius(Location center, int blockX, int blockZ, double radius) {
-        double dx = (double) center.getBlockX() - blockX;
-        double dz = (double) center.getBlockZ() - blockZ;
-        double distance = Math.sqrt(dx * dx + dz * dz);
+        int centerX = center.getBlockX();
+        int centerZ = center.getBlockZ();
 
-        return distance <= radius;
+        return Math.abs(centerX - blockX) <= radius && Math.abs(centerZ - blockZ) <= radius;
     }
 
     public static List<Position> getRegionsInRadius(Position position, int blockRadius) {
@@ -50,11 +49,11 @@ public class RegionHelper {
     }
 
     public static List<Position> getRegionsInRadius(int regionX, int regionZ, int blockRadius) {
-        int centerBlockX = (regionX << 9) + (int) OFFSET;
-        int centerBlockZ = (regionZ << 9) + (int) OFFSET;
+        int centerBlockX = (regionX << 9) + (int) 256D;
+        int centerBlockZ = (regionZ << 9) + (int) 256D;
 
         List<Position> regions = new ArrayList<>();
-        int regionRadius = (blockRadius + (int) OFFSET) >> 9;
+        int regionRadius = (blockRadius + (int) 256D) >> 9;
 
         for (int x = -regionRadius; x <= regionRadius; x++) {
             for (int z = -regionRadius; z <= regionRadius; z++) {
