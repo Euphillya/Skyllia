@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Level;
 public class MariaDB extends ConfigToml {
 
     private String path = "sgbd.mariadb.%s";
-    private int dbVersion = 2;
+    private int dbVersion = 3;
 
     private DatabaseType databaseType() {
         String value = getString(path.formatted("type"), DatabaseType.MARIADB.name());
@@ -25,7 +25,12 @@ public class MariaDB extends ConfigToml {
     }
 
     private String port() {
-        return getString(path.formatted("host"), "3306");
+        String port = "3306";
+        if (dbVersion < 3 ) {
+            port = getString(path.formatted("host"), port);
+            remove(path.formatted("host"));
+        }
+        return getString(path.formatted("port"), port);
     }
 
     private String username() {
