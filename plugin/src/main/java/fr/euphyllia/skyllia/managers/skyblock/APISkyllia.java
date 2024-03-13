@@ -17,7 +17,6 @@ import java.util.concurrent.CompletableFuture;
 
 public final class APISkyllia implements SkylliaImplementation {
 
-
     private final InterneAPI interneAPI;
 
     public APISkyllia(InterneAPI interneAPI) {

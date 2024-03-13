@@ -72,7 +72,7 @@ public class MariaDBIslandData extends IslandDataQuery {
                 if (resultSet.next()) {
                     Island island = this.constructIslandQuery(resultSet);
                     completableFuture.complete(island);
-                    Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+                    CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island)));
                 } else {
                     completableFuture.complete(null);
                 }
@@ -91,7 +91,7 @@ public class MariaDBIslandData extends IslandDataQuery {
                 if (resultSet.next()) {
                     Island island = this.constructIslandQuery(resultSet);
                     completableFuture.complete(island);
-                    Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+                    CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island)));
                 } else {
                     completableFuture.complete(null);
                 }
