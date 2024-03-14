@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "fr.euphyllia";
-version = "1.0-RC6";
+version = "1.0-RC7-SNAPSHOT";
 description = "Plugin Skyblock pour Folia / PaperMC";
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
@@ -49,10 +49,12 @@ allprojects {
 
     dependencies {
         implementation("com.github.Euphillya:Energie:1.1.4")
+        implementation("io.papermc:paperlib:1.0.7")
     }
 
     tasks.withType<ShadowJar> {
         relocate("fr.euphyllia.energie", "fr.euphyllia.skyllia.dependency.energie")
+        relocate("io.papermc.lib", "fr.euphyllia.skyllia.dependency.paperlib")
     }
 
     tasks {

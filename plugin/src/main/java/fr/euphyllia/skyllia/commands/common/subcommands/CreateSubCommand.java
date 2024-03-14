@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
@@ -101,7 +102,7 @@ public class CreateSubCommand implements SubCommandInterface {
                     if (isFirstIteration) {
                         this.setFirstHome(island, centerPaste);
                         this.setPermissionsRole(island);
-                        this.teleportPlayerIsland(plugin, player, centerPaste);
+                        this.teleportPlayerIsland(player, centerPaste);
                         this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(island, player);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.getSize(), 0, 0);
@@ -158,11 +159,8 @@ public class CreateSubCommand implements SubCommandInterface {
                 }, null);
     }
 
-    private void teleportPlayerIsland(Main plugin, Player player, Location center) {
-        SkylliaAPI.getScheduler()
-                .runTask(SchedulerType.SYNC, player, schedulerTask -> {
-                    player.teleportAsync(center);
-                }, null);
+    private void teleportPlayerIsland(Player player, Location center) {
+        SupportSpigot.asyncTeleportEntity(player, center);
     }
 
     private boolean setFirstHome(Island island, Location center) {

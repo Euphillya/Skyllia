@@ -24,6 +24,7 @@ import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.utils.Metrics;
+import io.papermc.lib.PaperLib;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,6 +82,7 @@ public class Main extends JavaPlugin {
         this.disabledConfig();
 
         new Metrics(this.interneAPI, 20874);
+        PaperLib.suggestPaper(this);
     }
 
     @Override

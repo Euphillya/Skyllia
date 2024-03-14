@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -69,7 +70,7 @@ public class WarpSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            player.teleportAsync(warp.location());
+            SupportSpigot.asyncTeleportEntity(player, warp.location());
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpTeleportSuccess);
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

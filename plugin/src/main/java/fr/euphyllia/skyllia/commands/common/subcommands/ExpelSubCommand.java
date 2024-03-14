@@ -50,7 +50,7 @@ public class ExpelSubCommand implements SubCommandInterface {
             return;
         }
 
-        PlayerUtils.teleportPlayerSpawn(plugin, bPlayerToExpel);
+        PlayerUtils.teleportPlayerSpawn(bPlayerToExpel);
     }
 
     @Override

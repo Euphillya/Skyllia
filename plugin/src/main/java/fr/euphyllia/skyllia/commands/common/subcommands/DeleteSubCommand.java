@@ -33,7 +33,7 @@ public class DeleteSubCommand implements SubCommandInterface {
     public static void checkClearPlayer(Main plugin, SkyblockManager skyblockManager, Players players) {
         Player bPlayer = Bukkit.getPlayer(players.getMojangId());
         if (bPlayer != null && bPlayer.isOnline()) {
-            PlayerUtils.teleportPlayerSpawn(plugin, bPlayer);
+            PlayerUtils.teleportPlayerSpawn(bPlayer);
             SkylliaAPI.getScheduler()
                     .runTask(SchedulerType.SYNC, bPlayer, schedulerTask -> {
                         if (ConfigToml.clearInventoryWhenDeleteIsland) {

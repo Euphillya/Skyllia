@@ -38,7 +38,7 @@ public class JoinEvent implements Listener {
                     Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
                     if (island == null) {
-                        PlayerUtils.teleportPlayerSpawn(this.api.getPlugin(), player);
+                        PlayerUtils.teleportPlayerSpawn(player);
                     } else {
                         this.api.updateCache(player);
                         World world = player.getLocation().getWorld();

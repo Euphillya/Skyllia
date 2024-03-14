@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -60,7 +61,7 @@ public class HomeSubCommand implements SubCommandInterface {
                         } else {
                             loc = warpIsland.location();
                         }
-                        player.teleportAsync(loc);
+                        SupportSpigot.asyncTeleportEntity(player, loc);
                         player.setGameMode(GameMode.SURVIVAL);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);

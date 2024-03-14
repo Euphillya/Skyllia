@@ -72,7 +72,7 @@ public class AccessSubCommand implements SubCommandInterface {
                         if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
                         Players players = island.getMember(playerInIsland.getUniqueId());
                         if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
-                            PlayerUtils.teleportPlayerSpawn(plugin, playerInIsland);
+                            PlayerUtils.teleportPlayerSpawn(playerInIsland);
                         }
                     });
                 });

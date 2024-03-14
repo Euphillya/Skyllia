@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEv
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
+import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
@@ -110,10 +111,7 @@ public class SkyblockEvent implements Listener {
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
             SkylliaAPI.getScheduler().runTask(SchedulerType.SYNC, futurLocation, schedulerTask -> {
                 if (WorldUtils.isSafeLocation(futurLocation)) {
-                    SkylliaAPI.getScheduler()
-                            .runTask(SchedulerType.SYNC, player, playerTask -> {
-                                player.teleportAsync(futurLocation);
-                            }, null);
+                    SupportSpigot.asyncTeleportEntity(player, futurLocation);
                 } else {
                     LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
                 }
