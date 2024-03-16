@@ -48,15 +48,13 @@ allprojects {
     }
 
     dependencies {
-        implementation("com.github.Euphillya:Energie:1.1.4")
-        implementation("io.papermc:paperlib:1.0.7")
+        implementation("com.github.Euphillya:Energie:1.1.5")
         implementation("com.github.Euphillya:SGBD-MariaDB:1.1")
     }
 
     tasks.withType<ShadowJar> {
         relocate("fr.euphyllia.energie", "fr.euphyllia.skyllia.dependency.energie")
         relocate("fr.euphyllia.sgbd", "fr.euphyllia.skyllia.dependency.sgbd")
-        relocate("io.papermc.lib", "fr.euphyllia.skyllia.dependency.paperlib")
     }
 
     tasks {

@@ -1,13 +1,11 @@
 package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.energie.model.SchedulerType;
-import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.players.PlayerTeleportSpawnEvent;
 import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class PlayerUtils {
 
