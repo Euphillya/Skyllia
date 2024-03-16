@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.managers.skyblock;
+package fr.euphyllia.skyllia.api.skyblock;
 
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.Permissions;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;

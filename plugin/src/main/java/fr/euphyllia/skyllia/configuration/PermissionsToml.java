@@ -5,7 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsInventory;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
-import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
+import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

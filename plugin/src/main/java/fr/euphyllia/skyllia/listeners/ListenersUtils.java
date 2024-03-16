@@ -14,7 +14,7 @@ import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.PositionIslandCache;
-import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
+import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;

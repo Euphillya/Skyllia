@@ -10,7 +10,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
-import fr.euphyllia.skyllia.managers.skyblock.PermissionManager;
+import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.RegionUtils;
