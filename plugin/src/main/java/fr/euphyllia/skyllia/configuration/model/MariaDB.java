@@ -1,14 +1,14 @@
 package fr.euphyllia.skyllia.configuration.model;
 
+import fr.euphyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.configuration.DatabaseType;
-import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.apache.logging.log4j.Level;
 
 public class MariaDB extends ConfigToml {
 
-    private String path = "sgbd.mariadb.%s";
-    private int dbVersion = 3;
+    private final String path = "sgbd.mariadb.%s";
+    private final int dbVersion = 3;
 
     private DatabaseType databaseType() {
         String value = getString(path.formatted("type"), DatabaseType.MARIADB.name());
@@ -62,6 +62,6 @@ public class MariaDB extends ConfigToml {
     }
 
     public MariaDBConfig getConstructor() {
-        return new MariaDBConfig(databaseType(), hostname(), port(), username(), password(), useSSL(), maxPool(), timeOut(), database(), version());
+        return new MariaDBConfig(hostname(), port(), username(), password(), useSSL(), maxPool(), timeOut(), database(), version());
     }
 }

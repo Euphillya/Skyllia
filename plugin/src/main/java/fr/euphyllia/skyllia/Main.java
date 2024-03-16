@@ -2,9 +2,9 @@ package fr.euphyllia.skyllia;
 
 
 import fr.euphyllia.energie.model.SchedulerType;
+import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;

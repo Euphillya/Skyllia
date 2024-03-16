@@ -1,10 +1,10 @@
 package fr.euphyllia.skyllia.api;
 
+import fr.euphyllia.sgbd.DatabaseLoader;
+import fr.euphyllia.sgbd.MariaDB;
+import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.configuration.ConfigInitializer;
-import fr.euphyllia.skyllia.api.database.DatabaseLoader;
-import fr.euphyllia.skyllia.api.database.sgbd.MariaDB;
-import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;

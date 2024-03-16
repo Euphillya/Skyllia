@@ -1,11 +1,11 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.energie.model.SchedulerType;
+import fr.euphyllia.sgbd.configuration.MariaDBConfig;
+import fr.euphyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
-import fr.euphyllia.skyllia.api.database.execute.MariaDBExecute;
-import fr.euphyllia.skyllia.api.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.database.query.DatabaseInitializeQuery;

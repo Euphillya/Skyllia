@@ -3,7 +3,7 @@ package fr.euphyllia.skyllia.configuration;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.ImmutableMap;
-import fr.euphyllia.skyllia.api.configuration.MariaDBConfig;
+import fr.euphyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
