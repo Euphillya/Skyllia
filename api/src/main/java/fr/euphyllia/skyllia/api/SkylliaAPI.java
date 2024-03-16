@@ -51,11 +51,11 @@ public final class SkylliaAPI {
         return Energie.isFolia();
     }
 
-    public @NotNull Boolean isWorldSkyblock(String name) {
+    public static @NotNull Boolean isWorldSkyblock(String name) {
         return implementation.isWorldSkyblock(name);
     }
 
-    public @NotNull Boolean isWorldSkyblock(World world) {
+    public static @NotNull Boolean isWorldSkyblock(World world) {
         return implementation.isWorldSkyblock(world);
     }
 }
