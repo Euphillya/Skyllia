@@ -222,4 +222,9 @@ public class IslandHook extends Island {
     public long getGameRulePermission() {
         return this.plugin.getInterneAPI().getSkyblockManager().getGameRulePermission(this).join();
     }
+
+    @Override
+    public long getPermission(PermissionsType permissionsType, RoleType roleType) {
+        return this.plugin.getInterneAPI().getSkyblockManager().getPermissionIsland(this.islandId, permissionsType, roleType).join().permission();
+    }
 }

@@ -62,4 +62,6 @@ public abstract class Island {
     public abstract boolean updateGamerule(long gamerules);
 
     public abstract long getGameRulePermission();
+
+    public abstract long getPermission(PermissionsType permissionsType, RoleType roleType);
 }
