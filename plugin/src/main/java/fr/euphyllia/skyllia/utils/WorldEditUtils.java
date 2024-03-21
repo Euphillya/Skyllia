@@ -81,7 +81,7 @@ public class WorldEditUtils {
         }
         Position position = island.getPosition();
         AtomicInteger chunkDeleted = new AtomicInteger(0);
-        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getNumberChunkTotalInPerimeter((int) island.getSize() + 16)); // add secure distance 1 chunk
+        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getNumberChunkTotalInPerimeter((int) island.getSize() + 32)); // add secure distance 2 chunk
         AtomicInteger delay = new AtomicInteger(1);
         boolean deleteChunkPerimeterIsland = ConfigToml.deleteChunkPerimeterIsland;
         RegionUtils.spiralStartCenter(position, island.getSize(), chunKPosition -> {
