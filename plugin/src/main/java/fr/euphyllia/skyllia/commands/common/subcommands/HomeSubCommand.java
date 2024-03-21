@@ -40,8 +40,6 @@ public class HomeSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-        SkylliaAPI.getScheduler()
-                .runTask(SchedulerType.SYNC, player, schedulerTask -> player.setGameMode(GameMode.SPECTATOR), null);
 
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
@@ -50,6 +48,8 @@ public class HomeSubCommand implements SubCommandInterface {
                 LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
+            SkylliaAPI.getScheduler()
+                    .runTask(SchedulerType.SYNC, player, schedulerTask -> player.setGameMode(GameMode.SPECTATOR), null);
 
             WarpIsland warpIsland = island.getWarpByName("home");
             double rayon = island.getSize();
