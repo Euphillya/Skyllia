@@ -40,11 +40,11 @@ public final class SkylliaAPI {
     }
 
     public static Scheduler getScheduler() {
-        return energie.getScheduler(Energie.SchedulerSoft.MINECRAFT);
+        return energie.getMinecraftScheduler();
     }
 
     public static Scheduler getNativeScheduler() {
-        return energie.getScheduler(Energie.SchedulerSoft.NATIVE);
+        return energie.getNativeScheduler();
     }
 
     public static boolean isFolia() {
