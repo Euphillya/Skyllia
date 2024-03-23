@@ -8,6 +8,12 @@ folia-supported: true
 depend:
   - WorldEdit
 
+libraries:
+  - com.zaxxer:HikariCP:5.1.0
+  - org.mariadb.jdbc:mariadb-java-client:3.3.2
+  - org.apache.logging.log4j:log4j-core:2.22.1
+  - org.apache.logging.log4j:log4j-api:2.22.1
+
 commands:
   skyllia:
     description: "Plugin Island"
