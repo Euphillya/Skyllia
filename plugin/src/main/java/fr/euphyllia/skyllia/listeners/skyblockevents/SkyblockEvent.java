@@ -110,8 +110,10 @@ public class SkyblockEvent implements Listener {
             Location playerLocation = player.getLocation();
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
             SkylliaAPI.getScheduler().runTask(SchedulerType.SYNC, futurLocation, schedulerTask -> {
-                if (WorldUtils.isSafeLocation(futurLocation)) {
-                    SupportSpigot.asyncTeleportEntity(player, futurLocation);
+                PlayerChangeWorldSkyblockEvent playerChangeWorldSkyblockEvent = new PlayerChangeWorldSkyblockEvent(player, event.getPortalType(), futurLocation, true);
+                Bukkit.getPluginManager().callEvent(playerChangeWorldSkyblockEvent);
+                if (!playerChangeWorldSkyblockEvent.checkSafeLocation() || WorldUtils.isSafeLocation(playerChangeWorldSkyblockEvent.getTo())) {
+                    SupportSpigot.asyncTeleportEntity(player, playerChangeWorldSkyblockEvent.getTo());
                 } else {
                     LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
                 }
