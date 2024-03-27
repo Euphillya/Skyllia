@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateSubCommand implements SubCommandInterface {
 
@@ -52,15 +54,12 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        SkylliaAPI.getScheduler()
-                .runTask(SchedulerType.SYNC, player, schedulerTask -> {
-                    player.setGameMode(GameMode.SPECTATOR);
-                }, null);
+        this.setGameMode(player, GameMode.SPECTATOR);
 
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
-            if (island == null) {
+            AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByOwner(player.getUniqueId()).join());
+            if (islandAtomic.get() == null) {
                 String schemKey = args.length == 0 ? "" : args[0];
                 if (schemKey.isEmpty()) {
                     schemKey = ConfigToml.schematicWorldMap.keySet().iterator().next();
@@ -89,25 +88,25 @@ public class CreateSubCommand implements SubCommandInterface {
                     LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
                     return true;
                 }
-                island = skyblockManager.getIslandByIslandId(idIsland).join();
-                Bukkit.getPluginManager().callEvent(new SkyblockCreateEvent(island, player.getUniqueId()));
+                islandAtomic.set(skyblockManager.getIslandByIslandId(idIsland).join());
+                CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockCreateEvent(islandAtomic.get(), player.getUniqueId())));
 
                 boolean isFirstIteration = true;
                 for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
                     String worldName = entry.getKey();
                     SchematicSetting schematicSetting = entry.getValue();
-                    Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
+                    Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), islandAtomic.get().getPosition().x(), islandAtomic.get().getPosition().z());
                     centerPaste.setY(schematicSetting.height());
-                    this.pasteSchematic(plugin, island, centerPaste, schematicSetting);
+                    this.pasteSchematic(plugin, islandAtomic.get(), centerPaste, schematicSetting);
                     if (isFirstIteration) {
-                        this.setFirstHome(island, centerPaste);
-                        this.setPermissionsRole(island);
+                        this.setFirstHome(islandAtomic.get(), centerPaste);
+                        this.setPermissionsRole(islandAtomic.get());
                         this.teleportPlayerIsland(player, centerPaste);
-                        this.restoreGameMode(plugin, player, GameMode.SURVIVAL);
-                        this.addOwnerIslandInMember(island, player);
-                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.getSize(), 0, 0);
+                        this.setGameMode(player, GameMode.SURVIVAL);
+                        this.addOwnerIslandInMember(islandAtomic.get(), player);
+                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
-                        Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+                        CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(islandAtomic.get())));
                         isFirstIteration = false;
                     }
                 }
@@ -116,7 +115,7 @@ public class CreateSubCommand implements SubCommandInterface {
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            this.restoreGameMode(plugin, player, olgGM);
+            this.setGameMode(player, olgGM);
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;
@@ -152,7 +151,7 @@ public class CreateSubCommand implements SubCommandInterface {
         }
     }
 
-    private void restoreGameMode(Main plugin, Player player, GameMode gameMode) {
+    private void setGameMode(Player player, GameMode gameMode) {
         SkylliaAPI.getScheduler()
                 .runTask(SchedulerType.SYNC, player, schedulerTask -> {
                     player.setGameMode(gameMode);
