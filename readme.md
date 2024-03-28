@@ -65,3 +65,7 @@ UUID islandId = playerIsland.getId();
 ## Generation Island
 
 Each island will be generated on a single region file with distance region configurable!
+
+## Addons
+ - [Insight Skyllia](https://github.com/Euphillya/Insights-Skyllia) by Euphyllia
+ - [PAPI Skyllia](https://github.com/Euphillya/Skyllia-PAPI) by Euphyllia
