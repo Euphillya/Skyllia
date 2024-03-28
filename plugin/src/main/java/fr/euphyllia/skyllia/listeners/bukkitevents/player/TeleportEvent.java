@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
+import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,21 +29,19 @@ public class TeleportEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTeleportOnIsland(final PlayerTeleportEvent event) {
+        if (VersionUtils.IS_PAPER) return; // Use : EntityInsideBlockEvent
         if (event.isCancelled()) {
             return;
         }
-        SkylliaAPI.getNativeScheduler()
-                .runTask(SchedulerType.ASYNC, schedulerTask -> {
-                    Location destination = event.getTo();
-                    PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
-                    if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
-                        ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
-                                PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, destination.getWorld().getName());
-                    } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
-                        ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
-                                PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, destination.getWorld().getName());
-                    }
-                });
+        Location destination = event.getTo();
+        PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
+        if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
+            ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
+                    PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, destination.getWorld().getName());
+        } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
+            ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
+                    PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, destination.getWorld().getName());
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

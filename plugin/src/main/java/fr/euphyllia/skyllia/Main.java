@@ -5,6 +5,7 @@ import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -13,12 +14,13 @@ import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.BlockEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.entity.DamageEvent;
-import fr.euphyllia.skyllia.listeners.bukkitevents.folia.PortailAlternativeFoliaEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.folia.PortalAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.BlockGameRuleEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.ExplosionEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.GriefingEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.MobSpawnEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.PickupEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.paper.PortalAlternativePaperEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyllia.managers.Managers;
@@ -131,8 +133,11 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
         pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.4
         pluginManager.registerEvents(new PistonEvent(this.interneAPI), this);
-        if (SkylliaAPI.isFolia()) {
-            pluginManager.registerEvents(new PortailAlternativeFoliaEvent(this.interneAPI), this);
+        if (VersionUtils.IS_FOLIA) {
+            pluginManager.registerEvents(new PortalAlternativeFoliaEvent(this.interneAPI), this);
+        }
+        if (VersionUtils.IS_PAPER) {
+            pluginManager.registerEvents(new PortalAlternativePaperEvent(), this);
         }
         // GameRule Events
         pluginManager.registerEvents(new BlockGameRuleEvent(this.interneAPI), this);
@@ -157,7 +162,7 @@ public class Main extends JavaPlugin {
           This makes the configuration possibly useless.
           BUT just in case, I leave the message enabled by default.
          */
-        if (SkylliaAPI.isFolia() && !ConfigToml.suppressWarningNetherEndEnabled) { // D
+        if (VersionUtils.IS_FOLIA && !ConfigToml.suppressWarningNetherEndEnabled) { // D
             if (Bukkit.getAllowNether()) {
                 logger.log(Level.WARN, "Disable nether in server.properties to disable nether portals!");
             }

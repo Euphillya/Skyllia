@@ -19,7 +19,6 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     private boolean cancel = false;
 
     public PlayerPrepareChangeWorldSkyblockEvent(Player player, WorldConfig wc, PortalType pt) {
-        super(true);
         this.player = player;
         this.worldConfig = wc;
         this.portalType = pt;
