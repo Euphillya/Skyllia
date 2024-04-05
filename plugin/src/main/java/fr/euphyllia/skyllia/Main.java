@@ -157,8 +157,8 @@ public class Main extends JavaPlugin {
     }
 
     private void disabledConfig() {
-        /*
-          Since 1.20.3, there is a gamerule that allows you to increase the number of ticks between entering a portal and teleporting.
+        /* is a gamerule that allows you to increase the number of ticks between entering a porta
+          Since 1.20.3, therel and teleporting.
           This makes the configuration possibly useless.
           BUT just in case, I leave the message enabled by default.
          */
