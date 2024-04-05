@@ -110,6 +110,11 @@ public class SkyblockEvent implements Listener {
             Location playerLocation = player.getLocation();
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
             SkylliaAPI.getScheduler().runTask(SchedulerType.SYNC, futurLocation, schedulerTask -> {
+                int y = world.getMinHeight();
+                while (!WorldUtils.isSafeLocation(futurLocation)) {
+                    if (futurLocation.getBlockY() >= world.getMaxHeight()) return;
+                    futurLocation.setY(y++);
+                }
                 PlayerChangeWorldSkyblockEvent playerChangeWorldSkyblockEvent = new PlayerChangeWorldSkyblockEvent(player, event.getPortalType(), futurLocation, true);
                 Bukkit.getPluginManager().callEvent(playerChangeWorldSkyblockEvent);
                 if (!playerChangeWorldSkyblockEvent.checkSafeLocation() || WorldUtils.isSafeLocation(playerChangeWorldSkyblockEvent.getTo())) {

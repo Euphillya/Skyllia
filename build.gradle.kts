@@ -49,7 +49,7 @@ allprojects {
 
     dependencies {
         implementation("com.github.Euphillya:Energie:1.2.0")
-        implementation("com.github.Euphillya:SGBD-MariaDB:1.2")
+        implementation("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
     }
 
     tasks.withType<ShadowJar> {
