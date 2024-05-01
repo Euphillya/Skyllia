@@ -5,6 +5,7 @@ plugins {
 dependencies {
     paperweight.paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
+    compileOnly("com.github.Euphillya:Energie:1.2.0")
 }
 
 tasks {

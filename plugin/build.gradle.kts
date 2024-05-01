@@ -12,6 +12,8 @@ dependencies {
     compileOnly("com.google.guava:guava:33.0.0-jre")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9") { isTransitive = false }
     compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") { isTransitive = false }
+    compileOnly("com.github.Euphillya:Energie:1.2.0")
+    compileOnly("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
 }
 
 java {

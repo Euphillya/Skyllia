@@ -5,6 +5,7 @@ plugins {
 dependencies {
     paperweight.foliaDevBundle("1.20.2-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
+    compileOnly("com.github.Euphillya:Energie:1.2.0")
 }
 
 tasks {
