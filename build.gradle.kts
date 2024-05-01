@@ -17,16 +17,17 @@ val engineHubRepo = "https://maven.enginehub.org/repo/";
 val jitpack = "https://jitpack.io";
 
 dependencies {
-    implementation(project(":nms:v1_17_R1", "reobf"))
+    /*implementation(project(":nms:v1_17_R1", "reobf"))
     implementation(project(":nms:v1_18_R1", "reobf"))
     implementation(project(":nms:v1_18_R2", "reobf"))
-    implementation(project(":nms:v1_19_R1", "reobf"))
+    implementation(project(":nms:v1_19_R1", "reobf"))*/
     implementation(project(":nms:v1_19_R2", "reobf"))
     implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_20_R1", "reobf"))
     implementation(project(":nms:v1_20_R2", "reobf"))
     implementation(project(":nms:v1_20_R3", "reobf"))
+    implementation(project(":nms:v1_20_R4", "reobf")) // 1.20.5-6
     implementation(project(":plugin"))
 
     testImplementation(platform("org.junit:junit-bom:5.9.2"))

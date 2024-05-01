@@ -1,5 +1,10 @@
+plugins {
+    id("io.papermc.paperweight.userdev") version "1.6.3" // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
+}
+
+
 dependencies {
-    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
+    paperweight.foliaDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnly("org.apache.logging.log4j:log4j-api:2.22.1")
     compileOnly("org.apache.logging.log4j:log4j-core:2.22.1")
     compileOnly("org.mariadb.jdbc:mariadb-java-client:3.3.2")
@@ -24,6 +29,15 @@ publishing {
         create("gpr", MavenPublication::class) {
             from(components["java"])
         }
+    }
+}
+
+tasks {
+    assemble {
+        dependsOn(reobfJar)
+    }
+    compileJava {
+        options.encoding = "UTF-8"
     }
 }
 
