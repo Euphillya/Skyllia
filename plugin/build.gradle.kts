@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT") { isTransitive = false }
     implementation(project(":api"))
     implementation(project(":nms:v1_19_R2"))
     implementation(project(":nms:v1_19_R3"))
@@ -14,9 +14,12 @@ dependencies {
     compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") { isTransitive = false }
     compileOnly("com.github.Euphillya:Energie:1.2.0")
     compileOnly("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
+    compileOnly("org.apache.logging.log4j:log4j-core:2.23.1")
+    compileOnly("org.apache.logging.log4j:log4j-api:2.23.1")
+    compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }

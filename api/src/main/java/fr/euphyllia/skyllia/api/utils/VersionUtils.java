@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api.utils;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import org.bukkit.Bukkit;
 
 public class VersionUtils {
 

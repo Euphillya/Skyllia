@@ -44,7 +44,6 @@ allprojects {
         maven(jitpack)
     }
 
-
     tasks.withType<ShadowJar> {
         relocate("fr.euphyllia.energie", "fr.euphyllia.skyllia.dependency.energie")
         relocate("fr.euphyllia.sgbd", "fr.euphyllia.skyllia.dependency.sgbd")
