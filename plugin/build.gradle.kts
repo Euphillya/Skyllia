@@ -1,10 +1,6 @@
 dependencies {
     compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
     implementation(project(":api"))
-    /*implementation(project(":nms:v1_17_R1"))
-    implementation(project(":nms:v1_18_R1"))
-    implementation(project(":nms:v1_18_R2"))
-    implementation(project(":nms:v1_19_R1"))*/
     implementation(project(":nms:v1_19_R2"))
     implementation(project(":nms:v1_19_R3"))
     implementation(project(":nms:v1_20_R1"))

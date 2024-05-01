@@ -169,12 +169,6 @@ public class IslandHook extends Island {
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions) {
-        return updatePermission(permissionsType, roleType, permissions);
-    }
-
-    @Override
     public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
         if (isUpdated) {

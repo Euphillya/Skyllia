@@ -4,7 +4,7 @@ plugins {
     id("java-library")
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
 group = "fr.euphyllia";
@@ -17,10 +17,6 @@ val engineHubRepo = "https://maven.enginehub.org/repo/";
 val jitpack = "https://jitpack.io";
 
 dependencies {
-    /*implementation(project(":nms:v1_17_R1", "reobf"))
-    implementation(project(":nms:v1_18_R1", "reobf"))
-    implementation(project(":nms:v1_18_R2", "reobf"))
-    implementation(project(":nms:v1_19_R1", "reobf"))*/
     implementation(project(":nms:v1_19_R2", "reobf"))
     implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_19_R3", "reobf"))
@@ -37,7 +33,7 @@ dependencies {
 allprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
-    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "io.github.goooler.shadow")
     apply(plugin = "maven-publish")
 
     repositories {
@@ -80,6 +76,6 @@ tasks.test {
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }

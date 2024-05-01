@@ -48,9 +48,6 @@ public abstract class Island {
 
     public abstract boolean updateMember(Players member);
 
-    @Deprecated(forRemoval = true)
-    public abstract boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions);
-
     public abstract boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions);
 
     public abstract Position getPosition();
