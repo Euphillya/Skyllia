@@ -1,16 +1,13 @@
 plugins {
-    id("io.papermc.paperweight.userdev") version "1.6.3" // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
+    id("java")
+    id("io.papermc.paperweight.userdev") version "1.7.1" // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
 }
 
 
 dependencies {
     paperweight.foliaDevBundle("1.20.4-R0.1-SNAPSHOT")
-    implementation("com.github.Euphillya:Energie:1.2.0")
-    implementation("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
-    compileOnly("org.apache.logging.log4j:log4j-api:2.22.1")
-    compileOnly("org.apache.logging.log4j:log4j-core:2.22.1")
-    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.3.2")
-    compileOnly("com.zaxxer:HikariCP:5.1.0")
+    compileOnly("com.github.Euphillya:Energie:1.2.0")
+    compileOnly("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
 }
 
 group = "fr.euphyllia.skyllia";
