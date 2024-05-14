@@ -38,13 +38,17 @@ public class JoinEvent implements Listener {
                     Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
                     if (island == null) {
-                        PlayerUtils.teleportPlayerSpawn(player);
+                        if (ConfigToml.teleportPlayerNotIslandWhenJoin) {
+                            PlayerUtils.teleportPlayerSpawn(player);
+                        }
                     } else {
                         this.api.updateCache(player);
-                        World world = player.getLocation().getWorld();
-                        if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
-                            Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
-                            this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+                        if (ConfigToml.teleportPlayerOnIslandWhenJoin) {
+                            World world = player.getLocation().getWorld();
+                            if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
+                                Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+                                this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+                            }
                         }
                     }
                 });
