@@ -24,8 +24,8 @@ public class ExplosionEvent implements Listener {
     public ExplosionEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
         explosionByHumanEntity = new CopyOnWriteArrayList<>();
-        explosionByHumanEntity.add(getEntityType("PRIMED_TNT", EntityType.TNT));
-        explosionByHumanEntity.add(getEntityType("MINECART_TNT", EntityType.TNT_MINECART));
+        explosionByHumanEntity.add(getEntityType("TNT", EntityType.PRIMED_TNT));
+        explosionByHumanEntity.add(getEntityType( "TNT_MINECART", EntityType.MINECART_TNT));
 
         explosionByMobEntity = new CopyOnWriteArrayList<>();
         explosionByMobEntity.add(EntityType.CREEPER);
