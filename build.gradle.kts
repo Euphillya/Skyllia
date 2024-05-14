@@ -18,11 +18,10 @@ dependencies {
     implementation(project(":plugin"))
     implementation(project(":nms:v1_19_R2", "reobf"))
     implementation(project(":nms:v1_19_R3", "reobf"))
-    implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_20_R1", "reobf"))
     implementation(project(":nms:v1_20_R2", "reobf"))
     implementation(project(":nms:v1_20_R3", "reobf"))
-    implementation(project(":nms:v1_20_R4", "reobf")) // 1.20.5-6
+    implementation(project(":nms:v1_20_R4", "reobf"))
 }
 
 allprojects {
