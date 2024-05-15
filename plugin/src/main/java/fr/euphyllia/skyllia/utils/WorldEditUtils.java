@@ -110,12 +110,14 @@ public class WorldEditUtils {
                     completableFuture.complete(true);
                     return;
                 }
+                int chunkPosX = chunKPosition.x() << 4;
+                int chunkPosZ = chunKPosition.z() << 4;
                 SkylliaAPI.getScheduler()
                         .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(world, chunKPosition.x(), chunKPosition.z()), t -> {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
                                     for (int y = 0; y < world.getMaxHeight(); y++) {
-                                        Location blockLocation = new Location(world, (chunKPosition.x() << 4) + x, y, (chunKPosition.z() << 4) + z);
+                                        Location blockLocation = new Location(world, chunkPosX + x, y, chunkPosZ + z);
                                         blockLocation.getBlock().setBiome(biome);
                                     }
                                 }
