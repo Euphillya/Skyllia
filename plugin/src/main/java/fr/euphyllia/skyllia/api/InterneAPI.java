@@ -25,8 +25,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class InterneAPI {
@@ -90,6 +92,27 @@ public class InterneAPI {
             return false;
         }
         return true;
+    }
+
+    public void setupFirstSchematic(@NotNull File dataFolder, @Nullable InputStream resource) {
+        File schematicsDir = new File(dataFolder, "schematics");
+        File defaultSchem = new File(schematicsDir, "default.schem");
+        if (!schematicsDir.exists()) {
+            schematicsDir.mkdirs();
+        } else {
+            return;
+        }
+        if (!defaultSchem.exists()) {
+            try {
+                try (InputStream in = resource) {
+                    if (in != null) {
+                        Files.copy(in, defaultSchem.toPath());
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean setupSGBD() throws DatabaseException {

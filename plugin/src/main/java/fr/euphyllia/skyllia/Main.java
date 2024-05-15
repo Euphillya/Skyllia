@@ -52,6 +52,7 @@ public class Main extends JavaPlugin {
         }
         this.interneAPI.loadAPI();
         try {
+            this.interneAPI.setupFirstSchematic(getDataFolder(), getResource("schematics/default.schem"));
             if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml", ConfigToml::init)) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
@@ -131,7 +132,7 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
         pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
         pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.4
+        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.6 (can work on Bloom, but don't use it)
         pluginManager.registerEvents(new PistonEvent(this.interneAPI), this);
         if (VersionUtils.IS_FOLIA) {
             pluginManager.registerEvents(new PortalAlternativeFoliaEvent(this.interneAPI), this);
