@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
+import fr.euphyllia.skyllia.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -76,8 +77,8 @@ public class Main extends JavaPlugin {
         }
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
-        this.setupCommands();
-        this.setupAdminCommands();
+        this.setupCommands("skyllia", new SkylliaCommand(this));
+        this.setupCommands("skylliadmin", new SkylliaAdminCommand(this));
         this.loadListener();
         this.runCache();
         this.disabledConfig();
@@ -101,20 +102,8 @@ public class Main extends JavaPlugin {
         return this.interneAPI;
     }
 
-    private void setupCommands() {
-        SkylliaCommand sc = new SkylliaCommand(this);
-        PluginCommand command = getServer().getPluginCommand("skyllia");
-        if (command == null) {
-            logger.log(Level.FATAL, "Command not put in plugin.yml");
-            return;
-        }
-        command.setExecutor(sc);
-        command.setTabCompleter(sc);
-    }
-
-    private void setupAdminCommands() {
-        SkylliaAdminCommand sc = new SkylliaAdminCommand(this);
-        PluginCommand command = getServer().getPluginCommand("skylliadmin");
+    private void setupCommands(String commands, SkylliaCommandInterface sc) {
+        PluginCommand command = getServer().getPluginCommand(commands);
         if (command == null) {
             logger.log(Level.FATAL, "Command not put in plugin.yml");
             return;

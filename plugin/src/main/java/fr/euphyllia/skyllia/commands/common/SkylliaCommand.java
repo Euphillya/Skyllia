@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.commands.common;
 import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.commands.SkylliaCommandInterface;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SkylliaCommand implements CommandExecutor, TabCompleter {
+public class SkylliaCommand implements SkylliaCommandInterface {
 
     private final Main plugin;
 
