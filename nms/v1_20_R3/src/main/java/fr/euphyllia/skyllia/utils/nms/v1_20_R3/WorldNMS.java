@@ -49,6 +49,8 @@ import org.bukkit.generator.WorldInfo;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 
@@ -221,7 +223,17 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         internal.keepSpawnInMemory = creator.keepSpawnLoaded().toBooleanOrElse(internal.getWorld().getKeepSpawnInMemory()); // Paper
 
-        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
+        try {
+            Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
+            getInstanceMethod.setAccessible(true);
+            Object regionizedServerInstance = getInstanceMethod.invoke(null);
+            Method addWorldMethod = regionizedServerClass.getDeclaredMethod("addWorld", ServerLevel.class);
+            addWorldMethod.setAccessible(true);
+            addWorldMethod.invoke(regionizedServerInstance, internal);
+        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(internal.getWorld()));
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());
