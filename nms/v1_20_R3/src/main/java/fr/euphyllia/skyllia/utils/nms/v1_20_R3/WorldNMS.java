@@ -223,17 +223,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         internal.keepSpawnInMemory = creator.keepSpawnLoaded().toBooleanOrElse(internal.getWorld().getKeepSpawnInMemory()); // Paper
 
-        try {
-            Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
-            getInstanceMethod.setAccessible(true);
-            Object regionizedServerInstance = getInstanceMethod.invoke(null);
-            Method addWorldMethod = regionizedServerClass.getDeclaredMethod("addWorld", ServerLevel.class);
-            addWorldMethod.setAccessible(true);
-            addWorldMethod.invoke(regionizedServerInstance, internal);
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(internal.getWorld()));
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());
