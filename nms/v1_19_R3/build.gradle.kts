@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("io.papermc.paperweight.userdev") version "1.7.1" // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
+    id("io.papermc.paperweight.userdev")
 }
 
 dependencies {

@@ -200,7 +200,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         // Paper start - fix and optimise world upgrading
         if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.convertWorldButItWorks(actualDimension, worldSession, DataFixers.getDataFixer(), iregistrycustom_dimension, worlddimension.generator().getTypeNameForDataFixer(), console.options.has("eraseCache"), console.options.has("recreateRegionFiles"));
+            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
         }
         // Paper end - fix and optimise world upgrading
         ResourceKey<net.minecraft.world.level.Level> worldKey;

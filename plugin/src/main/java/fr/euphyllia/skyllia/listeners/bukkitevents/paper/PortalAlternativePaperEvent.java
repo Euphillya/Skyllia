@@ -29,7 +29,7 @@ public class PortalAlternativePaperEvent implements Listener {
             Block block = event.getBlock();
             World world = block.getWorld();
             if (!SkylliaAPI.isWorldSkyblock(world)) return;
-            event.setCancelled(true);
+            //event.setCancelled(true); Todo ? Je ne sais plus pourquoi il est là
             Material blockType = block.getType();
             switch (blockType) {
                 case NETHER_PORTAL -> {
