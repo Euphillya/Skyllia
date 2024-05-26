@@ -1,7 +1,9 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.paper;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import io.papermc.paper.event.entity.EntityInsideBlockEvent;
 import org.apache.logging.log4j.LogManager;
@@ -29,15 +31,31 @@ public class PortalAlternativePaperEvent implements Listener {
             Block block = event.getBlock();
             World world = block.getWorld();
             if (!SkylliaAPI.isWorldSkyblock(world)) return;
-            //event.setCancelled(true); Todo ? Je ne sais plus pourquoi il est là
+            event.setCancelled(true);
             Material blockType = block.getType();
             switch (blockType) {
                 case NETHER_PORTAL -> {
-                    ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
+                    for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
+                        if (worldConfig.name().equalsIgnoreCase(world.getName())) {
+                            if (worldConfig.netherPortal().enabled()) {
+                                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
+                            }
+                            break;
+                        }
+                    }
                 }
-                case END_PORTAL ->
-                        ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, world.getName());
+                case END_PORTAL -> {
+                    for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
+                        if (worldConfig.name().equalsIgnoreCase(world.getName())) {
+                            if (worldConfig.endPortal().enabled()) {
+                                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, world.getName());
+                            }
+                            break;
+                        }
+                    }
+                }
             }
+
         }
     }
 }

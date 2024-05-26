@@ -26,23 +26,6 @@ public class TeleportEvent implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerTeleportOnIsland(final PlayerTeleportEvent event) {
-        if (VersionUtils.IS_PAPER) return; // Use : EntityInsideBlockEvent
-        if (event.isCancelled()) {
-            return;
-        }
-        Location destination = event.getTo();
-        PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
-        if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
-            ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
-                    PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, destination.getWorld().getName());
-        } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
-            ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(event.getPlayer(),
-                    PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, destination.getWorld().getName());
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerUsePortal(final PlayerPortalEvent event) {
         if (event.isCancelled()) return;
         event.setCanCreatePortal(false);
