@@ -1,13 +1,10 @@
 package fr.euphyllia.skyllia.commands.common;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.commands.SkylliaCommandInterface;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +29,8 @@ public class SkylliaCommand implements SkylliaCommandInterface {
             if (subCommands == null) {
                 return false;
             }
-            SkylliaAPI.getNativeScheduler()
-                    .runTask(SchedulerType.ASYNC, schedulerTask -> subCommands.getSubCommandInterface().onCommand(this.plugin, sender, command, label, listArgs));
+            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                    subCommands.getSubCommandInterface().onCommand(this.plugin, sender, command, label, listArgs));
         }
         return true;
     }

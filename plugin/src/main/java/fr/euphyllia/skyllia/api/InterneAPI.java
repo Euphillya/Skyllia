@@ -34,7 +34,6 @@ import java.nio.file.Path;
 public class InterneAPI {
 
     private final Logger logger = LogManager.getLogger(this);
-    ;
     private final Main plugin;
     private final SkyblockManager skyblockManager;
     private final CacheManager cacheManager;
@@ -155,14 +154,6 @@ public class InterneAPI {
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
         final String[] bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-");
         switch (bukkitVersion[0]) {
-            case "1.19.3" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R2.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R2.PlayerNMS();
-            }
-            case "1.19.4" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.PlayerNMS();
-            }
             case "1.20", "1.20.1" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
@@ -175,7 +166,7 @@ public class InterneAPI {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
             }
-            case "1.20.5", "1.20.6"  -> {
+            case "1.20.5", "1.20.6" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
             }

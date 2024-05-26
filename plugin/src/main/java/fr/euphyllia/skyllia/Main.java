@@ -1,9 +1,7 @@
 package fr.euphyllia.skyllia;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.commands.SkylliaCommandInterface;
@@ -35,6 +33,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin {
 
@@ -89,10 +88,8 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         this.logger.log(Level.INFO, "Plugin Off");
-        SkylliaAPI.getNativeScheduler().cancelAllTask();
-        SkylliaAPI.getScheduler().cancelAllTask();
-        getServer().getGlobalRegionScheduler().cancelTasks(this);
-        getServer().getAsyncScheduler().cancelTasks(this);
+        Bukkit.getAsyncScheduler().cancelTasks(this);
+        Bukkit.getGlobalRegionScheduler().cancelTasks(this);
         if (this.interneAPI.getDatabaseLoader() != null) {
             this.interneAPI.getDatabaseLoader().closeDatabase();
         }
@@ -141,9 +138,9 @@ public class Main extends JavaPlugin {
     }
 
     private void runCache() {
-        SkylliaAPI.getNativeScheduler().runAtFixedRate(SchedulerType.ASYNC, schedulerTask -> {
+        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> {
             Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
-        }, 0, ConfigToml.updateCacheTimer * 20L);
+        }, 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
     }
 
     private void disabledConfig() {

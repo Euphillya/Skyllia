@@ -24,8 +24,8 @@ public class ExplosionEvent implements Listener {
     public ExplosionEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
         explosionByHumanEntity = new CopyOnWriteArrayList<>();
-        explosionByHumanEntity.add(getEntityType("TNT", EntityType.PRIMED_TNT));
-        explosionByHumanEntity.add(getEntityType( "TNT_MINECART", EntityType.MINECART_TNT));
+        explosionByHumanEntity.add(getEntityType("TNT", EntityType.valueOf("PRIMED_TNT")));
+        explosionByHumanEntity.add(getEntityType("TNT_MINECART", EntityType.valueOf("MINECART_TNT")));
 
         explosionByMobEntity = new CopyOnWriteArrayList<>();
         explosionByMobEntity.add(EntityType.CREEPER);
@@ -34,6 +34,13 @@ public class ExplosionEvent implements Listener {
         explosionByMobEntity.add(EntityType.WITHER_SKULL);
     }
 
+    private static EntityType getEntityType(String name, EntityType defaultType) {
+        try {
+            return EntityType.valueOf(name);
+        } catch (IllegalArgumentException ignored) {
+            return defaultType;
+        }
+    }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onExplode(final EntityExplodeEvent event) {
@@ -46,14 +53,6 @@ public class ExplosionEvent implements Listener {
             ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_MOB_EXPLOSION, event);
         } else {
             ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_UNKNOWN_EXPLOSION, event);
-        }
-    }
-
-    private static EntityType getEntityType(String name, EntityType defaultType) {
-        try {
-            return EntityType.valueOf(name);
-        } catch (IllegalArgumentException ignored) {
-            return defaultType;
         }
     }
 }

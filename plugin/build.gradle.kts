@@ -3,10 +3,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT") { isTransitive = false }
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT") { isTransitive = false }
     implementation(project(":api"))
-    implementation(project(":nms:v1_19_R2", "reobf"))
-    implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_20_R1", "reobf"))
     implementation(project(":nms:v1_20_R2", "reobf"))
     implementation(project(":nms:v1_20_R3", "reobf"))

@@ -1,7 +1,5 @@
 package fr.euphyllia.skyllia.api;
 
-import fr.euphyllia.energie.Energie;
-import fr.euphyllia.energie.model.Scheduler;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Chunk;
@@ -15,12 +13,18 @@ import java.util.concurrent.CompletableFuture;
 
 public final class SkylliaAPI {
 
+    private static final boolean IS_FOLIA;
+    private static Plugin PLUGIN;
     private static SkylliaImplementation implementation;
-    private static Energie energie;
+
+    static {
+        IS_FOLIA = hasClass("io.papermc.paper.threadedregions.RegionizedServer");
+    }
+
 
     public static void setImplementation(Plugin plugin, SkylliaImplementation skylliaImplementation) {
+        PLUGIN = plugin;
         implementation = skylliaImplementation;
-        energie = new Energie(plugin);
     }
 
     public static CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerUniqueId) {
@@ -39,16 +43,8 @@ public final class SkylliaAPI {
         return implementation.getIslandByChunk(chunk);
     }
 
-    public static Scheduler getScheduler() {
-        return energie.getMinecraftScheduler();
-    }
-
-    public static Scheduler getNativeScheduler() {
-        return energie.getNativeScheduler();
-    }
-
     public static boolean isFolia() {
-        return Energie.isFolia();
+        return IS_FOLIA;
     }
 
     public static @NotNull Boolean isWorldSkyblock(String name) {
@@ -57,5 +53,18 @@ public final class SkylliaAPI {
 
     public static @NotNull Boolean isWorldSkyblock(World world) {
         return implementation.isWorldSkyblock(world);
+    }
+
+    public static Plugin getPlugin() {
+        return PLUGIN;
+    }
+
+    private static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException var2) {
+            return false;
+        }
     }
 }

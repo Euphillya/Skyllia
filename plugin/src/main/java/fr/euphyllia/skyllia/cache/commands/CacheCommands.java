@@ -46,7 +46,6 @@ public class CacheCommands {
     public record CreateCacheCommandsTabs(CommandSender commandSender, String key) {
     }
 
-    ;
 }
 
 

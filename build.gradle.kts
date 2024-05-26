@@ -16,8 +16,6 @@ val jitpack = "https://jitpack.io";
 dependencies {
     implementation(project(":api"))
     implementation(project(":plugin"))
-    implementation(project(":nms:v1_19_R2", "reobf"))
-    implementation(project(":nms:v1_19_R3", "reobf"))
     implementation(project(":nms:v1_20_R1", "reobf"))
     implementation(project(":nms:v1_20_R2", "reobf"))
     implementation(project(":nms:v1_20_R3", "reobf"))
@@ -43,7 +41,6 @@ allprojects {
     }
 
     dependencies {
-        implementation("com.github.Euphillya:Energie:1.2.0")
         implementation("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
 
         compileOnly("org.apache.logging.log4j:log4j-api:2.22.1")
@@ -57,7 +54,6 @@ allprojects {
     }
 
     tasks.withType<ShadowJar> {
-        relocate("fr.euphyllia.energie", "fr.euphyllia.skyllia.dependency.energie")
         relocate("fr.euphyllia.sgbd", "fr.euphyllia.skyllia.dependency.sgbd")
     }
 

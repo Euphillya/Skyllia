@@ -1,11 +1,9 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.entity.PlayerFolia;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -20,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,24 +47,23 @@ public class HomeSubCommand implements SubCommandInterface {
                 LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
-            SkylliaAPI.getScheduler()
-                    .runTask(SchedulerType.SYNC, player, schedulerTask -> player.setGameMode(GameMode.SPECTATOR), null);
+            PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
             WarpIsland warpIsland = island.getWarpByName("home");
             double rayon = island.getSize();
-            SkylliaAPI.getScheduler()
-                    .runTask(SchedulerType.SYNC, player, schedulerTask -> {
-                        Location loc;
-                        if (warpIsland == null) {
-                            loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().x(), island.getPosition().z());
-                        } else {
-                            loc = warpIsland.location();
-                        }
-                        SupportSpigot.asyncTeleportEntity(player, loc);
-                        player.setGameMode(GameMode.SURVIVAL);
-                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);
-                    }, null);
+
+            player.getScheduler().execute(plugin, () -> {
+                Location loc;
+                if (warpIsland == null) {
+                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().name()), island.getPosition().x(), island.getPosition().z());
+                } else {
+                    loc = warpIsland.location();
+                }
+                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                player.setGameMode(GameMode.SURVIVAL);
+                plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeIslandSuccess);
+            }, null, 0L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);

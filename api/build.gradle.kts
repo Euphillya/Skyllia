@@ -1,12 +1,11 @@
 plugins {
     id("java")
-    id("io.papermc.paperweight.userdev") version "1.7.1" // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
+    id("io.papermc.paperweight.userdev")
 }
 
 
 dependencies {
     paperweight.foliaDevBundle("1.20.4-R0.1-SNAPSHOT")
-    compileOnly("com.github.Euphillya:Energie:1.2.0")
     compileOnly("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
 }
 

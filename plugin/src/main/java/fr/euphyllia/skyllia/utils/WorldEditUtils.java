@@ -13,11 +13,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
-import fr.euphyllia.energie.model.MultipleRecords;
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
@@ -88,10 +85,8 @@ public class WorldEditUtils {
             if (deleteChunkPerimeterIsland && chunkDeleted.getAndAdd(1) >= numberChunkInIsland.get()) {
                 return;
             }
-            SkylliaAPI.getScheduler()
-                    .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(w, chunKPosition.x(), chunKPosition.z()), t -> {
-                        plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition);
-                    }, delay.getAndIncrement());
+            Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
+                    plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), delay.getAndIncrement());
         });
     }
 
@@ -112,17 +107,16 @@ public class WorldEditUtils {
                 }
                 int chunkPosX = chunKPosition.x() << 4;
                 int chunkPosZ = chunKPosition.z() << 4;
-                SkylliaAPI.getScheduler()
-                        .runDelayed(SchedulerType.SYNC, new MultipleRecords.WorldChunk(world, chunKPosition.x(), chunKPosition.z()), t -> {
-                            for (int x = 0; x < 16; x++) {
-                                for (int z = 0; z < 16; z++) {
-                                    for (int y = 0; y < world.getMaxHeight(); y++) {
-                                        Location blockLocation = new Location(world, chunkPosX + x, y, chunkPosZ + z);
-                                        blockLocation.getBlock().setBiome(biome);
-                                    }
-                                }
+                Bukkit.getRegionScheduler().runDelayed(plugin, world, chunkPosX, chunkPosZ, task -> {
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            for (int y = 0; y < world.getMaxHeight(); y++) {
+                                Location blockLocation = new Location(world, chunkPosX + x, y, chunkPosZ + z);
+                                blockLocation.getBlock().setBiome(biome);
                             }
-                        }, delay.getAndIncrement());
+                        }
+                    }
+                }, delay.getAndIncrement());
             });
         } finally {
             completableFuture.complete(true);

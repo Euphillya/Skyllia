@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.listeners.skyblockevents;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
@@ -10,7 +9,6 @@ import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEv
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
-import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
@@ -25,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.List;
 
@@ -109,7 +108,7 @@ public class SkyblockEvent implements Listener {
             }
             Location playerLocation = player.getLocation();
             Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
-            SkylliaAPI.getScheduler().runTask(SchedulerType.SYNC, futurLocation, schedulerTask -> {
+            Bukkit.getRegionScheduler().execute(SkylliaAPI.getPlugin(), futurLocation, () -> {
                 int y = world.getMinHeight();
                 while (!WorldUtils.isSafeLocation(futurLocation)) {
                     if (futurLocation.getBlockY() >= world.getMaxHeight()) return;
@@ -118,7 +117,7 @@ public class SkyblockEvent implements Listener {
                 PlayerChangeWorldSkyblockEvent playerChangeWorldSkyblockEvent = new PlayerChangeWorldSkyblockEvent(player, event.getPortalType(), futurLocation, true);
                 Bukkit.getPluginManager().callEvent(playerChangeWorldSkyblockEvent);
                 if (!playerChangeWorldSkyblockEvent.checkSafeLocation() || WorldUtils.isSafeLocation(playerChangeWorldSkyblockEvent.getTo())) {
-                    SupportSpigot.asyncTeleportEntity(player, playerChangeWorldSkyblockEvent.getTo());
+                    player.teleportAsync(playerChangeWorldSkyblockEvent.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 } else {
                     LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
                 }

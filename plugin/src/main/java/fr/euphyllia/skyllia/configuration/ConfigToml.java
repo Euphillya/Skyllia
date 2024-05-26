@@ -42,6 +42,8 @@ public class ConfigToml {
     public static int regionDistance = -1;
     public static boolean deleteChunkPerimeterIsland = false;
     public static boolean suppressWarningNetherEndEnabled = false;
+    public static boolean teleportPlayerOnIslandWhenJoin = true;
+    public static boolean teleportPlayerNotIslandWhenJoin = true;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -275,8 +277,6 @@ public class ConfigToml {
         defaultSchematicKey = getString("island.create.default-schem-key", defaultSchematicKey);
     }
 
-    public static boolean teleportPlayerOnIslandWhenJoin = true;
-    public static boolean teleportPlayerNotIslandWhenJoin = true;
     private static void playerSettings() {
         clearInventoryWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-inventory", clearInventoryWhenDeleteIsland);
         clearEnderChestWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-enderchest", clearEnderChestWhenDeleteIsland);
