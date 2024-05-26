@@ -4,12 +4,9 @@ plugins {
     id("java-library")
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
+    id("io.papermc.paperweight.userdev") version "1.7.1" apply false
 }
-
-group = "fr.euphyllia";
-version = "1.0-RC7-" + System.getenv("GITHUB_RUN_NUMBER");
-description = "Plugin Skyblock pour Folia / PaperMC";
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
 val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
@@ -17,29 +14,25 @@ val engineHubRepo = "https://maven.enginehub.org/repo/";
 val jitpack = "https://jitpack.io";
 
 dependencies {
-    implementation(project(":nms:v1_17_R1", "reobf"))
-    implementation(project(":nms:v1_18_R1", "reobf"))
-    implementation(project(":nms:v1_18_R2", "reobf"))
-    implementation(project(":nms:v1_19_R1", "reobf"))
-    implementation(project(":nms:v1_19_R2", "reobf"))
-    implementation(project(":nms:v1_19_R3", "reobf"))
-    implementation(project(":nms:v1_19_R3", "reobf"))
+    implementation(project(":api"))
+    implementation(project(":plugin"))
     implementation(project(":nms:v1_20_R1", "reobf"))
     implementation(project(":nms:v1_20_R2", "reobf"))
     implementation(project(":nms:v1_20_R3", "reobf"))
-    implementation(project(":plugin"))
-
-    testImplementation(platform("org.junit:junit-bom:5.9.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    implementation(project(":nms:v1_20_R4", "reobf"))
 }
 
 allprojects {
-    apply(plugin = "java")
+    group = "fr.euphyllia";
+    version = "1.0-" + System.getenv("GITHUB_RUN_NUMBER");
+    description = "Plugin Skyblock pour Folia / PaperMC";
+
     apply(plugin = "java-library")
-    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "io.github.goooler.shadow")
     apply(plugin = "maven-publish")
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven(paperRepo)
         maven(sonatypeRepo)
@@ -48,12 +41,19 @@ allprojects {
     }
 
     dependencies {
-        implementation("com.github.Euphillya:Energie:1.2.0")
         implementation("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
+
+        compileOnly("org.apache.logging.log4j:log4j-api:2.22.1")
+        compileOnly("org.apache.logging.log4j:log4j-core:2.22.1")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.3.2")
+        compileOnly("com.zaxxer:HikariCP:5.1.0")
+        compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
+        compileOnly("com.electronwill.night-config:toml:3.6.7")
+        compileOnly("com.google.guava:guava:33.0.0-jre")
+        compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
     }
 
     tasks.withType<ShadowJar> {
-        relocate("fr.euphyllia.energie", "fr.euphyllia.skyllia.dependency.energie")
         relocate("fr.euphyllia.sgbd", "fr.euphyllia.skyllia.dependency.sgbd")
     }
 

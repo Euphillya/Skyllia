@@ -1,8 +1,6 @@
 package fr.euphyllia.skyllia.utils;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -81,8 +79,7 @@ public class Metrics {
                         enabled,
                         this::appendPlatformData,
                         this::appendServiceData,
-                        submitDataTask -> SkylliaAPI.getScheduler()
-                                .runTask(SchedulerType.SYNC, schedulerTask -> submitDataTask.run()),
+                        submitDataTask -> Bukkit.getGlobalRegionScheduler().execute(plugin, submitDataTask),
                         plugin::isEnabled,
                         (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                         (message) -> this.plugin.getLogger().log(Level.INFO, message),

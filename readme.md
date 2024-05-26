@@ -57,10 +57,10 @@ UUID islandId = playerIsland.getId();
 
 |                      Software                       |    Version    |
 |:---------------------------------------------------:|:-------------:|
-|    [PaperMC](https://papermc.io/downloads/paper)    |  1.17-1.20.4  |
-|           [Purpur](https://purpurmc.org)            |  1.17-1.20.4  |
-|     [Folia](https://papermc.io/software/folia)      | 1.19.4-1.20.4 |
-| [Spigot](https://www.spigotmc.org)(Not Recommended) |  1.17-1.20.4  |
+|    [PaperMC](https://papermc.io/downloads/paper)    | 1.20.1-1.20.6 |
+|           [Purpur](https://purpurmc.org)            | 1.20.1-1.20.6 |
+|     [Folia](https://papermc.io/software/folia)      |  1.20-1.20.6  |
+| [Spigot](https://www.spigotmc.org)(Not Recommended) |   Cancelled   |
 
 ## Generation Island
 

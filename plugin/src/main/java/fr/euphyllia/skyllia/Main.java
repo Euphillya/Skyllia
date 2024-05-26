@@ -1,11 +1,10 @@
 package fr.euphyllia.skyllia;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
+import fr.euphyllia.skyllia.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -34,6 +33,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin {
 
@@ -52,6 +52,7 @@ public class Main extends JavaPlugin {
         }
         this.interneAPI.loadAPI();
         try {
+            this.interneAPI.setupFirstSchematic(getDataFolder(), getResource("schematics/default.schem"));
             if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml", ConfigToml::init)) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
@@ -75,8 +76,8 @@ public class Main extends JavaPlugin {
         }
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
-        this.setupCommands();
-        this.setupAdminCommands();
+        this.setupCommands("skyllia", new SkylliaCommand(this));
+        this.setupCommands("skylliadmin", new SkylliaAdminCommand(this));
         this.loadListener();
         this.runCache();
         this.disabledConfig();
@@ -87,10 +88,8 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         this.logger.log(Level.INFO, "Plugin Off");
-        SkylliaAPI.getNativeScheduler().cancelAllTask();
-        SkylliaAPI.getScheduler().cancelAllTask();
-        getServer().getGlobalRegionScheduler().cancelTasks(this);
-        getServer().getAsyncScheduler().cancelTasks(this);
+        Bukkit.getAsyncScheduler().cancelTasks(this);
+        Bukkit.getGlobalRegionScheduler().cancelTasks(this);
         if (this.interneAPI.getDatabaseLoader() != null) {
             this.interneAPI.getDatabaseLoader().closeDatabase();
         }
@@ -100,20 +99,8 @@ public class Main extends JavaPlugin {
         return this.interneAPI;
     }
 
-    private void setupCommands() {
-        SkylliaCommand sc = new SkylliaCommand(this);
-        PluginCommand command = getServer().getPluginCommand("skyllia");
-        if (command == null) {
-            logger.log(Level.FATAL, "Command not put in plugin.yml");
-            return;
-        }
-        command.setExecutor(sc);
-        command.setTabCompleter(sc);
-    }
-
-    private void setupAdminCommands() {
-        SkylliaAdminCommand sc = new SkylliaAdminCommand(this);
-        PluginCommand command = getServer().getPluginCommand("skylliadmin");
+    private void setupCommands(String commands, SkylliaCommandInterface sc) {
+        PluginCommand command = getServer().getPluginCommand(commands);
         if (command == null) {
             logger.log(Level.FATAL, "Command not put in plugin.yml");
             return;
@@ -131,7 +118,7 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
         pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
         pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.4
+        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.6 (can work on Bloom, but don't use it)
         pluginManager.registerEvents(new PistonEvent(this.interneAPI), this);
         if (VersionUtils.IS_FOLIA) {
             pluginManager.registerEvents(new PortalAlternativeFoliaEvent(this.interneAPI), this);
@@ -151,9 +138,9 @@ public class Main extends JavaPlugin {
     }
 
     private void runCache() {
-        SkylliaAPI.getNativeScheduler().runAtFixedRate(SchedulerType.ASYNC, schedulerTask -> {
+        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> {
             Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
-        }, 0, ConfigToml.updateCacheTimer * 20L);
+        }, 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
     }
 
     private void disabledConfig() {

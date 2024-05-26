@@ -25,14 +25,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class InterneAPI {
 
     private final Logger logger = LogManager.getLogger(this);
-    ;
     private final Main plugin;
     private final SkyblockManager skyblockManager;
     private final CacheManager cacheManager;
@@ -92,6 +93,27 @@ public class InterneAPI {
         return true;
     }
 
+    public void setupFirstSchematic(@NotNull File dataFolder, @Nullable InputStream resource) {
+        File schematicsDir = new File(dataFolder, "schematics");
+        File defaultSchem = new File(schematicsDir, "default.schem");
+        if (!schematicsDir.exists()) {
+            schematicsDir.mkdirs();
+        } else {
+            return;
+        }
+        if (!defaultSchem.exists()) {
+            try {
+                try (InputStream in = resource) {
+                    if (in != null) {
+                        Files.copy(in, defaultSchem.toPath());
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public boolean setupSGBD() throws DatabaseException {
         if (ConfigToml.mariaDBConfig != null) {
             MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
@@ -132,22 +154,6 @@ public class InterneAPI {
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
         final String[] bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-");
         switch (bukkitVersion[0]) {
-            case "1.17", "1.17.1" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_17_R1.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_17_R1.PlayerNMS();
-            }
-            case "1.18", "1.18.1" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R1.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R1.PlayerNMS();
-            }
-            case "1.18.2" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R2.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_18_R2.PlayerNMS();
-            }
-            case "1.19.4" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_19_R3.PlayerNMS();
-            }
             case "1.20", "1.20.1" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
@@ -159,6 +165,10 @@ public class InterneAPI {
             case "1.20.3", "1.20.4" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
+            }
+            case "1.20.5", "1.20.6" -> {
+                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
+                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
             }
             default ->
                     throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(bukkitVersion[0]));

@@ -1,8 +1,6 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.*;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -71,10 +69,7 @@ public class IslandHook extends Island {
         }
         this.size = rayon;
         if (Boolean.TRUE.equals(this.plugin.getInterneAPI().getSkyblockManager().setSizeIsland(this, rayon).join())) {
-            SkylliaAPI.getNativeScheduler()
-                    .runTask(SchedulerType.ASYNC, schedulerTask -> {
-                        Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, rayon));
-                    });
+            Bukkit.getAsyncScheduler().runNow(plugin, (task) -> Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, rayon)));
             return true;
         } else {
             return false;
@@ -169,17 +164,10 @@ public class IslandHook extends Island {
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public boolean updatePermissionIsland(PermissionsType permissionsType, RoleType roleType, long permissions) {
-        return updatePermission(permissionsType, roleType, permissions);
-    }
-
-    @Override
     public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updatePermissionIsland(this, permissionsType, roleType, permissions).join();
         if (isUpdated) {
-            SkylliaAPI.getNativeScheduler()
-                    .runTask(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions)));
+            Bukkit.getAsyncScheduler().runNow(plugin, task -> Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions)));
             return true;
         } else {
             return false;
@@ -210,8 +198,7 @@ public class IslandHook extends Island {
     public boolean updateGamerule(long gameRuleIsland) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updateGamerule(this, gameRuleIsland).join();
         if (isUpdated) {
-            SkylliaAPI.getNativeScheduler()
-                    .runTask(SchedulerType.ASYNC, schedulerTask -> Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleIsland)));
+            Bukkit.getAsyncScheduler().runNow(plugin, task -> Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleIsland)));
             return true;
         } else {
             return false;

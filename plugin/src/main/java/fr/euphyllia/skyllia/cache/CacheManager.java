@@ -1,8 +1,6 @@
 package fr.euphyllia.skyllia.cache;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
@@ -13,6 +11,7 @@ import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -40,47 +39,44 @@ public class CacheManager {
     }
 
     public void deleteCacheIsland(Island island) {
-        SkylliaAPI.getNativeScheduler()
-                .runTask(SchedulerType.ASYNC, schedulerTask -> {
-                    UUID islandId = island.getId();
-                    // ============= player cache
-                    for (Players players : island.getMembers()) {
-                        PlayersInIslandCache.getIslandIdByPlayerId().remove(players.getMojangId(), islandId);
-                    }
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+            UUID islandId = island.getId();
+            // ============= player cache
+            for (Players players : island.getMembers()) {
+                PlayersInIslandCache.getIslandIdByPlayerId().remove(players.getMojangId(), islandId);
+            }
 
-                    PlayersInIslandCache.delete(islandId);
-                    // ============= position island cache
-                    List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
-                    for (Position possiblePosition : islandPositionWithRadius) {
-                        PositionIslandCache.delete(possiblePosition);
-                    }
-                    // ============= permission role cache
-                    for (RoleType roleType : RoleType.values()) {
-                        for (PermissionsType permissionsType : PermissionsType.values()) {
-                            PermissionRoleInIslandCache.deletePermissionInIsland(islandId, roleType, permissionsType);
-                        }
-                    }
-                    // =========== supprimer cache gamerule
-                    PermissionGameRuleInIslandCache.deleteGameruleByIslandId(islandId);
-                });
+            PlayersInIslandCache.delete(islandId);
+            // ============= position island cache
+            List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
+            for (Position possiblePosition : islandPositionWithRadius) {
+                PositionIslandCache.delete(possiblePosition);
+            }
+            // ============= permission role cache
+            for (RoleType roleType : RoleType.values()) {
+                for (PermissionsType permissionsType : PermissionsType.values()) {
+                    PermissionRoleInIslandCache.deletePermissionInIsland(islandId, roleType, permissionsType);
+                }
+            }
+            // =========== supprimer cache gamerule
+            PermissionGameRuleInIslandCache.deleteGameruleByIslandId(islandId);
+        });
     }
 
     public void updateCacheIsland(Island island, UUID playerId) {
-        SkylliaAPI.getNativeScheduler()
-                .runTask(SchedulerType.ASYNC, schedulerTask -> {
-                    // ============= player cache
-                    PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());
-                    PlayersInIslandCache.add(island.getId(), island.getMembers());
-                    // ============= position island cache
-                    List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
-                    for (Position possiblePosition : islandPositionWithRadius) {
-                        PositionIslandCache.add(possiblePosition, island);
-                    }
-                    // ============= permission role cache
-                    this.updatePermissionCacheIsland(island);
-                    // ============= gamerule cache
-                    this.updateGameRuleCacheIsland(island);
-                });
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+            PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());
+            PlayersInIslandCache.add(island.getId(), island.getMembers());
+            // ============= position island cache
+            List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
+            for (Position possiblePosition : islandPositionWithRadius) {
+                PositionIslandCache.add(possiblePosition, island);
+            }
+            // ============= permission role cache
+            this.updatePermissionCacheIsland(island);
+            // ============= gamerule cache
+            this.updateGameRuleCacheIsland(island);
+        });
     }
 
     public void updatePermissionCacheIsland(Island island) {

@@ -1,8 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.entity.PlayerFolia;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -11,7 +10,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import fr.euphyllia.skyllia.api.utils.SupportSpigot;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
@@ -30,6 +28,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +53,7 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        this.setGameMode(player, GameMode.SPECTATOR);
+        PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
@@ -101,8 +100,8 @@ public class CreateSubCommand implements SubCommandInterface {
                     if (isFirstIteration) {
                         this.setFirstHome(islandAtomic.get(), centerPaste);
                         this.setPermissionsRole(islandAtomic.get());
-                        this.teleportPlayerIsland(player, centerPaste);
-                        this.setGameMode(player, GameMode.SURVIVAL);
+                        player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(islandAtomic.get(), player);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
@@ -115,7 +114,7 @@ public class CreateSubCommand implements SubCommandInterface {
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            this.setGameMode(player, olgGM);
+            PlayerFolia.setGameMode(player, olgGM);
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;
@@ -138,28 +137,15 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private void pasteSchematic(Main plugin, Island island, Location center, SchematicSetting schematicWorld) {
         switch (WorldEditUtils.worldEditVersion()) {
-            case WORLD_EDIT -> SkylliaAPI.getScheduler()
-                    .runTask(SchedulerType.SYNC, center, schedulerTask -> {
-                        WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
-                    });
+            case WORLD_EDIT ->
+                    Bukkit.getRegionScheduler().execute(plugin, center, () -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld));
             case FAST_ASYNC_WORLD_EDIT ->
-                    WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld);
+                    Bukkit.getAsyncScheduler().runNow(plugin, task -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld));
             case UNDEFINED -> {
-                island.setDisable(true); // Désactiver l'ile !
+                island.setDisable(true);
                 throw new UnsupportedOperationException();
             }
         }
-    }
-
-    private void setGameMode(Player player, GameMode gameMode) {
-        SkylliaAPI.getScheduler()
-                .runTask(SchedulerType.SYNC, player, schedulerTask -> {
-                    player.setGameMode(gameMode);
-                }, null);
-    }
-
-    private void teleportPlayerIsland(Player player, Location center) {
-        SupportSpigot.asyncTeleportEntity(player, center);
     }
 
     private boolean setFirstHome(Island island, Location center) {

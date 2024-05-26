@@ -1,23 +1,20 @@
+plugins {
+    id("java")
+}
+
 dependencies {
-    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT") { isTransitive = false }
     implementation(project(":api"))
-    implementation(project(":nms:v1_17_R1"))
-    implementation(project(":nms:v1_18_R1"))
-    implementation(project(":nms:v1_18_R2"))
-    implementation(project(":nms:v1_19_R1"))
-    implementation(project(":nms:v1_19_R2"))
-    implementation(project(":nms:v1_19_R3"))
-    implementation(project(":nms:v1_20_R1"))
-    implementation(project(":nms:v1_20_R2"))
-    implementation(project(":nms:v1_20_R3"))
-    compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
-    compileOnly("com.electronwill.night-config:toml:3.6.7")
-    compileOnly("com.google.guava:guava:33.0.0-jre")
+    implementation(project(":nms:v1_20_R1", "reobf"))
+    implementation(project(":nms:v1_20_R2", "reobf"))
+    implementation(project(":nms:v1_20_R3", "reobf"))
+    implementation(project(":nms:v1_20_R4", "reobf"))
+
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9") { isTransitive = false }
     compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") { isTransitive = false }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }

@@ -1,11 +1,9 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.database.query.DatabaseInitializeQuery;
@@ -13,6 +11,7 @@ import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 
@@ -139,17 +138,16 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             return false;
         }
 
-        SkylliaAPI.getNativeScheduler()
-                .runDelayed(SchedulerType.ASYNC, schedulerTask -> {
-                    for (int i = 1; i < ConfigToml.maxIsland; i++) {
-                        Position position = RegionUtils.getPositionNewIsland(i);
-                        try {
-                            MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null, false);
-                        } catch (DatabaseException e) {
-                            return; // ignore
-                        }
-                    }
-                }, 1);
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+            for (int i = 1; i < ConfigToml.maxIsland; i++) {
+                Position position = RegionUtils.getPositionNewIsland(i);
+                try {
+                    MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null, false);
+                } catch (DatabaseException e) {
+                    return; // ignore
+                }
+            }
+        });
         return true;
     }
 }

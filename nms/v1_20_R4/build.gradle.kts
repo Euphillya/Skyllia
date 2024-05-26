@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    paperweight.foliaDevBundle("1.20.2-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
 }
 
@@ -18,6 +18,6 @@ tasks {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }

@@ -1,10 +1,12 @@
 plugins {
-    id("io.papermc.paperweight.userdev") version "1.5.13" // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
+    id("java")
+    id("io.papermc.paperweight.userdev")
 }
 
 dependencies {
     paperweight.foliaDevBundle("1.20.1-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
+    compileOnly("com.github.Euphillya:Energie:1.2.0")
 }
 
 tasks {

@@ -1,8 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -34,20 +32,19 @@ public class DeleteSubCommand implements SubCommandInterface {
         Player bPlayer = Bukkit.getPlayer(players.getMojangId());
         if (bPlayer != null && bPlayer.isOnline()) {
             PlayerUtils.teleportPlayerSpawn(bPlayer);
-            SkylliaAPI.getScheduler()
-                    .runTask(SchedulerType.SYNC, bPlayer, schedulerTask -> {
-                        if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                            bPlayer.getInventory().clear();
-                        }
-                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                            bPlayer.getEnderChest().clear();
-                        }
-                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                            bPlayer.setTotalExperience(0);
-                            bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
-                        }
-                        bPlayer.setGameMode(GameMode.SURVIVAL);
-                    }, null);
+            bPlayer.getScheduler().execute(plugin, () -> {
+                if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                    bPlayer.getInventory().clear();
+                }
+                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                    bPlayer.getEnderChest().clear();
+                }
+                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                    bPlayer.setTotalExperience(0);
+                    bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
+                }
+                bPlayer.setGameMode(GameMode.SURVIVAL);
+            }, null, 0L);
         } else {
             skyblockManager.addClearMemberNextLogin(players.getMojangId());
         }

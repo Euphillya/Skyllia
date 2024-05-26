@@ -1,9 +1,8 @@
 package fr.euphyllia.skyllia.managers;
 
-import fr.euphyllia.energie.model.SchedulerType;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.managers.world.WorldsManager;
+import org.bukkit.Bukkit;
 
 public class Managers {
 
@@ -16,9 +15,6 @@ public class Managers {
     }
 
     public void init() {
-        SkylliaAPI.getScheduler()
-                .runTask(SchedulerType.SYNC, schedulerTask -> {
-                    this.worldsManager.initWorld();
-                });
+        Bukkit.getGlobalRegionScheduler().execute(api.getPlugin(), this.worldsManager::initWorld);
     }
 }

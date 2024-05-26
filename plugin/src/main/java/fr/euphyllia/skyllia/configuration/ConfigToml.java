@@ -42,6 +42,8 @@ public class ConfigToml {
     public static int regionDistance = -1;
     public static boolean deleteChunkPerimeterIsland = false;
     public static boolean suppressWarningNetherEndEnabled = false;
+    public static boolean teleportPlayerOnIslandWhenJoin = true;
+    public static boolean teleportPlayerNotIslandWhenJoin = true;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -279,6 +281,9 @@ public class ConfigToml {
         clearInventoryWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-inventory", clearInventoryWhenDeleteIsland);
         clearEnderChestWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-enderchest", clearEnderChestWhenDeleteIsland);
         resetExperiencePlayerWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-experience", resetExperiencePlayerWhenDeleteIsland);
+        teleportPlayerOnIslandWhenJoin = getBoolean("settings.player.join.teleport.own-island", teleportPlayerOnIslandWhenJoin);
+        teleportPlayerNotIslandWhenJoin = getBoolean("settings.player.join.teleport.spawn-not-island", teleportPlayerNotIslandWhenJoin);
+
     }
 
     private static void updateCache() {

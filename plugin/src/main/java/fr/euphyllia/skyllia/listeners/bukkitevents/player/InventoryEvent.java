@@ -20,7 +20,7 @@ public class InventoryEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryOpen(final InventoryOpenEvent event) {
         if (event.isCancelled()) return;
         Player player = (Player) event.getPlayer();
