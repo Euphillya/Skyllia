@@ -1,5 +1,7 @@
 package fr.euphyllia.skyllia.api.skyblock.model.permissions;
 
+import io.papermc.paper.annotation.DoNotUse;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +28,8 @@ public enum PermissionsInventory implements Permissions {
     OPEN_BARREL(131_072),
     OPEN_BLAST_FURNACE(262_144),
     OPEN_SMOKER(524_288),
-    OPEN_SMITHING_NEW(1_048_576),
+    @Deprecated
+    OPEN_SMITHING_NEW(1_048_576), // Its an old Permission
     OPEN_DISPENSER(2_097_152),
     OPEN_DROPPER(4_194_304),
     ;

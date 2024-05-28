@@ -5,12 +5,16 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsInventory;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class InventoryEvent implements Listener {
     private final InterneAPI api;
@@ -26,7 +30,21 @@ public class InventoryEvent implements Listener {
         Player player = (Player) event.getPlayer();
         InventoryType inventoryType = event.getInventory().getType();
         switch (inventoryType) {
-            case CHEST -> {
+            case MERCHANT -> {
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_MERCHANT, event);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerInteractEvent(final PlayerInteractEvent event) {
+        if (event.useInteractedBlock() == Event.Result.DENY) return;
+        Player player = event.getPlayer();
+        Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock == null) return;
+        Material inventoryType = clickedBlock.getType();
+        switch (inventoryType) {
+            case CHEST, TRAPPED_CHEST -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CHEST, event);
             }
             case DISPENSER -> {
@@ -38,22 +56,19 @@ public class InventoryEvent implements Listener {
             case FURNACE -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_FURNACE, event);
             }
-            case WORKBENCH -> {
+            case CRAFTING_TABLE -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_WORKBENCH, event);
             }
-            case ENCHANTING -> {
+            case ENCHANTING_TABLE -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_ENCHANTING, event);
             }
-            case BREWING -> {
+            case BREWING_STAND -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_BREWING, event);
-            }
-            case MERCHANT -> {
-                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_MERCHANT, event);
             }
             case ANVIL -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_ANVIL, event);
             }
-            case SMITHING -> {
+            case SMITHING_TABLE -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SMITHING, event);
             }
             case BEACON -> {
@@ -62,7 +77,7 @@ public class InventoryEvent implements Listener {
             case HOPPER -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_HOPPER, event);
             }
-            case SHULKER_BOX -> {
+            case SHULKER_BOX, WHITE_SHULKER_BOX, ORANGE_SHULKER_BOX, MAGENTA_SHULKER_BOX, LIGHT_BLUE_SHULKER_BOX, YELLOW_SHULKER_BOX, LIME_SHULKER_BOX, PINK_SHULKER_BOX, GRAY_SHULKER_BOX, LIGHT_GRAY_SHULKER_BOX, CYAN_SHULKER_BOX, PURPLE_SHULKER_BOX, BLUE_SHULKER_BOX, BROWN_SHULKER_BOX, GREEN_SHULKER_BOX, RED_SHULKER_BOX, BLACK_SHULKER_BOX -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SHULKER_BOX, event);
             }
             case BARREL -> {
@@ -80,7 +95,7 @@ public class InventoryEvent implements Listener {
             case LOOM -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_LOOM, event);
             }
-            case CARTOGRAPHY -> {
+            case CARTOGRAPHY_TABLE -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CARTOGRAPHY, event);
             }
             case GRINDSTONE -> {
@@ -89,14 +104,10 @@ public class InventoryEvent implements Listener {
             case STONECUTTER -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_STONECUTTER, event);
             }
-            case SMITHING_NEW -> {
-                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_SMITHING_NEW, event);
-            }
             case CRAFTER -> {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsInventory.OPEN_CRAFTER, event);
             }
             default -> {
-
             }
         }
     }
