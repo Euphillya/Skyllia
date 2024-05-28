@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     paperweight.foliaDevBundle("1.20.4-R0.1-SNAPSHOT")
-    compileOnly("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
+    implementation("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
 }
 
 group = "fr.euphyllia.skyllia";
