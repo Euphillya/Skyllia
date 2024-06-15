@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":nms:v1_20_R2", "reobf"))
     implementation(project(":nms:v1_20_R3", "reobf"))
     implementation(project(":nms:v1_20_R4", "reobf"))
+    implementation(project(":nms:v1_21_R1", "reobf"))
 }
 
 allprojects {

@@ -1,11 +1,11 @@
 plugins {
     id("java")
-    id("io.papermc.paperweight.userdev")
+    //id("io.papermc.paperweight.userdev")
 }
 
 
 dependencies {
-    paperweight.foliaDevBundle("1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     implementation("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
 }
 
@@ -32,7 +32,7 @@ publishing {
 
 tasks {
     assemble {
-        dependsOn(reobfJar)
+        //dependsOn(reobfJar)
     }
     compileJava {
         options.encoding = "UTF-8"
@@ -40,6 +40,6 @@ tasks {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }

@@ -14,10 +14,16 @@
 
 ## Plugin Skyblock for Minecraft
 
-Skyllia is a Skyblock plugin that will essentially run on Folia, but work on Spigot and Paper (1.17+).
+Skyllia is a Skyblock plugin that will essentially run on Folia, but work on Spigot and Paper (1.20+).
 The plugin will have very little innovative functionality, and it's not my intention at all that there should be
 external features (like quests, for example).
 The plugin has an API that you can use to add feature extensions to customize your server.
+
+## Prerequisites:
+
+- A MariaDB database
+- Paper 1.20.1+ or Folia 1.20+
+- Java 21
 
 ## Download Plugin
 
@@ -55,12 +61,12 @@ UUID islandId = playerIsland.getId();
 
 ## Compatible Software
 
-|                      Software                       |    Version    |
-|:---------------------------------------------------:|:-------------:|
-|    [PaperMC](https://papermc.io/downloads/paper)    | 1.20.1-1.20.6 |
-|           [Purpur](https://purpurmc.org)            | 1.20.1-1.20.6 |
-|     [Folia](https://papermc.io/software/folia)      |  1.20-1.20.6  |
-| [Spigot](https://www.spigotmc.org)(Not Recommended) |   Cancelled   |
+|                      Software                       |   Version   |
+|:---------------------------------------------------:|:-----------:|
+|    [PaperMC](https://papermc.io/downloads/paper)    | 1.20.1-1.21 |
+|           [Purpur](https://purpurmc.org)            | 1.20.1-1.21 |
+|     [Folia](https://papermc.io/software/folia)      |  1.20-1.21  |
+| [Spigot](https://www.spigotmc.org)(Not Recommended) |  Cancelled  |
 
 ## Generation Island
 
