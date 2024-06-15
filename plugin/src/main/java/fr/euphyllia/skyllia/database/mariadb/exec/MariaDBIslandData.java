@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.database.mariadb.exec;
 
+import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
@@ -67,39 +68,47 @@ public class MariaDBIslandData extends IslandDataQuery {
 
     public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_OWNER.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    Island island = this.constructIslandQuery(resultSet);
-                    completableFuture.complete(island);
-                    CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island)));
-                } else {
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_OWNER.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        Island island = this.constructIslandQuery(resultSet);
+                        completableFuture.complete(island);
+                        CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island)));
+                    } else {
+                        completableFuture.complete(null);
+                    }
+                } catch (Exception e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
                     completableFuture.complete(null);
                 }
-            } catch (Exception e) {
-                logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(null);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
         return completableFuture;
     }
 
     public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_PLAYER_ID.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    Island island = this.constructIslandQuery(resultSet);
-                    completableFuture.complete(island);
-                    CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island)));
-                } else {
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_PLAYER_ID.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        Island island = this.constructIslandQuery(resultSet);
+                        completableFuture.complete(island);
+                        CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island)));
+                    } else {
+                        completableFuture.complete(null);
+                    }
+                } catch (Exception e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
                     completableFuture.complete(null);
                 }
-            } catch (Exception e) {
-                logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(null);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
         return completableFuture;
     }
 
@@ -118,18 +127,22 @@ public class MariaDBIslandData extends IslandDataQuery {
 
     public CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(islandId), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    completableFuture.complete(this.constructIslandQuery(resultSet));
-                } else {
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(islandId), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        completableFuture.complete(this.constructIslandQuery(resultSet));
+                    } else {
+                        completableFuture.complete(null);
+                    }
+                } catch (Exception e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
                     completableFuture.complete(null);
                 }
-            } catch (Exception e) {
-                logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(null);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
         return completableFuture;
 
     }
@@ -152,19 +165,23 @@ public class MariaDBIslandData extends IslandDataQuery {
 
     public CompletableFuture<Integer> getMaxMemberInIsland(Island island) {
         CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    int maxMembers = resultSet.getInt("max_members");
-                    completableFuture.complete(maxMembers);
-                } else {
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        int maxMembers = resultSet.getInt("max_members");
+                        completableFuture.complete(maxMembers);
+                    } else {
+                        completableFuture.complete(-1);
+                    }
+                } catch (SQLException e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
                     completableFuture.complete(-1);
                 }
-            } catch (SQLException e) {
-                logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(-1);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(-1);
+        }
         return completableFuture;
     }
 }

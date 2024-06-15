@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
-    implementation("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
+    implementation("com.github.Euphillya:SGBD-MariaDB:1.3")
 }
 
 group = "fr.euphyllia.skyllia";

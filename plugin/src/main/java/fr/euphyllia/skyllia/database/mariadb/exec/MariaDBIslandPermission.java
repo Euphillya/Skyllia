@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.database.mariadb.exec;
 
+import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -53,58 +54,74 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
     public CompletableFuture<Boolean> updateIslandsPermission(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-        MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
-                List.of(island.getId(), permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
-                    completableFuture.complete(i != 0);
-                }, null);
+        try {
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
+                    List.of(island.getId(), permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
+                        completableFuture.complete(i != 0);
+                    }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(false);
+        }
 
         return completableFuture;
     }
 
     public CompletableFuture<PermissionRoleIsland> getIslandPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
         CompletableFuture<PermissionRoleIsland> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    long flags = resultSet.getLong("flags");
-                    PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, flags);
-                    completableFuture.complete(permissionsIsland);
-                } else {
-                    PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, 0);
-                    completableFuture.complete(permissionsIsland);
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        long flags = resultSet.getLong("flags");
+                        PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, flags);
+                        completableFuture.complete(permissionsIsland);
+                    } else {
+                        PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, 0);
+                        completableFuture.complete(permissionsIsland);
+                    }
+                } catch (Exception e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
+                    completableFuture.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
                 }
-            } catch (Exception e) {
-                logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
+        }
         return completableFuture;
     }
 
     public CompletableFuture<Long> getIslandGameRule(Island island) {
         CompletableFuture<Long> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_GAMERULES_ROLE.formatted(this.databaseName), List.of(
-                island.getId()
-        ), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    completableFuture.complete(resultSet.getLong("flags"));
-                } else {
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_GAMERULES_ROLE.formatted(this.databaseName), List.of(
+                    island.getId()
+            ), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        completableFuture.complete(resultSet.getLong("flags"));
+                    } else {
+                        completableFuture.complete(0L);
+                    }
+                } catch (SQLException exception) {
+                    logger.log(Level.FATAL, exception.getMessage(), exception);
                     completableFuture.complete(0L);
                 }
-            } catch (SQLException exception) {
-                logger.log(Level.FATAL, exception.getMessage(), exception);
-                completableFuture.complete(0L);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(0L);
+        }
         return completableFuture;
     }
 
     public CompletableFuture<Boolean> updateIslandGameRule(Island island, long value) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_GAMERULES_ISLANDS.formatted(this.databaseName), List.of(island.getId(), value, value), var1 -> {
-            completableFuture.complete(var1 != 0);
-        }, null);
+        try {
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_GAMERULES_ISLANDS.formatted(this.databaseName), List.of(island.getId(), value, value), var1 -> {
+                completableFuture.complete(var1 != 0);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(false);
+        }
         return completableFuture;
     }
 }

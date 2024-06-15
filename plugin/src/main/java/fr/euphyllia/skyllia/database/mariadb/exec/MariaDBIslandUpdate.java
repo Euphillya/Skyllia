@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.database.mariadb.exec;
 
+import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -78,33 +79,41 @@ public class MariaDBIslandUpdate extends IslandUpdateQuery {
 
     public CompletableFuture<Boolean> isDisabledIsland(Island island) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_STATUS_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    completableFuture.complete(resultSet.getInt("disable") == 1);
-                } else {
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_STATUS_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        completableFuture.complete(resultSet.getInt("disable") == 1);
+                    } else {
+                        completableFuture.complete(null);
+                    }
+                } catch (Exception e) {
                     completableFuture.complete(null);
                 }
-            } catch (Exception e) {
-                completableFuture.complete(null);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
         return completableFuture;
     }
 
     public CompletableFuture<Boolean> isPrivateIsland(Island island) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_PRIVATE_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    completableFuture.complete(resultSet.getInt("private") == 1);
-                } else {
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_PRIVATE_ISLAND.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
+                try {
+                    if (resultSet.next()) {
+                        completableFuture.complete(resultSet.getInt("private") == 1);
+                    } else {
+                        completableFuture.complete(null);
+                    }
+                } catch (Exception e) {
                     completableFuture.complete(null);
                 }
-            } catch (Exception e) {
-                completableFuture.complete(null);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
         return completableFuture;
     }
 

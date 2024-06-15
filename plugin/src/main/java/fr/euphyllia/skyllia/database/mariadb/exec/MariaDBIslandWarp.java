@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.database.mariadb.exec;
 
+import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -80,40 +81,10 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
 
     public CompletableFuture<@Nullable WarpIsland> getWarpByName(Island island, String warpName) {
         CompletableFuture<WarpIsland> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_WARP_NAME.formatted(this.databaseName, this.databaseName), List.of(island.getId(), warpName), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    String worldName = resultSet.getString("world_name");
-                    double locX = resultSet.getDouble("x");
-                    double locY = resultSet.getDouble("y");
-                    double locZ = resultSet.getDouble("z");
-                    float locPitch = resultSet.getFloat("pitch");
-                    float locYaw = resultSet.getFloat("yaw");
-
-                    World world = Bukkit.getWorld(worldName);
-                    if (world == null) {
-                        completableFuture.complete(null);
-                        return;
-                    }
-                    WarpIsland warpIsland = new WarpIsland(island.getId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
-                    completableFuture.complete(warpIsland);
-                }
-            } catch (SQLException e) {
-                logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(null);
-            }
-        }, null);
-        return completableFuture;
-    }
-
-    public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getListWarp(Island island) {
-        CompletableFuture<CopyOnWriteArrayList<WarpIsland>> completableFuture = new CompletableFuture<>();
-        MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_LIST_WARP.formatted(this.databaseName, this.databaseName), List.of(island.getId()), resultSet -> {
-            try {
-                CopyOnWriteArrayList<WarpIsland> warpIslands = new CopyOnWriteArrayList<>();
-                if (resultSet.next()) {
-                    do {
-                        String warpName = resultSet.getString("warp_name");
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_WARP_NAME.formatted(this.databaseName, this.databaseName), List.of(island.getId(), warpName), resultSet -> {
+                try {
+                    if (resultSet.next()) {
                         String worldName = resultSet.getString("world_name");
                         double locX = resultSet.getDouble("x");
                         double locY = resultSet.getDouble("y");
@@ -127,17 +98,55 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
                             return;
                         }
                         WarpIsland warpIsland = new WarpIsland(island.getId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
-                        warpIslands.add(warpIsland);
-                    } while (resultSet.next());
-                    completableFuture.complete(warpIslands);
-                } else {
+                        completableFuture.complete(warpIsland);
+                    }
+                } catch (SQLException e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
                     completableFuture.complete(null);
                 }
-            } catch (SQLException e) {
-                logger.log(Level.FATAL, e.getMessage(), e);
-                completableFuture.complete(null);
-            }
-        }, null);
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
+        return completableFuture;
+    }
+
+    public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getListWarp(Island island) {
+        CompletableFuture<CopyOnWriteArrayList<WarpIsland>> completableFuture = new CompletableFuture<>();
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_LIST_WARP.formatted(this.databaseName, this.databaseName), List.of(island.getId()), resultSet -> {
+                try {
+                    CopyOnWriteArrayList<WarpIsland> warpIslands = new CopyOnWriteArrayList<>();
+                    if (resultSet.next()) {
+                        do {
+                            String warpName = resultSet.getString("warp_name");
+                            String worldName = resultSet.getString("world_name");
+                            double locX = resultSet.getDouble("x");
+                            double locY = resultSet.getDouble("y");
+                            double locZ = resultSet.getDouble("z");
+                            float locPitch = resultSet.getFloat("pitch");
+                            float locYaw = resultSet.getFloat("yaw");
+
+                            World world = Bukkit.getWorld(worldName);
+                            if (world == null) {
+                                completableFuture.complete(null);
+                                return;
+                            }
+                            WarpIsland warpIsland = new WarpIsland(island.getId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
+                            warpIslands.add(warpIsland);
+                        } while (resultSet.next());
+                        completableFuture.complete(warpIslands);
+                    } else {
+                        completableFuture.complete(null);
+                    }
+                } catch (SQLException e) {
+                    logger.log(Level.FATAL, e.getMessage(), e);
+                    completableFuture.complete(null);
+                }
+            }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
         return completableFuture;
     }
 

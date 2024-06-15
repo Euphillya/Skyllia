@@ -42,7 +42,7 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("com.github.Euphillya:SGBD-MariaDB:3827fafa25")
+        compileOnly("com.github.Euphillya:SGBD-MariaDB:1.3")
 
         compileOnly("org.apache.logging.log4j:log4j-api:2.22.1")
         compileOnly("org.apache.logging.log4j:log4j-core:2.22.1")
