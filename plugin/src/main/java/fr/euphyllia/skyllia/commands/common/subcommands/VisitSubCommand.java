@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -78,7 +79,7 @@ public class VisitSubCommand implements SubCommandInterface {
 
             WarpIsland warpIsland = island.getWarpByName("home");
             player.getScheduler().execute(plugin, () -> {
-                player.setGameMode(GameMode.SPECTATOR);
+                if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SPECTATOR);
                 Location loc;
                 if (warpIsland == null) {
                     loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().x(), island.getPosition().z());
@@ -87,7 +88,7 @@ public class VisitSubCommand implements SubCommandInterface {
                 }
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
-                player.setGameMode(GameMode.SURVIVAL);
+                if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SURVIVAL);
                 LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
             }, null, 0L);
         } catch (Exception exception) {

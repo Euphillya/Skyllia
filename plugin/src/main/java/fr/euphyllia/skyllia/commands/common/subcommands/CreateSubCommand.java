@@ -53,7 +53,7 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
+        if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
@@ -101,7 +101,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.setFirstHome(islandAtomic.get(), centerPaste);
                         this.setPermissionsRole(islandAtomic.get());
                         player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
+                        if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(islandAtomic.get(), player);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                         LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
@@ -114,7 +114,7 @@ public class CreateSubCommand implements SubCommandInterface {
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            PlayerFolia.setGameMode(player, olgGM);
+            if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, olgGM);
             LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
         }
         return true;

@@ -44,6 +44,7 @@ public class ConfigToml {
     public static boolean suppressWarningNetherEndEnabled = false;
     public static boolean teleportPlayerOnIslandWhenJoin = true;
     public static boolean teleportPlayerNotIslandWhenJoin = true;
+    public static boolean changeGameModeWhenTeleportIsland = true;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -283,6 +284,7 @@ public class ConfigToml {
         resetExperiencePlayerWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-experience", resetExperiencePlayerWhenDeleteIsland);
         teleportPlayerOnIslandWhenJoin = getBoolean("settings.player.join.teleport.own-island", teleportPlayerOnIslandWhenJoin);
         teleportPlayerNotIslandWhenJoin = getBoolean("settings.player.join.teleport.spawn-not-island", teleportPlayerNotIslandWhenJoin);
+        changeGameModeWhenTeleportIsland = getBoolean("settings.player.island.teleport.change-gamemode", changeGameModeWhenTeleportIsland);
 
     }
 
