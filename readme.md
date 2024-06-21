@@ -74,5 +74,6 @@ Each island will be generated on a single region file with distance region confi
 
 ## Addons
 
+- [SkylliaOre](https://github.com/Euphillya/Skyllia-Ore) by Euphyllia (Ore Generator)
 - [Insight Skyllia](https://github.com/Euphillya/Insights-Skyllia) by Euphyllia
 - [PAPI Skyllia](https://github.com/Euphillya/Skyllia-PAPI) by Euphyllia
