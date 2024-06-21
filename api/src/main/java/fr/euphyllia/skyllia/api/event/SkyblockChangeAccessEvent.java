@@ -7,41 +7,58 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Appelé quand l'île se ferme ou s'ouvre. <br />
- * Pourrait être empêché avec un plugin. <br />
+ * Called when an island's access is changed (opened or closed). <br />
+ * This can be prevented by another plugin. <br />
  */
 public class SkyblockChangeAccessEvent extends Event implements Cancellable {
-
 
     private static final HandlerList handlerList = new HandlerList();
     private final Island island;
     private boolean cancel = false;
 
-
+    /**
+     * Constructs a new SkyblockChangeAccessEvent.
+     *
+     * @param island The island whose access is being changed.
+     */
     public SkyblockChangeAccessEvent(Island island) {
         super(true);
         this.island = island;
     }
 
-
+    /**
+     * Gets the handler list for this event.
+     *
+     * @return The handler list.
+     */
     public static HandlerList getHandlerList() {
         return handlerList;
     }
 
+    /**
+     * Gets the handlers for this event.
+     *
+     * @return The handlers.
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return getHandlerList();
     }
 
+    /**
+     * Gets the island whose access is being changed.
+     *
+     * @return The island.
+     */
     public Island getIsland() {
         return this.island;
     }
 
     /**
      * Gets the cancellation state of this event. A cancelled event will not
-     * be executed in the server, but will still pass to other plugins
+     * be executed in the server, but will still pass to other plugins.
      *
-     * @return true if this event is cancelled
+     * @return true if this event is cancelled.
      */
     @Override
     public boolean isCancelled() {
@@ -52,7 +69,7 @@ public class SkyblockChangeAccessEvent extends Event implements Cancellable {
      * Sets the cancellation state of this event. A cancelled event will not
      * be executed in the server, but will still pass to other plugins.
      *
-     * @param cancel true if you wish to cancel this event
+     * @param cancel true if you wish to cancel this event.
      */
     @Override
     public void setCancelled(boolean cancel) {

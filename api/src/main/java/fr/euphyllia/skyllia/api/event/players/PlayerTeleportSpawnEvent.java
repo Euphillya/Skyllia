@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Call when the player returns to the spawn using the plugin.
+ * Called when the player returns to the spawn using the plugin.
  */
 public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
 
@@ -17,23 +17,49 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
     private Location finalLocation;
     private boolean cancel = false;
 
+    /**
+     * Constructs a new PlayerTeleportSpawnEvent.
+     *
+     * @param player The player who is teleporting to the spawn.
+     * @param location The final location where the player will be teleported.
+     */
     public PlayerTeleportSpawnEvent(Player player, Location location) {
         this.bPlayer = player;
         this.finalLocation = location;
     }
 
+    /**
+     * Gets the handler list for this event.
+     *
+     * @return The handler list.
+     */
     public static HandlerList getHandlerList() {
         return handlerList;
     }
 
+    /**
+     * Gets the player who is teleporting to the spawn.
+     *
+     * @return The player.
+     */
     public Player getPlayer() {
         return this.bPlayer;
     }
 
+    /**
+     * Gets the final location where the player will be teleported.
+     *
+     * @return The final location.
+     */
     public Location getFinalLocation() {
         return finalLocation;
     }
 
+    /**
+     * Sets the final location where the player will be teleported.
+     *
+     * @param finalLocation The new final location.
+     */
     public void setFinalLocation(Location finalLocation) {
         this.finalLocation = finalLocation;
     }
@@ -45,9 +71,9 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
 
     /**
      * Gets the cancellation state of this event. A cancelled event will not
-     * be executed in the server, but will still pass to other plugins
+     * be executed in the server, but will still pass to other plugins.
      *
-     * @return true if this event is cancelled
+     * @return true if this event is cancelled.
      */
     @Override
     public boolean isCancelled() {
@@ -58,7 +84,7 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
      * Sets the cancellation state of this event. A cancelled event will not
      * be executed in the server, but will still pass to other plugins.
      *
-     * @param cancel true if you wish to cancel this event
+     * @param cancel true if you wish to cancel this event.
      */
     @Override
     public void setCancelled(boolean cancel) {

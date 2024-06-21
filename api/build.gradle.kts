@@ -1,6 +1,5 @@
 plugins {
     id("java")
-    //id("io.papermc.paperweight.userdev")
 }
 
 
@@ -10,7 +9,7 @@ dependencies {
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.0";
+version = "1.1";
 
 publishing {
     repositories {
@@ -31,9 +30,6 @@ publishing {
 }
 
 tasks {
-    assemble {
-        //dependsOn(reobfJar)
-    }
     compileJava {
         options.encoding = "UTF-8"
     }

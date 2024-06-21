@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Represents various inventory permissions that can be applied to a Skyblock island.
+ */
 public enum PermissionsInventory implements Permissions {
-    //DEFAULT(0),
     OPEN_CHEST(1),
     OPEN_ANVIL(2),
     OPEN_WORKBENCH(4),
@@ -29,17 +31,27 @@ public enum PermissionsInventory implements Permissions {
     OPEN_BLAST_FURNACE(262_144),
     OPEN_SMOKER(524_288),
     @Deprecated
-    OPEN_SMITHING_NEW(1_048_576), // Its an old Permission
+    OPEN_SMITHING_NEW(1_048_576), // It's an old permission
     OPEN_DISPENSER(2_097_152),
-    OPEN_DROPPER(4_194_304),
-    ;
+    OPEN_DROPPER(4_194_304);
 
     private final long permissionValue;
 
+    /**
+     * Constructs a PermissionsInventory with the specified permission value.
+     *
+     * @param permissionLong The permission value.
+     */
     PermissionsInventory(long permissionLong) {
         this.permissionValue = permissionLong;
     }
 
+    /**
+     * Converts a string representation of permission names to a long value.
+     *
+     * @param names The string representation of permission names.
+     * @return The long value of the permissions.
+     */
     public static long permissionValue(String names) {
         try {
             return PermissionsIsland.valueOf(names).getPermissionValue();
@@ -48,10 +60,20 @@ public enum PermissionsInventory implements Permissions {
         }
     }
 
+    /**
+     * Gets the maximum value of all permissions combined.
+     *
+     * @return The maximum permissions value.
+     */
     public static long maxPermissionsValue() {
         return Arrays.stream(PermissionsIsland.values()).mapToLong(PermissionsIsland::getPermissionValue).sum();
     }
 
+    /**
+     * Gets a list of all permission names.
+     *
+     * @return A list of permission names.
+     */
     public static List<String> getListPermissions() {
         List<String> list = new ArrayList<>();
         for (PermissionsIsland permissionsIsland : PermissionsIsland.values()) {
@@ -61,11 +83,21 @@ public enum PermissionsInventory implements Permissions {
         return list;
     }
 
+    /**
+     * Gets the permission value of this inventory permission.
+     *
+     * @return The permission value.
+     */
     @Override
     public long getPermissionValue() {
         return this.permissionValue;
     }
 
+    /**
+     * Gets the type of the permission.
+     *
+     * @return The permission type.
+     */
     @Override
     public PermissionsType getPermissionType() {
         return PermissionsType.INVENTORY;
