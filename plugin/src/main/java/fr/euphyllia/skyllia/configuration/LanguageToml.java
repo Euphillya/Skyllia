@@ -47,6 +47,7 @@ public class LanguageToml {
     public static String messageBiomeCommandNotEnoughArgs = "La commande n'est pas complète : /skyllia biome <biome>";
     public static String messageBiomeOnlyIsland = "La commande ne peut être exécuté seulement sur une île";
     public static String messageBiomeNotExist = "Le biome %s n'existe pas.";
+    public static String messageBiomePermissionDenied = "Vous n'avez pas la permission d'utiliser ce biome.";
     public static String messageBiomeChangeInProgress = "Changement de biome en cours. Veuillez notez que ça prends du temps... Un message vous avertira quand le processus sera achevé.";
     public static String messageBiomeChangeSuccess = "Le changement de biome dans le chunk où vous étiez est terminé ! Vous devez quitter et revenir sur votre île pour voir le changement.";
     public static String messageInviteAlreadyIsland = "Vous êtes déjà sur une île !";
@@ -235,6 +236,7 @@ public class LanguageToml {
         messageBiomeCommandNotEnoughArgs = getString("island.biome.not-enough-args", messageBiomeCommandNotEnoughArgs);
         messageBiomeOnlyIsland = getString("island.biome.only-island", messageBiomeOnlyIsland);
         messageBiomeNotExist = getString("island.biome.biome-not-exist", messageBiomeNotExist);
+        messageBiomePermissionDenied = getString("island.biome.permission-denied", messageBiomePermissionDenied);
         messageBiomeChangeInProgress = getString("island.biome.change-in-progress", messageBiomeChangeInProgress);
         messageBiomeChangeSuccess = getString("island.biome.success", messageBiomeChangeSuccess);
     }

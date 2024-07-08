@@ -64,6 +64,10 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 return true;
             }
 
+            if (!player.hasPermission("skyllia.island.command.biome.%s".formatted(biome.name()))) {
+                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomePermissionDenied.formatted(selectBiome));
+            }
+
             if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
                 LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeOnlyIsland);
                 return true;
@@ -125,7 +129,9 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         List<String> biomesList = new ArrayList<>();
         if (args.length == 1) {
             for (Biome biome : Biome.values()) {
-                biomesList.add(biome.name());
+                if (sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome.name()))) {
+                    biomesList.add(biome.name());
+                }
             }
         }
         return biomesList;

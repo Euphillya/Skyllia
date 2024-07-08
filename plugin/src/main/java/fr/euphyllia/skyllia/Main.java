@@ -42,7 +42,6 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        logger.log(Level.INFO, "Plugin Start");
         try {
             this.interneAPI = new InterneAPI(this);
         } catch (UnsupportedMinecraftVersionException e) {
@@ -87,7 +86,6 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.logger.log(Level.INFO, "Plugin Off");
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
         if (this.interneAPI.getDatabaseLoader() != null) {
