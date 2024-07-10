@@ -44,13 +44,13 @@ allprojects {
     dependencies {
         compileOnly("com.github.Euphillya:SGBD-MariaDB:1.3")
 
-        compileOnly("org.apache.logging.log4j:log4j-api:2.22.1")
-        compileOnly("org.apache.logging.log4j:log4j-core:2.22.1")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.3.2")
+        compileOnly("org.apache.logging.log4j:log4j-api:2.23.1")
+        compileOnly("org.apache.logging.log4j:log4j-core:2.23.1")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.4.0")
         compileOnly("com.zaxxer:HikariCP:5.1.0")
         compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
-        compileOnly("com.electronwill.night-config:toml:3.6.7")
-        compileOnly("com.google.guava:guava:33.0.0-jre")
+        compileOnly("com.electronwill.night-config:toml:3.8.0")
+        compileOnly("com.google.guava:guava:33.2.1-jre")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
     }
 
@@ -80,6 +80,6 @@ tasks.test {
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }

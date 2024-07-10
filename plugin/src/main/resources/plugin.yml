@@ -10,12 +10,12 @@ depend:
 
 libraries:
   - com.zaxxer:HikariCP:5.1.0
-  - org.mariadb.jdbc:mariadb-java-client:3.3.3
+  - org.mariadb.jdbc:mariadb-java-client:3.4.0
   - org.apache.logging.log4j:log4j-core:2.23.1
   - org.apache.logging.log4j:log4j-api:2.23.1
-  - com.google.guava:guava:33.1.0-jre
-  - com.electronwill.night-config:toml:3.6.7
-  - net.kyori:adventure-text-minimessage:4.16.0
+  - com.google.guava:guava:33.2.1-jre
+  - com.electronwill.night-config:toml:3.8.0
+  - net.kyori:adventure-text-minimessage:4.17.0
 
 commands:
   skyllia:
