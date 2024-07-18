@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.utils.nms.v1_20_R4;
+package fr.euphyllia.skyllia.utils.nms.v1_21_R1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -251,7 +251,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     @Override
     public void resetChunk(World craftWorld, Position position) {
         final ServerLevel serverLevel = ((CraftWorld) craftWorld).getHandle();
-        io.papermc.paper.util.TickThread.ensureTickThread(serverLevel, position.x(), position.z(), "Cannot regenerate chunk asynchronously");
+        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(serverLevel, position.x(), position.z(), "Cannot regenerate chunk asynchronously");
         final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
         final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
         final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);

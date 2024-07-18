@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.utils.nms.v1_20_R4;
+package fr.euphyllia.skyllia.utils.nms.v1_21_R1;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
