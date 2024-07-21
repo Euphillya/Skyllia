@@ -1,6 +1,6 @@
 # Skyllia - Skyblock Plugin for Minecraft
 
-Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Spigot and Paper (1.20+). This plugin offers an API for extending features to customize your server, with minimal external functionalities to maintain simplicity.
+Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Paper (1.20.1+). This plugin offers an API for extending features to customize your server, with minimal external functionalities to maintain simplicity.
 
 ## Table of Contents
 
