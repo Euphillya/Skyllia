@@ -251,7 +251,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     @Override
     public void resetChunk(World craftWorld, Position position) {
         final ServerLevel serverLevel = ((CraftWorld) craftWorld).getHandle();
-        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(serverLevel, position.x(), position.z(), "Cannot regenerate chunk asynchronously");
         final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
         final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
         final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);

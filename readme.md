@@ -1,6 +1,6 @@
 # Skyllia - Skyblock Plugin for Minecraft
 
-Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Paper (1.20.1+). This plugin offers an API for extending features to customize your server, with minimal external functionalities to maintain simplicity.
+Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Paper (1.20.1+). The plugin has an API that you can use to add feature extensions to customize your server. The plugin will have very little innovative functionality, and it's not my intention at all that there should be external features (like quests, for example).
 
 ## Table of Contents
 
@@ -35,10 +35,6 @@ Skyllia is a Skyblock plugin designed primarily for Folia but also compatible wi
 ## bStats
 
 [![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
-
-## Plugin Features
-
-Skyllia is a Skyblock plugin that will essentially run on Folia but work on Spigot and Paper (1.20+). The plugin has an API that you can use to add feature extensions to customize your server. The plugin will have very little innovative functionality, and it's not my intention at all that there should be external features (like quests, for example).
 
 ## Prerequisites
 
@@ -102,11 +98,11 @@ Skyllia comes with a set of commands and permissions to manage the plugin effect
 
 ## Compatible Software
 
-|                      Software                       |   Version   |
-|:---------------------------------------------------:|:-----------:|
-|    [PaperMC](https://papermc.io/downloads/paper)    | 1.20.1-1.21 |
-|           [Purpur](https://purpurmc.org)            | 1.20.1-1.21 |
-|     [Folia](https://papermc.io/software/folia)      |  1.20-1.21  |
+|                       Software                       |   Version   |
+|:----------------------------------------------------:|:-----------:|
+|    [PaperMC](https://papermc.io/downloads/paper)     | 1.20.1-1.21 |
+|            [Purpur](https://purpurmc.org)            | 1.20.1-1.21 |
+|      [Folia](https://papermc.io/software/folia)      |  1.20-1.21  |
 | [Spigot](https://www.spigotmc.org) (Not Recommended) |  Cancelled  |
 
 ## Island Generation

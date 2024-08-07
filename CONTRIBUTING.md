@@ -61,7 +61,7 @@ Enhancement suggestions are tracked as GitHub issues. Create an issue on the rep
 #### How Do I Submit A (Good) Pull Request?
 
 1. **Fork the repository**.
-2. **Clone your fork**: `git clone https://github.com/your-username/Skyllia.git`
+2. **Clone your fork**: `git clone https://github.com/Euphillya/Skyllia.git`
 3. **Create a branch**: `git checkout -b feature-branch`
 4. **Make your changes**.
 5. **Commit your changes**: `git commit -m 'Add some feature'`
