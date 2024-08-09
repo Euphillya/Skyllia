@@ -170,7 +170,7 @@ public class InterneAPI {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
             }
-            case "1.21" -> {
+            case "1.21", "1.21.1" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.PlayerNMS();
             }
