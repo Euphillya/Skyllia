@@ -112,7 +112,7 @@ public class WorldEditUtils {
                         for (int z = 0; z < 16; z++) {
                             for (int y = 0; y < world.getMaxHeight(); y++) {
                                 Location blockLocation = new Location(world, chunkPosX + x, y, chunkPosZ + z);
-                                blockLocation.getBlock().setBiome(biome);
+                                Bukkit.getRegionScheduler().execute(plugin, blockLocation, () -> blockLocation.getBlock().setBiome(biome));
                             }
                         }
                     }
