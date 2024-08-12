@@ -39,10 +39,7 @@ public class SkylliaCommand implements SkylliaCommandInterface {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
-            SubCommands[] subCommand = SubCommands.values();
-            for (SubCommands sub : subCommand) {
-                tab.add(sub.name().toLowerCase());
-            }
+            tab.addAll(SubCommands.getCommandMap().keySet());
         } else {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);

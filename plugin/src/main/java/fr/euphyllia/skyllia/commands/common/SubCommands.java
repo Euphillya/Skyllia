@@ -4,47 +4,61 @@ import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.commands.common.subcommands.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum SubCommands {
-    ACCESS(new AccessSubCommand()),
-    BAN(new BanSubCommand()),
-    BIOME(new SetBiomeSubCommand()),
-    CREATE(new CreateSubCommand()),
-    DELETE(new DeleteSubCommand()),
-    DELWARP(new DelWarpSubCommand()),
-    DEMOTE(new DemoteSubCommand()),
-    EXPEL(new ExpelSubCommand()),
-    GAMERULE(new GameRuleSubCommand()),
-    HOME(new HomeSubCommand()),
-    INVITE(new InviteSubCommand()),
-    KICK(new KickSubCommand()),
-    LEAVE(new LeaveSubCommand()),
-    PERMISSION(new PermissionSubCommand()),
-    PROMOTE(new PromoteSubCommand()),
-    TRANSFER(new TransferSubCommand()),
-    TRUST(new TrustSubCommand()),
-    SETHOME(new SetHomeSubCommand()),
-    SETWARP(new SetWarpSubCommand()),
-    UNBAN(new UnbanSubCommand()),
-    UNTRUST(new UntrustSubCommand()),
-    VISIT(new VisitSubCommand()),
-    WARP(new WarpSubCommand());
+    ACCESS(new AccessSubCommand(), "access"),
+    BAN(new BanSubCommand(), "ban"),
+    BIOME(new SetBiomeSubCommand(), "biome"),
+    CREATE(new CreateSubCommand(), "create"),
+    DELETE(new DeleteSubCommand(), "delete"),
+    DELWARP(new DelWarpSubCommand(), "delwarp"),
+    DEMOTE(new DemoteSubCommand(), "demote"),
+    EXPEL(new ExpelSubCommand(), "expel"),
+    GAMERULE(new GameRuleSubCommand(), "gamerule"),
+    HOME(new HomeSubCommand(), "home", "go", "tp"),
+    INVITE(new InviteSubCommand(), "invite", "add"),
+    KICK(new KickSubCommand(), "kick"),
+    LEAVE(new LeaveSubCommand(), "leave"),
+    PERMISSION(new PermissionSubCommand(), "permission"),
+    PROMOTE(new PromoteSubCommand(), "promote"),
+    TRANSFER(new TransferSubCommand(), "transfer"),
+    TRUST(new TrustSubCommand(), "trust"),
+    SETHOME(new SetHomeSubCommand(), "sethome"),
+    SETWARP(new SetWarpSubCommand(), "setwarp"),
+    UNBAN(new UnbanSubCommand(), "unban"),
+    UNTRUST(new UntrustSubCommand(), "untrust"),
+    VISIT(new VisitSubCommand(), "visit"),
+    WARP(new WarpSubCommand(), "warp");
 
     private final SubCommandInterface commandInterface;
+    private final String[] aliases;
 
-    SubCommands(SubCommandInterface subCommandInterface) {
+    private static final Map<String, SubCommands> commandMap = new HashMap<>();
+
+    static {
+        for (SubCommands subCommand : SubCommands.values()) {
+            for (String alias : subCommand.aliases) {
+                commandMap.put(alias.toLowerCase(), subCommand);
+            }
+        }
+    }
+
+    SubCommands(SubCommandInterface subCommandInterface, String... aliases) {
         this.commandInterface = subCommandInterface;
+        this.aliases = aliases;
     }
 
     public static SubCommands subCommandByName(@NotNull String name) {
-        for (SubCommands sub : SubCommands.values()) {
-            if (sub.name().equalsIgnoreCase(name)) {
-                return sub;
-            }
-        }
-        return null;
+        return commandMap.get(name.toLowerCase());
     }
 
     public SubCommandInterface getSubCommandInterface() {
         return this.commandInterface;
+    }
+
+    public static Map<String, SubCommands> getCommandMap() {
+        return commandMap;
     }
 }
