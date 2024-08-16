@@ -23,6 +23,7 @@ public enum SubCommands {
     LEAVE(new LeaveSubCommand(), "leave"),
     PERMISSION(new PermissionSubCommand(), "permission"),
     PROMOTE(new PromoteSubCommand(), "promote"),
+    TPS(new TPSSubCommand(), "tps", "lag", "mspt"),
     TRANSFER(new TransferSubCommand(), "transfer"),
     TRUST(new TrustSubCommand(), "trust"),
     SETHOME(new SetHomeSubCommand(), "sethome"),

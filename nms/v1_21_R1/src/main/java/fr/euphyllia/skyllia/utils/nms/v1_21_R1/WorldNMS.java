@@ -36,10 +36,7 @@ import net.minecraft.world.level.storage.LevelDataAndDimensions;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.validation.ContentValidationException;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.generator.CraftWorldInfo;
@@ -49,6 +46,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -277,5 +275,52 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
         randomSpawnSelectionField.set(serverLevel, newValue);
+    }
+
+    /**
+     * Gets the current location TPS.
+     *
+     * @param location the location for which to get the TPS
+     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
+     */
+    @Override
+    public double @Nullable [] getTPS(Location location) {
+        final int x = location.blockX() >> 4;
+        final int z = location.blockZ() >> 4;
+        final ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
+        return getTPSFromRegion(world, x, z);
+    }
+
+    /**
+     * Gets the current chunk TPS.
+     *
+     * @param chunk the chunk for which to get the TPS
+     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
+     */
+    @Override
+    public double @Nullable [] getTPS(Chunk chunk) {
+        final int x = chunk.getX();
+        final int z = chunk.getZ();
+        final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
+        return getTPSFromRegion(world, x, z);
+    }
+
+    private double[] getTPSFromRegion(ServerLevel world, int x, int z) {
+        return fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS.getTPSFromRegion(world, x, z); // Todo remove static when bundle 1.21 uploaded
+        /*io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+                region = world.regioniser.getRegionAtSynchronised(x, z);
+        if (region == null) {
+            return null;
+        } else {
+            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
+            final long currTime = System.nanoTime();
+            return new double[] {
+                    regionData.getRegionSchedulingHandle().getTickReport5s(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport15s(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport1m(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
+            };
+        }*/
     }
 }

@@ -46,7 +46,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
 
         Location playerLocation = player.getLocation();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
-            sender.sendMessage("Vous n'êtes pas sur votre ile");
+            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerIsNotOnAnIsland);
             return true;
         }
 

@@ -2,7 +2,9 @@ package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -126,5 +128,25 @@ public final class SkylliaAPI {
         } catch (ClassNotFoundException var2) {
             return false;
         }
+    }
+
+    /**
+     * Gets the current location TPS.
+     *
+     * @param location the location for which to get the TPS
+     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
+     */
+    public static double @Nullable [] getTPS(Location location) {
+        return implementation.getTPS(location);
+    }
+
+    /**
+     * Gets the current chunk TPS.
+     *
+     * @param chunk the chunk for which to get the TPS
+     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
+     */
+    public static double @Nullable [] getTPS(Chunk chunk) {
+        return implementation.getTPS(chunk);
     }
 }

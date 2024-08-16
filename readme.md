@@ -2,25 +2,28 @@
 
 Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Paper (1.20.1+). The plugin has an API that you can use to add feature extensions to customize your server. The plugin will have very little innovative functionality, and it's not my intention at all that there should be external features (like quests, for example).
 
+## bStats
+
+[![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
+
 ## Table of Contents
 
 1. [Wiki](#wiki)
 2. [Contact](#contact)
-3. [bStats](#bstats)
-4. [Plugin Features](#plugin-features)
-5. [Prerequisites](#prerequisites)
-6. [Installation](#installation)
-7. [Download Plugin](#download-plugin)
-8. [Configuration](#configuration)
-9. [API](#api)
+3. [Plugin Features](#plugin-features)
+4. [Prerequisites](#prerequisites)
+5. [Installation](#installation)
+6. [Download Plugin](#download-plugin)
+7. [Configuration](#configuration)
+8. [API](#api)
     - [Gradle Groovy](#gradle-groovy)
     - [Example Usage](#example-usage)
-10. [Commands & Permissions](#commands--permissions)
-11. [Compatible Software](#compatible-software)
-12. [Island Generation](#island-generation)
-13. [Addons](#addons)
-14. [Contribution](#contribution)
-15. [License](#license)
+9. [Commands & Permissions](#commands--permissions)
+10. [Compatible Software](#compatible-software)
+11. [Island Generation](#island-generation)
+12. [Addons](#addons)
+13. [Contribution](#contribution)
+14. [License](#license)
 
 ## Wiki
 
@@ -32,15 +35,12 @@ Skyllia is a Skyblock plugin designed primarily for Folia but also compatible wi
 
 [![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
 
-## bStats
-
-[![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
-
 ## Prerequisites
 
 - A MariaDB database
 - Paper 1.20.1+ or Folia 1.20+
 - Java 21
+- WorldEdit ([Folia](https://github.com/Euphillya/WorldEdit-Folia/actions) or [Original](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
 
 ## Installation
 
@@ -74,7 +74,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("fr.euphyllia.skyllia:api:VERSION")
+    compileOnly("fr.euphyllia.skyllia:api:1.3")
 }
 ```
 
@@ -98,12 +98,12 @@ Skyllia comes with a set of commands and permissions to manage the plugin effect
 
 ## Compatible Software
 
-|                       Software                       |   Version   |
-|:----------------------------------------------------:|:-----------:|
-|    [PaperMC](https://papermc.io/downloads/paper)     | 1.20.1-1.21 |
-|            [Purpur](https://purpurmc.org)            | 1.20.1-1.21 |
-|      [Folia](https://papermc.io/software/folia)      |  1.20-1.21  |
-| [Spigot](https://www.spigotmc.org) (Not Recommended) |  Cancelled  |
+|                       Software                       |    Version    |
+|:----------------------------------------------------:|:-------------:|
+|    [PaperMC](https://papermc.io/downloads/paper)     | 1.20.1-1.21.1 |
+|            [Purpur](https://purpurmc.org)            | 1.20.1-1.21.1 |
+|      [Folia](https://papermc.io/software/folia)      |  1.20-1.21.1  |
+| [Spigot](https://www.spigotmc.org) (Not Recommended) |   Cancelled   |
 
 ## Island Generation
 

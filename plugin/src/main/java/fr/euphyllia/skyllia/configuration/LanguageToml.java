@@ -25,6 +25,7 @@ public class LanguageToml {
     public static String messagePlayerHasNotIsland = "You don't have an island!";
     public static String messageIslandAlreadyExist = "You already have an island.";
     public static String messagePlayerNotFound = "Player not found.";
+    public static String messagePlayerIsNotOnAnIsland = "You must be on an island.";
     public static String messagePlayerNotInIsland = "You must be on your island.";
     public static String messageWarpCreateSuccess = "Your warp: %s has been created.";
     public static String messageError = "An error occurred. Please contact an administrator.";
