@@ -46,11 +46,11 @@ allprojects {
 
         compileOnly("org.apache.logging.log4j:log4j-api:2.23.1")
         compileOnly("org.apache.logging.log4j:log4j-core:2.23.1")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.4.0")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.4.1")
         compileOnly("com.zaxxer:HikariCP:5.1.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
-        compileOnly("com.electronwill.night-config:toml:3.8.0")
-        compileOnly("com.google.guava:guava:33.2.1-jre")
+        compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
+        compileOnly("com.electronwill.night-config:toml:3.8.1")
+        compileOnly("com.google.guava:guava:33.3.0-jre")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
     }
 
