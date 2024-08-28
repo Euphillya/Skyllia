@@ -37,11 +37,11 @@ public class VisitSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.visit")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageVisitCommandNotEnoughArgs);
             return true;
         }
 
@@ -54,25 +54,25 @@ public class VisitSubCommand implements SubCommandInterface {
                 visitPlayerId = Bukkit.getPlayerUniqueId(visitPlayer);
             }
             if (visitPlayerId == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
                 return true;
             }
 
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(visitPlayerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitPlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messageVisitPlayerHasNotIsland);
                 return true;
             }
 
             if (!player.hasPermission("skyllia.island.command.visit.bypass")) {
                 if (island.isPrivateIsland()) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandIsPrivate);
+                    LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandIsPrivate);
                     return true;
                 }
                 Players memberIsland = island.getMember(player.getUniqueId());
                 if (memberIsland != null && memberIsland.getRoleType().equals(RoleType.BAN)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandPlayerBanned);
+                    LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandPlayerBanned);
                     return true;
                 }
             }
@@ -89,11 +89,11 @@ public class VisitSubCommand implements SubCommandInterface {
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                 if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SURVIVAL);
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
+                LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
             }, null, 0L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
         return true;
     }

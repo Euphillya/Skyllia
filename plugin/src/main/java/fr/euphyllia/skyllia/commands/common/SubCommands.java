@@ -33,9 +33,6 @@ public enum SubCommands {
     VISIT(new VisitSubCommand(), "visit"),
     WARP(new WarpSubCommand(), "warp");
 
-    private final SubCommandInterface commandInterface;
-    private final String[] aliases;
-
     private static final Map<String, SubCommands> commandMap = new HashMap<>();
 
     static {
@@ -46,6 +43,9 @@ public enum SubCommands {
         }
     }
 
+    private final SubCommandInterface commandInterface;
+    private final String[] aliases;
+
     SubCommands(SubCommandInterface subCommandInterface, String... aliases) {
         this.commandInterface = subCommandInterface;
         this.aliases = aliases;
@@ -55,11 +55,11 @@ public enum SubCommands {
         return commandMap.get(name.toLowerCase());
     }
 
-    public SubCommandInterface getSubCommandInterface() {
-        return this.commandInterface;
-    }
-
     public static Map<String, SubCommands> getCommandMap() {
         return commandMap;
+    }
+
+    public SubCommandInterface getSubCommandInterface() {
+        return this.commandInterface;
     }
 }

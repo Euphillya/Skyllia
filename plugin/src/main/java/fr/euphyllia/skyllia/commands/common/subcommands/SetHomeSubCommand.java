@@ -35,7 +35,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.sethome")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         Location playerLocation = player.getLocation();
@@ -46,14 +46,14 @@ public class SetHomeSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
             Position islandPosition = island.getPosition();
             Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
 
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
                 return true;
             }
 
@@ -63,20 +63,20 @@ public class SetHomeSubCommand implements SubCommandInterface {
                 PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_HOME)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
 
             boolean updateOrCreateHome = island.addWarps("home", playerLocation, false);
             if (updateOrCreateHome) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageHomeCreateSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageHomeCreateSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
 
         return true;

@@ -35,11 +35,11 @@ public class WarpSubCommand implements SubCommandInterface {
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageWarpCommandNotEnoughArgs);
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.warp")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
@@ -49,7 +49,7 @@ public class WarpSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -59,22 +59,22 @@ public class WarpSubCommand implements SubCommandInterface {
                 PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.TP_WARP)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
 
             WarpIsland warp = island.getWarpByName(warpName);
             if (warp == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpNotExist);
+                LanguageToml.sendMessage(player, LanguageToml.messageWarpNotExist);
                 return true;
             }
 
             player.teleportAsync(warp.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpTeleportSuccess);
+            LanguageToml.sendMessage(player, LanguageToml.messageWarpTeleportSuccess);
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
 
 

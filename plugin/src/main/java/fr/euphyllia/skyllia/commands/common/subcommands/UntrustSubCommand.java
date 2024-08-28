@@ -36,17 +36,17 @@ public class UntrustSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.access")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageUntrustCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageUntrustCommandNotEnoughArgs);
             return true;
         }
         try {
             UUID playerTrustedId = Bukkit.getPlayerUniqueId(args[0]);
             if (playerTrustedId == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
                 return true;
             }
 
@@ -54,7 +54,7 @@ public class UntrustSubCommand implements SubCommandInterface {
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -64,20 +64,20 @@ public class UntrustSubCommand implements SubCommandInterface {
 
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_TRUST)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
 
             boolean isRemove = PlayersInIslandCache.removePlayerTrustedInIsland(island.getId(), playerTrustedId);
             if (isRemove) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageUntrustSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageUntrustSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageUntrustFailed);
+                LanguageToml.sendMessage(player, LanguageToml.messageUntrustFailed);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
         return true;
     }

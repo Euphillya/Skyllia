@@ -36,17 +36,17 @@ public class SetWarpSubCommand implements SubCommandInterface {
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageWarpCommandNotEnoughArgs);
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.setwarp")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         Location playerLocation = player.getLocation();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerIsNotOnAnIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerIsNotOnAnIsland);
             return true;
         }
 
@@ -59,7 +59,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -69,7 +69,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
                 PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_WARP)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
@@ -78,19 +78,19 @@ public class SetWarpSubCommand implements SubCommandInterface {
             Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
 
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
                 return true;
             }
 
             boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation, false);
             if (updateOrCreateWarps) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCreateSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageWarpCreateSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
 
         return true;

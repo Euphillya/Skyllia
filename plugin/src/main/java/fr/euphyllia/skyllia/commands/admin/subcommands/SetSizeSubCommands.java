@@ -28,19 +28,19 @@ public class SetSizeSubCommands implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.admins.commands.island.setsize")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         if (args.length < 3) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageASetSizeCommandNotEnoughArgs);
             return true;
         }
         String playerName = args[0];
         String changeValue = args[1];
         String confirm = args[2];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeNotConfirmedArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageASetSizeNotConfirmedArgs);
             return true;
         }
         try {
@@ -53,24 +53,24 @@ public class SetSizeSubCommands implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(playerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
             double newSize = Double.parseDouble(changeValue);
             boolean updated = island.setSize(newSize);
             if (updated) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeFailed);
+                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeFailed);
             }
 
         } catch (Exception e) {
             if (e instanceof NumberFormatException ignored) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeNAN);
+                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeNAN);
             } else {
                 logger.log(Level.FATAL, e.getMessage(), e);
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
         }
         return true;

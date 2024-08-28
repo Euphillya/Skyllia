@@ -27,28 +27,28 @@ public class LeaveSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.leave")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
             return true;
         }
         Players players = island.getMember(player.getUniqueId());
         if (players.getRoleType().equals(RoleType.OWNER)) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveFailedIsOwnerIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messageLeaveFailedIsOwnerIsland);
             return true;
         }
 
         boolean hasLeave = island.removeMember(players);
         if (hasLeave) {
             DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeaveSuccess);
+            LanguageToml.sendMessage(player, LanguageToml.messageLeaveSuccess);
         } else {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageLeavePlayerFailed);
+            LanguageToml.sendMessage(player, LanguageToml.messageLeavePlayerFailed);
         }
         return true;
     }

@@ -32,11 +32,11 @@ public class DemoteSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.demote")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemoteCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageDemoteCommandNotEnoughArgs);
             return true;
         }
         try {
@@ -45,7 +45,7 @@ public class DemoteSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -56,7 +56,7 @@ public class DemoteSubCommand implements SubCommandInterface {
 
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.DEMOTE)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
@@ -64,26 +64,26 @@ public class DemoteSubCommand implements SubCommandInterface {
             Players players = island.getMember(playerName);
 
             if (players == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
                 return true;
             }
 
             if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayerFailedHighOrEqualsStatus);
+                LanguageToml.sendMessage(player, LanguageToml.messageDemotePlayerFailedHighOrEqualsStatus);
                 return true;
             }
 
             RoleType demoteResult = RoleType.getRoleById(players.getRoleType().getValue() - 1);
             if (demoteResult.getValue() == 0 || demoteResult.getValue() == -1) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayerFailed.formatted(playerName));
+                LanguageToml.sendMessage(player, LanguageToml.messageDemotePlayerFailed.formatted(playerName));
                 return true;
             }
             players.setRoleType(demoteResult);
             island.updateMember(players);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageDemotePlayer.formatted(playerName));
+            LanguageToml.sendMessage(player, LanguageToml.messageDemotePlayer.formatted(playerName));
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
 
         return true;

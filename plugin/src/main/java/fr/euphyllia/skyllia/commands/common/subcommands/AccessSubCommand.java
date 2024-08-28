@@ -37,7 +37,7 @@ public class AccessSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.access")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
@@ -45,7 +45,7 @@ public class AccessSubCommand implements SubCommandInterface {
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
         if (island == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
             return true;
         }
 
@@ -55,7 +55,7 @@ public class AccessSubCommand implements SubCommandInterface {
 
             PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
             if (!permissionManager.hasPermission(PermissionsCommandIsland.ACCESS)) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                 return true;
             }
         }
@@ -65,7 +65,7 @@ public class AccessSubCommand implements SubCommandInterface {
         boolean isUpdate = island.setPrivateIsland(statusAccessUpdate);
         if (isUpdate) {
             if (statusAccessUpdate) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandClose);
+                LanguageToml.sendMessage(player, LanguageToml.messageAccessIslandClose);
                 ConfigToml.worldConfigs.forEach(worldConfig -> {
                     RegionUtils.getEntitiesInRegion(plugin, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().x(), island.getPosition().z(), entity -> {
                         Player playerInIsland = (Player) entity;
@@ -77,7 +77,7 @@ public class AccessSubCommand implements SubCommandInterface {
                     });
                 });
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageAccessIslandOpen);
+                LanguageToml.sendMessage(player, LanguageToml.messageAccessIslandOpen);
             }
         }
         return true;

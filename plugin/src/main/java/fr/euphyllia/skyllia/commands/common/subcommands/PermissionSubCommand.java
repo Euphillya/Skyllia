@@ -35,11 +35,11 @@ public class PermissionSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.permission")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 4) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messagePermissionCommandNotEnoughArgs);
             return true;
         }
         String permissionsTypeRaw = args[0]; // ISLAND / COMMANDS / INVENTORY
@@ -53,7 +53,7 @@ public class PermissionSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -64,34 +64,34 @@ public class PermissionSubCommand implements SubCommandInterface {
 
                     PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                     if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_PERMISSION)) {
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                        LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                         return true;
                     }
                 }
                 if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
                     return true;
                 }
 
                 if (updatePermissions(skyblockManager, island, permissionFormat)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateSuccess);
                 } else {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateFailed);
                 }
             } else {
                 // RESET !
                 if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwner);
+                    LanguageToml.sendMessage(player, LanguageToml.messageOnlyOwner);
                 }
                 if (resetPermission(island, permissionFormat)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateSuccess);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateSuccess);
                 } else {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePermissionsUpdateFailed);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateFailed);
                 }
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
         return true;
     }
@@ -130,14 +130,14 @@ public class PermissionSubCommand implements SubCommandInterface {
         try {
             permissionsType = PermissionsType.valueOf(permissionsTypeRaw.toUpperCase());
         } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionPermissionTypeInvalid);
+            LanguageToml.sendMessage(entity, LanguageToml.messagePermissionPermissionTypeInvalid);
             return null;
         }
         RoleType roleType;
         try {
             roleType = RoleType.valueOf(roleTypeRaw.toUpperCase());
         } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionRoleTypeInvalid);
+            LanguageToml.sendMessage(entity, LanguageToml.messagePermissionRoleTypeInvalid);
             return null;
         }
         Permissions permissions = null;
@@ -150,7 +150,7 @@ public class PermissionSubCommand implements SubCommandInterface {
                 };
             }
         } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(main, entity, LanguageToml.messagePermissionsPermissionsValueInvalid);
+            LanguageToml.sendMessage(entity, LanguageToml.messagePermissionsPermissionsValueInvalid);
             return null;
         }
         boolean value = Boolean.parseBoolean(valueRaw);

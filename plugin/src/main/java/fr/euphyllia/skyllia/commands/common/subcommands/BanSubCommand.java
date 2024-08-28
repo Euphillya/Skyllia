@@ -32,17 +32,17 @@ public class BanSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.ban")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageBanCommandNotEnoughArgs);
             return true;
         }
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
             return true;
         }
 
@@ -53,7 +53,7 @@ public class BanSubCommand implements SubCommandInterface {
 
             PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
             if (!permissionManager.hasPermission(PermissionsCommandIsland.BAN)) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                 return true;
             }
         }
@@ -62,20 +62,20 @@ public class BanSubCommand implements SubCommandInterface {
         Players players = island.getMember(playerBan);
 
         if (players != null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanImpossiblePlayerInIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messageBanImpossiblePlayerInIsland);
             return true;
         }
 
         Player bPlayerBan = Bukkit.getPlayerExact(playerBan);
         if (bPlayerBan == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
             return true;
         }
 
         players = new Players(bPlayerBan.getUniqueId(), playerBan, island.getId(), RoleType.BAN);
 
         island.updateMember(players);
-        LanguageToml.sendMessage(plugin, player, LanguageToml.messageBanPlayerSuccess);
+        LanguageToml.sendMessage(player, LanguageToml.messageBanPlayerSuccess);
         ExpelSubCommand.expelPlayer(plugin, island, bPlayerBan, player, true);
         return true;
     }

@@ -33,11 +33,11 @@ public class DelWarpSubCommand implements SubCommandInterface {
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageWarpCommandNotEnoughArgs);
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.delwarp")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
@@ -47,12 +47,12 @@ public class DelWarpSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
             if (warpName.equalsIgnoreCase("home")) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandNotDeleteHome);
+                LanguageToml.sendMessage(player, LanguageToml.messageIslandNotDeleteHome);
                 return true;
             }
 
@@ -62,20 +62,20 @@ public class DelWarpSubCommand implements SubCommandInterface {
                 PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.DEL_WARP)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
 
             boolean deleteWarp = island.delWarp(warpName);
             if (deleteWarp) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageWarpDeleteSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageWarpDeleteSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
 
         return true;

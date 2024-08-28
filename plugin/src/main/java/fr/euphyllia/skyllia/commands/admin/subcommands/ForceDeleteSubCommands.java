@@ -35,18 +35,18 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.admins.commands.island.delete")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         if (args.length < 2) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageADeleteCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageADeleteCommandNotEnoughArgs);
             return true;
         }
         String playerName = args[0];
         String confirm = args[1];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageADeleteNotConfirmedArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageADeleteNotConfirmedArgs);
             return true;
         }
         try {
@@ -59,7 +59,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(playerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -71,13 +71,13 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                     WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
                 }
 
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageIslandDeleteSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
 
         return true;

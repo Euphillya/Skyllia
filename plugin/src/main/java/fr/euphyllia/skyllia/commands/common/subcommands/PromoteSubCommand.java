@@ -32,11 +32,11 @@ public class PromoteSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.promote")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromoteCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messagePromoteCommandNotEnoughArgs);
             return true;
         }
         try {
@@ -45,7 +45,7 @@ public class PromoteSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -56,7 +56,7 @@ public class PromoteSubCommand implements SubCommandInterface {
 
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.PROMOTE)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
@@ -64,26 +64,26 @@ public class PromoteSubCommand implements SubCommandInterface {
             Players players = island.getMember(playerName);
 
             if (players == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
                 return true;
             }
 
             if (executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayerFailedLowOrEqualsStatus);
+                LanguageToml.sendMessage(player, LanguageToml.messagePromotePlayerFailedLowOrEqualsStatus);
                 return true;
             }
 
             RoleType promoteResult = RoleType.getRoleById(players.getRoleType().getValue() + 1);
             if (promoteResult.getValue() == 0 || promoteResult.getValue() == RoleType.OWNER.getValue()) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayerFailed.formatted(playerName));
+                LanguageToml.sendMessage(player, LanguageToml.messagePromotePlayerFailed.formatted(playerName));
                 return true;
             }
             players.setRoleType(promoteResult);
             island.updateMember(players);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePromotePlayer.formatted(playerName));
+            LanguageToml.sendMessage(player, LanguageToml.messagePromotePlayer.formatted(playerName));
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
 
         return true;

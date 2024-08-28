@@ -56,21 +56,21 @@ public class DeleteSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.delete")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
             if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
                 return true;
             }
 
@@ -83,13 +83,13 @@ public class DeleteSubCommand implements SubCommandInterface {
                     WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
                 }
 
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandDeleteSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageIslandDeleteSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
         return true;
     }

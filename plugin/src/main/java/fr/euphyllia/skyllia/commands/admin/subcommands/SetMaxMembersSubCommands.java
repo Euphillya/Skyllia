@@ -28,19 +28,19 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.admins.commands.island.setmaxmembers")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         if (args.length < 3) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageASetMaxMembersCommandNotEnoughArgs);
             return true;
         }
         String playerName = args[0];
         String changeValue = args[1];
         String confirm = args[2];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersNotConfirmedArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageASetMaxMembersNotConfirmedArgs);
             return true;
         }
         try {
@@ -53,24 +53,24 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(playerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
             int members = Integer.parseInt(changeValue);
             boolean updated = island.setMaxMembers(members);
             if (updated) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetSizeFailed);
+                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeFailed);
             }
 
         } catch (Exception e) {
             if (e instanceof NumberFormatException ignored) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageASetMaxMembersNAN);
+                LanguageToml.sendMessage(player, LanguageToml.messageASetMaxMembersNAN);
             } else {
                 logger.log(Level.FATAL, e.getMessage(), e);
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+                LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
         }
         return true;

@@ -85,6 +85,7 @@ public class SkyblockEvent implements Listener {
     private void teleportOtherWorld(Player player, PlayerPrepareChangeWorldSkyblockEvent event, PermissionsIsland permissionsIsland) {
         Island island = ListenersUtils.checkPermission(player.getLocation(), player, permissionsIsland, event);
         if (island == null) {
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return;
         }
         try {
@@ -95,6 +96,7 @@ public class SkyblockEvent implements Listener {
             } else if (permissionsIsland.equals(PermissionsIsland.USE_END_PORTAL)) {
                 portalConfig = worldConfig.endPortal();
             } else {
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                 return;
             }
             if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalConfig.direction()))) {
@@ -119,7 +121,7 @@ public class SkyblockEvent implements Listener {
                 if (!playerChangeWorldSkyblockEvent.checkSafeLocation() || WorldUtils.isSafeLocation(playerChangeWorldSkyblockEvent.getTo())) {
                     player.teleportAsync(playerChangeWorldSkyblockEvent.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 } else {
-                    LanguageToml.sendMessage(this.api.getPlugin(), player, LanguageToml.messageLocationNotSafe);
+                    LanguageToml.sendMessage(player, LanguageToml.messageLocationNotSafe);
                 }
             });
         } catch (Exception e) {

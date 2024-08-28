@@ -22,19 +22,19 @@ public class TPSSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.tps")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         Location playerLocation = player.getLocation();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerIsNotOnAnIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerIsNotOnAnIsland);
             return true;
         }
 
         double @Nullable [] tpsIsland = SkylliaAPI.getTPS(playerLocation);
         if (tpsIsland == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerIsNotOnAnIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerIsNotOnAnIsland);
             return true;
         }
         player.sendMessage(TPSFormatter.displayTPS(tpsIsland).asComponent());

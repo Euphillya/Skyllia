@@ -35,11 +35,11 @@ public class GameRuleSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.gamerule")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 2) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageGameRuleCommandNotEnoughArgs);
             return true;
         }
         String permissionRaw = args[0]; // Permission
@@ -48,7 +48,7 @@ public class GameRuleSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -59,7 +59,7 @@ public class GameRuleSubCommand implements SubCommandInterface {
 
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_GAMERULE)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
@@ -69,7 +69,7 @@ public class GameRuleSubCommand implements SubCommandInterface {
             try {
                 gameRuleIsland = GameRuleIsland.valueOf(permissionRaw.toUpperCase());
             } catch (IllegalArgumentException exception) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleInvalid);
+                LanguageToml.sendMessage(player, LanguageToml.messageGameRuleInvalid);
                 return true;
             }
 
@@ -80,13 +80,13 @@ public class GameRuleSubCommand implements SubCommandInterface {
             boolean updateGameRuleIsland = island.updateGamerule(permissionManager.getPermissions());
 
             if (updateGameRuleIsland) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageGameRuleUpdateSuccess);
             } else {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageGameRuleUpdateFailed);
+                LanguageToml.sendMessage(player, LanguageToml.messageGameRuleUpdateFailed);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
         return true;
     }

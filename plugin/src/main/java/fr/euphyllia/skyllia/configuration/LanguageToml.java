@@ -360,8 +360,9 @@ public class LanguageToml {
     }
 
 
-    public static void sendMessage(Main plugin, Entity entity, String msg) {
+    public static void sendMessage(Entity entity, String msg) {
+        // Todo MultiLangue future version
         if (msg.isEmpty()) return;
-        entity.sendMessage(plugin.getInterneAPI().getMiniMessage().deserialize(msg));
+        entity.sendMessage(Main.getPlugin(Main.class).getInterneAPI().getMiniMessage().deserialize(msg));
     }
 }

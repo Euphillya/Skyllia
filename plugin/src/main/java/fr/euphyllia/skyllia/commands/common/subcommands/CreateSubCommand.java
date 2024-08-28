@@ -49,7 +49,7 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.create")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         GameMode olgGM = player.getGameMode();
@@ -65,26 +65,26 @@ public class CreateSubCommand implements SubCommandInterface {
                 }
                 Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
                 if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandSchemNotExist);
+                    LanguageToml.sendMessage(player, LanguageToml.messageIslandSchemNotExist);
                     return true;
                 }
                 IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
 
                 if (islandSettings == null) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandTypeNotExist);
+                    LanguageToml.sendMessage(player, LanguageToml.messageIslandTypeNotExist);
                     return true;
                 }
 
                 if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
 
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandInProgress);
+                LanguageToml.sendMessage(player, LanguageToml.messageIslandInProgress);
                 UUID idIsland = UUID.randomUUID();
                 boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings).join());
                 if (!isCreate) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandError);
+                    LanguageToml.sendMessage(player, LanguageToml.messageIslandError);
                     return true;
                 }
                 islandAtomic.set(skyblockManager.getIslandByIslandId(idIsland).join());
@@ -101,10 +101,11 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.setFirstHome(islandAtomic.get(), centerPaste);
                         this.setPermissionsRole(islandAtomic.get());
                         player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
+                        if (ConfigToml.changeGameModeWhenTeleportIsland)
+                            PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(islandAtomic.get(), player);
                         plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
-                        LanguageToml.sendMessage(plugin, player, LanguageToml.messageIslandCreateFinish);
+                        LanguageToml.sendMessage(player, LanguageToml.messageIslandCreateFinish);
                         CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(islandAtomic.get())));
                         isFirstIteration = false;
                     }
@@ -115,7 +116,7 @@ public class CreateSubCommand implements SubCommandInterface {
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, olgGM);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
         return true;
     }

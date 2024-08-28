@@ -42,11 +42,11 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.biome")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageBiomeCommandNotEnoughArgs);
             return true;
         }
 
@@ -60,16 +60,16 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             try {
                 biome = Biome.valueOf(selectBiome.toUpperCase());
             } catch (IllegalArgumentException e) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeNotExist.formatted(selectBiome));
+                LanguageToml.sendMessage(player, LanguageToml.messageBiomeNotExist.formatted(selectBiome));
                 return true;
             }
 
             if (!player.hasPermission("skyllia.island.command.biome.%s".formatted(biome.name()))) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomePermissionDenied.formatted(selectBiome));
+                LanguageToml.sendMessage(player, LanguageToml.messageBiomePermissionDenied.formatted(selectBiome));
             }
 
             if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeOnlyIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messageBiomeOnlyIsland);
                 return true;
             }
 
@@ -77,12 +77,12 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
             final UUID islandId = island.getId();
             if (CommandCacheExecution.isAlreadyExecute(islandId, "biome")) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageCommandAlreadyExecution);
+                LanguageToml.sendMessage(player, LanguageToml.messageCommandAlreadyExecution);
                 return true;
             }
             CommandCacheExecution.addCommandExecute(islandId, "biome");
@@ -94,7 +94,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
                 PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
                 if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_BIOME)) {
-                    LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     return true;
                 }
             }
@@ -103,21 +103,21 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
 
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotInIsland);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
                 return true;
             }
 
             World world = player.getWorld();
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeInProgress);
+            LanguageToml.sendMessage(player, LanguageToml.messageBiomeChangeInProgress);
 
             boolean biomeChanged = WorldEditUtils.changeBiomeChunk(plugin, world, biome, island).join();
             if (biomeChanged) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messageBiomeChangeSuccess);
+                LanguageToml.sendMessage(player, LanguageToml.messageBiomeChangeSuccess);
                 CommandCacheExecution.removeCommandExec(islandId, "biome");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageError);
+            LanguageToml.sendMessage(player, LanguageToml.messageError);
 
         }
 

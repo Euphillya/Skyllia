@@ -116,7 +116,7 @@ public class Main extends JavaPlugin {
         pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
         pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
         pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.20.6 (can work on Bloom, but don't use it)
+        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.21.1 (can work on Bloom, but don't use it)
         pluginManager.registerEvents(new PistonEvent(this.interneAPI), this);
         if (VersionUtils.IS_FOLIA) {
             pluginManager.registerEvents(new PortalAlternativeFoliaEvent(this.interneAPI), this);

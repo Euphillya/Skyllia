@@ -31,17 +31,17 @@ public class UnbanSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.unban")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageUnbanCommandNotEnoughArgs);
             return true;
         }
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
             return true;
         }
 
@@ -52,7 +52,7 @@ public class UnbanSubCommand implements SubCommandInterface {
 
             PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
             if (!permissionManager.hasPermission(PermissionsCommandIsland.UNBAN)) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                 return true;
             }
         }
@@ -61,15 +61,15 @@ public class UnbanSubCommand implements SubCommandInterface {
         Players players = island.getMember(playerBan);
 
         if (players == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanPlayerNotBanned);
+            LanguageToml.sendMessage(player, LanguageToml.messageUnbanPlayerNotBanned);
             return true;
         }
 
         boolean isRemoved = island.removeMember(players);
         if (isRemoved) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnBanPlayerSuccess);
+            LanguageToml.sendMessage(player, LanguageToml.messageUnBanPlayerSuccess);
         } else {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageUnbanPlayerFailed);
+            LanguageToml.sendMessage(player, LanguageToml.messageUnbanPlayerFailed);
         }
         return true;
     }

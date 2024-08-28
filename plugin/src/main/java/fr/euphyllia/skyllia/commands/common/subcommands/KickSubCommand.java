@@ -31,17 +31,17 @@ public class KickSubCommand implements SubCommandInterface {
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.kick")) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickCommandNotEnoughArgs);
+            LanguageToml.sendMessage(player, LanguageToml.messageKickCommandNotEnoughArgs);
             return true;
         }
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerHasNotIsland);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
             return true;
         }
 
@@ -52,7 +52,7 @@ public class KickSubCommand implements SubCommandInterface {
 
             PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
             if (!permissionManager.hasPermission(PermissionsCommandIsland.KICK)) {
-                LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerPermissionDenied);
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                 return true;
             }
         }
@@ -61,21 +61,21 @@ public class KickSubCommand implements SubCommandInterface {
         Players players = island.getMember(playerKick);
 
         if (players == null) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messagePlayerNotFound);
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
             return true;
         }
 
         if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailedHighOrEqualsStatus);
+            LanguageToml.sendMessage(player, LanguageToml.messageKickPlayerFailedHighOrEqualsStatus);
             return true;
         }
 
         boolean isRemoved = island.removeMember(players);
         if (isRemoved) {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerSuccess);
+            LanguageToml.sendMessage(player, LanguageToml.messageKickPlayerSuccess);
             DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
         } else {
-            LanguageToml.sendMessage(plugin, player, LanguageToml.messageKickPlayerFailed);
+            LanguageToml.sendMessage(player, LanguageToml.messageKickPlayerFailed);
         }
         return true;
     }
