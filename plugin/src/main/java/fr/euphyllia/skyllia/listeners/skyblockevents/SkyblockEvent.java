@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.listeners.skyblockevents;
 
+import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
@@ -116,10 +117,13 @@ public class SkyblockEvent implements Listener {
                     if (futurLocation.getBlockY() >= world.getMaxHeight()) return;
                     futurLocation.setY(y++);
                 }
-                PlayerChangeWorldSkyblockEvent playerChangeWorldSkyblockEvent = new PlayerChangeWorldSkyblockEvent(player, event.getPortalType(), futurLocation, true);
-                Bukkit.getPluginManager().callEvent(playerChangeWorldSkyblockEvent);
-                if (!playerChangeWorldSkyblockEvent.checkSafeLocation() || WorldUtils.isSafeLocation(playerChangeWorldSkyblockEvent.getTo())) {
-                    player.teleportAsync(playerChangeWorldSkyblockEvent.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                PlayerChangeWorldSkyblockEvent worldSkyblockEvent = new PlayerChangeWorldSkyblockEvent(player, event.getPortalType(), futurLocation, true);
+                Bukkit.getPluginManager().callEvent(worldSkyblockEvent);
+                if (!worldSkyblockEvent.checkSafeLocation() || WorldUtils.isSafeLocation(worldSkyblockEvent.getTo())) {
+                    player.teleportAsync(worldSkyblockEvent.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    this.api.getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player,
+                            RegionHelper.getCenterRegion(worldSkyblockEvent.getTo().getWorld(), island.getPosition().x(), island.getPosition().z()),
+                            island.getSize(), 0, 0);
                 } else {
                     LanguageToml.sendMessage(player, LanguageToml.messageLocationNotSafe);
                 }
