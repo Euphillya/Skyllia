@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -9,7 +10,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.InviteCacheExecution;
-import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public class InviteSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(InviteSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
@@ -51,27 +52,27 @@ public class InviteSubCommand implements SubCommandInterface {
                 return true;
             }
             String playerOrOwner = args[1];
-            invitePlayer(plugin, player, playerOrOwner);
+            invitePlayer(Main.getPlugin(Main.class), player, playerOrOwner);
         } else if (type.equalsIgnoreCase("accept")) {
             if (args.length < 2) {
                 LanguageToml.sendMessage(player, LanguageToml.messageInviteAcceptCommandNotEnoughArgs);
                 return true;
             }
             String playerOrOwner = args[1];
-            acceptPlayer(plugin, player, playerOrOwner);
+            acceptPlayer(Main.getPlugin(Main.class), player, playerOrOwner);
         } else if (type.equalsIgnoreCase("decline")) {
             if (args.length < 2) {
                 LanguageToml.sendMessage(player, LanguageToml.messageInviteDeclineCommandNotEnoughArgs);
                 return true;
             }
             String playerOrOwner = args[1];
-            declinePlayer(plugin, player, playerOrOwner);
+            declinePlayer(Main.getPlugin(Main.class), player, playerOrOwner);
         }
         return true;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> value = new ArrayList<>();
         if (args.length == 1) {
             return List.of("accept", "decline", "add");

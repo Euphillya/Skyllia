@@ -8,20 +8,79 @@ import java.util.List;
  * Represents various permissions that can be applied to a Skyblock island.
  */
 public enum PermissionsIsland implements Permissions {
+    /**
+     * Permission to break blocks.
+     */
     BLOCK_BREAK(1),
+
+    /**
+     * Permission to place blocks.
+     */
     BLOCK_PLACE(2),
+
+    /**
+     * Permission to use buckets.
+     */
     BUCKETS(4),
+
+    /**
+     * Permission to use redstone components.
+     */
     REDSTONE(8),
+
+    /**
+     * Permission to engage in player vs player (PvP) combat.
+     */
     PVP(16),
+
+    /**
+     * Permission to kill monsters.
+     */
     KILL_MONSTER(32),
+
+    /**
+     * Permission to kill animals.
+     */
     KILL_ANIMAL(64),
+
+    /**
+     * Permission to drop items.
+     */
     DROP_ITEMS(128),
+
+    /**
+     * Permission to pick up items.
+     */
     PICKUP_ITEMS(256),
+
+    /**
+     * Permission to use nether portals.
+     */
     USE_NETHER_PORTAL(512),
+
+    /**
+     * Permission to use end portals.
+     */
     USE_END_PORTAL(1_024),
+
+    /**
+     * Permission to interact with entities.
+     */
     INTERACT_ENTITIES(2_048),
+
+    /**
+     * Permission to kill unknown entities.
+     */
     KILL_UNKNOWN_ENTITY(4_096),
+
+    /**
+     * Permission to kill NPCs (non-player characters).
+     */
     KILL_NPC(8_192),
+
+    /**
+     * Permission to perform general interactions on the island.
+     */
     INTERACT(16_384);
 
     private final long permissionValue;

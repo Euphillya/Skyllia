@@ -1,13 +1,13 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
-import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -18,6 +18,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public class PermissionSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(PermissionSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
@@ -48,9 +49,9 @@ public class PermissionSubCommand implements SubCommandInterface {
         String valueRaw = args[3]; // true / false
 
         try {
-            PermissionFormat permissionFormat = this.getPermissionFormat(plugin, player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
+            PermissionFormat permissionFormat = this.getPermissionFormat(Main.getPlugin(Main.class), player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
             if (permissionFormat == null) return true;
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
                 LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
@@ -97,7 +98,7 @@ public class PermissionSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
             return Arrays.stream(PermissionsType.values()).map(Enum::name).toList();
         }

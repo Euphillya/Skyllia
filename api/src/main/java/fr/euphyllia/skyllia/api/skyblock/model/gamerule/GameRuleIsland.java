@@ -10,17 +10,64 @@ import java.util.List;
  * Represents various game rules that can be applied to a Skyblock island.
  */
 public enum GameRuleIsland {
+    /**
+     * Disables the spawning of hostile mobs on the island.
+     */
     DISABLE_SPAWN_HOSTILE(1),
+
+    /**
+     * Disables the spawning of passive mobs on the island.
+     */
     DISABLE_SPAWN_PASSIVE(2),
+
+    /**
+     * Disables the spawning of unknown mobs on the island.
+     */
     DISABLE_SPAWN_UNKNOWN(4),
+
+    /**
+     * Disables explosions caused by players on the island.
+     */
     DISABLE_HUMAN_EXPLOSION(8),
+
+    /**
+     * Disables explosions caused by mobs on the island.
+     */
     DISABLE_MOB_EXPLOSION(16),
+
+    /**
+     * Disables Endermen from picking up blocks on the island.
+     */
     DISABLE_ENDERMAN_PICK_BLOCK(32),
+
+    /**
+     * Disables fire spreading on the island.
+     */
     DISABLE_FIRE_SPREADING(64),
+
+    /**
+     * Disables mobs from picking up items on the island.
+     */
     DISABLE_MOB_PICKUP_ITEMS(128),
+
+    /**
+     * Disables unknown explosions on the island.
+     */
     DISABLE_UNKNOWN_EXPLOSION(256),
+
+    /**
+     * Disables passive mob griefing on the island.
+     */
     DISABLE_PASSIF_MOB_GRIEFING(512),
+
+    /**
+     * Disables hostile mob griefing on the island.
+     */
     DISABLE_HOSTILE_MOB_GRIEFING(1_024),
+
+    /**
+     * Disables unknown mob griefing on the island.
+     */
     DISABLE_UNKNOWN_MOB_GRIEFING(2_048);
 
     private final long permissionValue;

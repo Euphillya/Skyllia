@@ -8,21 +8,84 @@ import java.util.List;
  * Represents various command permissions that can be applied to a Skyblock island.
  */
 public enum PermissionsCommandIsland implements Permissions {
+    /**
+     * Permission to demote players.
+     */
     DEMOTE(1),
+
+    /**
+     * Permission to promote players.
+     */
     PROMOTE(2),
+
+    /**
+     * Permission to kick players from the island.
+     */
     KICK(4),
+
+    /**
+     * Permission to access certain island features.
+     */
     ACCESS(8),
+
+    /**
+     * Permission to set a home location on the island.
+     */
     SET_HOME(16),
+
+    /**
+     * Permission to invite players to the island.
+     */
     INVITE(32),
+
+    /**
+     * Permission to set a biome on the island.
+     */
     SET_BIOME(64),
+
+    /**
+     * Permission to set a warp point on the island.
+     */
     SET_WARP(128),
+
+    /**
+     * Permission to delete a warp point from the island.
+     */
     DEL_WARP(256),
+
+    /**
+     * Permission to teleport to a warp point on the island.
+     */
     TP_WARP(512),
+
+    /**
+     * Permission to expel players from the island.
+     */
     EXPEL(1_024),
+
+    /**
+     * Permission to manage island permissions.
+     */
     MANAGE_PERMISSION(2_048),
+
+    /**
+     * Permission to ban players from the island.
+     */
     BAN(4_096),
+
+    /**
+     * Permission to unban players from the island.
+     */
     UNBAN(8_192),
+
+    /**
+     * Permission to manage trust levels on the island.
+     */
     MANAGE_TRUST(16_384),
+
+    /**
+     * Permission to manage game rules on the island.
+     */
     MANAGE_GAMERULE(32_768);
 
     private final long permissionValue;

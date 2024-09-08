@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.commands.admin;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.commands.SkylliaCommandInterface;
+import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

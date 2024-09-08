@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.entity.PlayerFolia;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
@@ -12,7 +13,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
-import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
@@ -29,6 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +45,7 @@ public class CreateSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(CreateSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
@@ -56,7 +57,7 @@ public class CreateSubCommand implements SubCommandInterface {
         if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
         try {
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByOwner(player.getUniqueId()).join());
             if (islandAtomic.get() == null) {
                 String schemKey = args.length == 0 ? "" : args[0];
@@ -96,7 +97,7 @@ public class CreateSubCommand implements SubCommandInterface {
                     SchematicSetting schematicSetting = entry.getValue();
                     Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), islandAtomic.get().getPosition().x(), islandAtomic.get().getPosition().z());
                     centerPaste.setY(schematicSetting.height());
-                    this.pasteSchematic(plugin, islandAtomic.get(), centerPaste, schematicSetting);
+                    this.pasteSchematic(Main.getPlugin(Main.class), islandAtomic.get(), centerPaste, schematicSetting);
                     if (isFirstIteration) {
                         this.setFirstHome(islandAtomic.get(), centerPaste);
                         this.setPermissionsRole(islandAtomic.get());
@@ -104,7 +105,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         if (ConfigToml.changeGameModeWhenTeleportIsland)
                             PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(islandAtomic.get(), player);
-                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
+                        Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                         LanguageToml.sendMessage(player, LanguageToml.messageIslandCreateFinish);
                         CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(islandAtomic.get())));
                         isFirstIteration = false;
@@ -122,7 +123,7 @@ public class CreateSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
             List<String> nameSchem = new ArrayList<>();
             ConfigToml.schematicWorldMap.forEach((key, schematicWorld) -> {

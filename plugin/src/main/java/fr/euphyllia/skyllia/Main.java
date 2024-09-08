@@ -2,11 +2,13 @@ package fr.euphyllia.skyllia;
 
 import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
+import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
-import fr.euphyllia.skyllia.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
+import fr.euphyllia.skyllia.commands.common.SubCommandImpl;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
@@ -39,6 +41,7 @@ public class Main extends JavaPlugin {
 
     private final Logger logger = LogManager.getLogger(this);
     private InterneAPI interneAPI;
+    private SubCommandRegistry commandRegistry;
 
     @Override
     public void onEnable() {
@@ -75,6 +78,7 @@ public class Main extends JavaPlugin {
         }
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
+        this.commandRegistry = new SubCommandImpl();
         this.setupCommands("skyllia", new SkylliaCommand(this));
         this.setupCommands("skylliadmin", new SkylliaAdminCommand(this));
         this.loadListener();
@@ -154,5 +158,9 @@ public class Main extends JavaPlugin {
                 logger.log(Level.WARN, "Disable end in bukkit.yml to disable end portals!");
             }
         }
+    }
+
+    public SubCommandRegistry getCommandRegistry() {
+        return commandRegistry;
     }
 }

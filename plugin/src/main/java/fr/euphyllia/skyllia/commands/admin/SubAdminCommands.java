@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin;
 
-import fr.euphyllia.skyllia.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.commands.admin.subcommands.ForceDeleteSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.SetMaxMembersSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.SetSizeSubCommands;

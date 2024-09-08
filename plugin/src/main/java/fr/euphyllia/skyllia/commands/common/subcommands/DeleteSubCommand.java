@@ -1,11 +1,11 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -19,6 +19,7 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +52,7 @@ public class DeleteSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
@@ -60,7 +61,7 @@ public class DeleteSubCommand implements SubCommandInterface {
             return true;
         }
         try {
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
             if (island == null) {
                 LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
@@ -77,10 +78,10 @@ public class DeleteSubCommand implements SubCommandInterface {
 
             boolean isDisabled = island.setDisable(true);
             if (isDisabled) {
-                this.updatePlayer(plugin, skyblockManager, island);
+                this.updatePlayer(Main.getPlugin(Main.class), skyblockManager, island);
 
                 for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                    WorldEditUtils.deleteIsland(plugin, island, Bukkit.getWorld(worldConfig.name()));
+                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(worldConfig.name()));
                 }
 
                 LanguageToml.sendMessage(player, LanguageToml.messageIslandDeleteSuccess);
@@ -95,7 +96,7 @@ public class DeleteSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return null;
     }
 

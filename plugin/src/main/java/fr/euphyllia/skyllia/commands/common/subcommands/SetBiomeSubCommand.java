@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -11,7 +12,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsl
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.CommandCacheExecution;
-import fr.euphyllia.skyllia.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
@@ -25,6 +25,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(SetBiomeSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             return true;
         }
@@ -73,7 +74,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
@@ -110,7 +111,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             World world = player.getWorld();
             LanguageToml.sendMessage(player, LanguageToml.messageBiomeChangeInProgress);
 
-            boolean biomeChanged = WorldEditUtils.changeBiomeChunk(plugin, world, biome, island).join();
+            boolean biomeChanged = WorldEditUtils.changeBiomeChunk(Main.getPlugin(Main.class), world, biome, island).join();
             if (biomeChanged) {
                 LanguageToml.sendMessage(player, LanguageToml.messageBiomeChangeSuccess);
                 CommandCacheExecution.removeCommandExec(islandId, "biome");
@@ -125,7 +126,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Main plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> biomesList = new ArrayList<>();
         if (args.length == 1) {
             for (Biome biome : Biome.values()) {

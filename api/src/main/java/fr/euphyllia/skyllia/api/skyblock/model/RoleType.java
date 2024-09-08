@@ -5,11 +5,34 @@ package fr.euphyllia.skyllia.api.skyblock.model;
  */
 public enum RoleType {
 
+    /**
+     * Role with the highest level of authority, typically the owner of the island.
+     */
     OWNER(4),
+
+    /**
+     * Role with significant authority, often a co-owner or trusted individual with many privileges.
+     */
     CO_OWNER(3),
+
+    /**
+     * Role with moderate authority, usually a moderator responsible for managing the island.
+     */
     MODERATOR(2),
+
+    /**
+     * Role with basic access, typically a regular member of the island.
+     */
     MEMBER(1),
+
+    /**
+     * Role with minimal access, often a visitor with very limited permissions.
+     */
     VISITOR(0),
+
+    /**
+     * Role indicating that the player is banned from the island.
+     */
     BAN(-1);
 
     private final int value;

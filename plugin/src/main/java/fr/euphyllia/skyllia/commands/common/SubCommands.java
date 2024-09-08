@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common;
 
-import fr.euphyllia.skyllia.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.commands.common.subcommands.*;
 import org.jetbrains.annotations.NotNull;
 
