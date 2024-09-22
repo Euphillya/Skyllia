@@ -22,8 +22,10 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ForceDeleteSubCommands implements SubCommandInterface {
 
@@ -32,22 +34,19 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            return true;
-        }
-        if (!player.hasPermission("skyllia.admins.commands.island.delete")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+        if (!sender.hasPermission("skyllia.admins.commands.island.delete")) {
+            LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         if (args.length < 2) {
-            LanguageToml.sendMessage(player, LanguageToml.messageADeleteCommandNotEnoughArgs);
+            LanguageToml.sendMessage(sender, LanguageToml.messageADeleteCommandNotEnoughArgs);
             return true;
         }
         String playerName = args[0];
         String confirm = args[1];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(player, LanguageToml.messageADeleteNotConfirmedArgs);
+            LanguageToml.sendMessage(sender, LanguageToml.messageADeleteNotConfirmedArgs);
             return true;
         }
         try {
@@ -60,7 +59,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(playerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(sender, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
@@ -72,13 +71,13 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                     WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(worldConfig.name()));
                 }
 
-                LanguageToml.sendMessage(player, LanguageToml.messageIslandDeleteSuccess);
+                LanguageToml.sendMessage(sender, LanguageToml.messageIslandDeleteSuccess);
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageError);
+                LanguageToml.sendMessage(sender, LanguageToml.messageError);
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            LanguageToml.sendMessage(sender, LanguageToml.messageError);
         }
 
         return true;
@@ -86,7 +85,19 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
+        if (!sender.hasPermission("skyllia.admins.commands.island.delete")) {
+            return new ArrayList<>();
+        }
+
+        if (args.length == 1) {
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+        }
+
+        else if (args.length == 2) {
+            return List.of("confirm");
+        }
+
+        return new ArrayList<>();
     }
 
     private void updatePlayer(Main plugin, SkyblockManager skyblockManager, Island island) {

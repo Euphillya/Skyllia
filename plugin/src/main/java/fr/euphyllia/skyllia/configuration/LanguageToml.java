@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.Main;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -364,5 +365,11 @@ public class LanguageToml {
         // Todo MultiLangue future version
         if (msg.isEmpty()) return;
         entity.sendMessage(Main.getPlugin(Main.class).getInterneAPI().getMiniMessage().deserialize(msg));
+    }
+
+    public static void sendMessage(CommandSender sender, String msg) {
+        // Todo MultiLangue future version
+        if (msg.isEmpty()) return;
+        sender.sendMessage(Main.getPlugin(Main.class).getInterneAPI().getMiniMessage().deserialize(msg));
     }
 }

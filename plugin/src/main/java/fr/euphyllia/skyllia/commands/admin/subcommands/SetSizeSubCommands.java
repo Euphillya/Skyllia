@@ -16,8 +16,11 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class SetSizeSubCommands implements SubCommandInterface {
 
@@ -25,23 +28,20 @@ public class SetSizeSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            return true;
-        }
-        if (!player.hasPermission("skyllia.admins.commands.island.setsize")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+        if (!sender.hasPermission("skyllia.admins.commands.island.setsize")) {
+            LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
 
         if (args.length < 3) {
-            LanguageToml.sendMessage(player, LanguageToml.messageASetSizeCommandNotEnoughArgs);
+            LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeCommandNotEnoughArgs);
             return true;
         }
         String playerName = args[0];
         String changeValue = args[1];
         String confirm = args[2];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(player, LanguageToml.messageASetSizeNotConfirmedArgs);
+            LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeNotConfirmedArgs);
             return true;
         }
         try {
@@ -54,24 +54,24 @@ public class SetSizeSubCommands implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(playerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                LanguageToml.sendMessage(sender, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
 
             double newSize = Double.parseDouble(changeValue);
             boolean updated = island.setSize(newSize);
             if (updated) {
-                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeSuccess);
+                LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeSuccess);
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeFailed);
+                LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeFailed);
             }
 
         } catch (Exception e) {
             if (e instanceof NumberFormatException ignored) {
-                LanguageToml.sendMessage(player, LanguageToml.messageASetSizeNAN);
+                LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeNAN);
             } else {
                 logger.log(Level.FATAL, e.getMessage(), e);
-                LanguageToml.sendMessage(player, LanguageToml.messageError);
+                LanguageToml.sendMessage(sender, LanguageToml.messageError);
             }
         }
         return true;
@@ -79,6 +79,22 @@ public class SetSizeSubCommands implements SubCommandInterface {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
+        if (!sender.hasPermission("skyllia.admins.commands.island.setsize")) {
+            return new ArrayList<>();
+        }
+
+        if (args.length == 1) {
+           return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+        }
+
+        else if (args.length == 2) {
+            return Arrays.asList("100", "200", "300", "500", "1000");
+        }
+        else if (args.length == 3) {
+            if ("confirm".startsWith(args[2].toLowerCase())) {
+                return List.of("confirm");
+            }
+        }
+        return new ArrayList<>();
     }
 }
