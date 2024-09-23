@@ -124,6 +124,8 @@ public class LanguageToml {
     public static String messageGameRuleUpdateSuccess = "The gamerule has been updated";
     public static String messageGameRuleUpdateFailed = "An error occurred while updating the gamerule";
     public static String messageDeleteCommandNotEnoughArgs = "The command is incomplete: /skyllia delete confirm";
+    public static String messageInviteAcceptedNotification = "Player %player_accept% has accepted your island invitation.";
+    public static String messageInviteDeclinedNotification = "Player %player_decline% has declined your island invitation.";
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -301,6 +303,8 @@ public class LanguageToml {
         messageInviteMaxMemberExceededIsland = getString("island.invite.accept.max-member-exceeded", messageInviteMaxMemberExceededIsland);
         messageInviteAcceptOwnerHasNotIsland = getString("island.invite.accept.owner-not-island", messageInviteAcceptOwnerHasNotIsland);
         messageInviteDeclineOwnerHasNotIsland = getString("island.invite.decline.owner-not-island", messageInviteDeclineOwnerHasNotIsland);
+        messageInviteAcceptedNotification = getString("island.invite.accept.notify-owner", messageInviteAcceptedNotification);
+        messageInviteDeclinedNotification = getString("island.invite.decline.notify-owner", messageInviteDeclinedNotification);
     }
 
     private static void islandKickLanguage() {

@@ -144,6 +144,11 @@ public class InviteSubCommand implements SubCommandInterface {
                 Players newPlayers = new Players(playerWantJoin.getUniqueId(), playerWantJoin.getName(), islandOwner.getId(), RoleType.MEMBER);
                 islandOwner.updateMember(newPlayers);
                 LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteJoinIsland);
+
+                Player ownerPlayer = Bukkit.getPlayer(ownerIslandId);
+                if (ownerPlayer != null && ownerPlayer.isOnline()) {
+                    LanguageToml.sendMessage(ownerPlayer, LanguageToml.messageInviteAcceptedNotification.replaceAll("%player_accept%", playerWantJoin.getName()));
+                }
             } else {
                 LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteMaxMemberExceededIsland);
             }
@@ -173,6 +178,10 @@ public class InviteSubCommand implements SubCommandInterface {
             }
             InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantDecline.getUniqueId());
             LanguageToml.sendMessage(playerWantDecline, LanguageToml.messageInviteDeclineDeleteInvitation.replaceAll("%player_invite%", ownerIsland));
+            Player ownerPlayer = Bukkit.getPlayer(ownerIslandId);
+            if (ownerPlayer != null && ownerPlayer.isOnline()) {
+                LanguageToml.sendMessage(ownerPlayer, LanguageToml.messageInviteDeclinedNotification.replaceAll("%player_decline%", playerWantDecline.getName()));
+            }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             LanguageToml.sendMessage(playerWantDecline, LanguageToml.messageError);
