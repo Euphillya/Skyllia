@@ -16,6 +16,7 @@ import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -71,7 +72,9 @@ public class WarpSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            player.teleportAsync(warp.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+            Location warpLocation = warp.location();
+            warpLocation.setY(warpLocation.getY() + 0.5);
+            player.teleportAsync(warpLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
             LanguageToml.sendMessage(player, LanguageToml.messageWarpTeleportSuccess);
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

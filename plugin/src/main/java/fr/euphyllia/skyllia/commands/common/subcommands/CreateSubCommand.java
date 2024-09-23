@@ -101,6 +101,7 @@ public class CreateSubCommand implements SubCommandInterface {
                     if (isFirstIteration) {
                         this.setFirstHome(islandAtomic.get(), centerPaste);
                         this.setPermissionsRole(islandAtomic.get());
+                        centerPaste.setY(centerPaste.getY() + 0.5);
                         player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN);
                         if (ConfigToml.changeGameModeWhenTeleportIsland)
                             PlayerFolia.setGameMode(player, GameMode.SURVIVAL);

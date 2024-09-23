@@ -61,6 +61,7 @@ public class HomeSubCommand implements SubCommandInterface {
                 } else {
                     loc = warpIsland.location();
                 }
+                loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
