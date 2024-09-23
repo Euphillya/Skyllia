@@ -87,7 +87,7 @@ public class VisitSubCommand implements SubCommandInterface {
                 } else {
                     loc = warpIsland.location();
                 }
-                loc.setY(loc.getY());
+                loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                 if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SURVIVAL);
