@@ -36,12 +36,16 @@ public class PlayerEvent implements Listener {
 
     public void onPlayerUseBucket(final PlayerBucketEvent event) {
         if (event.isCancelled()) return;
+        Player player = event.getPlayer();
+        if (player.hasPermission("skyllia.player.bucket.bypass")) return;
         ListenersUtils.checkPermission(event.getBlock().getLocation(), event.getPlayer(), PermissionsIsland.BUCKETS, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDropItem(final PlayerDropItemEvent event) {
         if (event.isCancelled()) return;
+        Player player = event.getPlayer();
+        if (player.hasPermission("skyllia.player.drop.bypass")) return;
         ListenersUtils.checkPermission(event.getItemDrop().getLocation(), event.getPlayer(), PermissionsIsland.DROP_ITEMS, event);
     }
 
@@ -49,6 +53,7 @@ public class PlayerEvent implements Listener {
     public void onPickUpItemDropped(final EntityPickupItemEvent event) {
         if (event.isCancelled()) return;
         if (event.getEntity() instanceof Player player) {
+            if (player.hasPermission("skyllia.player.pickup.bypass")) return;
             ListenersUtils.checkPermission(event.getItem().getLocation(), player, PermissionsIsland.PICKUP_ITEMS, event);
         }
     }

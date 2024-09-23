@@ -28,6 +28,7 @@ public class InventoryEvent implements Listener {
     public void onInventoryOpen(final InventoryOpenEvent event) {
         if (event.isCancelled()) return;
         Player player = (Player) event.getPlayer();
+        if (player.hasPermission("skyllia.interact.bypass")) return;
         InventoryType inventoryType = event.getInventory().getType();
         switch (inventoryType) {
             case MERCHANT -> {
@@ -40,6 +41,7 @@ public class InventoryEvent implements Listener {
     public void onPlayerInteractEvent(final PlayerInteractEvent event) {
         if (event.useInteractedBlock() == Event.Result.DENY) return;
         Player player = event.getPlayer();
+        if (player.hasPermission("skyllia.interact.bypass")) return;
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) return;
         Material inventoryType = clickedBlock.getType();
