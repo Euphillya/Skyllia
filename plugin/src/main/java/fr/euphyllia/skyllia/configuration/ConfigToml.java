@@ -12,8 +12,11 @@ import fr.euphyllia.skyllia.configuration.model.MariaDB;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -45,6 +48,7 @@ public class ConfigToml {
     public static boolean teleportPlayerOnIslandWhenJoin = true;
     public static boolean teleportPlayerNotIslandWhenJoin = true;
     public static boolean changeGameModeWhenTeleportIsland = true;
+    public static @Nullable Location spawnWorld = null;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -290,5 +294,18 @@ public class ConfigToml {
 
     private static void updateCache() {
         updateCacheTimer = getInt("settings.global.cache.update-timer-seconds", updateCacheTimer);
+    }
+
+    private static void spawnWorldServer() {
+        boolean enabled = getBoolean("settings.spawn.enable", false);
+        if (enabled) {
+            String worldName = getString("settings.spawn.world-name", "world");
+            double blockX = getDouble("settings.spawn.block-x", 0.0);
+            double blockY = getDouble("settings.spawn.block-y", 64.0);
+            double blockZ = getDouble("settings.spawn.block-z", 0.0);
+            float yaw = getDouble("settings.spawn.yaw", 0.0).floatValue();
+            float pitch = getDouble("settings.spawn.pitch", 0.0).floatValue();
+            spawnWorld = new Location(Bukkit.getWorld(worldName), blockX, blockY, blockZ, yaw, pitch);
+        }
     }
 }
