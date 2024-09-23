@@ -60,6 +60,15 @@ public class DeleteSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
+        if (args.length != 1) {
+            LanguageToml.sendMessage(sender, LanguageToml.messageDeleteCommandNotEnoughArgs);
+            return true;
+        }
+        String confirm = args[0];
+        if (!confirm.equalsIgnoreCase("confirm")) {
+            LanguageToml.sendMessage(sender, LanguageToml.messageADeleteNotConfirmedArgs);
+            return true;
+        }
         try {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();

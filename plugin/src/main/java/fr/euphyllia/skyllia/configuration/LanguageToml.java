@@ -123,6 +123,7 @@ public class LanguageToml {
     public static String messageGameRuleInvalid = "The gamerule does not exist";
     public static String messageGameRuleUpdateSuccess = "The gamerule has been updated";
     public static String messageGameRuleUpdateFailed = "An error occurred while updating the gamerule";
+    public static String messageDeleteCommandNotEnoughArgs = "The command is incomplete: /skyllia delete confirm";
     private static boolean verbose;
 
     public static void init(File configFile) {
