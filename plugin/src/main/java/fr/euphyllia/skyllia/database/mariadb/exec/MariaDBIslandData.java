@@ -48,13 +48,12 @@ public class MariaDBIslandData extends IslandDataQuery {
             """;
     private static final String ADD_ISLANDS = """
                 INSERT INTO `%s`.`islands`
-                    SELECT ?, 0, S.region_x, S.region_z, ?, ?, current_timestamp(), ?
+                    SELECT ?, 0, S.region_x, S.region_z, ?, ?, CURRENT_TIMESTAMP(), ?
                     FROM `%s`.`spiral` S
-                    WHERE S.region_x NOT IN (SELECT region_x FROM `%s`.`islands` S2 WHERE S.region_x = S2.region_x AND S.region_z = S2.region_z AND S2.DISABLE = 0)
-                        AND S.region_z NOT IN (SELECT region_z FROM `%s`.`islands` S2 WHERE S.region_x = S2.region_x AND S.region_z = S2.region_z AND S2.DISABLE = 0)
-                    ORDER BY
-                        S.id
-                LIMIT 1;
+                    LEFT JOIN `%s`.`islands` S2
+                        ON S.region_x = S2.region_x AND S.region_z = S2.region_z AND S2.DISABLE = 0
+                    WHERE S2.region_x IS NULL
+                    ORDER BY S.id LIMIT 1;
             """;
     private final Logger logger = LogManager.getLogger(MariaDBIslandData.class);
 
