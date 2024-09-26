@@ -114,7 +114,7 @@ public class MariaDBIslandData extends IslandDataQuery {
     public CompletableFuture<Boolean> insertIslands(Island futurIsland) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName, this.databaseName), List.of(
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName), List.of(
                     futurIsland.getId(), 1, futurIsland.getSize(), futurIsland.getMaxMembers()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
