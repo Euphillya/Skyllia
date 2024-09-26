@@ -110,7 +110,7 @@ public class WorldEditUtils {
                 Bukkit.getRegionScheduler().runDelayed(plugin, world, chunkPosX, chunkPosZ, task -> {
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
-                            for (int y = 0; y < world.getMaxHeight(); y++) {
+                            for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++) {
                                 Location blockLocation = new Location(world, chunkPosX + x, y, chunkPosZ + z);
                                 Bukkit.getRegionScheduler().execute(plugin, blockLocation, () -> blockLocation.getBlock().setBiome(biome));
                             }
