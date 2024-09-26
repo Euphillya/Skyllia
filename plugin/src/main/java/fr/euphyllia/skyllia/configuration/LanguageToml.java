@@ -52,6 +52,7 @@ public class LanguageToml {
     public static String messageBiomePermissionDenied = "You do not have permission to use this biome.";
     public static String messageBiomeChangeInProgress = "Biome change in progress. Please note that it takes time... A message will notify you when the process is complete.";
     public static String messageBiomeChangeSuccess = "The biome change in the chunk you were in is complete! You need to leave and return to your island to see the change.";
+    public static String messageBiomeIslandChangeSuccess = "The biome change in your island you were in is complete! You need to leave and return to your island to see the change.";
     public static String messageInviteAlreadyIsland = "You are already on an island!";
     public static String messageInviteCommandNotEnoughArgs = "The command is incomplete: /skyllia invite <add/accept/decline> <player/island_owner>";
     public static String messageInviteAcceptCommandNotEnoughArgs = "You must specify which island you want to join: /skyllia invite accept <island_owner>";
@@ -133,8 +134,8 @@ public class LanguageToml {
         config.load();
         verbose = getBoolean("verbose", false);
 
-        version = getInt("config-version", 1);
-        set("config-version", 1);
+        version = getInt("config-version", 2);
+        set("config-version", 2);
         if (verbose) {
             logger.log(Level.INFO, "Lecture du fichier langue");
         }
@@ -192,6 +193,10 @@ public class LanguageToml {
         return config.getInt(path);
     }
 
+    protected static void remove(@NotNull String path) {
+        config.remove(path);
+    }
+
     private static void adminLanguage() {
         // forcedelete
         messageADeleteCommandNotEnoughArgs = getString("admin.commands.island.delete.not-enough-args", messageADeleteCommandNotEnoughArgs);
@@ -243,7 +248,13 @@ public class LanguageToml {
         messageBiomeNotExist = getString("island.biome.biome-not-exist", messageBiomeNotExist);
         messageBiomePermissionDenied = getString("island.biome.permission-denied", messageBiomePermissionDenied);
         messageBiomeChangeInProgress = getString("island.biome.change-in-progress", messageBiomeChangeInProgress);
-        messageBiomeChangeSuccess = getString("island.biome.success", messageBiomeChangeSuccess);
+        if (version < 2) {
+            String oldValue = getString("island.biome.success", messageBiomeChangeSuccess);
+            set("island.biome.success-biome", oldValue);
+            remove("island.biome.success");
+        }
+        messageBiomeChangeSuccess = getString("island.biome.success-biome", messageBiomeChangeSuccess);
+        messageBiomeIslandChangeSuccess = getString("island.biome.success-island", messageBiomeIslandChangeSuccess);
     }
 
     private static void islandCreateLanguage() {

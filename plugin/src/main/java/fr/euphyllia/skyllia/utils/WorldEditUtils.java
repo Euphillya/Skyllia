@@ -24,12 +24,16 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -90,7 +94,40 @@ public class WorldEditUtils {
         });
     }
 
-    public static CompletableFuture<Boolean> changeBiomeChunk(Main plugin, org.bukkit.World world, Biome biome, Island island) {
+    public static CompletableFuture<Boolean> changeBiomeChunk(Chunk chunk, Biome biome) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+        List<int[]> coordinates = new ArrayList<>();
+        org.bukkit.World world = chunk.getWorld();
+        int minHeight = world.getMinHeight();
+        int maxHeight = world.getMaxHeight();
+        int chunkX = chunk.getX() << 4; //
+        int chunkZ = chunk.getZ() << 4;
+
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int y = minHeight; y < maxHeight; y++) {
+                    coordinates.add(new int[]{chunkX + x, y, chunkZ + z});
+                }
+            }
+        }
+
+        Bukkit.getRegionScheduler().execute(Main.getPlugin(Main.class), world, chunk.getX(), chunk.getZ(), () -> {
+            try {
+                for (int[] coord : coordinates) {
+                    chunk.getWorld().setBiome(coord[0], coord[1], coord[2], biome);
+                }
+                future.complete(true);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                future.complete(false);
+            }
+        });
+
+        return future;
+    }
+
+    public static CompletableFuture<Boolean> changeBiomeIsland(org.bukkit.World world, Biome biome, Island island) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         if (world == null) {
             throw new RuntimeException("World is not loaded or not exist");
@@ -107,12 +144,12 @@ public class WorldEditUtils {
                 }
                 int chunkPosX = chunKPosition.x() << 4;
                 int chunkPosZ = chunKPosition.z() << 4;
-                Bukkit.getRegionScheduler().runDelayed(plugin, world, chunkPosX, chunkPosZ, task -> {
+                Bukkit.getRegionScheduler().runDelayed(Main.getPlugin(Main.class), world, chunkPosX, chunkPosZ, task -> {
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
                             for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++) {
                                 Location blockLocation = new Location(world, chunkPosX + x, y, chunkPosZ + z);
-                                Bukkit.getRegionScheduler().execute(plugin, blockLocation, () -> blockLocation.getBlock().setBiome(biome));
+                                Bukkit.getRegionScheduler().execute(Main.getPlugin(Main.class), blockLocation, () -> blockLocation.getBlock().setBiome(biome));
                             }
                         }
                     }
