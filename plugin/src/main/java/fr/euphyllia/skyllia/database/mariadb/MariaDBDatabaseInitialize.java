@@ -99,6 +99,13 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
                 (id, region_x, region_z)
                 VALUES(?, ?, ?);
             """;
+    private static final String ISLANDS_INDEX = """
+            CREATE INDEX `region_xz_disabled` ON `%s`.`islands` (`region_x`, `region_z`, `disable`);
+            """;
+    private static final String SPIRAL_INDEX = """
+            CREATE INDEX `region_xz` ON `%s`.`spiral` (`region_x`, `region_z`);
+            """;
+
     private final Logger logger = LogManager.getLogger(MariaDBDatabaseInitialize.class);
     private final String database;
     private final InterneAPI api;
@@ -131,6 +138,8 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         if (this.dbVersion <= 1) {
             MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`islands_gamerule` DROP PRIMARY KEY, ADD PRIMARY KEY (`island_id`) USING BTREE;".formatted(this.database));
         }
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), ISLANDS_INDEX.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), SPIRAL_INDEX.formatted(this.database));
         int distancePerIsland = ConfigToml.regionDistance;
         if (distancePerIsland <= 0) {
             logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
