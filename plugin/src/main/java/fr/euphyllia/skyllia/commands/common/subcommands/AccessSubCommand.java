@@ -72,10 +72,12 @@ public class AccessSubCommand implements SubCommandInterface {
                     RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
                         Player playerInIsland = (Player) entity;
                         if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
-                        Players players = island.getMember(playerInIsland.getUniqueId());
-                        if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
-                            PlayerUtils.teleportPlayerSpawn(playerInIsland);
-                        }
+                        Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
+                            Players players = island.getMember(playerInIsland.getUniqueId());
+                            if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
+                                PlayerUtils.teleportPlayerSpawn(playerInIsland);
+                            }
+                        });
                     });
                 });
             } else {
