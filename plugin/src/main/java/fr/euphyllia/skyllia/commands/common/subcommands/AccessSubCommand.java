@@ -21,6 +21,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +69,7 @@ public class AccessSubCommand implements SubCommandInterface {
             if (statusAccessUpdate) {
                 LanguageToml.sendMessage(player, LanguageToml.messageAccessIslandClose);
                 ConfigToml.worldConfigs.forEach(worldConfig -> {
-                    RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition().x(), island.getPosition().z(), entity -> {
+                    RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
                         Player playerInIsland = (Player) entity;
                         if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
                         Players players = island.getMember(playerInIsland.getUniqueId());

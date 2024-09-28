@@ -51,42 +51,69 @@ public class RegionUtils {
         return new Position(regionX, regionZ);
     }
 
-    public static void getEntitiesInRegion(Main plugin, EntityType entityType, World world, int regionX, int regionZ, CallbackEntity callbackEntity) {
-        int minChunkX = regionX << 5; // Calcul de la coordonnée X minimale du chunk
-        int minChunkZ = regionZ << 5; // Calcul de la coordonnée Z minimale du chunk
+    public static void getEntitiesInRegion(Main plugin, EntityType entityType, World world, Position islandRegion, double size, CallbackEntity callbackEntity) {
+        List<Chunk> loadedChunks = new ArrayList<>();
 
-        int maxChunkX = minChunkX + 31; // 32 chunks en X
-        int maxChunkZ = minChunkZ + 31; // 32 chunks en Z
+        spiralStartCenter(islandRegion, size, chunkPos -> {
+            int chunkX = chunkPos.x();
+            int chunkZ = chunkPos.z();
 
-        for (int x = minChunkX; x <= maxChunkX; x++) {
-            for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                final int chunkX = x;
-                final int chunkZ = z;
-                Bukkit.getRegionScheduler().runDelayed(plugin, world, chunkX, chunkZ, task -> {
-                    Chunk chunk = world.getChunkAt(chunkX, chunkZ);
-                    if (chunk.isLoaded()) {
-                        // Traitement du chunk chargé
-                        Entity[] listEntities = chunk.getEntities();
-                        for (Entity entity : listEntities) {
-                            if (entityType == entity.getType() || entityType == null) {
+            if (world.isChunkLoaded(chunkX, chunkZ)) {
+                Chunk chunk = world.getChunkAt(chunkX, chunkZ, false);
+                if (chunk.isLoaded()) {
+                    loadedChunks.add(chunk);
+                }
+            }
+        });
+
+        int batchSize = 16;
+        int delayIncrement = 1;
+
+        for (int i = 0; i < loadedChunks.size(); i += batchSize) {
+            int end = Math.min(i + batchSize, loadedChunks.size());
+            List<Chunk> batch = loadedChunks.subList(i, end);
+
+            long delay = (i / batchSize) * delayIncrement;
+
+            if (batch.isEmpty()) continue;
+
+            Chunk representativeChunk = batch.getFirst();
+            int repChunkX = representativeChunk.getX();
+            int repChunkZ = representativeChunk.getZ();
+
+            Bukkit.getRegionScheduler().runDelayed(plugin, world, repChunkX, repChunkZ, (scheduledTask) -> {
+                try {
+                    for (Chunk chunk : batch) {
+                        for (Entity entity : chunk.getEntities()) {
+                            if (entityType == null || entityType == entity.getType()) {
                                 callbackEntity.run(entity);
                             }
                         }
                     }
-                }, 1);
-            }
+                } catch (Exception e) {
+                    logger.error("Erreur lors du traitement des chunks", e);
+                }
+            }, delay);
         }
     }
 
+    /**
+     * Méthode pour parcourir les chunks en spirale autour du centre de la région.
+     *
+     * @param islandRegion        Position centrale de l'île
+     * @param size                Taille de l'île (rayon)
+     * @param callbackChunkPosition Callback pour traiter chaque chunk position
+     */
     public static void spiralStartCenter(Position islandRegion, double size, CallBackPosition callbackChunkPosition) {
         Position chunk = RegionHelper.getChunkCenterRegion(islandRegion.x(), islandRegion.z());
         int cx = chunk.x();
         int cz = chunk.z();
         int x = 0, z = 0;
         int dx = 0, dz = -1;
-        int maxI = (33 * ConfigToml.regionDistance) * (33 * ConfigToml.regionDistance);
+        int maxI = (int) Math.pow((33 * ConfigToml.regionDistance), 2);
         List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(islandRegion, (int) Math.round(size));
         List<Position> regionCleaned = new ArrayList<>();
+
         for (int i = 0; i < maxI; i++) {
             if ((-size / 2 <= x) && (x <= size / 2) && (-size / 2 <= z) && (z <= size / 2)) {
                 Position chunkPos = new Position(cx + x, cz + z);
