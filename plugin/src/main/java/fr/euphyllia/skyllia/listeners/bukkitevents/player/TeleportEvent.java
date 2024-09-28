@@ -1,14 +1,20 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -21,6 +27,21 @@ public class TeleportEvent implements Listener {
 
     public TeleportEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerTeleportEvent(final PlayerTeleportEvent event) {
+        if (event.isCancelled()) return;
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+            Location to = event.getTo();
+            World world = to.getWorld();
+            if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
+                Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
+                if (island == null) return;
+                Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+                this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), event.getPlayer(), centerIsland, island.getSize(), 0, 0);
+            }
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

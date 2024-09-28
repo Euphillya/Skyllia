@@ -100,10 +100,10 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
                 VALUES(?, ?, ?);
             """;
     private static final String ISLANDS_INDEX = """
-            CREATE INDEX `region_xz_disabled` ON `%s`.`islands` (`region_x`, `region_z`, `disable`);
+            CREATE INDEX IF NOT EXISTS `region_xz_disabled` ON `%s`.`islands` (`region_x`, `region_z`, `disable`);
             """;
     private static final String SPIRAL_INDEX = """
-            CREATE INDEX `region_xz` ON `%s`.`spiral` (`region_x`, `region_z`);
+            CREATE INDEX IF NOT EXISTS `region_xz` ON `%s`.`spiral` (`region_x`, `region_z`);
             """;
 
     private final Logger logger = LogManager.getLogger(MariaDBDatabaseInitialize.class);
