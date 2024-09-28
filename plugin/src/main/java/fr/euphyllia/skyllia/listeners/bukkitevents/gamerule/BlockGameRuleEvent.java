@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,7 +24,9 @@ public class BlockGameRuleEvent implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onFireSpreadingBlock(BlockSpreadEvent event) {
         if (event.isCancelled()) return;
-        ListenersUtils.checkGameRuleIsland(event.getBlock().getLocation(), GameRuleIsland.DISABLE_FIRE_SPREADING, event);
+        if (event.getNewState().getType().equals(Material.FIRE)) {
+            ListenersUtils.checkGameRuleIsland(event.getBlock().getLocation(), GameRuleIsland.DISABLE_FIRE_SPREADING, event);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
