@@ -58,6 +58,7 @@ public class MariaDB extends ConfigToml {
     }
 
     private int version() {
+        remove(path.formatted("version"));
         return getInt(path.formatted("version"), dbVersion);
     }
 

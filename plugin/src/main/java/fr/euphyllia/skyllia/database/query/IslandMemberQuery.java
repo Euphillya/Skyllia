@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.database.query;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -20,11 +21,11 @@ public abstract class IslandMemberQuery {
 
     public abstract CompletableFuture<@Nullable Players> getOwnerInIslandId(Island island);
 
-    public abstract CompletableFuture<Boolean> addMemberClear(UUID playerId);
+    public abstract CompletableFuture<Boolean> addMemberClear(UUID playerId, RemovalCause cause);
 
-    public abstract CompletableFuture<Boolean> deleteMemberClear(UUID playerId);
+    public abstract CompletableFuture<Boolean> deleteMemberClear(UUID playerId, RemovalCause cause);
 
-    public abstract CompletableFuture<Boolean> checkClearMemberExist(UUID playerId);
+    public abstract CompletableFuture<Boolean> checkClearMemberExist(UUID playerId, RemovalCause cause);
 
     public abstract CompletableFuture<Boolean> deleteMember(Island island, Players oldMember);
 }

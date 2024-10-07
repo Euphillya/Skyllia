@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -29,25 +30,53 @@ public class DeleteSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(DeleteSubCommand.class);
 
-    public static void checkClearPlayer(Main plugin, SkyblockManager skyblockManager, Players players) {
+    public static void checkClearPlayer(Main plugin, SkyblockManager skyblockManager, Players players, RemovalCause cause) {
         Player bPlayer = Bukkit.getPlayer(players.getMojangId());
         if (bPlayer != null && bPlayer.isOnline()) {
             PlayerUtils.teleportPlayerSpawn(bPlayer);
             bPlayer.getScheduler().execute(plugin, () -> {
-                if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                    bPlayer.getInventory().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    bPlayer.getEnderChest().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    bPlayer.setTotalExperience(0);
-                    bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
+                switch (cause) {
+                    case KICKED -> {
+                        if (ConfigToml.clearInventoryWhenKickedIsland) {
+                            bPlayer.getInventory().clear();
+                        }
+                        if (ConfigToml.clearEnderChestWhenKickedIsland) {
+                            bPlayer.getEnderChest().clear();
+                        }
+                        if (ConfigToml.resetExperiencePlayerWhenKickedIsland) {
+                            bPlayer.setTotalExperience(0);
+                            bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
+                        }
+                    }
+                    case ISLAND_DELETED -> {
+                        if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                            bPlayer.getInventory().clear();
+                        }
+                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                            bPlayer.getEnderChest().clear();
+                        }
+                        if (ConfigToml.resetExperiencePlayerWhenDeleteIsland) {
+                            bPlayer.setTotalExperience(0);
+                            bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
+                        }
+                    }
+                    case LEAVE -> {
+                        if (ConfigToml.clearInventoryWhenLeaveIsland) {
+                            bPlayer.getInventory().clear();
+                        }
+                        if (ConfigToml.clearEnderChestWhenLeaveIsland) {
+                            bPlayer.getEnderChest().clear();
+                        }
+                        if (ConfigToml.resetExperiencePlayerWhenLeaveIsland) {
+                            bPlayer.setTotalExperience(0);
+                            bPlayer.sendExperienceChange(0, 0);
+                        }
+                    }
                 }
                 bPlayer.setGameMode(GameMode.SURVIVAL);
             }, null, 0L);
         } else {
-            skyblockManager.addClearMemberNextLogin(players.getMojangId());
+            skyblockManager.addClearMemberNextLogin(players.getMojangId(), cause);
         }
     }
 
@@ -113,7 +142,7 @@ public class DeleteSubCommand implements SubCommandInterface {
         for (Players players : island.getMembers()) {
             players.setRoleType(RoleType.VISITOR);
             island.updateMember(players);
-            checkClearPlayer(plugin, skyblockManager, players);
+            checkClearPlayer(plugin, skyblockManager, players, RemovalCause.ISLAND_DELETED);
         }
     }
 }

@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.event.PrepareSkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
@@ -115,16 +116,16 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerName);
     }
 
-    public CompletableFuture<Boolean> addClearMemberNextLogin(UUID playerId) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().addMemberClear(playerId);
+    public CompletableFuture<Boolean> addClearMemberNextLogin(UUID playerId, RemovalCause cause) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().addMemberClear(playerId, cause);
     }
 
-    public CompletableFuture<Boolean> deleteClearMember(UUID playerId) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMemberClear(playerId);
+    public CompletableFuture<Boolean> deleteClearMember(UUID playerId, RemovalCause cause) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMemberClear(playerId, cause);
     }
 
-    public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId);
+    public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId, RemovalCause cause) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId, cause);
     }
 
     public CompletableFuture<Boolean> updatePermissionIsland(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {

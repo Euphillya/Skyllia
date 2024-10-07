@@ -140,6 +140,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         }
         MariaDBExecute.executeQuery(api.getDatabaseLoader(), ISLANDS_INDEX.formatted(this.database));
         MariaDBExecute.executeQuery(api.getDatabaseLoader(), SPIRAL_INDEX.formatted(this.database));
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`player_clear` ADD COLUMN IF NOT EXISTS `cause` VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED' AFTER `uuid_player`;".formatted(this.database));
         int distancePerIsland = ConfigToml.regionDistance;
         if (distancePerIsland <= 0) {
             logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +

@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.commands.common.subcommands.DeleteSubCommand;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -104,7 +105,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
         for (Players players : island.getMembers()) {
             players.setRoleType(RoleType.VISITOR);
             island.updateMember(players);
-            DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players);
+            DeleteSubCommand.checkClearPlayer(plugin, skyblockManager, players, RemovalCause.ISLAND_DELETED);
         }
     }
 }

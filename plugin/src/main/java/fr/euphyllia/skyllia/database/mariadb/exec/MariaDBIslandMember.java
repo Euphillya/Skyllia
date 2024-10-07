@@ -5,6 +5,7 @@ import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.database.query.IslandMemberQuery;
 import org.apache.logging.log4j.Level;
@@ -61,16 +62,16 @@ public class MariaDBIslandMember extends IslandMemberQuery {
 
     private static final String ADD_MEMBER_CLEAR = """
             INSERT INTO `%s`.`player_clear`
-            (`uuid_player`) VALUES (?);
+            (`uuid_player`, `cause`) VALUES (?, ?);
             """;
     private static final String SELECT_MEMBER_CLEAR = """
             SELECT `uuid_player` FROM `%s`.`player_clear`
-            WHERE `uuid_player` = ?;
+            WHERE `uuid_player` = ? AND `cause` = ?;
             """;
 
     private static final String DELETE_MEMBER_CLEAR = """
             DELETE FROM `%s`.`player_clear`
-                WHERE `uuid_player` = ?;
+                WHERE `uuid_player` = ? AND `cause` = ?;
             """;
     private final Logger logger = LogManager.getLogger(MariaDBIslandMember.class);
     private final InterneAPI api;
@@ -194,20 +195,20 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         return completableFuture;
     }
 
-    public CompletableFuture<Boolean> addMemberClear(UUID playerId) {
+    public CompletableFuture<Boolean> addMemberClear(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId), i -> completableFuture.complete(i != 0), null);
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), i -> completableFuture.complete(i != 0), null);
         } catch (DatabaseException e) {
             completableFuture.complete(false);
         }
         return completableFuture;
     }
 
-    public CompletableFuture<Boolean> deleteMemberClear(UUID playerId) {
+    public CompletableFuture<Boolean> deleteMemberClear(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId), i -> {
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause), i -> {
                 completableFuture.complete(i != 0);
             }, null);
         } catch (DatabaseException e) {
@@ -216,10 +217,10 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         return completableFuture;
     }
 
-    public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId) {
+    public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId), resultSet -> {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause), resultSet -> {
                 try {
                     completableFuture.complete(resultSet.next());
                 } catch (SQLException e) {

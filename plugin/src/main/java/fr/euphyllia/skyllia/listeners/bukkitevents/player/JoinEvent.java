@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -56,22 +57,52 @@ public class JoinEvent implements Listener {
     public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
         Player player = playerLoginEvent.getPlayer();
         Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
-            boolean exist = this.api.getSkyblockManager().checkClearMemberExist(player.getUniqueId()).join();
-            if (!exist) return;
-            this.api.getSkyblockManager().deleteClearMember(player.getUniqueId());
-            player.getScheduler().execute(api.getPlugin(), () -> {
-                if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                    player.getInventory().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    player.getEnderChest().clear();
-                }
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                    player.setTotalExperience(0);
-                    player.sendExperienceChange(0, 0); // Mise à jour du packet
-                }
-                player.setGameMode(GameMode.SURVIVAL);
-            }, null, 0L);
+            for (RemovalCause cause : RemovalCause.values()) {
+                boolean exist = this.api.getSkyblockManager().checkClearMemberExist(player.getUniqueId(), cause).join();
+                if (!exist) return;
+                this.api.getSkyblockManager().deleteClearMember(player.getUniqueId(), cause);
+                player.getScheduler().execute(api.getPlugin(), () -> {
+                    switch (cause) {
+                        case KICKED -> {
+                            if (ConfigToml.clearInventoryWhenKickedIsland) {
+                                player.getInventory().clear();
+                            }
+                            if (ConfigToml.clearEnderChestWhenKickedIsland) {
+                                player.getEnderChest().clear();
+                            }
+                            if (ConfigToml.resetExperiencePlayerWhenKickedIsland) {
+                                player.setTotalExperience(0);
+                                player.sendExperienceChange(0, 0); // Mise à jour du packet
+                            }
+                        }
+                        case ISLAND_DELETED -> {
+                            if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                                player.getInventory().clear();
+                            }
+                            if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                                player.getEnderChest().clear();
+                            }
+                            if (ConfigToml.resetExperiencePlayerWhenDeleteIsland) {
+                                player.setTotalExperience(0);
+                                player.sendExperienceChange(0, 0); // Mise à jour du packet
+                            }
+                        }
+                        case LEAVE -> {
+                            if (ConfigToml.clearInventoryWhenLeaveIsland) {
+                                player.getInventory().clear();
+                            }
+                            if (ConfigToml.clearEnderChestWhenLeaveIsland) {
+                                player.getEnderChest().clear();
+                            }
+                            if (ConfigToml.resetExperiencePlayerWhenLeaveIsland) {
+                                player.setTotalExperience(0);
+                                player.sendExperienceChange(0, 0);
+                            }
+                        }
+                    }
+                    player.setGameMode(GameMode.SURVIVAL);
+                }, null, 0L);
+            }
         });
     }
 

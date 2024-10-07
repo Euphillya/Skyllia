@@ -39,6 +39,12 @@ public class ConfigToml {
     public static boolean clearInventoryWhenDeleteIsland = true;
     public static boolean clearEnderChestWhenDeleteIsland = true;
     public static boolean resetExperiencePlayerWhenDeleteIsland = true;
+    public static boolean clearInventoryWhenKickedIsland = true;
+    public static boolean clearEnderChestWhenKickedIsland = true;
+    public static boolean resetExperiencePlayerWhenKickedIsland = true;
+    public static boolean clearInventoryWhenLeaveIsland = true;
+    public static boolean clearEnderChestWhenLeaveIsland = true;
+    public static boolean resetExperiencePlayerWhenLeaveIsland = true;
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, SchematicSetting>> schematicWorldMap = new ConcurrentHashMap<>();
     public static String defaultSchematicKey = "example-schem";
     public static int updateCacheTimer = 60;
@@ -286,6 +292,15 @@ public class ConfigToml {
         clearInventoryWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-inventory", clearInventoryWhenDeleteIsland);
         clearEnderChestWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-enderchest", clearEnderChestWhenDeleteIsland);
         resetExperiencePlayerWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-experience", resetExperiencePlayerWhenDeleteIsland);
+
+        clearInventoryWhenKickedIsland = getBoolean("settings.player.island.kicked.clear-inventory", clearInventoryWhenKickedIsland);
+        clearEnderChestWhenKickedIsland = getBoolean("settings.player.island.kicked.clear-enderchest", clearEnderChestWhenKickedIsland);
+        resetExperiencePlayerWhenKickedIsland = getBoolean("settings.player.island.kicked.clear-experience", resetExperiencePlayerWhenKickedIsland);
+
+        clearInventoryWhenLeaveIsland = getBoolean("settings.player.island.leave.clear-inventory", clearInventoryWhenLeaveIsland);
+        clearEnderChestWhenLeaveIsland = getBoolean("settings.player.island.leave.clear-enderchest", clearEnderChestWhenLeaveIsland);
+        resetExperiencePlayerWhenLeaveIsland = getBoolean("settings.player.island.leave.clear-experience", resetExperiencePlayerWhenLeaveIsland);
+
         teleportPlayerOnIslandWhenJoin = getBoolean("settings.player.join.teleport.own-island", teleportPlayerOnIslandWhenJoin);
         teleportPlayerNotIslandWhenJoin = getBoolean("settings.player.join.teleport.spawn-not-island", teleportPlayerNotIslandWhenJoin);
         changeGameModeWhenTeleportIsland = getBoolean("settings.player.island.teleport.change-gamemode", changeGameModeWhenTeleportIsland);

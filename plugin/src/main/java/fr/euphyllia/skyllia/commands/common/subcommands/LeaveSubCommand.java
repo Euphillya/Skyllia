@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -46,7 +47,7 @@ public class LeaveSubCommand implements SubCommandInterface {
 
         boolean hasLeave = island.removeMember(players);
         if (hasLeave) {
-            DeleteSubCommand.checkClearPlayer(Main.getPlugin(Main.class), skyblockManager, players);
+            DeleteSubCommand.checkClearPlayer(Main.getPlugin(Main.class), skyblockManager, players, RemovalCause.LEAVE);
             LanguageToml.sendMessage(player, LanguageToml.messageLeaveSuccess);
         } else {
             LanguageToml.sendMessage(player, LanguageToml.messageLeavePlayerFailed);
