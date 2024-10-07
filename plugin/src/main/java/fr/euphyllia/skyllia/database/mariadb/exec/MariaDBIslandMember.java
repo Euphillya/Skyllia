@@ -208,7 +208,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Boolean> deleteMemberClear(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause), i -> {
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), i -> {
                 completableFuture.complete(i != 0);
             }, null);
         } catch (DatabaseException e) {
@@ -220,7 +220,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause), resultSet -> {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), resultSet -> {
                 try {
                     completableFuture.complete(resultSet.next());
                 } catch (SQLException e) {
