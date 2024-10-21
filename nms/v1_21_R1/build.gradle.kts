@@ -3,11 +3,16 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
+repositories {
+    maven("https://github.com/Euphillya/FoliaDevBundle/raw/gh-pages/")
+}
+
 dependencies {
-    paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
+    paperweight.foliaDevBundle("1.21.1-R0.1-SNAPSHOT")
     compileOnly(project(":nms:v1_20_R4"))
     compileOnly(project(":api"))
 }
+
 
 tasks {
     assemble {

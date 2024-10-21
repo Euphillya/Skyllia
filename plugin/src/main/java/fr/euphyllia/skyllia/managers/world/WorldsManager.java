@@ -39,8 +39,7 @@ public class WorldsManager {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia
             } catch (Exception ignored) {
                 worldCreator.keepSpawnLoaded(TriState.TRUE); // Toujours chargé le monde ! Prévenir du crash avec le PlayerRespawnLogic
-                WorldFeedback.FeedbackWorld feedbackWorld = null;
-                feedbackWorld = WorldUtils.addWorld(this.api, worldCreator);
+                WorldFeedback.FeedbackWorld feedbackWorld = WorldUtils.addWorld(this.api, worldCreator);
                 if (feedbackWorld.feedback == WorldFeedback.Feedback.SUCCESS) {
                     w = feedbackWorld.world;
                 } else {
