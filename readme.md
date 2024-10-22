@@ -100,9 +100,9 @@ Skyllia comes with a set of commands and permissions to manage the plugin effect
 
 |                       Software                       |    Version    |
 |:----------------------------------------------------:|:-------------:|
-|    [PaperMC](https://papermc.io/downloads/paper)     | 1.20.1-1.21.1 |
-|            [Purpur](https://purpurmc.org)            | 1.20.1-1.21.1 |
-|      [Folia](https://papermc.io/software/folia)      |  1.20-1.21.1  |
+|    [PaperMC](https://papermc.io/downloads/paper)     | 1.20.1-1.21.2 |
+|            [Purpur](https://purpurmc.org)            | 1.20.1-1.21.2 |
+|      [Folia](https://papermc.io/software/folia)      |  1.20-1.21.2  |
 | [Spigot](https://www.spigotmc.org) (Not Recommended) |   Cancelled   |
 
 ## Island Generation
