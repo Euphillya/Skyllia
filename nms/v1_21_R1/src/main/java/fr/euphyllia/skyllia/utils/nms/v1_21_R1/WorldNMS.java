@@ -186,6 +186,12 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         worlddata.checkName(name);
         worlddata.setModdedInfo(console.getServerModName(), console.getModdedStatus().shouldReportAsModified());
 
+        // Paper start - fix and optimise world upgrading
+        if (console.options.has("forceUpgrade")) {
+            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
+        }
+        // Paper end - fix and optimise world upgrading
+
         // Paper - fix and optimise world upgrading; move down
 
         long j = BiomeManager.obfuscateSeed(worlddata.worldGenOptions().seed()); // Paper - use world seed
@@ -197,11 +203,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             biomeProvider = generator.getDefaultBiomeProvider(worldInfo);
         }
 
-        // Paper start - fix and optimise world upgrading
-        if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
-        }
-        // Paper end - fix and optimise world upgrading
         ResourceKey<net.minecraft.world.level.Level> worldKey;
         String levelName = craftServer.getServer().getProperties().levelName;
         if (name.equals(levelName + "_nether")) {
@@ -210,6 +211,11 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             worldKey = net.minecraft.world.level.Level.END;
         } else {
             worldKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(creator.key().namespace(), creator.key().value()));
+        }
+
+        // If set to not keep spawn in memory (changed from default) then adjust rule accordingly
+        if (creator.keepSpawnLoaded() == net.kyori.adventure.util.TriState.FALSE) { // Paper
+            worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
         }
 
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
