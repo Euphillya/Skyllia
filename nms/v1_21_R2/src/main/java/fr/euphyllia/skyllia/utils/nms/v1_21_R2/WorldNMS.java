@@ -230,6 +230,8 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
         }
 
+        console.prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
+
         try {
             Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
             Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
