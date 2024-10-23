@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT") // Todo Update Soon
+    paperweight.paperDevBundle("1.21.3-R0.1-SNAPSHOT")
     compileOnly(project(":nms:v1_20_R4"))
     compileOnly(project(":api"))
 }
