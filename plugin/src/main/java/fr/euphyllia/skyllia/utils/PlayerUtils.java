@@ -20,7 +20,7 @@ public class PlayerUtils {
                 return;
             }
             player.teleportAsync(playerTeleportSpawnEvent.getFinalLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-        }, null, 0L);
+        }, null, 1L);
 
     }
 }

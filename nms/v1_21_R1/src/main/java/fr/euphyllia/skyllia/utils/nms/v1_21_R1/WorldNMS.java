@@ -186,6 +186,12 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         worlddata.checkName(name);
         worlddata.setModdedInfo(console.getServerModName(), console.getModdedStatus().shouldReportAsModified());
 
+        // Paper start - fix and optimise world upgrading
+        if (console.options.has("forceUpgrade")) {
+            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
+        }
+        // Paper end - fix and optimise world upgrading
+
         // Paper - fix and optimise world upgrading; move down
 
         long j = BiomeManager.obfuscateSeed(worlddata.worldGenOptions().seed()); // Paper - use world seed
@@ -197,11 +203,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             biomeProvider = generator.getDefaultBiomeProvider(worldInfo);
         }
 
-        // Paper start - fix and optimise world upgrading
-        if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
-        }
-        // Paper end - fix and optimise world upgrading
         ResourceKey<net.minecraft.world.level.Level> worldKey;
         String levelName = craftServer.getServer().getProperties().levelName;
         if (name.equals(levelName + "_nether")) {
@@ -212,35 +213,23 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             worldKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(creator.key().namespace(), creator.key().value()));
         }
 
-        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(11),
-                worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
-
-        try {
-            setRandomSpawnSelection(internal);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        // If set to not keep spawn in memory (changed from default) then adjust rule accordingly
+        if (creator.keepSpawnLoaded() == net.kyori.adventure.util.TriState.FALSE) { // Paper
+            worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
         }
 
+        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
+                worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
+
+        internal.randomSpawnSelection = new ChunkPos(internal.getChunkSource().randomState().sampler().findSpawnPosition());
 
         console.addLevel(internal);
 
         internal.setSpawnSettings(true, true);
 
-        if (creator.keepSpawnLoaded() == TriState.FALSE) {
-            worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
-        }
+        console.prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
 
-        try {
-            Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
-            getInstanceMethod.setAccessible(true);
-            Object regionizedServerInstance = getInstanceMethod.invoke(null);
-            Method addWorldMethod = regionizedServerClass.getDeclaredMethod("addWorld", ServerLevel.class);
-            addWorldMethod.setAccessible(true);
-            addWorldMethod.invoke(regionizedServerInstance, internal);
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(internal.getWorld()));
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());
@@ -264,17 +253,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         for (final BlockPos blockPos : blockPosIterable) { // Fix memory issue client
             serverChunkCache.blockChanged(blockPos);
         }
-    }
-
-    private static void setRandomSpawnSelection(ServerLevel serverLevel) throws NoSuchFieldException, IllegalAccessException {
-        Class<?> clazz = serverLevel.getClass();
-
-        // Obtention du champ 'randomSpawnSelection'
-        Field randomSpawnSelectionField = clazz.getDeclaredField("randomSpawnSelection");
-        randomSpawnSelectionField.setAccessible(true);
-
-        ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
-        randomSpawnSelectionField.set(serverLevel, newValue);
     }
 
     /**
@@ -306,8 +284,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     }
 
     private double[] getTPSFromRegion(ServerLevel world, int x, int z) {
-        return fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS.getTPSFromRegion(world, x, z); // Todo remove static when bundle 1.21 uploaded
-        /*io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
                 region = world.regioniser.getRegionAtSynchronised(x, z);
         if (region == null) {
             return null;
@@ -321,6 +298,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
                     regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
                     regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
             };
-        }*/
+        }
     }
 }

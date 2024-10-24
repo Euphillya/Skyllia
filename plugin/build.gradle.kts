@@ -10,6 +10,7 @@ dependencies {
     compileOnly(project(":nms:v1_20_R3", "reobf"))
     compileOnly(project(":nms:v1_20_R4", "reobf"))
     compileOnly(project(":nms:v1_21_R1", "reobf"))
+    compileOnly(project(":nms:v1_21_R2", "reobf"))
 
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9") { isTransitive = false }
     compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") { isTransitive = false }

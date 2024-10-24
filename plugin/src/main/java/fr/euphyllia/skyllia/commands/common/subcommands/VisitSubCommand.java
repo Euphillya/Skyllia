@@ -92,7 +92,7 @@ public class VisitSubCommand implements SubCommandInterface {
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                 if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SURVIVAL);
                 LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
-            }, null, 0L);
+            }, null, 1L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
             LanguageToml.sendMessage(player, LanguageToml.messageError);

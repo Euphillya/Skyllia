@@ -1,17 +1,20 @@
-package fr.euphyllia.skyllia.utils.nms.v1_20_R1;
+package fr.euphyllia.skyllia.utils.nms.v1_21_R2;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
+import net.kyori.adventure.util.TriState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.nbt.NbtException;
+import net.minecraft.nbt.ReportedNbtException;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
@@ -29,13 +32,14 @@ import net.minecraft.world.level.levelgen.PatrolSpawner;
 import net.minecraft.world.level.levelgen.PhantomSpawner;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.WorldOptions;
+import net.minecraft.world.level.storage.LevelDataAndDimensions;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
-import net.minecraft.world.level.storage.WorldData;
+import net.minecraft.world.level.validation.ContentValidationException;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.generator.CraftWorldInfo;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -46,9 +50,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
-
 
 public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
@@ -63,26 +69,20 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
-        io.papermc.paper.threadedregions.RegionizedServer.ensureGlobalTickThread("World create can be done only on global tick thread");
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
+        Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
+        //Preconditions.checkState(!console.isIteratingOverLevels, "Cannot create a world while worlds are being ticked"); // Paper - Cat - Temp disable. We'll see how this goes.
+        Preconditions.checkArgument(creator != null, "WorldCreator cannot be null");
 
         String name = creator.name();
-
-        String levelName = console.getProperties().levelName;
-        if (name.equals(levelName)
-                || (console.isNetherEnabled() && name.equals(levelName + "_nether"))
-                || (craftServer.getAllowEnd() && name.equals(levelName + "_the_end"))
-        ) {
-            return WorldFeedback.Feedback.WORLD_DEFAULT.toFeedbackWorld();
-        }
-
         ChunkGenerator generator = creator.generator();
         BiomeProvider biomeProvider = creator.biomeProvider();
         File folder = new File(craftServer.getWorldContainer(), name);
-        org.bukkit.World world = craftServer.getWorld(name);
+        World world = craftServer.getWorld(name);
 
-        CraftWorld worldByKey = (CraftWorld) craftServer.getWorld(creator.key());
+        // Paper start
+        World worldByKey = craftServer.getWorld(creator.key());
         if (world != null || worldByKey != null) {
             if (world != worldByKey) {
                 return WorldFeedback.Feedback.WORLD_DUPLICATED.toFeedbackWorld();
@@ -105,28 +105,66 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             case NORMAL -> LevelStem.OVERWORLD;
             case NETHER -> LevelStem.NETHER;
             case THE_END -> LevelStem.END;
-            default -> throw new IllegalArgumentException("Illegal dimension");
+            default -> throw new IllegalArgumentException("Illegal dimension (" + creator.environment() + ")");
         };
 
         LevelStorageSource.LevelStorageAccess worldSession;
         try {
-            worldSession = LevelStorageSource.createDefault(craftServer.getWorldContainer().toPath()).createAccess(name, actualDimension);
-        } catch (IOException ex) {
+            worldSession = LevelStorageSource.createDefault(craftServer.getWorldContainer().toPath()).validateAndCreateAccess(name, actualDimension);
+        } catch (IOException | ContentValidationException ex) {
             throw new RuntimeException(ex);
+        }
+
+        Dynamic<?> dynamic;
+        if (worldSession.hasWorldData()) {
+            net.minecraft.world.level.storage.LevelSummary worldinfo;
+
+            try {
+                dynamic = worldSession.getDataTag();
+                worldinfo = worldSession.getSummary(dynamic);
+            } catch (NbtException | ReportedNbtException | IOException ioexception) {
+                LevelStorageSource.LevelDirectory convertable_b = worldSession.getLevelDirectory();
+
+                MinecraftServer.LOGGER.warn("Failed to load world data from {}", convertable_b.dataFile(), ioexception);
+                MinecraftServer.LOGGER.info("Attempting to use fallback");
+
+                try {
+                    dynamic = worldSession.getDataTagFallback();
+                    worldinfo = worldSession.getSummary(dynamic);
+                } catch (NbtException | ReportedNbtException | IOException ioexception1) {
+                    MinecraftServer.LOGGER.error("Failed to load world data from {}", convertable_b.oldDataFile(), ioexception1);
+                    MinecraftServer.LOGGER.error("Failed to load world data from {} and {}. World files may be corrupted. Shutting down.", convertable_b.dataFile(), convertable_b.oldDataFile());
+                    return null;
+                }
+
+                worldSession.restoreLevelDataFromOld();
+            }
+
+            if (worldinfo.requiresManualConversion()) {
+                MinecraftServer.LOGGER.info("This world must be opened in an older version (like 1.6.4) to be safely converted");
+                return null;
+            }
+
+            if (!worldinfo.isCompatible()) {
+                MinecraftServer.LOGGER.info("This world was created by an incompatible version.");
+                return null;
+            }
+        } else {
+            dynamic = null;
         }
 
         boolean hardcore = creator.hardcore();
 
         PrimaryLevelData worlddata;
         WorldLoader.DataLoadContext worldloader_a = console.worldLoader;
-        net.minecraft.core.Registry<LevelStem> iregistry = worldloader_a.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
-        DynamicOps<Tag> dynamicops = RegistryOps.create(NbtOps.INSTANCE, worldloader_a.datapackWorldgen());
-        Pair<WorldData, WorldDimensions.Complete> pair = worldSession.getDataTag(dynamicops, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen().allRegistriesLifecycle());
+        RegistryAccess.Frozen iregistrycustom_dimension = worldloader_a.datapackDimensions();
+        net.minecraft.core.Registry<LevelStem> iregistry = iregistrycustom_dimension.registryOrThrow(Registries.LEVEL_STEM);
+        if (dynamic != null) {
+            LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(dynamic, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen());
 
-
-        if (pair != null) {
-            worlddata = (PrimaryLevelData) pair.getFirst();
-            iregistry = pair.getSecond().dimensions();
+            worlddata = (PrimaryLevelData) leveldataanddimensions.worldData();
+            iregistry = leveldataanddimensions.dimensions().dimensions();
+            iregistrycustom_dimension = leveldataanddimensions.dimensions().dimensionsRegistryAccess();
         } else {
             LevelSettings worldsettings;
             WorldOptions worldoptions = new WorldOptions(creator.seed(), creator.generateStructures(), false);
@@ -142,43 +180,71 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
             worlddata = new PrimaryLevelData(worldsettings, worldoptions, worlddimensions_b.specialWorldProperty(), lifecycle);
             iregistry = worlddimensions_b.dimensions();
+            iregistrycustom_dimension = worlddimensions_b.dimensionsRegistryAccess();
         }
         worlddata.customDimensions = iregistry;
         worlddata.checkName(name);
         worlddata.setModdedInfo(console.getServerModName(), console.getModdedStatus().shouldReportAsModified());
 
-        long j = BiomeManager.obfuscateSeed(creator.seed());
+        // Paper start - fix and optimise world upgrading
+        if (console.options.has("forceUpgrade")) {
+            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
+        }
+        // Paper end - fix and optimise world upgrading
+
+        // Paper - fix and optimise world upgrading; move down
+
+        long j = BiomeManager.obfuscateSeed(worlddata.worldGenOptions().seed()); // Paper - use world seed
         List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
         LevelStem worlddimension = iregistry.get(actualDimension);
 
-        WorldInfo worldInfo = new CraftWorldInfo(worlddata, worldSession, creator.environment(), worlddimension.type().value(), worlddimension.generator(), craftServer.getHandle().getServer().registryAccess()); // Paper
+        WorldInfo worldInfo = new CraftWorldInfo(worlddata, worldSession, creator.environment(), worlddimension.type().value(), worlddimension.generator(), craftServer.getHandle().getServer().registryAccess()); // Paper - Expose vanilla BiomeProvider from WorldInfo
         if (biomeProvider == null && generator != null) {
             biomeProvider = generator.getDefaultBiomeProvider(worldInfo);
         }
 
-        if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.convertWorldButItWorks(
-                    actualDimension, worldSession, DataFixers.getDataFixer(), worlddimension.generator().getTypeNameForDataFixer(), console.options.has("eraseCache")
-            );
+        ResourceKey<net.minecraft.world.level.Level> worldKey;
+        String levelName = craftServer.getServer().getProperties().levelName;
+        if (name.equals(levelName + "_nether")) {
+            worldKey = net.minecraft.world.level.Level.NETHER;
+        } else if (name.equals(levelName + "_the_end")) {
+            worldKey = net.minecraft.world.level.Level.END;
+        } else {
+            worldKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(creator.key().namespace(), creator.key().value()));
         }
 
-        ResourceKey<net.minecraft.world.level.Level> worldKey;
-        worldKey = ResourceKey.create(Registries.DIMENSION, new net.minecraft.resources.ResourceLocation(creator.key().getNamespace().toLowerCase(java.util.Locale.ENGLISH), creator.key().getKey().toLowerCase(java.util.Locale.ENGLISH))); // Paper
+        // If set to not keep spawn in memory (changed from default) then adjust rule accordingly
+        if (creator.keepSpawnLoaded() == net.kyori.adventure.util.TriState.FALSE) { // Paper
+            worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
+        }
 
-        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, console.progressListenerFactory.create(11),
-                worlddata.isDebugWorld(), j, creator.environment() == org.bukkit.World.Environment.NORMAL ? list : ImmutableList.of(), true, null, creator.environment(), generator, biomeProvider);
+        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
+                worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
 
-        internal.randomSpawnSelection = new ChunkPos(internal.getChunkSource().randomState().sampler().findSpawnPosition());
+        try {
+            setRandomSpawnSelection(internal);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
 
         console.addLevel(internal);
 
         internal.setSpawnSettings(true, true);
 
-        internal.keepSpawnInMemory = creator.keepSpawnLoaded().toBooleanOrElse(internal.getWorld().getKeepSpawnInMemory()); // Paper
-
         console.prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
 
-        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
+        try {
+            Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
+            getInstanceMethod.setAccessible(true);
+            Object regionizedServerInstance = getInstanceMethod.invoke(null);
+            Method addWorldMethod = regionizedServerClass.getDeclaredMethod("addWorld", ServerLevel.class);
+            addWorldMethod.setAccessible(true);
+            addWorldMethod.invoke(regionizedServerInstance, internal);
+        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(internal.getWorld()));
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());
@@ -187,7 +253,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     @Override
     public void resetChunk(World craftWorld, Position position) {
         final ServerLevel serverLevel = ((CraftWorld) craftWorld).getHandle();
-        io.papermc.paper.util.TickThread.ensureTickThread(serverLevel, position.x(), position.z(), "Cannot regenerate chunk asynchronously");
         final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
         final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
         final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);
@@ -203,6 +268,17 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         for (final BlockPos blockPos : blockPosIterable) { // Fix memory issue client
             serverChunkCache.blockChanged(blockPos);
         }
+    }
+
+    private static void setRandomSpawnSelection(ServerLevel serverLevel) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> clazz = serverLevel.getClass();
+
+        // Obtention du champ 'randomSpawnSelection'
+        Field randomSpawnSelectionField = clazz.getDeclaredField("randomSpawnSelection");
+        randomSpawnSelectionField.setAccessible(true);
+
+        ChunkPos newValue = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
+        randomSpawnSelectionField.set(serverLevel, newValue);
     }
 
     /**
@@ -234,7 +310,8 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     }
 
     private double[] getTPSFromRegion(ServerLevel world, int x, int z) {
-        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+        return fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS.getTPSFromRegion(world, x, z); // Todo remove static when bundle 1.21 uploaded
+        /*io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
                 region = world.regioniser.getRegionAtSynchronised(x, z);
         if (region == null) {
             return null;
@@ -248,6 +325,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
                     regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
                     regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
             };
-        }
+        }*/
     }
 }

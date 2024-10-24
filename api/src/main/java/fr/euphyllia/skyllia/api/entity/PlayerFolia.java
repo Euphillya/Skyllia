@@ -16,6 +16,6 @@ public class PlayerFolia {
      * @param gameMode The new game mode for the player.
      */
     public static void setGameMode(Player player, GameMode gameMode) {
-        player.getScheduler().execute(SkylliaAPI.getPlugin(), () -> player.setGameMode(gameMode), null, 0L);
+        player.getScheduler().execute(SkylliaAPI.getPlugin(), () -> player.setGameMode(gameMode), null, 1L);
     }
 }

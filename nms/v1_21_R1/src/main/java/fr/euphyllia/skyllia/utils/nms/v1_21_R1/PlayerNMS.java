@@ -18,7 +18,7 @@ public class PlayerNMS extends fr.euphyllia.skyllia.api.utils.nms.PlayerNMS {
             final net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket updateWorldBorderPacket = new net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket(worldBorderPlayer);
             org.bukkit.craftbukkit.entity.CraftPlayer craftPlayer = ((org.bukkit.craftbukkit.entity.CraftPlayer) player);
             craftPlayer.getHandle().connection.send(updateWorldBorderPacket);
-        }, null, 0L);
+        }, null, 1L);
     }
 
 

@@ -74,7 +74,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                     }
                 }
                 bPlayer.setGameMode(GameMode.SURVIVAL);
-            }, null, 0L);
+            }, null, 1L);
         } else {
             skyblockManager.addClearMemberNextLogin(players.getMojangId(), cause);
         }
