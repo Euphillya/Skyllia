@@ -158,12 +158,11 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         PrimaryLevelData worlddata;
         WorldLoader.DataLoadContext worldloader_a = console.worldLoader;
         RegistryAccess.Frozen iregistrycustom_dimension = worldloader_a.datapackDimensions();
-        net.minecraft.core.Registry<LevelStem> iregistry = iregistrycustom_dimension.registryOrThrow(Registries.LEVEL_STEM);
+        net.minecraft.core.Registry<LevelStem> iregistry = iregistrycustom_dimension.lookupOrThrow(Registries.LEVEL_STEM);
         if (dynamic != null) {
             LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(dynamic, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen());
 
             worlddata = (PrimaryLevelData) leveldataanddimensions.worldData();
-            iregistry = leveldataanddimensions.dimensions().dimensions();
             iregistrycustom_dimension = leveldataanddimensions.dimensions().dimensionsRegistryAccess();
         } else {
             LevelSettings worldsettings;
@@ -172,16 +171,16 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
             DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(GsonHelper.parse((creator.generatorSettings().isEmpty()) ? "{}" : creator.generatorSettings()), creator.type().name().toLowerCase(Locale.ROOT));
 
-            worldsettings = new LevelSettings(name, getGameType(GameMode.SURVIVAL), hardcore, Difficulty.EASY, false, new GameRules(), worldloader_a.dataConfiguration());
+            worldsettings = new LevelSettings(name, GameType.byId(craftServer.getDefaultGameMode().getValue()), hardcore, Difficulty.EASY, false, new GameRules(worldloader_a.dataConfiguration().enabledFeatures()), worldloader_a.dataConfiguration());
             worlddimensions = properties.create(worldloader_a.datapackWorldgen());
 
             WorldDimensions.Complete worlddimensions_b = worlddimensions.bake(iregistry);
             Lifecycle lifecycle = worlddimensions_b.lifecycle().add(worldloader_a.datapackWorldgen().allRegistriesLifecycle());
 
             worlddata = new PrimaryLevelData(worldsettings, worldoptions, worlddimensions_b.specialWorldProperty(), lifecycle);
-            iregistry = worlddimensions_b.dimensions();
             iregistrycustom_dimension = worlddimensions_b.dimensionsRegistryAccess();
         }
+        iregistry = iregistrycustom_dimension.lookupOrThrow(Registries.LEVEL_STEM);
         worlddata.customDimensions = iregistry;
         worlddata.checkName(name);
         worlddata.setModdedInfo(console.getServerModName(), console.getModdedStatus().shouldReportAsModified());
@@ -196,7 +195,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         long j = BiomeManager.obfuscateSeed(worlddata.worldGenOptions().seed()); // Paper - use world seed
         List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
-        LevelStem worlddimension = iregistry.get(actualDimension);
+        LevelStem worlddimension = iregistry.getValue(actualDimension);
 
         WorldInfo worldInfo = new CraftWorldInfo(worlddata, worldSession, creator.environment(), worlddimension.type().value(), worlddimension.generator(), craftServer.getHandle().getServer().registryAccess()); // Paper - Expose vanilla BiomeProvider from WorldInfo
         if (biomeProvider == null && generator != null) {
@@ -230,7 +229,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         console.addLevel(internal);
 
-        internal.setSpawnSettings(true, true);
+        internal.setSpawnSettings(true);
 
         console.prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
 
@@ -256,7 +255,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
         final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
         final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);
-        final Iterable<BlockPos> blockPosIterable = BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinBuildHeight(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxBuildHeight() - 1, chunkPos.getMaxBlockZ());
+        final Iterable<BlockPos> blockPosIterable = BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinY(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxY() - 1, chunkPos.getMaxBlockZ());
         for (Entity entity : serverLevel.getChunkEntities(position.x(), position.z())) {
             if (entity instanceof Player) continue;
             entity.remove();
