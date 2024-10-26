@@ -101,7 +101,7 @@ public class JoinEvent implements Listener {
                         }
                     }
                     player.setGameMode(GameMode.SURVIVAL);
-                }, null, 0L);
+                }, null, 1L);
             }
         });
     }

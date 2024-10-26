@@ -66,7 +66,7 @@ public class HomeSubCommand implements SubCommandInterface {
                 if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                 LanguageToml.sendMessage(player, LanguageToml.messageHomeIslandSuccess);
-            }, null, 0L);
+            }, null, 1L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
             LanguageToml.sendMessage(player, LanguageToml.messageError);
