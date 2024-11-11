@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.SkylliaImplementation;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.PositionIslandCache;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
@@ -31,9 +32,31 @@ public final class APISkyllia implements SkylliaImplementation {
         return this.interneAPI.getSkyblockManager().getIslandByPlayerId(playerUniqueId);
     }
 
+    /**
+     * Retrieves the island associated with a player's UUID.
+     *
+     * @param playerUniqueId The UUID of the player.
+     * @return A CompletableFuture that will contain the island associated with the player's UUID.
+     */
+    @Override
+    public @NotNull Island getCacheIslandByPlayerId(UUID playerUniqueId) {
+        return PlayersInIslandCache.getIslandByPlayerId().getOrDefault(playerUniqueId, null);
+    }
+
     @Override
     public CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
         return this.interneAPI.getSkyblockManager().getIslandByIslandId(islandId);
+    }
+
+    /**
+     * Retrieves the island associated with an island ID.
+     *
+     * @param islandId The UUID of the island.
+     * @return An island associated with the island ID.
+     */
+    @Override
+    public @NotNull Island getCacheIslandByIslandId(UUID islandId) {
+        return PlayersInIslandCache.getIslandByIslandId().getOrDefault(islandId, null);
     }
 
     @Override

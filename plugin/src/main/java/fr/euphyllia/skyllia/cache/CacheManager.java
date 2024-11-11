@@ -33,6 +33,7 @@ public class CacheManager {
         if (pIsland == null) {
             // ========= remove player
             PlayersInIslandCache.getIslandIdByPlayerId().remove(bPlayer.getUniqueId());
+            PlayersInIslandCache.getIslandByPlayerId().remove(bPlayer.getUniqueId());
             return;
         }
         this.updateCacheIsland(pIsland, bPlayer.getUniqueId());
@@ -44,6 +45,8 @@ public class CacheManager {
             // ============= player cache
             for (Players players : island.getMembers()) {
                 PlayersInIslandCache.getIslandIdByPlayerId().remove(players.getMojangId(), islandId);
+                PlayersInIslandCache.getIslandByPlayerId().remove(players.getMojangId());
+                PlayersInIslandCache.getIslandByIslandId().remove(islandId);
             }
 
             PlayersInIslandCache.delete(islandId);
@@ -66,7 +69,9 @@ public class CacheManager {
     public void updateCacheIsland(Island island, UUID playerId) {
         Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
             PlayersInIslandCache.getIslandIdByPlayerId().put(playerId, island.getId());
+            PlayersInIslandCache.getIslandByPlayerId().put(playerId, island);
             PlayersInIslandCache.add(island.getId(), island.getMembers());
+            PlayersInIslandCache.getIslandByIslandId().put(island.getId(), island);
             // ============= position island cache
             List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
             for (Position possiblePosition : islandPositionWithRadius) {

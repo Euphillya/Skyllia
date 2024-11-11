@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.cache;
 
+import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,8 @@ public class PlayersInIslandCache {
     private static final ConcurrentHashMap<UUID, CopyOnWriteArrayList<Players>> listPlayersInIsland = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, UUID> islandIdByPlayerId = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, CopyOnWriteArrayList<UUID>> listTrustedPlayerByIslandId = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, Island> islandByPlayerId = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, Island> islandByIslandId = new ConcurrentHashMap<>();
 
     public static CopyOnWriteArrayList<Players> getPlayersCached(UUID islandId) {
         return listPlayersInIsland.getOrDefault(islandId, new CopyOnWriteArrayList<>());
@@ -71,5 +74,13 @@ public class PlayersInIslandCache {
     public static boolean playerIsTrustedInIsland(UUID islandId, UUID playerId) {
         CopyOnWriteArrayList<UUID> listPlayer = getPlayersListTrusted(islandId);
         return listPlayer.contains(playerId);
+    }
+
+    public static ConcurrentHashMap<UUID, Island> getIslandByPlayerId() {
+        return islandByPlayerId;
+    }
+
+    public static ConcurrentHashMap<UUID, Island> getIslandByIslandId() {
+        return islandByIslandId;
     }
 }
