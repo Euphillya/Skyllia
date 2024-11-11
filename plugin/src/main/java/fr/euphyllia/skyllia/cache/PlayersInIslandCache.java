@@ -18,8 +18,12 @@ public class PlayersInIslandCache {
     private static final ConcurrentHashMap<UUID, UUID> islandIdByPlayerId = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, CopyOnWriteArrayList<UUID>> listTrustedPlayerByIslandId = new ConcurrentHashMap<>();
 
+    public static CopyOnWriteArrayList<Players> getPlayersCached(UUID islandId) {
+        return listPlayersInIsland.getOrDefault(islandId, new CopyOnWriteArrayList<>());
+    }
+
     public static Players getPlayers(UUID islandId, UUID playerId) {
-        List<Players> playersInIsland = listPlayersInIsland.getOrDefault(islandId, new CopyOnWriteArrayList<>());
+        List<Players> playersInIsland = getPlayersCached(islandId);
         if (playersInIsland.isEmpty()) {
             return new Players(playerId, null, islandId, RoleType.VISITOR);
         }

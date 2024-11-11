@@ -118,6 +118,13 @@ public abstract class Island {
     public abstract CopyOnWriteArrayList<Players> getMembers();
 
     /**
+     * Gets the list of members on the island.
+     *
+     * @return A list of members.
+     */
+    public abstract CopyOnWriteArrayList<Players> getMembersCached();
+
+    /**
      * Gets a member by their UUID.
      *
      * @param mojangId The UUID of the member.

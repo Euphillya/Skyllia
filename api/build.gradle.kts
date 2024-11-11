@@ -4,12 +4,12 @@ plugins {
 
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
     implementation("com.github.Euphillya:SGBD-MariaDB:1.3")
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.4";
+version = "1.5";
 
 publishing {
     repositories {

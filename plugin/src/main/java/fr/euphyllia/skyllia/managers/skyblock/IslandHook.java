@@ -144,6 +144,11 @@ public class IslandHook extends Island {
     }
 
     @Override
+    public CopyOnWriteArrayList<Players> getMembersCached() {
+        return PlayersInIslandCache.getPlayersCached(this.islandId);
+    }
+
+    @Override
     public Players getMember(UUID mojangId) {
         return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, mojangId).join();
     }
