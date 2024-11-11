@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -141,6 +142,16 @@ public class IslandHook extends Island {
     @Override
     public CopyOnWriteArrayList<Players> getMembers() {
         return this.plugin.getInterneAPI().getSkyblockManager().getMembersInIsland(this).join();
+    }
+
+    /**
+     * Gets the list of members on the island.
+     *
+     * @return A list of members.
+     */
+    @Override
+    public CopyOnWriteArrayList<Players> getMembersCached() {
+        return PlayersInIslandCache.getPlayersCached(this.islandId);
     }
 
     @Override

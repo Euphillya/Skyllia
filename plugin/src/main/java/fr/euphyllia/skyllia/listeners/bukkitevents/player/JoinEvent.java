@@ -41,7 +41,6 @@ public class JoinEvent implements Listener {
                     PlayerUtils.teleportPlayerSpawn(player);
                 }
             } else {
-                this.api.updateCache(player);
                 if (ConfigToml.teleportPlayerOnIslandWhenJoin) {
                     World world = player.getLocation().getWorld();
                     if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
