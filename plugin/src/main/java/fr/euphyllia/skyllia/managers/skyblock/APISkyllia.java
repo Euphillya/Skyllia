@@ -39,7 +39,7 @@ public final class APISkyllia implements SkylliaImplementation {
      * @return A CompletableFuture that will contain the island associated with the player's UUID.
      */
     @Override
-    public @NotNull Island getCacheIslandByPlayerId(UUID playerUniqueId) {
+    public @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
         return PlayersInIslandCache.getIslandByPlayerId().getOrDefault(playerUniqueId, null);
     }
 
@@ -55,7 +55,7 @@ public final class APISkyllia implements SkylliaImplementation {
      * @return An island associated with the island ID.
      */
     @Override
-    public @NotNull Island getCacheIslandByIslandId(UUID islandId) {
+    public @Nullable Island getCacheIslandByIslandId(UUID islandId) {
         return PlayersInIslandCache.getIslandByIslandId().getOrDefault(islandId, null);
     }
 

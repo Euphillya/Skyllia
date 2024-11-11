@@ -31,7 +31,7 @@ public interface SkylliaImplementation {
      * @param playerUniqueId The UUID of the player.
      * @return An island associated with the player's UUID.
      */
-    public @NotNull Island getCacheIslandByPlayerId(UUID playerUniqueId);
+    public @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId);
 
     /**
      * Retrieves the island associated with an island ID.
@@ -47,7 +47,7 @@ public interface SkylliaImplementation {
      * @param islandId The UUID of the island.
      * @return An island associated with the island ID.
      */
-    public @NotNull Island getCacheIslandByIslandId(UUID islandId);
+    public @Nullable Island getCacheIslandByIslandId(UUID islandId);
 
     /**
      * Retrieves the island at a specific position.
