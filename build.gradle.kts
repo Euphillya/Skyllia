@@ -5,7 +5,7 @@ plugins {
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.7"
-    id("io.papermc.paperweight.userdev") version "1.7.3" apply false
+    id("io.papermc.paperweight.userdev") version "1.7.4" apply false
 }
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":nms:v1_20_R3", "reobf"))
     implementation(project(":nms:v1_20_R4", "reobf"))
     implementation(project(":nms:v1_21_R1", "reobf"))
+    implementation(project(":nms:v1_21_R2", "reobf"))
 }
 
 allprojects {
