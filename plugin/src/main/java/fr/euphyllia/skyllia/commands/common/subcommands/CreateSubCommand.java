@@ -58,7 +58,7 @@ public class CreateSubCommand implements SubCommandInterface {
 
         try {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
-            AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByOwner(player.getUniqueId()).join());
+            AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByPlayerId(player.getUniqueId()).join());
             if (islandAtomic.get() == null) {
                 String schemKey = args.length == 0 ? "" : args[0];
                 if (schemKey.isEmpty()) {
