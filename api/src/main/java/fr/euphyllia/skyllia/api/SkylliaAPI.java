@@ -156,7 +156,7 @@ public final class SkylliaAPI {
      * @param playerUniqueId The UUID of the player.
      * @return An island associated with the player's UUID.
      */
-    public @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
+    public static @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
         return implementation.getCacheIslandByPlayerId(playerUniqueId);
     }
 
@@ -166,7 +166,7 @@ public final class SkylliaAPI {
      * @param islandId The UUID of the island.
      * @return An island associated with the island ID.
      */
-    public @Nullable Island getCacheIslandByIslandId(UUID islandId) {
+    public static @Nullable Island getCacheIslandByIslandId(UUID islandId) {
         return implementation.getCacheIslandByIslandId(islandId);
     }
 }
