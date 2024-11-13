@@ -27,7 +27,7 @@ dependencies {
 allprojects {
     group = "fr.euphyllia";
     version = "1.0-" + System.getenv("GITHUB_RUN_NUMBER");
-    description = "Plugin Skyblock pour Folia / PaperMC";
+    description = "First Skyblock Plugin for Folia";
 
     apply(plugin = "java-library")
     apply(plugin = "io.github.goooler.shadow")

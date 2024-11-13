@@ -6,6 +6,7 @@ import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.configuration.ConfigInitializer;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
@@ -42,6 +43,7 @@ public class InterneAPI {
     private Managers managers;
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
+    private BiomesImpl biomesImpl;
 
     public InterneAPI(Main plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
@@ -157,27 +159,33 @@ public class InterneAPI {
             case "1.20", "1.20.1" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
+                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.BiomeNMS();
             }
             case "1.20.2" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.PlayerNMS();
+                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.BiomeNMS();
             }
             case "1.20.3", "1.20.4" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
+                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.BiomeNMS();
             }
             case "1.20.5", "1.20.6" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
+                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.BiomeNMS();
             }
             case "1.21", "1.21.1" -> {
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.PlayerNMS();
+                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.BiomeNMS();
             }
             case "1.21.2", "1.21.3" -> {
                 logger.warn("Warning: Version 1.21.3 is not fully tested. Be cautious!");
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.PlayerNMS();
+                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.BiomeNMS();
             }
             default ->
                     throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(bukkitVersion[0]));
@@ -196,4 +204,7 @@ public class InterneAPI {
         SkylliaAPI.setImplementation(this.plugin, new APISkyllia(this));
     }
 
+    public BiomesImpl getBiomesImpl() {
+        return this.biomesImpl;
+    }
 }

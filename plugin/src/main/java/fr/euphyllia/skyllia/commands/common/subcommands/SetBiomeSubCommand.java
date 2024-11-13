@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -11,6 +12,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.cache.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -53,14 +55,17 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         String selectBiome = args[0];
         Biome biome;
 
+        InterneAPI api = Main.getPlugin(Main.class).getInterneAPI();
+        BiomesImpl biomesImpl = api.getBiomesImpl();
+
         try {
-            biome = Biome.valueOf(selectBiome.toUpperCase());
+            biome = api.getBiomesImpl().getBiome(selectBiome);
         } catch (IllegalArgumentException e) {
             LanguageToml.sendMessage(player, LanguageToml.messageBiomeNotExist.formatted(selectBiome));
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.biome.%s".formatted(biome.name()))) {
+        if (!player.hasPermission("skyllia.island.command.biome.%s".formatted(biomesImpl.getNameBiome(biome)))) {
             LanguageToml.sendMessage(player, LanguageToml.messageBiomePermissionDenied.formatted(selectBiome));
             return true;
         }
@@ -75,7 +80,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
         try {
 
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = api.getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
@@ -158,9 +163,9 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
             List<String> biomesList = new ArrayList<>();
-            for (Biome biome : Biome.values()) {
-                if (sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome.name()))) {
-                    biomesList.add(biome.name());
+            for (String biome : Main.getPlugin(Main.class).getInterneAPI().getBiomesImpl().getBiomeNameList()) {
+                if (sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome))) {
+                    biomesList.add(biome);
                 }
             }
             return biomesList;
