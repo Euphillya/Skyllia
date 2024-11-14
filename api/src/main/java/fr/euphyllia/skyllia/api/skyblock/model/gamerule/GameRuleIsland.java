@@ -68,7 +68,12 @@ public enum GameRuleIsland {
     /**
      * Disables unknown mob griefing on the island.
      */
-    DISABLE_UNKNOWN_MOB_GRIEFING(2_048);
+    DISABLE_UNKNOWN_MOB_GRIEFING(2_048),
+
+    /**
+     * Disables player griefing on the island.
+     */
+    DISABLE_PLAYER_GRIEFING(4_096);
 
     private final long permissionValue;
 

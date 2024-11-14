@@ -32,6 +32,8 @@ public class GriefingEvent implements Listener {
             ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_PASSIF_MOB_GRIEFING, event);
         } else if (entity instanceof Monster) {
             ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_HOSTILE_MOB_GRIEFING, event);
+        } else if (entity instanceof Player) {
+            ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_PLAYER_GRIEFING, event);
         } else {
             ListenersUtils.checkGameRuleIsland(location, GameRuleIsland.DISABLE_UNKNOWN_MOB_GRIEFING, event);
         }
