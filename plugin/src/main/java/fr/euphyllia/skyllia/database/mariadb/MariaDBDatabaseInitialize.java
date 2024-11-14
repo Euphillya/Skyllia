@@ -14,95 +14,94 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
-    private static final String CREATE_DATABASE = """
-            CREATE DATABASE IF NOT EXISTS `%s`;
-            """;
-    private static final String CREATE_ISLANDS = """
+    private static final String CREATE_DATABASE_TEMPLATE = "CREATE DATABASE IF NOT EXISTS `%s`;";
+    private static final String CREATE_ISLANDS_TABLE = """
             CREATE TABLE IF NOT EXISTS `%s`.`islands` (
-            `island_id` CHAR(36) NOT NULL,
-            `disable` TINYINT DEFAULT '0',
-            `region_x` INT NOT NULL,
-            `region_z` INT NOT NULL,
-            `private` TINYINT DEFAULT '0',
-            `size` DOUBLE NOT NULL,
-            `create_time` TIMESTAMP,
-            `max_members` INT NOT NULL,
-            PRIMARY KEY (`island_id`, `region_x`, `region_z`)
+                `island_id` CHAR(36) NOT NULL,
+                `disable` TINYINT DEFAULT '0',
+                `region_x` INT NOT NULL,
+                `region_z` INT NOT NULL,
+                `private` TINYINT DEFAULT '0',
+                `size` DOUBLE NOT NULL,
+                `create_time` TIMESTAMP,
+                `max_members` INT NOT NULL,
+                PRIMARY KEY (`island_id`, `region_x`, `region_z`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
-    private static final String CREATE_GAMERULE_ISLANDS = """
+    private static final String CREATE_ISLANDS_GAMERULE_TABLE = """
             CREATE TABLE IF NOT EXISTS `%s`.`islands_gamerule` (
-            `island_id` CHAR(36) NOT NULL,
-            `flags` INT UNSIGNED NOT NULL DEFAULT '0',
-            PRIMARY KEY (`island_id`)
+                `island_id` CHAR(36) NOT NULL,
+                `flags` INT UNSIGNED NOT NULL DEFAULT '0',
+                PRIMARY KEY (`island_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
-    private static final String CREATE_ISLANDS_MEMBERS = """
-                CREATE TABLE IF NOT EXISTS `%s`.`members_in_islands` (
-                  `island_id` CHAR(36) NOT NULL,
-                  `uuid_player` CHAR(36) NOT NULL,
-                  `player_name` VARCHAR(40) DEFAULT NULL,
-                  `role` VARCHAR(40) DEFAULT NULL,
-                  `joined` TIMESTAMP,
-                  PRIMARY KEY (`island_id`,`uuid_player`),
-                  CONSTRAINT `members_in_islands_FK` FOREIGN KEY (`island_id`) REFERENCES `islands` (`island_id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-            """;
-    private static final String CREATE_ISLANDS_WARP = """
-                CREATE TABLE IF NOT EXISTS `%s`.`islands_warp` (
-                  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                  `island_id` CHAR(36) NOT NULL,
-                  `warp_name` VARCHAR(100) DEFAULT NULL,
-                  `world_name` VARCHAR(100) DEFAULT NULL,
-                  `x` DOUBLE DEFAULT NULL,
-                  `y` DOUBLE DEFAULT NULL,
-                  `z` DOUBLE DEFAULT NULL,
-                  `pitch` FLOAT DEFAULT NULL,
-                  `yaw` FLOAT DEFAULT NULL,
-                  PRIMARY KEY (`id`),
-                  KEY `islands_warp_FK` (`island_id`),
-                  UNIQUE KEY `unique_warp_per_island` (`island_id`, `warp_name`),
-                  CONSTRAINT `islands_warp_FK` FOREIGN KEY (`island_id`) REFERENCES `islands` (`island_id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-            """;
-    private static final String CREATE_SPIRAL = """
-                CREATE TABLE IF NOT EXISTS `%s`.`spiral` (
-                  `id` INT NOT NULL,
-                  `region_x` INT NOT NULL,
-                  `region_z` INT NOT NULL,
-                  PRIMARY KEY (`id`),
-                  INDEX `idx_region_x` (`region_x`),
-                  INDEX `idx_region_z` (`region_z`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-            """;
-
-    private static final String CREATE_TABLE_ISLAND_PERMISSION = """
-            CREATE TABLE IF NOT EXISTS %s.`islands_permissions` (
-            `island_id` VARCHAR(36) NOT NULL,
-            `type` VARCHAR(36) NOT NULL,
-            `role` VARCHAR(40) NOT NULL,
-            `flags` INT UNSIGNED NOT NULL DEFAULT '0',
-            PRIMARY KEY (`island_id`,`type`,`role`)
+    private static final String CREATE_ISLANDS_MEMBERS_TABLE = """
+            CREATE TABLE IF NOT EXISTS `%s`.`members_in_islands` (
+                `island_id` CHAR(36) NOT NULL,
+                `uuid_player` CHAR(36) NOT NULL,
+                `player_name` VARCHAR(40) DEFAULT NULL,
+                `role` VARCHAR(40) DEFAULT NULL,
+                `joined` TIMESTAMP,
+                PRIMARY KEY (`island_id`, `uuid_player`),
+                CONSTRAINT `members_in_islands_FK` FOREIGN KEY (`island_id`) REFERENCES `islands` (`island_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
-    private static final String CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK = """
-                CREATE TABLE IF NOT EXISTS `%s`.`player_clear` (
-                   `uuid_player` CHAR(36) NOT NULL,
-                   PRIMARY KEY (`uuid_player`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    private static final String CREATE_ISLANDS_WARP_TABLE = """
+            CREATE TABLE IF NOT EXISTS `%s`.`islands_warp` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `island_id` CHAR(36) NOT NULL,
+                `warp_name` VARCHAR(100) DEFAULT NULL,
+                `world_name` VARCHAR(100) DEFAULT NULL,
+                `x` DOUBLE DEFAULT NULL,
+                `y` DOUBLE DEFAULT NULL,
+                `z` DOUBLE DEFAULT NULL,
+                `pitch` FLOAT DEFAULT NULL,
+                `yaw` FLOAT DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `islands_warp_FK` (`island_id`),
+                UNIQUE KEY `unique_warp_per_island` (`island_id`, `warp_name`),
+                CONSTRAINT `islands_warp_FK` FOREIGN KEY (`island_id`) REFERENCES `islands` (`island_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+    private static final String CREATE_SPIRAL_TABLE = """
+            CREATE TABLE IF NOT EXISTS `%s`.`spiral` (
+                `id` INT NOT NULL,
+                `region_x` INT NOT NULL,
+                `region_z` INT NOT NULL,
+                PRIMARY KEY (`id`),
+                INDEX `idx_region_x` (`region_x`),
+                INDEX `idx_region_z` (`region_z`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+    private static final String CREATE_ISLANDS_PERMISSIONS_TABLE = """
+            CREATE TABLE IF NOT EXISTS `%s`.`islands_permissions` (
+                `island_id` VARCHAR(36) NOT NULL,
+                `type` VARCHAR(36) NOT NULL,
+                `role` VARCHAR(40) NOT NULL,
+                `flags` INT UNSIGNED NOT NULL DEFAULT '0',
+                PRIMARY KEY (`island_id`, `type`, `role`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+    private static final String CREATE_PLAYER_CLEAR_TABLE = """
+            CREATE TABLE IF NOT EXISTS `%s`.`player_clear` (
+                `uuid_player` CHAR(36) NOT NULL,
+                `cause` VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED',
+                PRIMARY KEY (`uuid_player`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
     private static final String INSERT_SPIRAL = """
-                INSERT IGNORE INTO `%s`.`spiral`
-                (id, region_x, region_z)
-                VALUES(?, ?, ?);
+            INSERT IGNORE INTO `%s`.`spiral` (id, region_x, region_z) VALUES (?, ?, ?);
             """;
-    private static final String ISLANDS_INDEX = """
+    private static final String CREATE_ISLANDS_INDEX = """
             CREATE INDEX IF NOT EXISTS `region_xz_disabled` ON `%s`.`islands` (`region_x`, `region_z`, `disable`);
             """;
-    private static final String SPIRAL_INDEX = """
+    private static final String CREATE_SPIRAL_INDEX = """
             CREATE INDEX IF NOT EXISTS `region_xz` ON `%s`.`spiral` (`region_x`, `region_z`);
             """;
 
@@ -114,6 +113,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     public MariaDBDatabaseInitialize(InterneAPI interneAPI) throws DatabaseException {
         this.api = interneAPI;
         MariaDBConfig dbConfig = ConfigToml.mariaDBConfig;
+
         if (dbConfig == null) {
             throw new DatabaseException("No database is mentioned in the configuration of the plugin.", null);
         }
@@ -123,41 +123,79 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
     @Override
     public boolean init() throws DatabaseException {
-        // DATABASE
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_DATABASE.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS.formatted(this.database));
-        if (this.dbVersion <= 1) {
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(this.database));
+        // Create Database and Tables
+        createDatabaseAndTables();
+
+        // Apply necessary migrations based on database version
+        applyMigrations();
+
+        // Initialize Spiral Table
+        initializeSpiralTable();
+
+        return true;
+    }
+
+    private void createDatabaseAndTables() throws DatabaseException {
+        executeQuery(CREATE_DATABASE_TEMPLATE.formatted(database));
+        executeQuery(CREATE_ISLANDS_TABLE.formatted(database));
+        executeQuery(CREATE_ISLANDS_MEMBERS_TABLE.formatted(database));
+        executeQuery(CREATE_ISLANDS_WARP_TABLE.formatted(database));
+        executeQuery(CREATE_SPIRAL_TABLE.formatted(database));
+        executeQuery(CREATE_ISLANDS_PERMISSIONS_TABLE.formatted(database));
+        executeQuery(CREATE_PLAYER_CLEAR_TABLE.formatted(database));
+        executeQuery(CREATE_ISLANDS_GAMERULE_TABLE.formatted(database));
+        executeQuery(CREATE_ISLANDS_INDEX.formatted(database));
+        executeQuery(CREATE_SPIRAL_INDEX.formatted(database));
+    }
+
+    private void applyMigrations() throws DatabaseException {
+        if (dbVersion <= 1) {
+            executeQuery("ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(database));
+            executeQuery("""
+                    ALTER TABLE `%s`.`islands_gamerule` DROP PRIMARY KEY,
+                    ADD PRIMARY KEY (`island_id`) USING BTREE;
+                    """.formatted(database));
         }
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_MEMBERS.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_ISLANDS_WARP.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_SPIRAL.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_CLEAR_INVENTORY_CAUSE_KICK.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_TABLE_ISLAND_PERMISSION.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), CREATE_GAMERULE_ISLANDS.formatted(this.database));
-        if (this.dbVersion <= 1) {
-            MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`islands_gamerule` DROP PRIMARY KEY, ADD PRIMARY KEY (`island_id`) USING BTREE;".formatted(this.database));
-        }
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), ISLANDS_INDEX.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), SPIRAL_INDEX.formatted(this.database));
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), "ALTER TABLE `%s`.`player_clear` ADD COLUMN IF NOT EXISTS `cause` VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED' AFTER `uuid_player`;".formatted(this.database));
+    }
+
+    private void initializeSpiralTable() {
         int distancePerIsland = ConfigToml.regionDistance;
         if (distancePerIsland <= 0) {
-            logger.log(Level.FATAL, "You must set a value greater than 1 distance region file per island (config.toml -> config.region-distance-per-island). " +
+            logger.log(Level.FATAL, "You must set a value greater than 1 for region distance per island (config.toml -> config.region-distance-per-island). " +
                     "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
-            return false;
+            return;
         }
 
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+        Runnable spiralTask = () -> {
             for (int i = 1; i < ConfigToml.maxIsland; i++) {
                 Position position = RegionUtils.getPositionNewIsland(i);
                 try {
-                    MariaDBExecute.executeQuery(api.getDatabaseLoader(), INSERT_SPIRAL.formatted(this.database), List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland), null, null, false);
+                    executeQuery(INSERT_SPIRAL.formatted(database),
+                            List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland));
                 } catch (DatabaseException e) {
-                    return; // ignore
+                    logger.log(Level.ERROR, "Error inserting into spiral table", e);
                 }
             }
-        });
-        return true;
+        };
+
+        executeAsync(spiralTask);
+    }
+
+    private void executeQuery(String query) throws DatabaseException {
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query);
+    }
+
+    private void executeQuery(String query, List<Object> params) throws DatabaseException {
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null, false);
+    }
+
+    private void executeAsync(Runnable task) {
+        if (ConfigToml.useVirtualThread) {
+            Thread.startVirtualThread(task);
+        } else {
+           Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
+               task.run();
+           });
+        }
     }
 }

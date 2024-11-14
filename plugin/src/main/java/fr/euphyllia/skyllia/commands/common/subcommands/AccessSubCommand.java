@@ -21,7 +21,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,12 +71,19 @@ public class AccessSubCommand implements SubCommandInterface {
                     RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
                         Player playerInIsland = (Player) entity;
                         if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
-                        Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
+                        Runnable teleportPlayerRun = () -> {
                             Players players = island.getMember(playerInIsland.getUniqueId());
                             if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
                                 PlayerUtils.teleportPlayerSpawn(playerInIsland);
                             }
-                        });
+                        };
+                        if (ConfigToml.useVirtualThread) {
+                            Thread.startVirtualThread(teleportPlayerRun);
+                        } else {
+                            Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
+                                teleportPlayerRun.run();
+                            });
+                        }
                     });
                 });
             } else {

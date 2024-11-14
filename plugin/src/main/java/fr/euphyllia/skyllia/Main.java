@@ -35,7 +35,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class Main extends JavaPlugin {
 
@@ -45,45 +45,19 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        try {
-            this.interneAPI = new InterneAPI(this);
-        } catch (UnsupportedMinecraftVersionException e) {
-            logger.log(Level.FATAL, e.getMessage(), e);
-            Bukkit.getPluginManager().disablePlugin(this);
+        if (!initializeInterneAPI()) {
             return;
         }
-        this.interneAPI.loadAPI();
-        try {
-            this.interneAPI.setupFirstSchematic(getDataFolder(), getResource("schematics/default.schem"));
-            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "config.toml", ConfigToml::init)) {
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "language.toml", LanguageToml::init)) {
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-            if (!this.interneAPI.setupConfigs(this.getDataFolder(), "permissions.toml", PermissionsToml::init)) {
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-            if (!this.interneAPI.setupSGBD()) {
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-        } catch (DatabaseException | IOException exception) {
-            this.logger.log(Level.FATAL, exception, exception);
-            Bukkit.getPluginManager().disablePlugin(this);
+
+        if (!loadConfigurations()) {
             return;
         }
-        this.interneAPI.setManagers(new Managers(interneAPI));
-        this.interneAPI.getManagers().init();
-        this.commandRegistry = new SubCommandImpl();
-        this.setupCommands("skyllia", new SkylliaCommand(this));
-        this.setupCommands("skylliadmin", new SkylliaAdminCommand(this));
-        this.loadListener();
-        this.runCache();
-        this.disabledConfig();
+
+        initializeManagers();
+        registerCommands();
+        registerListeners();
+        scheduleCacheUpdate();
+        checkDisabledConfig();
 
         new Metrics(this.interneAPI, 20874);
     }
@@ -92,7 +66,7 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
-        if (this.interneAPI.getDatabaseLoader() != null) {
+        if (this.interneAPI != null && this.interneAPI.getDatabaseLoader() != null) {
             this.interneAPI.getDatabaseLoader().closeDatabase();
         }
     }
@@ -101,56 +75,113 @@ public class Main extends JavaPlugin {
         return this.interneAPI;
     }
 
-    private void setupCommands(String commands, SkylliaCommandInterface sc) {
-        PluginCommand command = getServer().getPluginCommand(commands);
+    public SubCommandRegistry getCommandRegistry() {
+        return commandRegistry;
+    }
+
+    private boolean initializeInterneAPI() {
+        try {
+            this.interneAPI = new InterneAPI(this);
+            this.interneAPI.loadAPI();
+            return true;
+        } catch (UnsupportedMinecraftVersionException e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            Bukkit.getPluginManager().disablePlugin(this);
+            return false;
+        }
+    }
+
+    private boolean loadConfigurations() {
+        try {
+            this.interneAPI.setupFirstSchematic(getDataFolder(), getResource("schematics/default.schem"));
+            if (!this.interneAPI.setupConfigs(getDataFolder(), "config.toml", ConfigToml::init) ||
+                    !this.interneAPI.setupConfigs(getDataFolder(), "language.toml", LanguageToml::init) ||
+                    !this.interneAPI.setupConfigs(getDataFolder(), "permissions.toml", PermissionsToml::init) ||
+                    !this.interneAPI.setupSGBD()) {
+                Bukkit.getPluginManager().disablePlugin(this);
+                return false;
+            }
+            return true;
+        } catch (DatabaseException | IOException exception) {
+            logger.log(Level.FATAL, exception, exception);
+            Bukkit.getPluginManager().disablePlugin(this);
+            return false;
+        }
+    }
+
+    private void initializeManagers() {
+        this.interneAPI.setManagers(new Managers(interneAPI));
+        this.interneAPI.getManagers().init();
+        this.commandRegistry = new SubCommandImpl();
+    }
+
+    private void registerCommands() {
+        setupCommand("skyllia", new SkylliaCommand(this));
+        setupCommand("skylliadmin", new SkylliaAdminCommand(this));
+    }
+
+    private void setupCommand(String commandName, SkylliaCommandInterface commandExecutor) {
+        PluginCommand command = getServer().getPluginCommand(commandName);
         if (command == null) {
-            logger.log(Level.FATAL, "Command not put in plugin.yml");
+            logger.log(Level.FATAL, "Command '" + commandName + "' not defined in plugin.yml");
             return;
         }
-        command.setExecutor(sc);
-        command.setTabCompleter(sc);
+        command.setExecutor(commandExecutor);
+        command.setTabCompleter(commandExecutor);
     }
 
-    private void loadListener() {
+    private void registerListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
+
         // Bukkit Events
-        pluginManager.registerEvents(new JoinEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new BlockEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new InventoryEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new PlayerEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new DamageEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new InteractEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new TeleportEvent(this.interneAPI), this); // Todo Don't work with folia 1.19.4-1.21.2 (can work on Bloom, but don't use it)
-        pluginManager.registerEvents(new PistonEvent(this.interneAPI), this);
+        registerEvent(pluginManager, new JoinEvent(this.interneAPI));
+        registerEvent(pluginManager, new BlockEvent(this.interneAPI));
+        registerEvent(pluginManager, new InventoryEvent(this.interneAPI));
+        registerEvent(pluginManager, new PlayerEvent(this.interneAPI));
+        registerEvent(pluginManager, new DamageEvent(this.interneAPI));
+        registerEvent(pluginManager, new InteractEvent(this.interneAPI));
+        registerEvent(pluginManager, new TeleportEvent(this.interneAPI)); // TODO: Doesn't work with Folia 1.19.4-1.21.3
+        registerEvent(pluginManager, new PistonEvent(this.interneAPI));
+
         if (VersionUtils.IS_FOLIA) {
-            pluginManager.registerEvents(new PortalAlternativeFoliaEvent(this.interneAPI), this);
+            registerEvent(pluginManager, new PortalAlternativeFoliaEvent(this.interneAPI));
         }
         if (VersionUtils.IS_PAPER) {
-            pluginManager.registerEvents(new PortalAlternativePaperEvent(), this);
+            registerEvent(pluginManager, new PortalAlternativePaperEvent());
         }
+
         // GameRule Events
-        pluginManager.registerEvents(new BlockGameRuleEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new ExplosionEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new GriefingEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new MobSpawnEvent(this.interneAPI), this);
-        pluginManager.registerEvents(new PickupEvent(this.interneAPI), this);
+        registerEvent(pluginManager, new BlockGameRuleEvent(this.interneAPI));
+        registerEvent(pluginManager, new ExplosionEvent(this.interneAPI));
+        registerEvent(pluginManager, new GriefingEvent(this.interneAPI));
+        registerEvent(pluginManager, new MobSpawnEvent(this.interneAPI));
+        registerEvent(pluginManager, new PickupEvent(this.interneAPI));
 
         // Skyblock Event
-        pluginManager.registerEvents(new SkyblockEvent(this.interneAPI), this);
+        registerEvent(pluginManager, new SkyblockEvent(this.interneAPI));
     }
 
-    private void runCache() {
-        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> {
-            Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
-        }, 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
+    private void registerEvent(PluginManager pluginManager, Object listener) {
+        pluginManager.registerEvents((org.bukkit.event.Listener) listener, this);
     }
 
-    private void disabledConfig() {
+    private void scheduleCacheUpdate() {
+        Runnable cacheUpdateTask = () -> Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
+
+        if (ConfigToml.useVirtualThread) {
+            ScheduledExecutorService service = Executors.newScheduledThreadPool(0, Thread.ofVirtual().factory());
+            service.scheduleAtFixedRate(cacheUpdateTask, 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
+        } else {
+            Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> cacheUpdateTask.run(), 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
+        }
+    }
+
+    private void checkDisabledConfig() {
         /* Since 1.20.3, there is a gamerule that allows you to increase the number of ticks between entering a portal and teleporting.
           This makes the configuration possibly useless.
           BUT just in case, I leave the message enabled by default.
          */
-        if (VersionUtils.IS_FOLIA && !ConfigToml.suppressWarningNetherEndEnabled) { // D
+        if (VersionUtils.IS_FOLIA && !ConfigToml.suppressWarningNetherEndEnabled) {
             if (Bukkit.getAllowNether()) {
                 logger.log(Level.WARN, "Disable nether in server.properties to disable nether portals!");
             }
@@ -158,9 +189,5 @@ public class Main extends JavaPlugin {
                 logger.log(Level.WARN, "Disable end in bukkit.yml to disable end portals!");
             }
         }
-    }
-
-    public SubCommandRegistry getCommandRegistry() {
-        return commandRegistry;
     }
 }

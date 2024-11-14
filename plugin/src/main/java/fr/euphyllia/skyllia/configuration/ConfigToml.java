@@ -56,6 +56,7 @@ public class ConfigToml {
     public static boolean changeGameModeWhenTeleportIsland = true;
     public static @Nullable Location spawnWorld = null;
     private static boolean verbose;
+    public static boolean useVirtualThread = false;
 
     public static void init(File configFile) {
         config = CommentedFileConfig.builder(configFile).sync().autosave().build();
@@ -214,6 +215,7 @@ public class ConfigToml {
         regionDistance = getInt("config.region-distance-per-island", regionDistance);
         deleteChunkPerimeterIsland = getBoolean("config.optimization.delete-chunk-perimeter-island", deleteChunkPerimeterIsland);
         suppressWarningNetherEndEnabled = getBoolean("config.suppress-warning-nether-end-world-enabled", suppressWarningNetherEndEnabled);
+        useVirtualThread = getBoolean("config.optimization.virtual-thread", useVirtualThread);
     }
 
     private static void typeIsland() {

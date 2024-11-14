@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.commands.admin;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -29,8 +30,14 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
             if (subCommands == null) {
                 return false;
             }
-            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                    subCommands.getSubCommandInterface().onCommand(this.plugin, sender, command, label, listArgs));
+            if (ConfigToml.useVirtualThread) {
+                Thread.startVirtualThread(() -> {
+                    subCommands.getSubCommandInterface().onCommand(this.plugin, sender, command, label, listArgs);
+                });
+            } else {
+                Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                        subCommands.getSubCommandInterface().onCommand(this.plugin, sender, command, label, listArgs));
+            }
         }
         return true;
     }

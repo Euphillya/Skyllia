@@ -31,79 +31,89 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onLoadIslandInJoinEvent(PlayerJoinEvent playerJoinEvent) {
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
-            Player player = playerJoinEvent.getPlayer();
-            SkyblockManager skyblockManager = this.api.getSkyblockManager();
+        Player player = playerJoinEvent.getPlayer();
+
+        Runnable task = () -> {
+            SkyblockManager skyblockManager = api.getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
-            if (island == null || (ConfigToml.teleportPlayerOnIslandWhenJoin && !Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(player.getLocation().getWorld().getName())))) {
+            boolean shouldTeleportSpawn = island == null ||
+                    (ConfigToml.teleportPlayerOnIslandWhenJoin && !WorldUtils.isWorldSkyblock(player.getWorld().getName()));
+
+            if (shouldTeleportSpawn) {
                 if (ConfigToml.teleportPlayerNotIslandWhenJoin) {
                     PlayerUtils.teleportPlayerSpawn(player);
                 }
             } else {
-                this.api.updateCache(player);
-                if (ConfigToml.teleportPlayerOnIslandWhenJoin) {
-                    World world = player.getLocation().getWorld();
-                    if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
-                        Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
-                        this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
-                    }
+                api.updateCache(player);
+                if (ConfigToml.teleportPlayerOnIslandWhenJoin && WorldUtils.isWorldSkyblock(player.getWorld().getName())) {
+                    Location centerIsland = RegionHelper.getCenterRegion(
+                            player.getWorld(), island.getPosition().x(), island.getPosition().z());
+                    api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
                 }
             }
-        });
+        };
+
+        executeAsync(task);
     }
 
     @EventHandler
     public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
         Player player = playerLoginEvent.getPlayer();
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+
+        Runnable task = () -> {
             for (RemovalCause cause : RemovalCause.values()) {
-                boolean exist = this.api.getSkyblockManager().checkClearMemberExist(player.getUniqueId(), cause).join();
-                if (!exist) return;
-                this.api.getSkyblockManager().deleteClearMember(player.getUniqueId(), cause);
-                player.getScheduler().execute(api.getPlugin(), () -> {
-                    switch (cause) {
-                        case KICKED -> {
-                            if (ConfigToml.clearInventoryWhenKickedIsland) {
-                                player.getInventory().clear();
-                            }
-                            if (ConfigToml.clearEnderChestWhenKickedIsland) {
-                                player.getEnderChest().clear();
-                            }
-                            if (ConfigToml.resetExperiencePlayerWhenKickedIsland) {
-                                player.setTotalExperience(0);
-                                player.sendExperienceChange(0, 0); // Mise à jour du packet
-                            }
-                        }
-                        case ISLAND_DELETED -> {
-                            if (ConfigToml.clearInventoryWhenDeleteIsland) {
-                                player.getInventory().clear();
-                            }
-                            if (ConfigToml.clearEnderChestWhenDeleteIsland) {
-                                player.getEnderChest().clear();
-                            }
-                            if (ConfigToml.resetExperiencePlayerWhenDeleteIsland) {
-                                player.setTotalExperience(0);
-                                player.sendExperienceChange(0, 0); // Mise à jour du packet
-                            }
-                        }
-                        case LEAVE -> {
-                            if (ConfigToml.clearInventoryWhenLeaveIsland) {
-                                player.getInventory().clear();
-                            }
-                            if (ConfigToml.clearEnderChestWhenLeaveIsland) {
-                                player.getEnderChest().clear();
-                            }
-                            if (ConfigToml.resetExperiencePlayerWhenLeaveIsland) {
-                                player.setTotalExperience(0);
-                                player.sendExperienceChange(0, 0);
-                            }
-                        }
-                    }
+                boolean exist = api.getSkyblockManager().checkClearMemberExist(player.getUniqueId(), cause).join();
+                if (!exist) continue;
+
+                api.getSkyblockManager().deleteClearMember(player.getUniqueId(), cause);
+
+                Runnable playerTask = () -> {
+                    clearPlayerData(player, cause);
                     player.setGameMode(GameMode.SURVIVAL);
-                }, null, 1L);
+                };
+
+                player.getScheduler().execute(api.getPlugin(), playerTask, null, 1L);
             }
-        });
+        };
+
+        executeAsync(task);
     }
 
+    private void executeAsync(Runnable task) {
+        if (ConfigToml.useVirtualThread) {
+            Thread.startVirtualThread(task);
+        } else {
+            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> task.run());
+        }
+    }
+
+    private void clearPlayerData(Player player, RemovalCause cause) {
+        switch (cause) {
+            case KICKED -> {
+                if (ConfigToml.clearInventoryWhenKickedIsland) player.getInventory().clear();
+                if (ConfigToml.clearEnderChestWhenKickedIsland) player.getEnderChest().clear();
+                if (ConfigToml.resetExperiencePlayerWhenKickedIsland) {
+                    player.setTotalExperience(0);
+                    player.sendExperienceChange(0, 0);
+                }
+            }
+            case ISLAND_DELETED -> {
+                if (ConfigToml.clearInventoryWhenDeleteIsland) player.getInventory().clear();
+                if (ConfigToml.clearEnderChestWhenDeleteIsland) player.getEnderChest().clear();
+                if (ConfigToml.resetExperiencePlayerWhenDeleteIsland) {
+                    player.setTotalExperience(0);
+                    player.sendExperienceChange(0, 0);
+                }
+            }
+            case LEAVE -> {
+                if (ConfigToml.clearInventoryWhenLeaveIsland) player.getInventory().clear();
+                if (ConfigToml.clearEnderChestWhenLeaveIsland) player.getEnderChest().clear();
+                if (ConfigToml.resetExperiencePlayerWhenLeaveIsland) {
+                    player.setTotalExperience(0);
+                    player.sendExperienceChange(0, 0);
+                }
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.commands.common.subcommands.*;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -33,8 +34,14 @@ public class SkylliaCommand implements SkylliaCommandInterface {
                 sender.sendMessage("Cette sous-commande n'existe pas.");
                 return false;
             }
-            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                    subCommandInterface.onCommand(this.plugin, sender, command, label, listArgs));
+            if (ConfigToml.useVirtualThread) {
+                Thread.startVirtualThread(() -> {
+                    subCommandInterface.onCommand(this.plugin, sender, command, label, listArgs);
+                });
+            } else {
+                Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                        subCommandInterface.onCommand(this.plugin, sender, command, label, listArgs));
+            }
         }
         return true;
     }

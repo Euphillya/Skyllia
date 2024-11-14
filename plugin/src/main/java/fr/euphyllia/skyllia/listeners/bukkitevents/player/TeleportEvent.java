@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class TeleportEvent implements Listener {
+
     private final InterneAPI api;
     private final Logger logger = LogManager.getLogger(TeleportEvent.class);
 
@@ -32,44 +34,61 @@ public class TeleportEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTeleportEvent(final PlayerTeleportEvent event) {
         if (event.isCancelled()) return;
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+
+        Runnable task = () -> {
             Location to = event.getTo();
             World world = to.getWorld();
-            if (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
-                Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
-                if (island == null) return;
-                Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
-                this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), event.getPlayer(), centerIsland, island.getSize(), 0, 0);
-            }
-        });
+            if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
+
+            Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
+            if (island == null) return;
+
+            Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+            api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), event.getPlayer(), centerIsland, island.getSize(), 0, 0);
+        };
+
+        executeAsync(task);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerUsePortal(final PlayerPortalEvent event) {
         if (event.isCancelled()) return;
+
         event.setCanCreatePortal(false);
         PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
-        if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
-            Location location = event.getPlayer().getLocation();
-            WorldConfig worldConfig = WorldUtils.getWorldConfig(location.getWorld().getName());
-            if (worldConfig == null) return;
-            PortalConfig portalConfig = worldConfig.endPortal();
-            if (!portalConfig.enabled()) {
-                event.setCancelled(true);
-                return;
-            }
-            ListenersUtils.checkPermission(location, event.getPlayer(), PermissionsIsland.USE_END_PORTAL, event);
-        } else if (teleportCause.equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
-            Location location = event.getPlayer().getLocation();
-            WorldConfig worldConfig = WorldUtils.getWorldConfig(location.getWorld().getName());
-            if (worldConfig == null) return;
-            PortalConfig portalConfig = worldConfig.netherPortal();
-            if (!portalConfig.enabled()) {
-                event.setCancelled(true);
-                return;
-            }
-            ListenersUtils.checkPermission(location, event.getPlayer(), PermissionsIsland.USE_NETHER_PORTAL, event);
-        }
+        if (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL ||
+                teleportCause == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
 
+            Player player = event.getPlayer();
+            Location location = player.getLocation();
+            World world = location.getWorld();
+            if (world == null) return;
+
+            WorldConfig worldConfig = WorldUtils.getWorldConfig(world.getName());
+            if (worldConfig == null) return;
+
+            PortalConfig portalConfig = (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL)
+                    ? worldConfig.endPortal()
+                    : worldConfig.netherPortal();
+
+            if (!portalConfig.enabled()) {
+                event.setCancelled(true);
+                return;
+            }
+
+            PermissionsIsland permission = (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL)
+                    ? PermissionsIsland.USE_END_PORTAL
+                    : PermissionsIsland.USE_NETHER_PORTAL;
+
+            ListenersUtils.checkPermission(location, player, permission, event);
+        }
+    }
+
+    private void executeAsync(Runnable task) {
+        if (ConfigToml.useVirtualThread) {
+            Thread.startVirtualThread(task);
+        } else {
+            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> task.run());
+        }
     }
 }
