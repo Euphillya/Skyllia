@@ -170,6 +170,10 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             for (int i = 1; i < ConfigToml.maxIsland; i++) {
                 Position position = RegionUtils.getPositionNewIsland(i);
                 try {
+                    if (api.getDatabaseLoader() == null) {
+                        logger.log(Level.ERROR, "Cannot get connection to the database.");
+                        break;
+                    }
                     executeQuery(INSERT_SPIRAL.formatted(database),
                             List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland));
                 } catch (DatabaseException e) {
