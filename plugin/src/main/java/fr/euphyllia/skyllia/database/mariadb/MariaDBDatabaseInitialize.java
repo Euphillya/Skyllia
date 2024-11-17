@@ -178,6 +178,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
                             List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland));
                 } catch (DatabaseException e) {
                     logger.log(Level.ERROR, "Error inserting into spiral table", e);
+                    break;
                 }
             }
         };
