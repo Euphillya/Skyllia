@@ -12,6 +12,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.cache.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -49,6 +50,10 @@ public class CreateSubCommand implements SubCommandInterface {
         if (!(sender instanceof Player player)) {
             return true;
         }
+        if (CommandCacheExecution.isAlreadyExecute(player.getUniqueId(), "create")) {
+            LanguageToml.sendMessage(player, LanguageToml.messageCommandAlreadyExecution);
+            return true;
+        }
         if (!player.hasPermission("skyllia.island.command.create")) {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
@@ -67,17 +72,20 @@ public class CreateSubCommand implements SubCommandInterface {
                 Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
                 if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                     LanguageToml.sendMessage(player, LanguageToml.messageIslandSchemNotExist);
+                    CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
                     return true;
                 }
                 IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
 
                 if (islandSettings == null) {
                     LanguageToml.sendMessage(player, LanguageToml.messageIslandTypeNotExist);
+                    CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
                     return true;
                 }
 
                 if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
                     LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+                    CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
                     return true;
                 }
 
@@ -85,6 +93,7 @@ public class CreateSubCommand implements SubCommandInterface {
                 UUID idIsland = UUID.randomUUID();
                 boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings).join());
                 if (!isCreate) {
+                    CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
                     LanguageToml.sendMessage(player, LanguageToml.messageIslandError);
                     return true;
                 }
@@ -113,13 +122,16 @@ public class CreateSubCommand implements SubCommandInterface {
                     }
                 }
             } else {
+                CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
                 new HomeSubCommand().onCommand(plugin, sender, command, label, args);
             }
         } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage(), e);
+            CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
+            logger.log(Level.WARN, e.getMessage(), e);
             if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, olgGM);
             LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
+        CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
         return true;
     }
 
