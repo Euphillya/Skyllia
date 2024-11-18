@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -85,7 +86,7 @@ public class InviteSubCommand implements SubCommandInterface {
     private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
         try {
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
+            Island island = SkylliaAPI.getCacheIslandByPlayerId(ownerIsland.getUniqueId());
             if (island == null) {
                 LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerHasNotIsland);
                 return;
@@ -123,8 +124,7 @@ public class InviteSubCommand implements SubCommandInterface {
 
     private void acceptPlayer(Main plugin, Player playerWantJoin, String ownerIsland) {
         try {
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island islandPlayer = skyblockManager.getIslandByPlayerId(playerWantJoin.getUniqueId()).join();
+            Island islandPlayer = SkylliaAPI.getCacheIslandByPlayerId(playerWantJoin.getUniqueId());
             if (islandPlayer != null) {
                 LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteAlreadyIsland);
                 return;
@@ -134,7 +134,7 @@ public class InviteSubCommand implements SubCommandInterface {
                 LanguageToml.sendMessage(playerWantJoin, LanguageToml.messagePlayerNotFound);
                 return;
             }
-            Island islandOwner = skyblockManager.getIslandByOwner(ownerIslandId).join();
+            Island islandOwner = SkylliaAPI.getCacheIslandByPlayerId(ownerIslandId);
             if (islandOwner == null) {
                 LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteAcceptOwnerHasNotIsland);
                 return;
@@ -164,8 +164,8 @@ public class InviteSubCommand implements SubCommandInterface {
 
     private void declinePlayer(Main plugin, Player playerWantDecline, String ownerIsland) {
         try {
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(playerWantDecline.getUniqueId()).join();
+            Island island = SkylliaAPI.getCacheIslandByPlayerId(playerWantDecline.getUniqueId());
+
             if (island == null) {
                 LanguageToml.sendMessage(playerWantDecline, LanguageToml.messagePlayerHasNotIsland);
                 return;
@@ -175,7 +175,7 @@ public class InviteSubCommand implements SubCommandInterface {
                 LanguageToml.sendMessage(playerWantDecline, LanguageToml.messagePlayerNotFound);
                 return;
             }
-            Island islandOwner = skyblockManager.getIslandByOwner(ownerIslandId).join();
+            Island islandOwner = SkylliaAPI.getCacheIslandByPlayerId(ownerIslandId);
             if (islandOwner == null) {
                 LanguageToml.sendMessage(playerWantDecline, LanguageToml.messageInviteDeclineOwnerHasNotIsland);
                 return;

@@ -1,36 +1,29 @@
 package fr.euphyllia.skyllia.cache;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InviteCacheExecution {
 
-    private static final ConcurrentHashMap<UUID, List<UUID>> invitePending = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, CopyOnWriteArrayList<UUID>> invitePending = new ConcurrentHashMap<>();
 
     public static boolean isInvitedCache(UUID islandId, UUID playerId) {
-        List<UUID> playerIdList = invitePending.getOrDefault(islandId, null);
-        if (playerIdList == null) return false;
-        return playerIdList.contains(playerId);
+        CopyOnWriteArrayList<UUID> playerIdList = invitePending.get(islandId);
+        return playerIdList != null && playerIdList.contains(playerId);
     }
 
-    public static void addInviteCache(UUID islandId, UUID playerId) {
-        if (isInvitedCache(islandId, playerId)) return;
-        List<UUID> playerIdList = invitePending.getOrDefault(islandId, new ArrayList<>());
-        playerIdList.add(playerId);
-        invitePending.put(islandId, playerIdList);
+    public static synchronized void addInviteCache(UUID islandId, UUID playerId) {
+        invitePending.computeIfAbsent(islandId, k -> new CopyOnWriteArrayList<>()).add(playerId);
     }
 
-    public static void removeInviteCache(UUID islandId, UUID playerId) {
-        if (isInvitedCache(islandId, playerId)) {
-            List<UUID> playerIdList = invitePending.getOrDefault(islandId, new ArrayList<>());
+    public static synchronized void removeInviteCache(UUID islandId, UUID playerId) {
+        CopyOnWriteArrayList<UUID> playerIdList = invitePending.get(islandId);
+        if (playerIdList != null) {
             playerIdList.remove(playerId);
-            invitePending.put(islandId, playerIdList);
+            if (playerIdList.isEmpty()) {
+                invitePending.remove(islandId);
+            }
         }
-    }
-
-    public static List<UUID> getInvitedListCache(UUID islandId) {
-        return invitePending.getOrDefault(islandId, new ArrayList<>());
     }
 }
