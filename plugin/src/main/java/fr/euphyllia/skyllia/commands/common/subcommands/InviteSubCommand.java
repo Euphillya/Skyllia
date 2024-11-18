@@ -139,6 +139,10 @@ public class InviteSubCommand implements SubCommandInterface {
                 LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteAcceptOwnerHasNotIsland);
                 return;
             }
+            if (!InviteCacheExecution.isInvitedCache(islandOwner.getId(), playerWantJoin.getUniqueId())) {
+                LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteInviteNotFound);
+                return;
+            }
             InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantJoin.getUniqueId());
             if (islandOwner.getMaxMembers() >= islandOwner.getMembers().size()) {
                 Players newPlayers = new Players(playerWantJoin.getUniqueId(), playerWantJoin.getName(), islandOwner.getId(), RoleType.MEMBER);

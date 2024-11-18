@@ -65,6 +65,7 @@ public class LanguageToml {
     public static String messageInviteJoinIsland = "You are now a member of the island!";
     public static String messageInviteMaxMemberExceededIsland = "The member limit of the island has been reached. You cannot join the island.";
     public static String messageInviteDeclineDeleteInvitation = "You have declined the invitation from %player_invite%.";
+    public static String messageInviteInviteNotFound = "You have not received an invitation from the player.";
     public static String messageKickPlayerSuccess = "The player has been kicked from your island.";
     public static String messageKickPlayerFailed = "The player could not be kicked. If the problem persists, contact an administrator";
     public static String messageKickPlayerFailedHighOrEqualsStatus = "You cannot kick a player of your rank or higher.";
@@ -312,6 +313,8 @@ public class LanguageToml {
         messageInvitePlayerInvited = getString("island.invite.add.pending", messageInvitePlayerInvited);
         messageInviteJoinIsland = getString("island.invite.accept.success", messageInviteJoinIsland);
         messageInviteMaxMemberExceededIsland = getString("island.invite.accept.max-member-exceeded", messageInviteMaxMemberExceededIsland);
+        messageInviteDeclineDeleteInvitation = getString("island.invite.decline.delete", messageInviteDeclineDeleteInvitation);
+        messageInviteInviteNotFound = getString("island.invite.not-found", messageInviteInviteNotFound);
         messageInviteAcceptOwnerHasNotIsland = getString("island.invite.accept.owner-not-island", messageInviteAcceptOwnerHasNotIsland);
         messageInviteDeclineOwnerHasNotIsland = getString("island.invite.decline.owner-not-island", messageInviteDeclineOwnerHasNotIsland);
         messageInviteAcceptedNotification = getString("island.invite.accept.notify-owner", messageInviteAcceptedNotification);
