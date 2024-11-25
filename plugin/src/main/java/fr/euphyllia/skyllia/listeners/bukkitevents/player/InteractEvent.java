@@ -42,7 +42,6 @@ public class InteractEvent implements Listener {
 
             if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
                     && (material == Material.COMPARATOR || material == Material.REPEATER)) {
-                System.out.println("redstone 1");
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.REDSTONE, event);
                 return;
             }
