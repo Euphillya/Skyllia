@@ -48,15 +48,6 @@ public class InteractEvent implements Listener {
 
             if (event.getAction() == Action.PHYSICAL
                     && (material == Material.TRIPWIRE
-                    || material == Material.STONE_PRESSURE_PLATE
-                    || material == Material.OAK_PRESSURE_PLATE
-                    || material == Material.LIGHT_WEIGHTED_PRESSURE_PLATE
-                    || material == Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
-                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.REDSTONE, event);
-                return;
-            }
-            if (event.getAction() == Action.PHYSICAL
-                    && (material == Material.TRIPWIRE
                     || material.name().contains("PRESSURE_PLATE"))) {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.REDSTONE, event);
                 return;
