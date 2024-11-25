@@ -31,14 +31,34 @@ public class InteractEvent implements Listener {
         if (event.useItemInHand().equals(Event.Result.DENY)) return;
 
         Player player = event.getPlayer();
+
         if (player.hasPermission("skyllia.interact.bypass")) {
             return;
         }
+
         Block block = event.getClickedBlock();
         if (block != null) {
             Material material = block.getType();
-            if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && (material == Material.COMPARATOR || material == Material.REPEATER)
-                    || event.getAction() == Action.PHYSICAL && (material == Material.TRIPWIRE)) {
+
+            if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
+                    && (material == Material.COMPARATOR || material == Material.REPEATER)) {
+                System.out.println("redstone 1");
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.REDSTONE, event);
+                return;
+            }
+
+            if (event.getAction() == Action.PHYSICAL
+                    && (material == Material.TRIPWIRE
+                    || material == Material.STONE_PRESSURE_PLATE
+                    || material == Material.OAK_PRESSURE_PLATE
+                    || material == Material.LIGHT_WEIGHTED_PRESSURE_PLATE
+                    || material == Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+                ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.REDSTONE, event);
+                return;
+            }
+            if (event.getAction() == Action.PHYSICAL
+                    && (material == Material.TRIPWIRE
+                    || material.name().contains("PRESSURE_PLATE"))) {
                 ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.REDSTONE, event);
                 return;
             }

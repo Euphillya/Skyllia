@@ -31,10 +31,10 @@ public class PortalAlternativePaperEvent implements Listener {
             Block block = event.getBlock();
             World world = block.getWorld();
             if (!SkylliaAPI.isWorldSkyblock(world)) return;
-            event.setCancelled(true);
             Material blockType = block.getType();
             switch (blockType) {
                 case NETHER_PORTAL -> {
+                    event.setCancelled(true);
                     for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
                         if (worldConfig.name().equalsIgnoreCase(world.getName())) {
                             if (worldConfig.netherPortal().enabled()) {
@@ -45,6 +45,7 @@ public class PortalAlternativePaperEvent implements Listener {
                     }
                 }
                 case END_PORTAL -> {
+                    event.setCancelled(true);
                     for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
                         if (worldConfig.name().equalsIgnoreCase(world.getName())) {
                             if (worldConfig.endPortal().enabled()) {
