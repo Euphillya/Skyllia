@@ -35,6 +35,7 @@ public class TrustSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
+            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
         }
         if (!player.hasPermission("skyllia.island.command.access")) {
