@@ -85,8 +85,8 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
         try {
 
-            SkyblockManager skyblockManager = api.getSkyblockManager();
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
                 LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);

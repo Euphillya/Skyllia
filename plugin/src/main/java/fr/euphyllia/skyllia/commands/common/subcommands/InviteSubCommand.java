@@ -86,8 +86,8 @@ public class InviteSubCommand implements SubCommandInterface {
 
     private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
         try {
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(ownerIsland.getUniqueId());
+            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
             if (island == null) {
                 LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerHasNotIsland);
                 return;
