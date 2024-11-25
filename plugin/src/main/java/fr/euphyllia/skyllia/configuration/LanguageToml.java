@@ -30,8 +30,13 @@ public class LanguageToml {
     public static String messagePlayerNotInIsland = "You must be on your island.";
     public static String messageWarpCreateSuccess = "Your warp: %s has been created.";
     public static String messageError = "An error occurred. Please contact an administrator.";
-    public static String messageTransfertSuccess = "The new owner of the island is: %new_owner%";
-    public static String messageOnlyOwner = "Only the island owner can do this.";
+    public static String messageTransfertSuccess = "You have successfully transferred ownership to %new_owner%";
+    public static String messageTransfertSuccessOldOwnerNotification = "You have been made the owner of the island by %old_owner%.";
+    public static String messageTransfertConfirmation = "You are about to transfer ownership of the island to %new_owner%; this action is irreversible. Type /is transfer %new_owner% confirm to confirm.";
+    public static String messageTransfertSpecifyPlayer = "Please specify a player to transfer ownership to.";
+    public static String messageTransfertAlreadyOwner = "You are already the owner of the island.";
+    public static String messageTransfertOnlyCoOwner = "You can only transfer ownership to a co-owner.";
+    public static String messageOnlyOwner = "§cOnly the island owner can execute this command.";
     public static String messageNotMember = "The player is not a member of the island";
     public static String messageIslandTypeNotExist = "The selected island type does not exist.";
     public static String messageIslandSchemNotExist = "The schematic to create the island does not exist.";
@@ -223,8 +228,13 @@ public class LanguageToml {
         messageAccessIslandClose = getString("island.access.close", messageAccessIslandClose);
     }
 
-    private static void islandChangeOwnerLanguage() {
+    private static void islandTransferIsland() {
         messageTransfertSuccess = getString("island.transfert.success", messageTransfertSuccess);
+        messageTransfertSuccessOldOwnerNotification = getString("island.transfert.notify-old-owner", messageTransfertSuccessOldOwnerNotification);
+        messageTransfertConfirmation = getString("island.transfert.confirm", messageTransfertConfirmation);
+        messageTransfertSpecifyPlayer = getString("island.transfert.error.specify-player", messageTransfertSpecifyPlayer);
+        messageTransfertAlreadyOwner = getString("island.transfert.error.already-owner", messageTransfertAlreadyOwner);
+        messageTransfertOnlyCoOwner = getString("island.transfert.error.only-co_owner", messageTransfertOnlyCoOwner);
     }
 
     private static void islandChangeStatusPlayerLanguage() {
