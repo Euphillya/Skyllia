@@ -128,6 +128,9 @@ public class LanguageToml {
     public static String messageDeleteCommandNotEnoughArgs = "The command is incomplete: /skyllia delete confirm";
     public static String messageInviteAcceptedNotification = "Player %player_accept% has accepted your island invitation.";
     public static String messageInviteDeclinedNotification = "Player %player_decline% has declined your island invitation.";
+    public static String messageLeaveConfirmation = "Are you sure you want to leave your island? This will erase your inventory and ender chest. Type /is leave confirm to confirm.";
+    public static String messageCommandPlayerOnly = "This command can only be executed by a player.";
+
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -301,6 +304,7 @@ public class LanguageToml {
         messageCommandAlreadyExecution = getString("island.generic.player.command-already-execution", messageCommandAlreadyExecution);
         messagePlayerNotConnected = getString("island.generic.player.offline", messagePlayerNotConnected);
         messageLocationNotSafe = getString("island.generic.location.not-safe", messageLocationNotSafe);
+        messageCommandPlayerOnly = getString("island.generic.commands.player-only", messageCommandPlayerOnly);
     }
 
     private static void islandInviteLanguage() {
@@ -332,6 +336,7 @@ public class LanguageToml {
         messageLeaveSuccess = getString("island.leave.success", messageLeaveSuccess);
         messageLeavePlayerFailed = getString("island.leave.failed", messageLeavePlayerFailed);
         messageLeaveFailedIsOwnerIsland = getString("island.leave.he-is-owner", messageLeaveFailedIsOwnerIsland);
+        messageLeaveConfirmation = getString("island.leave.confirm", messageLeaveConfirmation);
     }
 
     private static void islandPermissionLanguage() {
