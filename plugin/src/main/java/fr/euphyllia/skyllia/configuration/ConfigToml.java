@@ -55,8 +55,8 @@ public class ConfigToml {
     public static boolean teleportPlayerNotIslandWhenJoin = true;
     public static boolean changeGameModeWhenTeleportIsland = true;
     public static @Nullable Location spawnWorld = null;
-    private static boolean verbose;
     public static boolean useVirtualThread = false;
+    private static boolean verbose;
 
     public static void init(File configFile) {
         config = CommentedFileConfig.builder(configFile).sync().autosave().build();

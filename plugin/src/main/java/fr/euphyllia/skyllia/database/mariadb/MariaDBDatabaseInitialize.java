@@ -14,9 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
@@ -198,9 +195,9 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         if (ConfigToml.useVirtualThread) {
             Thread.startVirtualThread(task);
         } else {
-           Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
-               task.run();
-           });
+            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
+                task.run();
+            });
         }
     }
 }

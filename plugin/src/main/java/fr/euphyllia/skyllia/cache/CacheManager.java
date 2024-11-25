@@ -80,7 +80,7 @@ public class CacheManager {
     public void updateCacheIsland(Island island, UUID playerId) {
         if (ConfigToml.useVirtualThread) {
             Thread.startVirtualThread(() -> {
-               this.updateExecCacheIsland(island, playerId);
+                this.updateExecCacheIsland(island, playerId);
             });
         } else {
             Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {

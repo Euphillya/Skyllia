@@ -100,8 +100,8 @@ public class RegionUtils {
     /**
      * Méthode pour parcourir les chunks en spirale autour du centre de la région.
      *
-     * @param islandRegion        Position centrale de l'île
-     * @param size                Taille de l'île (rayon)
+     * @param islandRegion          Position centrale de l'île
+     * @param size                  Taille de l'île (rayon)
      * @param callbackChunkPosition Callback pour traiter chaque chunk position
      */
     public static void spiralStartCenter(Position islandRegion, double size, CallBackPosition callbackChunkPosition) {

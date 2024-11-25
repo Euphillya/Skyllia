@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -31,7 +32,10 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class SetBiomeSubCommand implements SubCommandInterface {
@@ -81,7 +85,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         try {
 
             SkyblockManager skyblockManager = api.getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
 
             if (island == null) {
                 LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);

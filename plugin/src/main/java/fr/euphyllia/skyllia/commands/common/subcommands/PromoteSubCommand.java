@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -44,7 +45,7 @@ public class PromoteSubCommand implements SubCommandInterface {
             String playerName = args[0];
 
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;

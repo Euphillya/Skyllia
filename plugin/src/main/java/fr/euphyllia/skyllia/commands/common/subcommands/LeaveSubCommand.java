@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -34,7 +35,7 @@ public class LeaveSubCommand implements SubCommandInterface {
         }
 
         SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
             return true;
