@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
+import fr.euphyllia.skyllia.commands.admin.SubAdminCommandImpl;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.commands.common.SubCommandImpl;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
@@ -42,6 +43,7 @@ public class Main extends JavaPlugin {
     private final Logger logger = LogManager.getLogger(this);
     private InterneAPI interneAPI;
     private SubCommandRegistry commandRegistry;
+    private SubCommandRegistry adminCommandRegistry;
 
     @Override
     public void onEnable() {
@@ -79,6 +81,10 @@ public class Main extends JavaPlugin {
         return commandRegistry;
     }
 
+    public SubCommandRegistry getAdminCommandRegistry() {
+        return adminCommandRegistry;
+    }
+
     private boolean initializeInterneAPI() {
         try {
             this.interneAPI = new InterneAPI(this);
@@ -113,6 +119,7 @@ public class Main extends JavaPlugin {
         this.interneAPI.setManagers(new Managers(interneAPI));
         this.interneAPI.getManagers().init();
         this.commandRegistry = new SubCommandImpl();
+        this.adminCommandRegistry = new SubAdminCommandImpl();
     }
 
     private void registerCommands() {
@@ -123,7 +130,7 @@ public class Main extends JavaPlugin {
     private void setupCommand(String commandName, SkylliaCommandInterface commandExecutor) {
         PluginCommand command = getServer().getPluginCommand(commandName);
         if (command == null) {
-            logger.log(Level.FATAL, "Command '" + commandName + "' not defined in plugin.yml");
+            logger.log(Level.FATAL, "Command '{}' not defined in plugin.yml", commandName);
             return;
         }
         command.setExecutor(commandExecutor);

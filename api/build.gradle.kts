@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("maven-publish")
 }
 
 
@@ -9,9 +10,27 @@ dependencies {
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.6";
+version = "1.7";
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks {
+    compileJava {
+        options.encoding = "UTF-8"
+    }
+}
 
 publishing {
+    publications {
+        create<MavenPublication>("gpr") {
+            from(components["java"])
+        }
+    }
     repositories {
         maven {
             name = "GitHubPackages"
@@ -22,20 +41,4 @@ publishing {
             }
         }
     }
-    publications {
-        create("gpr", MavenPublication::class) {
-            from(components["java"])
-        }
-    }
-}
-
-tasks {
-    compileJava {
-        options.encoding = "UTF-8"
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
 }

@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("java-library")
@@ -26,7 +27,7 @@ dependencies {
 
 allprojects {
     group = "fr.euphyllia";
-    version = "1.0-" + System.getenv("GITHUB_RUN_NUMBER");
+    version = "1.0-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
     description = "First Skyblock Plugin for Folia";
 
     apply(plugin = "java-library")
@@ -83,4 +84,13 @@ tasks.test {
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+}
+
+fun getGitCommitHash(): String {
+    val stdout = ByteArrayOutputStream()
+    exec {
+        commandLine("git", "rev-parse", "--short", "HEAD") // "--short" retourne les premières lettres du commit
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }

@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.managers.skyblock;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.SkylliaImplementation;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -15,12 +16,15 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public final class APISkyllia implements SkylliaImplementation {
 
+    private static final Logger log = LoggerFactory.getLogger(APISkyllia.class);
     private final InterneAPI interneAPI;
 
     public APISkyllia(InterneAPI interneAPI) {
@@ -107,6 +111,28 @@ public final class APISkyllia implements SkylliaImplementation {
             return this.interneAPI.getWorldNMS().getTPS(chunk);
         } else {
             return Bukkit.getTPS();
+        }
+    }
+
+    @Override
+    public boolean registerCommands(SubCommandInterface commandInterface, String... commands) {
+        try {
+            this.interneAPI.getPlugin().getCommandRegistry().registerSubCommand(commandInterface, commands);
+            return true;
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands) {
+        try {
+            this.interneAPI.getPlugin().getAdminCommandRegistry().registerSubCommand(commandInterface, commands);
+            return true;
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            return false;
         }
     }
 }

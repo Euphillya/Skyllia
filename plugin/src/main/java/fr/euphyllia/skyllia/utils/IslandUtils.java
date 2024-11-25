@@ -15,7 +15,7 @@ public class IslandUtils {
         try {
             if (name == null) {
                 return ConfigToml.islandSettingsMap.getOrDefault(ConfigToml.defaultSchematicKey,
-                        ConfigToml.islandSettingsMap.values().stream().toList().get(0));
+                        ConfigToml.islandSettingsMap.values().stream().toList().getFirst());
             } else {
                 return ConfigToml.islandSettingsMap.getOrDefault(name, getIslandSettings(null));
             }

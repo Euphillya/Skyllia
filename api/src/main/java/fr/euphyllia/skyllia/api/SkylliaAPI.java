@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.api;
 
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Bukkit;
@@ -168,5 +169,27 @@ public final class SkylliaAPI {
      */
     public static @Nullable Island getCacheIslandByIslandId(UUID islandId) {
         return implementation.getCacheIslandByIslandId(islandId);
+    }
+
+    /**
+     * Registers commands with the provided command interface.
+     *
+     * @param commandInterface The command interface to use for the commands.
+     * @param commands         The commands to register.
+     * @return True if the commands were successfully registered, false otherwise.
+     */
+    public static boolean registerCommands(SubCommandInterface commandInterface, String... commands) {
+        return implementation.registerCommands(commandInterface, commands);
+    }
+
+    /**
+     * Registers admin commands with the provided command interface.
+     *
+     * @param commandInterface The command interface to use for the admin commands.
+     * @param commands         The admin commands to register.
+     * @return True if the admin commands were successfully registered, false otherwise.
+     */
+    public static boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands) {
+        return implementation.registerAdminCommands(commandInterface, commands);
     }
 }

@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.api;
 
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Chunk;
@@ -96,4 +97,22 @@ public interface SkylliaImplementation {
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
      */
     public double @Nullable [] getTPS(Chunk chunk);
+
+    /**
+     * Registers commands with the provided command interface.
+     *
+     * @param commandInterface The command interface to use for the commands.
+     * @param commands         The commands to register.
+     * @return True if the commands were successfully registered, false otherwise.
+     */
+    public boolean registerCommands(SubCommandInterface commandInterface, String... commands);
+
+    /**
+     * Registers admin commands with the provided command interface.
+     *
+     * @param commandInterface The command interface to use for the admin commands.
+     * @param commands         The admin commands to register.
+     * @return True if the admin commands were successfully registered, false otherwise.
+     */
+    public boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands);
 }
