@@ -68,13 +68,17 @@ To add Skyllia API to your project, use the following configuration:
 
 ```groovy
 repositories {
-    maven {
-        url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
-    }
+   maven {
+      url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
+      credentials {
+         username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+         password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+      }
+   }
 }
 
 dependencies {
-    compileOnly("fr.euphyllia.skyllia:api:1.3")
+    compileOnly("fr.euphyllia.skyllia:api:1.7")
 }
 ```
 
