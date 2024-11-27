@@ -282,6 +282,7 @@ public class LanguageToml {
     private static void islandDeleteLanguage() {
         messageOnlyOwnerCanDeleteIsland = getString("island.delete.only-owner", messageOnlyOwnerCanDeleteIsland);
         messageIslandDeleteSuccess = getString("island.delete.success", messageIslandDeleteSuccess);
+        messageDeleteCommandNotEnoughArgs = getString("island.delete.not-enough-args", messageDeleteCommandNotEnoughArgs);
     }
 
     private static void islandExpelLanguage() {
