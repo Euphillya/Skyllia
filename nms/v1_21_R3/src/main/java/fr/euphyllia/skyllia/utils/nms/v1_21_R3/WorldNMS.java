@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.utils.nms.v1_21_R2;
+package fr.euphyllia.skyllia.utils.nms.v1_21_R3;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -221,6 +221,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
                 worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
 
         internal.randomSpawnSelection = new ChunkPos(internal.getChunkSource().randomState().sampler().findSpawnPosition());
+
 
         console.addLevel(internal);
 

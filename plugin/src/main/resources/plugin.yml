@@ -9,11 +9,11 @@ depend:
   - WorldEdit
 
 libraries:
-  - com.zaxxer:HikariCP:5.1.0
-  - org.mariadb.jdbc:mariadb-java-client:3.4.1
-  - org.apache.logging.log4j:log4j-core:2.23.1
-  - org.apache.logging.log4j:log4j-api:2.23.1
-  - com.google.guava:guava:33.3.0-jre
+  - com.zaxxer:HikariCP:6.2.1
+  - org.mariadb.jdbc:mariadb-java-client:3.5.1
+  - org.apache.logging.log4j:log4j-core:2.24.2
+  - org.apache.logging.log4j:log4j-api:2.24.2
+  - com.google.guava:guava:33.3.1-jre
   - com.electronwill.night-config:toml:3.8.1
   - net.kyori:adventure-text-minimessage:4.17.0
 

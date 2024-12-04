@@ -9,7 +9,6 @@ repositories {
 
 dependencies {
     paperweight.foliaDevBundle("1.21.1-R0.1-SNAPSHOT")
-    compileOnly(project(":nms:v1_20_R4"))
     compileOnly(project(":api"))
 }
 

@@ -187,6 +187,12 @@ public class InterneAPI {
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.PlayerNMS();
                 biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.BiomeNMS();
             }
+            case "1.21.4" -> {
+                logger.warn("Warning: Version 1.21.4 is not fully tested. Be cautious!");
+                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.WorldNMS();
+                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.PlayerNMS();
+                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.BiomeNMS();
+            }
             default ->
                     throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(bukkitVersion[0]));
         }
