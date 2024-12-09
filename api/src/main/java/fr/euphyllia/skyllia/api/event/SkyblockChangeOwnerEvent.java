@@ -18,15 +18,22 @@ import java.util.UUID;
  * <p>
  * Example usage:
  * <pre>{@code
- * @EventHandler
- * public void onOwnerChange(SkyblockChangeOwnerEvent event) {
- *     UUID previousOwner = event.getPreviousOwner();
- *     UUID newOwner = event.getNewOwner();
- *     Island island = event.getIsland();
- *     // Additional logic here
+ * import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
+ * import org.bukkit.event.EventHandler;
+ * import org.bukkit.event.Listener;
+ * import java.util.UUID;
+ *
+ * public class OwnerChangeListener implements Listener {
+ *
+ *     @EventHandler
+ *     public void onOwnerChange(SkyblockChangeOwnerEvent event) {
+ *         UUID previousOwner = event.getPreviousOwner();
+ *         UUID newOwner = event.getNewOwner();
+ *         Island island = event.getIsland();
+ *         // Additional logic here
+ *     }
  * }
  * }</pre>
- * </p>
  *
  * @see Island
  */
