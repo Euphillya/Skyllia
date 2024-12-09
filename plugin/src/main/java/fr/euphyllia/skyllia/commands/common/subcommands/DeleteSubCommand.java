@@ -114,6 +114,17 @@ public class DeleteSubCommand implements SubCommandInterface {
                 return true;
             }
 
+            // Vérification des membres
+            if (ConfigToml.preventDeletionIfHasMembers) {
+                long memberCount = island.getMembers().stream()
+                        .filter(member -> !member.getMojangId().equals(player.getUniqueId()))
+                        .count();
+                if (memberCount > 0) {
+                    LanguageToml.sendMessage(player, LanguageToml.messageCannotDeleteIslandWithMembers);
+                    return true;
+                }
+            }
+
 
             boolean isDisabled = island.setDisable(true);
             if (isDisabled) {

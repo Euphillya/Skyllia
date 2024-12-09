@@ -135,6 +135,8 @@ public class LanguageToml {
     public static String messageInviteDeclinedNotification = "Player %player_decline% has declined your island invitation.";
     public static String messageLeaveConfirmation = "Are you sure you want to leave your island? This will erase your inventory and ender chest. Type /is leave confirm to confirm.";
     public static String messageCommandPlayerOnly = "This command can only be executed by a player.";
+    public static String messageCannotDeleteIslandWithMembers = "You cannot delete your island because it has members. Please remove all members before deleting.";
+
 
     private static boolean verbose;
 
@@ -289,6 +291,7 @@ public class LanguageToml {
         messageExpelCommandNotEnoughArgs = getString("island.expel.not-enough-args", messageExpelCommandNotEnoughArgs);
         messageExpelPlayerFailed = getString("island.expel.player-failed", messageExpelPlayerFailed);
         messageExpelPlayerFailedNotInIsland = getString("island.expel.player-not-in-island", messageExpelPlayerFailedNotInIsland);
+        messageCannotDeleteIslandWithMembers = getString("island.delete.cannot-delete-with-members", messageCannotDeleteIslandWithMembers);
     }
 
     private static void islandHomeLanguage() {

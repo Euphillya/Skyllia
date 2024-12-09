@@ -56,6 +56,7 @@ public class ConfigToml {
     public static boolean changeGameModeWhenTeleportIsland = true;
     public static @Nullable Location spawnWorld = null;
     public static boolean useVirtualThread = false;
+    public static boolean preventDeletionIfHasMembers = false;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -294,6 +295,7 @@ public class ConfigToml {
         clearInventoryWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-inventory", clearInventoryWhenDeleteIsland);
         clearEnderChestWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-enderchest", clearEnderChestWhenDeleteIsland);
         resetExperiencePlayerWhenDeleteIsland = getBoolean("settings.player.island.delete.clear-experience", resetExperiencePlayerWhenDeleteIsland);
+        preventDeletionIfHasMembers = getBoolean("settings.island.delete.prevent-deletion-if-has-members", preventDeletionIfHasMembers);
 
         clearInventoryWhenKickedIsland = getBoolean("settings.player.island.kicked.clear-inventory", clearInventoryWhenKickedIsland);
         clearEnderChestWhenKickedIsland = getBoolean("settings.player.island.kicked.clear-enderchest", clearEnderChestWhenKickedIsland);

@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
@@ -9,6 +10,7 @@ import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -88,6 +90,9 @@ public class TransferSubCommand implements SubCommandInterface {
 
         newOwner.setRoleType(RoleType.OWNER);
         island.updateMember(newOwner);
+
+        SkyblockChangeOwnerEvent event = new SkyblockChangeOwnerEvent(island, oldOwner.getMojangId(), newOwner.getMojangId());
+        Bukkit.getPluginManager().callEvent(event);
 
         LanguageToml.sendMessage(player, LanguageToml.messageTransfertSuccess.replace("%new_owner%", newOwner.getLastKnowName()));
 

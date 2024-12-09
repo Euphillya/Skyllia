@@ -10,7 +10,7 @@ dependencies {
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.7";
+version = "1.8";
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api.event.players;
 
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -8,31 +9,102 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player touches a portal.
+ * Represents an event triggered when a player interacts with a portal to change worlds within the Skyblock environment.
+ * <p>
+ * This event is called asynchronously when a player touches a portal, initiating a world change process.
+ * It allows plugins to perform actions before or after the world transition occurs, such as validating the
+ * transition, modifying world configurations, or enforcing additional restrictions. Additionally, this event
+ * can be cancelled by other plugins to prevent the world change from taking place.
+ * </p>
+ * <p>
+ * Note: This event is not triggered if the warp name is "home", as "home" warps are handled differently.
+ * </p>
+ * <p>
+ * To handle this event, plugins must register an event listener and implement the appropriate handler.
+ * </p>
+ *
+ * <h2>Example Usage:</h2>
+ * <pre>{@code
+ * import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
+ * import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+ * import fr.euphyllia.skyllia.api.skyblock.Island;
+ * import org.bukkit.entity.Player;
+ * import org.bukkit.event.EventHandler;
+ * import org.bukkit.event.Listener;
+ *
+ * public class PortalInteractionListener implements Listener {
+ *
+ *     @EventHandler
+ *     public void onPlayerPrepareChangeWorld(PlayerPrepareChangeWorldSkyblockEvent event) {
+ *         Player player = event.getPlayer();
+ *         PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType = event.getPortalType();
+ *         WorldConfig worldConfig = event.getWorldConfig();
+ *
+ *         // Example 1: Logging the portal interaction
+ *         player.sendMessage("You have touched a " + portalType + " portal.");
+ *         System.out.println("Player " + player.getName() + " is attempting to change world via " + portalType + " portal.");
+ *
+ *         // Example 2: Modifying world configuration before the transition
+ *         if (portalType == PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER) {
+ *             worldConfig.setDifficulty("Hard");
+ *             player.sendMessage("Nether world difficulty set to Hard.");
+ *         }
+ *
+ *         // Example 3: Preventing the world change under certain conditions
+ *         if (player.hasPermission("skyblock.portal.override")) {
+ *             player.sendMessage("You do not have permission to change to this world.");
+ *             event.setCancelled(true);
+ *         }
+ *     }
+ * }
+ * }</pre>
+ *
+ * @see Island
+ * @see WorldConfig
  */
 public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Cancellable {
 
+    /**
+     * The handler list for this event.
+     */
     private static final HandlerList handlerList = new HandlerList();
+
+    /**
+     * The player who is interacting with the portal.
+     */
     private final Player player;
+
+    /**
+     * The type of portal being used for the world change.
+     */
     private final PortalType portalType;
+
+    /**
+     * The world configuration associated with the world change.
+     */
     private final WorldConfig worldConfig;
+
+    /**
+     * Indicates whether this event has been cancelled.
+     */
     private boolean cancel = false;
 
     /**
-     * Constructs a new PlayerPrepareChangeWorldSkyblockEvent.
+     * Constructs a new {@code PlayerPrepareChangeWorldSkyblockEvent}.
      *
-     * @param player The player who touched the portal.
-     * @param wc The world configuration.
-     * @param pt The type of the portal.
+     * @param player     The player who touched the portal.
+     * @param wc         The world configuration for the target world.
+     * @param pt         The type of the portal being used.
      */
     public PlayerPrepareChangeWorldSkyblockEvent(Player player, WorldConfig wc, PortalType pt) {
+        super(true);
         this.player = player;
         this.worldConfig = wc;
         this.portalType = pt;
     }
 
     /**
-     * Gets the handler list for this event.
+     * Retrieves the handler list for this event.
      *
      * @return The handler list.
      */
@@ -41,9 +113,9 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     }
 
     /**
-     * Gets the handlers for this event.
+     * Retrieves the handlers associated with this event.
      *
-     * @return The handlers.
+     * @return The handler list.
      */
     @Override
     public @NotNull HandlerList getHandlers() {
@@ -51,7 +123,16 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     }
 
     /**
-     * Gets the type of the portal.
+     * Retrieves the player who is interacting with the portal.
+     *
+     * @return The player involved in the portal interaction.
+     */
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    /**
+     * Retrieves the type of portal being used for the world change.
      *
      * @return The portal type.
      */
@@ -60,7 +141,7 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     }
 
     /**
-     * Gets the world configuration.
+     * Retrieves the world configuration associated with the world change.
      *
      * @return The world configuration.
      */
@@ -69,19 +150,10 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     }
 
     /**
-     * Gets the player who touched the portal.
+     * Checks whether this event has been cancelled. A cancelled event will prevent the world change
+     * from occurring, but the event will still pass to other plugins.
      *
-     * @return The player.
-     */
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    /**
-     * Gets the cancellation state of this event. A cancelled event will not
-     * be executed in the server, but will still pass to other plugins.
-     *
-     * @return true if this event is cancelled.
+     * @return {@code true} if this event is cancelled, {@code false} otherwise.
      */
     @Override
     public boolean isCancelled() {
@@ -89,10 +161,10 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     }
 
     /**
-     * Sets the cancellation state of this event. A cancelled event will not
-     * be executed in the server, but will still pass to other plugins.
+     * Sets the cancellation state of this event. A cancelled event will prevent the world change
+     * from occurring, but the event will still pass to other plugins.
      *
-     * @param cancel true if you wish to cancel this event.
+     * @param cancel {@code true} to cancel this event, {@code false} to allow it to proceed.
      */
     @Override
     public void setCancelled(boolean cancel) {
@@ -100,9 +172,17 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     }
 
     /**
-     * Represents the types of portals that can be touched by a player.
+     * Represents the types of portals that a player can interact with to change worlds.
      */
     public enum PortalType {
-        NETHER, END
+        /**
+         * Represents a Nether portal.
+         */
+        NETHER,
+
+        /**
+         * Represents an End portal.
+         */
+        END
     }
 }
