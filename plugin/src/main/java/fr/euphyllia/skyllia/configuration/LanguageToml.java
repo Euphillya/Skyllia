@@ -113,7 +113,7 @@ public class LanguageToml {
     public static String messageUnbanPlayerFailed = "The player could not be unbanned for an unknown reason.";
     public static String messageADeleteCommandNotEnoughArgs = "The player's name is missing.";
     public static String messageADeleteNotConfirmedArgs = "You must add 'confirm' to the end of your command";
-    public static String messageASetSizeCommandNotEnoughArgs = "The command is incomplete: /skylladmin setsize <player/uuid> <number> confirm";
+    public static String messageASetSizeCommandNotEnoughArgs = "The command is incomplete: /skylliadmin setsize <player/uuid> <number> confirm";
     public static String messageASetSizeNotConfirmedArgs = "You must add the argument 'confirm' to the end of your command.";
     public static String messageASetSizeNAN = "You did not choose an integer.";
     public static String messageASetSizeFailed = "The change could not be made.";
@@ -136,6 +136,10 @@ public class LanguageToml {
     public static String messageLeaveConfirmation = "Are you sure you want to leave your island? This will erase your inventory and ender chest. Type /is leave confirm to confirm.";
     public static String messageCommandPlayerOnly = "This command can only be executed by a player.";
     public static String messageCannotDeleteIslandWithMembers = "You cannot delete your island because it has members. Please remove all members before deleting.";
+    public static String messageATransferCommandNotEnoughArgs = "The command is incomplete: /skylliadmin transfer <previousOwner> <newOwner> confirm";
+    public static String messageATransferNotConfirmedArgs = "You must add 'confirm' to the end of your command";
+    public static String messageATransferSuccess = "Ownership has been successfully transferred from %previous_owner% to %new_owner%.";
+    public static String messageSubCommandsNotExists = "This subcommand does not exist.";
 
 
     private static boolean verbose;
@@ -208,6 +212,10 @@ public class LanguageToml {
         config.remove(path);
     }
 
+    private static void miscLanguage() {
+        messageSubCommandsNotExists = getString("misc.commands.sub-commands-does-not-exist", messageSubCommandsNotExists);
+    }
+
     private static void adminLanguage() {
         // forcedelete
         messageADeleteCommandNotEnoughArgs = getString("admin.commands.island.delete.not-enough-args", messageADeleteCommandNotEnoughArgs);
@@ -222,6 +230,10 @@ public class LanguageToml {
         messageASetMaxMembersCommandNotEnoughArgs = getString("admin.commands.island.setmaxmembers.not-enough-args", messageASetMaxMembersCommandNotEnoughArgs);
         messageASetMaxMembersNotConfirmedArgs = getString("admin.commands.island.setmaxmembers.no-confirm", messageASetMaxMembersNotConfirmedArgs);
         messageASetMaxMembersNAN = getString("admin.commands.island.setmaxmembers.nan", messageASetMaxMembersNAN);
+        // force_transfer
+        messageATransferCommandNotEnoughArgs = getString("admin.commands.island.transfer.not-enough-args", messageATransferCommandNotEnoughArgs);
+        messageATransferNotConfirmedArgs = getString("admin.commands.island.transfer.no-confirm", messageATransferNotConfirmedArgs);
+        messageATransferSuccess = getString("admin.commands.island.transfer.success", messageATransferSuccess);
 
     }
 

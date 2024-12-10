@@ -34,6 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -79,11 +80,11 @@ public class Main extends JavaPlugin {
         return this.interneAPI;
     }
 
-    public SubCommandRegistry getCommandRegistry() {
+    public @NotNull SubCommandRegistry getCommandRegistry() {
         return commandRegistry;
     }
 
-    public SubCommandRegistry getAdminCommandRegistry() {
+    public @NotNull SubCommandRegistry getAdminCommandRegistry() {
         return adminCommandRegistry;
     }
 
