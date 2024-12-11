@@ -64,7 +64,7 @@ public class Main extends JavaPlugin {
         scheduleCacheUpdate();
         checkDisabledConfig();
 
-        new Metrics(this.interneAPI, 20874);
+        new Metrics(this, 20874);
     }
 
     @Override
