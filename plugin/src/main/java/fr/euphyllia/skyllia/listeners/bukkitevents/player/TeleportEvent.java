@@ -34,9 +34,8 @@ public class TeleportEvent implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTeleportEvent(final PlayerTeleportEvent event) {
         if (event.isCancelled()) return;
-
+        Location to = event.getTo();
         Runnable task = () -> {
-            Location to = event.getTo();
             World world = to.getWorld();
             if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
 
@@ -46,8 +45,7 @@ public class TeleportEvent implements Listener {
             Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
             api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), event.getPlayer(), centerIsland, island.getSize(), 0, 0);
         };
-
-        executeAsync(task);
+        Bukkit.getRegionScheduler().execute(api.getPlugin(), to, task);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -81,14 +79,6 @@ public class TeleportEvent implements Listener {
                     : PermissionsIsland.USE_NETHER_PORTAL;
 
             ListenersUtils.checkPermission(location, player, permission, event);
-        }
-    }
-
-    private void executeAsync(Runnable task) {
-        if (ConfigToml.useVirtualThread) {
-            Thread.startVirtualThread(task);
-        } else {
-            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> task.run());
         }
     }
 }
