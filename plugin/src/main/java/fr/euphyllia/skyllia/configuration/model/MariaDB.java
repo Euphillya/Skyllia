@@ -1,8 +1,8 @@
 package fr.euphyllia.skyllia.configuration.model;
 
-import fr.euphyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.configuration.DatabaseType;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import org.apache.logging.log4j.Level;
 
 public class MariaDB extends ConfigToml {

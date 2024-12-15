@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.utils;
+package fr.euphyllia.skyllia.api.utils;
 
 import org.bukkit.entity.*;
 

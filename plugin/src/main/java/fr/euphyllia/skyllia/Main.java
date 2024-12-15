@@ -1,10 +1,10 @@
 package fr.euphyllia.skyllia;
 
-import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.utils.Metrics;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.admin.SubAdminCommandImpl;
@@ -26,7 +26,7 @@ import fr.euphyllia.skyllia.listeners.bukkitevents.paper.PortalAlternativePaperE
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyllia.managers.Managers;
-import fr.euphyllia.skyllia.utils.Metrics;
+import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
