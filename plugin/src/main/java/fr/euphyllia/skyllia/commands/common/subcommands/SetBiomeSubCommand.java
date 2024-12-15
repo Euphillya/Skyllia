@@ -22,6 +22,7 @@ import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -118,44 +119,46 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             }
 
             Position islandPosition = island.getPosition();
-            Position playerRegionPosition = RegionHelper.getRegionInChunk(
-                    playerLocation.getChunk().getX(), playerLocation.getChunk().getZ());
+            player.getScheduler().run(plugin, pScheduler -> {
+                Position playerRegionPosition = RegionHelper.getRegionInChunk(
+                        playerLocation.getChunk().getX(), playerLocation.getChunk().getZ());
 
-            if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
-                CommandCacheExecution.removeCommandExec(islandId, "biome");
-                return true;
-            }
-
-            LanguageToml.sendMessage(player, LanguageToml.messageBiomeChangeInProgress);
-
-            CompletableFuture<Boolean> changeBiomeFuture;
-            String messageToSend;
-
-            if (args.length >= 2 && args[1].equalsIgnoreCase("island")
-                    && player.hasPermission("skyllia.island.command.biome_island")) {
-
-                changeBiomeFuture = WorldEditUtils.changeBiomeIsland(world, biome, island);
-                messageToSend = LanguageToml.messageBiomeIslandChangeSuccess;
-
-            } else {
-                changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getChunk(), biome);
-                messageToSend = LanguageToml.messageBiomeChangeSuccess;
-            }
-
-            changeBiomeFuture.thenAccept(success -> {
-                if (success) {
-                    LanguageToml.sendMessage(player, messageToSend);
-                } else {
-                    LanguageToml.sendMessage(player, LanguageToml.messageError);
+                if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
+                    CommandCacheExecution.removeCommandExec(islandId, "biome");
+                    return;
                 }
-                CommandCacheExecution.removeCommandExec(islandId, "biome");
-            }).exceptionally(ex -> {
-                logger.log(Level.ERROR, ex.getMessage(), ex);
-                LanguageToml.sendMessage(player, LanguageToml.messageError);
-                CommandCacheExecution.removeCommandExec(islandId, "biome");
-                return null;
-            });
+
+                LanguageToml.sendMessage(player, LanguageToml.messageBiomeChangeInProgress);
+
+                CompletableFuture<Boolean> changeBiomeFuture;
+                String messageToSend;
+
+                if (args.length >= 2 && args[1].equalsIgnoreCase("island")
+                        && player.hasPermission("skyllia.island.command.biome_island")) {
+
+                    changeBiomeFuture = WorldEditUtils.changeBiomeIsland(world, biome, island);
+                    messageToSend = LanguageToml.messageBiomeIslandChangeSuccess;
+
+                } else {
+                    changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getChunk(), biome);
+                    messageToSend = LanguageToml.messageBiomeChangeSuccess;
+                }
+
+                changeBiomeFuture.thenAccept(success -> {
+                    if (success) {
+                        LanguageToml.sendMessage(player, messageToSend);
+                    } else {
+                        LanguageToml.sendMessage(player, LanguageToml.messageError);
+                    }
+                    CommandCacheExecution.removeCommandExec(islandId, "biome");
+                }).exceptionally(ex -> {
+                    logger.log(Level.ERROR, ex.getMessage(), ex);
+                    LanguageToml.sendMessage(player, LanguageToml.messageError);
+                    CommandCacheExecution.removeCommandExec(islandId, "biome");
+                    return null;
+                });
+            }, null);
         } catch (Exception e) {
             logger.log(Level.ERROR, e.getMessage(), e);
             LanguageToml.sendMessage(player, LanguageToml.messageError);

@@ -16,6 +16,7 @@ import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,46 +41,52 @@ public class SetHomeSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
-        Location playerLocation = player.getLocation();
-        int regionLocX = playerLocation.getChunk().getX();
-        int regionLocZ = playerLocation.getChunk().getZ();
 
-        try {
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-            if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+        SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        if (island == null) {
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            return true;
+        }
+
+        Position islandPosition = island.getPosition();
+
+        Players executorPlayer = island.getMember(player.getUniqueId());
+
+        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+            if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_HOME)) {
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                 return true;
             }
-            Position islandPosition = island.getPosition();
-            Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
+        }
 
-            if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
-                return true;
-            }
+        player.getScheduler().run(plugin, pScheduler -> {
+            Location playerLocation = player.getLocation();
+            int regionLocX = playerLocation.getChunk().getX();
+            int regionLocZ = playerLocation.getChunk().getZ();
 
-            Players executorPlayer = island.getMember(player.getUniqueId());
-
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_HOME)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                    return true;
+            try {
+                Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
+                if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
+                    return;
                 }
-            }
 
-            boolean updateOrCreateHome = island.addWarps("home", playerLocation, false);
-            if (updateOrCreateHome) {
-                LanguageToml.sendMessage(player, LanguageToml.messageHomeCreateSuccess);
-            } else {
+                Bukkit.getAsyncScheduler().runNow(plugin, aScheduler -> {
+                    boolean updateOrCreateHome = island.addWarps("home", playerLocation, false);
+                    if (updateOrCreateHome) {
+                        LanguageToml.sendMessage(player, LanguageToml.messageHomeCreateSuccess);
+                    } else {
+                        LanguageToml.sendMessage(player, LanguageToml.messageError);
+                    }
+                });
+            } catch (Exception e) {
+                logger.log(Level.FATAL, e.getMessage(), e);
                 LanguageToml.sendMessage(player, LanguageToml.messageError);
             }
-        } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
-        }
+        }, null);
 
         return true;
     }

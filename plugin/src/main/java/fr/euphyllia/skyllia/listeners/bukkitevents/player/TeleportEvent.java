@@ -7,7 +7,8 @@ import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.cache.CacheIsland;
+import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +30,29 @@ public class TeleportEvent implements Listener {
 
     public TeleportEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
+    }
+
+    @EventHandler
+    public void onPlayerHasAccessIsland(final PlayerTeleportEvent event) {
+        if (event.isCancelled()) return;
+        if (event.getPlayer().hasPermission("skyllia.island.command.visit.bypass")) return;
+        Location to = event.getTo();
+        Runnable task = () -> {
+            World world = to.getWorld();
+            if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
+
+            Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
+            if (island == null) {
+                event.setCancelled(true);
+                LanguageToml.sendMessage(event.getPlayer(), LanguageToml.messageVisitIslandIsPrivate);
+                return;
+            }
+            if (CacheIsland.getIslandClosed(island.getId())) {
+                event.setCancelled(true);
+                LanguageToml.sendMessage(event.getPlayer(), LanguageToml.messageVisitIslandIsPrivate);
+            }
+        };
+        Bukkit.getRegionScheduler().execute(api.getPlugin(), to, task);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

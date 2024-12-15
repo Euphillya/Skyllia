@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -52,9 +53,9 @@ public class Metrics {
     /**
      * Creates a new Metrics instance.
      *
-     * @param plugin Your plugin instance.
+     * @param plugin    Your plugin instance.
      * @param serviceId The id of the service. It can be found at <a
-     *     href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
+     *                  href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
     public Metrics(Plugin plugin, int serviceId) {
         this.plugin = plugin;
@@ -108,7 +109,9 @@ public class Metrics {
                         false);
     }
 
-    /** Shuts down the underlying scheduler service. */
+    /**
+     * Shuts down the underlying scheduler service.
+     */
     public void shutdown() {
         metricsBase.shutdown();
     }
@@ -144,7 +147,9 @@ public class Metrics {
 
     public static class MetricsBase {
 
-        /** The version of the Metrics class. */
+        /**
+         * The version of the Metrics class.
+         */
         public static final String METRICS_VERSION = "3.1.0";
 
         private static final String REPORT_URL = "https://bStats.org/api/v2/data/%s";
@@ -351,7 +356,9 @@ public class Metrics {
             }
         }
 
-        /** Checks that the class was properly relocated. */
+        /**
+         * Checks that the class was properly relocated.
+         */
         private void checkRelocation() {
             // You can use the property to disable the check in your test environment
             if (System.getProperty("bstats.relocatecheck") == null
@@ -359,9 +366,9 @@ public class Metrics {
                 // Maven's Relocate is clever and changes strings, too. So we have to use this
                 // little "trick" ... :D
                 final String defaultPackage =
-                        new String(new byte[] {'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's'});
+                        new String(new byte[]{'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's'});
                 final String examplePackage =
-                        new String(new byte[] {'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
+                        new String(new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
                 // We want to make sure no one just copy & pastes the example and uses the wrong
                 // package names
                 if (MetricsBase.class.getPackage().getName().startsWith(defaultPackage)
@@ -396,7 +403,7 @@ public class Metrics {
         /**
          * Class constructor.
          *
-         * @param chartId The id of the chart.
+         * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
         public AdvancedBarChart(String chartId, Callable<Map<String, int[]>> callable) {
@@ -436,7 +443,7 @@ public class Metrics {
         /**
          * Class constructor.
          *
-         * @param chartId The id of the chart.
+         * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
         public SimplePie(String chartId, Callable<String> callable) {
@@ -462,7 +469,7 @@ public class Metrics {
         /**
          * Class constructor.
          *
-         * @param chartId The id of the chart.
+         * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
         public DrilldownPie(String chartId, Callable<Map<String, Map<String, Integer>>> callable) {
@@ -506,7 +513,7 @@ public class Metrics {
         /**
          * Class constructor.
          *
-         * @param chartId The id of the chart.
+         * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
         public SingleLineChart(String chartId, Callable<Integer> callable) {
@@ -532,7 +539,7 @@ public class Metrics {
         /**
          * Class constructor.
          *
-         * @param chartId The id of the chart.
+         * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
         public MultiLineChart(String chartId, Callable<Map<String, Integer>> callable) {
@@ -572,7 +579,7 @@ public class Metrics {
         /**
          * Class constructor.
          *
-         * @param chartId The id of the chart.
+         * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
         public AdvancedPie(String chartId, Callable<Map<String, Integer>> callable) {
@@ -646,7 +653,7 @@ public class Metrics {
         /**
          * Class constructor.
          *
-         * @param chartId The id of the chart.
+         * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
         public SimpleBarChart(String chartId, Callable<Map<String, Integer>> callable) {
@@ -663,7 +670,7 @@ public class Metrics {
                 return null;
             }
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                valuesBuilder.appendField(entry.getKey(), new int[] {entry.getValue()});
+                valuesBuilder.appendField(entry.getKey(), new int[]{entry.getValue()});
             }
             return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
         }
@@ -699,7 +706,7 @@ public class Metrics {
         /**
          * Appends a string field to the JSON.
          *
-         * @param key The key of the field.
+         * @param key   The key of the field.
          * @param value The value of the field.
          * @return A reference to this object.
          */
@@ -714,7 +721,7 @@ public class Metrics {
         /**
          * Appends an integer field to the JSON.
          *
-         * @param key The key of the field.
+         * @param key   The key of the field.
          * @param value The value of the field.
          * @return A reference to this object.
          */
@@ -726,7 +733,7 @@ public class Metrics {
         /**
          * Appends an object to the JSON.
          *
-         * @param key The key of the field.
+         * @param key    The key of the field.
          * @param object The object.
          * @return A reference to this object.
          */
@@ -741,7 +748,7 @@ public class Metrics {
         /**
          * Appends a string array to the JSON.
          *
-         * @param key The key of the field.
+         * @param key    The key of the field.
          * @param values The string array.
          * @return A reference to this object.
          */
@@ -760,7 +767,7 @@ public class Metrics {
         /**
          * Appends an integer array to the JSON.
          *
-         * @param key The key of the field.
+         * @param key    The key of the field.
          * @param values The integer array.
          * @return A reference to this object.
          */
@@ -777,7 +784,7 @@ public class Metrics {
         /**
          * Appends an object array to the JSON.
          *
-         * @param key The key of the field.
+         * @param key    The key of the field.
          * @param values The integer array.
          * @return A reference to this object.
          */
@@ -794,7 +801,7 @@ public class Metrics {
         /**
          * Appends a field to the object.
          *
-         * @param key The key of the field.
+         * @param key          The key of the field.
          * @param escapedValue The escaped value of the field.
          */
         private void appendFieldUnescaped(String key, String escapedValue) {

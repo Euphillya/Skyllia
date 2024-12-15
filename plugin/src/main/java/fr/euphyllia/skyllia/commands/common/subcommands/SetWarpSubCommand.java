@@ -17,6 +17,7 @@ import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -25,6 +26,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.Buffer;
 import java.util.List;
 
 public class SetWarpSubCommand implements SubCommandInterface {
@@ -54,42 +56,48 @@ public class SetWarpSubCommand implements SubCommandInterface {
 
         String warpName = args[0];
 
-        int regionLocX = playerLocation.getChunk().getX();
-        int regionLocZ = playerLocation.getChunk().getZ();
+        SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        if (island == null) {
+            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            return true;
+        }
+
+        Players executorPlayer = island.getMember(player.getUniqueId());
+
+        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
+            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
+            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
+            if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_WARP)) {
+                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+                return true;
+            }
+        }
+
+        Position islandPosition = island.getPosition();
+
+
 
         try {
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-            if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
-                return true;
-            }
+            player.getScheduler().run(plugin, aScheduled -> {
+                int regionLocX = playerLocation.getChunk().getX();
+                int regionLocZ = playerLocation.getChunk().getZ();
+                Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
 
-            Players executorPlayer = island.getMember(player.getUniqueId());
-
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_WARP)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                    return true;
+                if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
+                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
+                    return;
                 }
-            }
 
-            Position islandPosition = island.getPosition();
-            Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
-
-            if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
-                return true;
-            }
-
-            boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation, false);
-            if (updateOrCreateWarps) {
-                LanguageToml.sendMessage(player, LanguageToml.messageWarpCreateSuccess.formatted(warpName));
-            } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageError);
-            }
+                Bukkit.getAsyncScheduler().runNow(plugin, aScheduler -> {
+                    boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation, false);
+                    if (updateOrCreateWarps) {
+                        LanguageToml.sendMessage(player, LanguageToml.messageWarpCreateSuccess.formatted(warpName));
+                    } else {
+                        LanguageToml.sendMessage(player, LanguageToml.messageError);
+                    }
+                });
+            }, null);
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             LanguageToml.sendMessage(player, LanguageToml.messageError);

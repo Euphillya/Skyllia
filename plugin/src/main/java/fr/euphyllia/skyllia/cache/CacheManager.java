@@ -94,6 +94,7 @@ public class CacheManager {
         PlayersInIslandCache.getIslandByPlayerId().put(playerId, island);
         PlayersInIslandCache.add(island.getId(), island.getMembers());
         PlayersInIslandCache.getIslandByIslandId().put(island.getId(), island);
+        CacheIsland.getIslandClosed(playerId);
         // ============= position island cache
         List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(island.getPosition(), (int) Math.round(island.getSize()));
         for (Position possiblePosition : islandPositionWithRadius) {
