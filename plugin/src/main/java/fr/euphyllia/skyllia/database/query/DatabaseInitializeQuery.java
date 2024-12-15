@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.database.query;
 
-import fr.euphyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 
 public abstract class DatabaseInitializeQuery {
 

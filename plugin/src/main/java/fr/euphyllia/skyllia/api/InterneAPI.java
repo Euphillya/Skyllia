@@ -1,8 +1,5 @@
 package fr.euphyllia.skyllia.api;
 
-import fr.euphyllia.sgbd.DatabaseLoader;
-import fr.euphyllia.sgbd.MariaDB;
-import fr.euphyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.configuration.ConfigInitializer;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
@@ -15,6 +12,9 @@ import fr.euphyllia.skyllia.database.IslandQuery;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.sgbd.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.MariaDB;
+import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -182,13 +182,11 @@ public class InterneAPI {
                 biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.BiomeNMS();
             }
             case "1.21.2", "1.21.3" -> {
-                logger.warn("Warning: Version 1.21.3 is not fully tested. Be cautious!");
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.PlayerNMS();
                 biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.BiomeNMS();
             }
             case "1.21.4" -> {
-                logger.warn("Warning: Version 1.21.4 is not fully tested. Be cautious!");
                 worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.WorldNMS();
                 playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.PlayerNMS();
                 biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.BiomeNMS();
