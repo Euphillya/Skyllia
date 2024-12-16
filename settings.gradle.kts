@@ -13,3 +13,4 @@ include("nms:v1_21_R2")
 include("nms:v1_21_R3")
 // Addons
 include("addons:OreGenerator")
+include("addons:PapiSkyllia")
