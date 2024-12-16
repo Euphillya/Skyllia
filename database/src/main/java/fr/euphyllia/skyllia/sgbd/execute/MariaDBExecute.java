@@ -5,7 +5,6 @@ import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.model.DBCallback;
 import fr.euphyllia.skyllia.sgbd.model.DBCallbackInt;
 import fr.euphyllia.skyllia.sgbd.model.DBWork;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,18 +19,15 @@ public class MariaDBExecute {
     private static final Logger logger = LogManager.getLogger(MariaDBExecute.class);
 
     public static void executeQuery(DatabaseLoader pool, String query) throws DatabaseException {
-        executeQuery(pool, query, null, null, null, false);
+        executeQuery(pool, query, null, null, null);
     }
 
     public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work) throws DatabaseException {
-        executeQuery(pool, query, param, callback, work, false);
-    }
+        if (pool == null) {
+            throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
+        }
 
-    public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work, boolean ignoreError) throws DatabaseException {
         try {
-            if (pool == null) {
-                throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
-            }
             Connection connection = pool.getMariaDBConnection();
             if (connection == null) {
                 throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
@@ -66,16 +62,18 @@ public class MariaDBExecute {
             Connection connection = pool.getMariaDBConnection();
             if (connection == null) {
                 throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
-            } else if (work != null) {
-                work.run(connection);
-            } else {
-                int resultInt = pool.executeInt(connection, query, param);
-                if (callback != null) {
-                    callback.run(resultInt);
-                }
-
-                connection.close();
             }
+
+            if (work != null) {
+                work.run(connection);
+                return;
+            }
+
+            int resultInt = pool.executeInt(connection, query, param);
+            if (callback != null) {
+                callback.run(resultInt);
+            }
+            connection.close();
         } catch (SQLException | DatabaseException exception) {
             throw new DatabaseException(exception);
         }

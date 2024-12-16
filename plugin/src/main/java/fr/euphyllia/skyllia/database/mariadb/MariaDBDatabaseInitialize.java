@@ -188,7 +188,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void executeQuery(String query, List<Object> params) throws DatabaseException {
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null, false);
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null);
     }
 
     private void executeAsync(Runnable task) {
