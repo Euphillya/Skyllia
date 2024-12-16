@@ -12,7 +12,7 @@ depend:
   - Skyllia
 
 libraries:
-  - com.google.guava:guava:33.2.0-jre
+  - com.google.guava:guava:33.3.1-jre
 
 commands:
   skylliaore:
