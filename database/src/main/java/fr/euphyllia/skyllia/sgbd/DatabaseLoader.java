@@ -1,16 +1,15 @@
 package fr.euphyllia.skyllia.sgbd;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.stream.AsciiStream;
+import fr.euphyllia.skyllia.sgbd.stream.BinaryStream;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
-import fr.euphyllia.skyllia.sgbd.stream.AsciiStream;
-import fr.euphyllia.skyllia.sgbd.stream.BinaryStream;
-import org.jetbrains.annotations.Nullable;
 
 public class DatabaseLoader {
 
@@ -35,10 +34,7 @@ public class DatabaseLoader {
 
     @Nullable
     public Connection getMariaDBConnection() throws DatabaseException {
-        if (mariaDB != null && mariaDB.isConnected()) {
-            return mariaDB.getConnection();
-        }
-        return null;
+        return mariaDB != null ? mariaDB.getConnection() : null;
     }
 
     public int executeInt(Connection connection, String query, List<?> param) throws SQLException {
@@ -63,42 +59,27 @@ public class DatabaseLoader {
     }
 
     private void insertStatement(int i, PreparedStatement statement, Object value) throws SQLException {
-        if (value instanceof byte[] valueBytes) {
-            statement.setBytes(i, valueBytes);
-        } else if (value instanceof Timestamp valueTimes) {
-            statement.setTimestamp(i, valueTimes);
-        } else if (value instanceof String valueString) {
-            statement.setString(i, valueString);
-        } else if (value instanceof Integer valueInt) {
-            statement.setInt(i, valueInt);
-        } else if (value instanceof Double valueDouble) {
-            statement.setDouble(i, valueDouble);
-        } else if (value instanceof Long valueLong) {
-            statement.setLong(i, valueLong);
-        } else if (value instanceof Byte valueByte) {
-            statement.setByte(i, valueByte);
-        } else if (value instanceof Short valueShort) {
-            statement.setShort(i, valueShort);
-        } else if (value instanceof Float valueFloat) {
-            statement.setFloat(i, valueFloat);
-        } else if (value instanceof BigDecimal valueBigDecimal) {
-            statement.setBigDecimal(i, valueBigDecimal);
-        } else if (value instanceof Time valueTime) {
-            statement.setTime(i, valueTime);
-        } else if (value instanceof AsciiStream valueAsciiStream) {
-            statement.setAsciiStream(i, valueAsciiStream.x(), valueAsciiStream.length());
-        } else if (value instanceof BinaryStream valueBinaryStream) {
-            statement.setBinaryStream(i, valueBinaryStream.x(), valueBinaryStream.length());
-        } else if (value instanceof Blob valueBlob) {
-            statement.setBlob(i, valueBlob);
-        } else if (value instanceof Clob valueClob) {
-            statement.setClob(i, valueClob);
-        } else if (value instanceof Array valueArray) {
-            statement.setArray(i, valueArray);
-        } else if (value instanceof URL valueURL) {
-            statement.setURL(i, valueURL);
-        } else {
-            statement.setString(i, String.valueOf(value));
+        switch (value) {
+            case byte[] valueBytes -> statement.setBytes(i, valueBytes);
+            case Timestamp valueTimes -> statement.setTimestamp(i, valueTimes);
+            case String valueString -> statement.setString(i, valueString);
+            case Integer valueInt -> statement.setInt(i, valueInt);
+            case Double valueDouble -> statement.setDouble(i, valueDouble);
+            case Long valueLong -> statement.setLong(i, valueLong);
+            case Byte valueByte -> statement.setByte(i, valueByte);
+            case Short valueShort -> statement.setShort(i, valueShort);
+            case Float valueFloat -> statement.setFloat(i, valueFloat);
+            case BigDecimal valueBigDecimal -> statement.setBigDecimal(i, valueBigDecimal);
+            case Time valueTime -> statement.setTime(i, valueTime);
+            case AsciiStream valueAsciiStream ->
+                    statement.setAsciiStream(i, valueAsciiStream.x(), valueAsciiStream.length());
+            case BinaryStream valueBinaryStream ->
+                    statement.setBinaryStream(i, valueBinaryStream.x(), valueBinaryStream.length());
+            case Blob valueBlob -> statement.setBlob(i, valueBlob);
+            case Clob valueClob -> statement.setClob(i, valueClob);
+            case Array valueArray -> statement.setArray(i, valueArray);
+            case URL valueURL -> statement.setURL(i, valueURL);
+            case null, default -> statement.setString(i, String.valueOf(value));
         }
     }
 
