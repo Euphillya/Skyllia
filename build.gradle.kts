@@ -43,8 +43,8 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("org.apache.logging.log4j:log4j-api:2.24.2")
-        compileOnly("org.apache.logging.log4j:log4j-core:2.24.2")
+        compileOnly("org.apache.logging.log4j:log4j-api:2.24.3")
+        compileOnly("org.apache.logging.log4j:log4j-core:2.24.3")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
         compileOnly("com.zaxxer:HikariCP:6.2.1")
         compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
