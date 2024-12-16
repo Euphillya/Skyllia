@@ -1,0 +1,20 @@
+name: SkylliaOre
+version: '${version}'
+main: fr.euphyllia.skylliaore.Main
+api-version: '1.20'
+authors: [ Euphyllia ]
+folia-supported: true
+
+softdepend:
+  - Oraxen
+
+depend:
+  - Skyllia
+
+libraries:
+  - com.google.guava:guava:33.2.0-jre
+
+commands:
+  skylliaore:
+    description: "Choose Generator Island"
+    permission: "skylliaore.use"
