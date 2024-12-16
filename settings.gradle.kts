@@ -11,3 +11,5 @@ include("nms:v1_20_R4")
 include("nms:v1_21_R1")
 include("nms:v1_21_R2")
 include("nms:v1_21_R3")
+// Addons
+include("addons:OreGenerator")
