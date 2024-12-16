@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
@@ -164,19 +165,31 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         }
 
         Runnable spiralTask = () -> {
+            List<SpiralBatchInserter.IslandData> islandDataList = new ArrayList<>();
             for (int i = 1; i < ConfigToml.maxIsland; i++) {
                 Position position = RegionUtils.getPositionNewIsland(i);
-                try {
-                    if (api.getDatabaseLoader() == null) {
-                        logger.log(Level.ERROR, "Cannot get connection to the database.");
-                        break;
-                    }
-                    executeQuery(INSERT_SPIRAL.formatted(database),
-                            List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland));
-                } catch (DatabaseException e) {
-                    logger.log(Level.ERROR, "Error inserting into spiral table", e);
-                    break;
-                }
+                islandDataList.add(new SpiralBatchInserter.IslandData(
+                        i,
+                        position.x() * distancePerIsland,
+                        position.z() * distancePerIsland
+                ));
+            }
+
+            SpiralBatchInserter batchInserter = new SpiralBatchInserter(
+                    String.format(INSERT_SPIRAL, database),
+                    islandDataList
+            );
+
+            try {
+                MariaDBExecute.executeQueryDML(
+                        api.getDatabaseLoader(),
+                        String.format(INSERT_SPIRAL, database),
+                        null,
+                        null,
+                        batchInserter
+                );
+            } catch (DatabaseException e) {
+                logger.log(Level.ERROR, "Error inserting into spiral table", e);
             }
         };
 
