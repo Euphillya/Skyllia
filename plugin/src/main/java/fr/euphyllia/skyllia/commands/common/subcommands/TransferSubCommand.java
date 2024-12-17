@@ -26,7 +26,7 @@ public class TransferSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(TransferSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
@@ -105,13 +105,13 @@ public class TransferSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 2) {
             // Autocomplete 'confirm'
             if ("confirm".startsWith(args[1].toLowerCase())) {
                 return Collections.singletonList("confirm");
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 }

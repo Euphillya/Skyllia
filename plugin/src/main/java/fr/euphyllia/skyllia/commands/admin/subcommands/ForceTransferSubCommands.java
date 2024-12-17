@@ -29,7 +29,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(ForceTransferSubCommands.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
             LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
             return true;
@@ -118,7 +118,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
             return new ArrayList<>();
         }

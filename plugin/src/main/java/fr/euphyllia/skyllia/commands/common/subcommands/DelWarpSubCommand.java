@@ -22,6 +22,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DelWarpSubCommand implements SubCommandInterface {
@@ -29,7 +30,7 @@ public class DelWarpSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(DelWarpSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
@@ -84,10 +85,10 @@ public class DelWarpSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (sender.hasPermission("skyllia.island.command.delwarp") && sender instanceof Player player) {
             return CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
         }
-        return null;
+        return Collections.emptyList();
     }
 }

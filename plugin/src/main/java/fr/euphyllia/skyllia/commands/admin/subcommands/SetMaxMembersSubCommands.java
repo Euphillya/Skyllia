@@ -27,7 +27,7 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(SetMaxMembersSubCommands.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.setmaxmembers")) {
             LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
             return true;
@@ -78,7 +78,7 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.setmaxmembers")) {
             return new ArrayList<>();
         }
