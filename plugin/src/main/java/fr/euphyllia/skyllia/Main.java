@@ -1,7 +1,8 @@
 package fr.euphyllia.skyllia;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.Metrics;
@@ -27,16 +28,21 @@ import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -58,8 +64,9 @@ public class Main extends JavaPlugin {
             return;
         }
 
+        initializeCommandsDispatcher();
+
         initializeManagers();
-        registerCommands();
         registerListeners();
         scheduleCacheUpdate();
         checkDisabledConfig();
@@ -125,21 +132,6 @@ public class Main extends JavaPlugin {
         this.adminCommandRegistry = new SubAdminCommandImpl();
     }
 
-    private void registerCommands() {
-        setupCommand("skyllia", new SkylliaCommand(this));
-        setupCommand("skylliadmin", new SkylliaAdminCommand(this));
-    }
-
-    private void setupCommand(String commandName, SkylliaCommandInterface commandExecutor) {
-        PluginCommand command = getServer().getPluginCommand(commandName);
-        if (command == null) {
-            logger.log(Level.FATAL, "Command '{}' not defined in plugin.yml", commandName);
-            return;
-        }
-        command.setExecutor(commandExecutor);
-        command.setTabCompleter(commandExecutor);
-    }
-
     private void registerListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
 
@@ -199,5 +191,14 @@ public class Main extends JavaPlugin {
                 logger.log(Level.WARN, "Disable end in bukkit.yml to disable end portals!");
             }
         }
+    }
+
+    private void initializeCommandsDispatcher() {
+        LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
+        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            final Commands commands = event.registrar();
+            commands.register("skyllia", "some help description string", List.of("is"), new SkylliaCommand(this));
+            commands.register("skylliaadmin", "some help description string", List.of("isadmin"), new SkylliaAdminCommand(this));
+        });
     }
 }

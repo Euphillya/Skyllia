@@ -27,18 +27,16 @@ public interface SubCommandInterface {
      * @param args     the arguments provided with the command
      * @return {@code true} if the command was successfully handled, {@code false} otherwise
      */
-    boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args);
+    boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args);
 
     /**
      * Provides tab completion suggestions for the sub-command.
      *
      * @param plugin   the {@link Plugin} instance that is executing the command
      * @param sender   the {@link CommandSender} who is tab completing
-     * @param command  the {@link Command} object representing the command
-     * @param label    the label of the command (e.g., the command name)
      * @param args     the arguments provided with the command so far
      * @return a {@link List} of suggestions for tab completion, or {@code null} if no suggestions are available
      */
-    @Nullable
-    List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args);
+    @NotNull
+    List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args);
 }
