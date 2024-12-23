@@ -47,7 +47,6 @@ public class SpiralBatchInserter implements DBWork {
                 if (++count % BATCH_SIZE == 0) {
                     preparedStatement.executeBatch();
                     connection.commit();
-                    logger.error("Insertion de {}", count);
                 }
             }
 
