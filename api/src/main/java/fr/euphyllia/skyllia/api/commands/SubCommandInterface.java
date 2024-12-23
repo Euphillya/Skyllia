@@ -22,8 +22,6 @@ public interface SubCommandInterface {
      *
      * @param plugin   the {@link Plugin} instance that is executing the command
      * @param sender   the {@link CommandSender} who issued the command
-     * @param command  the {@link Command} object representing the command
-     * @param label    the label of the command (e.g., the command name)
      * @param args     the arguments provided with the command
      * @return {@code true} if the command was successfully handled, {@code false} otherwise
      */
