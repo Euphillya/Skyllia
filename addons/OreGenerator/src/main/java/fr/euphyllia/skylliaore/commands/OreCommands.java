@@ -27,8 +27,9 @@ public class OreCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (!sender.hasPermission("skylliaore.use")) return true;
         if (args.length < 2) {
-            sender.sendMessage(Component.text("Usage: /<command> <player> <generator>").color(NamedTextColor.RED));
+            sender.sendMessage(Component.text("Usage: /skylliaadmin generator <player> <generator>").color(NamedTextColor.RED));
             return false;
         }
 

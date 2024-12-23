@@ -69,7 +69,7 @@ In this example, the default generator is set to "test". The generator named "te
 
 ### Commands
 
-- `/skylliaore <player> <generator>`: Change the generator for a specific player.
+- `/skylliaadmin generator <player> <generator>`: Change the generator for a specific player.
 
 ### Note on Generator Change
 
@@ -77,7 +77,7 @@ When changing the generator, there is a delay of approximately 30 seconds before
 
 ### Permissions
 
-- `skylliaore.use`: Permission to use the `/skylliaore` command.
+- `skylliaore.use`: Permission to use the `/skylliaadmin generator` command.
 
 ## Contribution
 
