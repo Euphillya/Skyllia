@@ -41,18 +41,20 @@ public class ExpelSubCommand implements SubCommandInterface {
             return;
         }
 
-        int chunkLocX = bPlayerExpelLocation.getChunk().getX();
-        int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
+        org.bukkit.Bukkit.getRegionScheduler().execute(plugin, bPlayerExpelLocation, () -> {
+            int chunkLocX = bPlayerExpelLocation.getChunk().getX();
+            int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
 
-        Position islandPosition = island.getPosition();
-        Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
+            Position islandPosition = island.getPosition();
+            Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
 
-        if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-            if (!silent) LanguageToml.sendMessage(executor, LanguageToml.messageExpelPlayerFailedNotInIsland);
-            return;
-        }
+            if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
+                if (!silent) LanguageToml.sendMessage(executor, LanguageToml.messageExpelPlayerFailedNotInIsland);
+                return;
+            }
 
-        PlayerUtils.teleportPlayerSpawn(bPlayerToExpel);
+            PlayerUtils.teleportPlayerSpawn(bPlayerToExpel);
+        });
     }
 
     @Override
