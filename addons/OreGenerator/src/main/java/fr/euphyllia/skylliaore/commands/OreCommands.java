@@ -1,6 +1,7 @@
 package fr.euphyllia.skylliaore.commands;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliaore.Main;
 import fr.euphyllia.skylliaore.api.Generator;
@@ -10,33 +11,22 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class OreCommands implements CommandExecutor, TabCompleter {
+public class OreCommands implements SubCommandInterface {
 
-    /**
-     * Executes the given command, returning its success.
-     *
-     * @param sender  Source of the command
-     * @param command Command which was executed
-     * @param label   Alias of the command which was used
-     * @param args    Passed command arguments
-     * @return true if a valid command, otherwise false
-     */
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 2) {
             sender.sendMessage(Component.text("Usage: /<command> <player> <generator>").color(NamedTextColor.RED));
             return false;
@@ -67,31 +57,28 @@ public class OreCommands implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    /**
-     * Requests a list of possible completions for a command argument.
-     *
-     * @param sender  Source of the command.  For players tab-completing a
-     *                command inside of a command block, this will be the player, not
-     *                the command block.
-     * @param command Command which was executed
-     * @param label   Alias of the command which was used
-     * @param args    The arguments passed to the command, including final
-     *                partial argument to be completed
-     * @return A List of possible completions for the final argument, or null
-     * to default to the command executor
-     */
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        // ---------- ARG #1 : Noms de joueurs ----------
         if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
                     .collect(Collectors.toList());
-        } else if (args.length == 2) {
-            Main.getPlugin(Main.class);
+        }
+
+        // ---------- ARG #2 : Liste de générateurs ----------
+        else if (args.length == 2) {
+            String partial = args[1].trim().toLowerCase();
             DefaultConfig config = Main.getDefaultConfig();
             Map<String, Generator> generators = config.getGenerators();
-            return new ArrayList<>(generators.keySet());
+            return generators.keySet().stream()
+                    .filter(genName -> genName.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
         }
-        return List.of();
+
+        return Collections.emptyList();
     }
 }

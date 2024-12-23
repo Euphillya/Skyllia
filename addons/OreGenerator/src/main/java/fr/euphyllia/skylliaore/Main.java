@@ -1,5 +1,7 @@
 package fr.euphyllia.skylliaore;
 
+import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skylliaore.commands.OreCommands;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
@@ -73,13 +75,6 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        PluginCommand skylliaOre = getCommand("skylliaore");
-        if (skylliaOre != null) {
-            OreCommands oreCommands = new OreCommands();
-            skylliaOre.setExecutor(oreCommands);
-            skylliaOre.setTabCompleter(oreCommands);
-        } else {
-            logger.error("Command 'skylliaore' not found in plugin.yml");
-        }
+        SkylliaAPI.registerAdminCommands(new OreCommands(), "generator");
     }
 }
