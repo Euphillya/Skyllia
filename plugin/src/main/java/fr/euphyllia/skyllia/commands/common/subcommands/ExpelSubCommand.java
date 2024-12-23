@@ -27,7 +27,9 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExpelSubCommand implements SubCommandInterface {
 
@@ -57,7 +59,7 @@ public class ExpelSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
@@ -116,7 +118,14 @@ public class ExpelSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(CommandSender::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

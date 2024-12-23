@@ -25,15 +25,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class TrustSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(TrustSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
@@ -82,7 +84,14 @@ public class TrustSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return new ArrayList<>();
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(CommandSender::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

@@ -10,15 +10,15 @@ import fr.euphyllia.skyllia.commands.admin.subcommands.SetMaxMembersSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.SetSizeSubCommands;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SkylliaAdminCommand implements SkylliaCommandInterface {
 
@@ -32,45 +32,42 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands")) {
-            LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
-            return true;
+    public void execute(CommandSourceStack sender, String @NotNull [] args) {
+        if (!sender.getSender().hasPermission("skyllia.admins.commands")) {
+            LanguageToml.sendMessage(sender.getSender(), LanguageToml.messagePlayerPermissionDenied);
+            return;
         }
         if (args.length != 0) {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
             SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
             if (subCommandInterface == null) {
-                LanguageToml.sendMessage(sender, LanguageToml.messageSubCommandsNotExists);
-                return false;
+                LanguageToml.sendMessage(sender.getSender(), LanguageToml.messageSubCommandsNotExists);
+                return;
             }
-            if (ConfigToml.useVirtualThread) {
-                Thread.startVirtualThread(() -> {
-                    subCommandInterface.onCommand(this.plugin, sender, command, label, listArgs);
-                });
-            } else {
-                Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                        subCommandInterface.onCommand(this.plugin, sender, command, label, listArgs));
-            }
+            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                    subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs));
         }
-        return true;
+        return;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        List<String> tab = new ArrayList<>();
-        if (args.length == 1) {
-            tab.addAll(registry.getCommandMap().keySet());
+    public Collection<String> suggest(CommandSourceStack sender, String[] args) {
+        Set<String> commands = registry.getCommandMap().keySet();
+        if (args.length == 0) {
+            return commands;
+        } else if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return commands.stream().filter(command -> command.toLowerCase().startsWith(partial)).toList();
         } else {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
             SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
             if (subCommandInterface != null) {
-                return subCommandInterface.onTabComplete(this.plugin, sender, command, label, listArgs);
+                return subCommandInterface.onTabComplete(this.plugin, sender.getSender(), listArgs);
             }
         }
-        return tab;
+        return Collections.emptyList();
     }
 
     private void registerDefaultCommands() {

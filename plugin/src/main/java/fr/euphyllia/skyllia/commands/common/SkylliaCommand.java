@@ -7,15 +7,15 @@ import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.commands.common.subcommands.*;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SkylliaCommand implements SkylliaCommandInterface {
 
@@ -26,44 +26,6 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         this.plugin = main;
         this.registry = this.plugin.getCommandRegistry();
         registerDefaultCommands();
-    }
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length != 0) {
-            String subCommand = args[0].trim().toLowerCase();
-            String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
-            SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
-            if (subCommandInterface == null) {
-                LanguageToml.sendMessage(sender, LanguageToml.messageSubCommandsNotExists);
-                return false;
-            }
-            if (ConfigToml.useVirtualThread) {
-                Thread.startVirtualThread(() -> {
-                    subCommandInterface.onCommand(this.plugin, sender, command, label, listArgs);
-                });
-            } else {
-                Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                        subCommandInterface.onCommand(this.plugin, sender, command, label, listArgs));
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        List<String> tab = new ArrayList<>();
-        if (args.length == 1) {
-            tab.addAll(registry.getCommandMap().keySet());
-        } else {
-            String subCommand = args[0].trim().toLowerCase();
-            String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
-            SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
-            if (subCommandInterface != null) {
-                return subCommandInterface.onTabComplete(this.plugin, sender, command, label, listArgs);
-            }
-        }
-        return tab;
     }
 
     private void registerDefaultCommands() {
@@ -91,5 +53,39 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new UntrustSubCommand(), "untrust");
         registry.registerSubCommand(new VisitSubCommand(), "visit");
         registry.registerSubCommand(new WarpSubCommand(), "warp");
+    }
+
+    @Override
+    public void execute(CommandSourceStack sender, String[] args) {
+        if (args.length != 0) {
+            String subCommand = args[0].trim().toLowerCase();
+            String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
+            SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
+            if (subCommandInterface == null) {
+                LanguageToml.sendMessage(sender.getSender(), LanguageToml.messageSubCommandsNotExists);
+                return;
+            }
+            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                    subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs));
+        }
+    }
+
+    @Override
+    public Collection<String> suggest(CommandSourceStack sender, String[] args) {
+        Set<String> commands = registry.getCommandMap().keySet();
+        if (args.length == 0) {
+            return commands;
+        } else if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return commands.stream().filter(command -> command.toLowerCase().startsWith(partial)).toList();
+        } else {
+            String subCommand = args[0].trim().toLowerCase();
+            String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
+            SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
+            if (subCommandInterface != null) {
+                return subCommandInterface.onTabComplete(this.plugin, sender.getSender(), listArgs);
+            }
+        }
+        return Collections.emptyList();
     }
 }

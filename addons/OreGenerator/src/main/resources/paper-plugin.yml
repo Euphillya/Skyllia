@@ -1,0 +1,19 @@
+name: SkylliaOre
+version: '${version}'
+main: fr.euphyllia.skylliaore.Main
+api-version: '1.20'
+authors: [ Euphyllia ]
+folia-supported: true
+loader: fr.euphyllia.skylliaore.OreLoader
+
+dependencies:
+  server:
+    Skyllia:
+      load: OMIT
+      required: true
+      join-classpath: true
+    Oraxen:
+      load: OMIT
+      required: false
+      join-classpath: true
+

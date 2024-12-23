@@ -20,16 +20,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ForceTransferSubCommands implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(ForceTransferSubCommands.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
             LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
             return true;
@@ -118,25 +120,38 @@ public class ForceTransferSubCommands implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
+        // ARG 1 → Nom du premier joueur
         if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
-                    .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .filter(name -> name.toLowerCase().startsWith(partial))
                     .collect(Collectors.toList());
-        } else if (args.length == 2) {
-            return Bukkit.getOnlinePlayers().stream()
-                    .map(Player::getName)
-                    .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
-                    .collect(Collectors.toList());
-        } else if (args.length == 3) {
-            return List.of("confirm");
         }
 
-        return new ArrayList<>();
+        // ARG 2 → Nom du deuxième joueur
+        if (args.length == 2) {
+            String partial = args[1].trim().toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        // ARG 3 → Saisie pour "confirm"
+        if (args.length == 3) {
+            String partial = args[2].trim().toLowerCase();
+            return Stream.of("confirm")
+                    .filter(word -> word.startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        // Aucun autre argument
+        return Collections.emptyList();
     }
 }

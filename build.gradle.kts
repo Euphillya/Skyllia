@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -6,24 +5,25 @@ plugins {
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
-    id("io.papermc.paperweight.userdev") version "1.7.6" apply false
+    id("io.papermc.paperweight.userdev") version "1.7.7" apply false
 }
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
 val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
 val engineHubRepo = "https://maven.enginehub.org/repo/";
-val jitpack = "https://jitpack.io";
+val mojang = "https://libraries.minecraft.net";
 
 dependencies {
+    implementation(project(":database"))
     implementation(project(":api"))
     implementation(project(":plugin"))
-    implementation(project(":nms:v1_20_R1", "reobf"))
-    implementation(project(":nms:v1_20_R2", "reobf"))
-    implementation(project(":nms:v1_20_R3", "reobf"))
-    implementation(project(":nms:v1_20_R4", "reobf"))
-    implementation(project(":nms:v1_21_R1", "reobf"))
-    implementation(project(":nms:v1_21_R2", "reobf"))
-    implementation(project(":nms:v1_21_R3", "reobf"))
+    implementation(project(":nms:v1_20_R1"))
+    implementation(project(":nms:v1_20_R2"))
+    implementation(project(":nms:v1_20_R3"))
+    implementation(project(":nms:v1_20_R4"))
+    implementation(project(":nms:v1_21_R1"))
+    implementation(project(":nms:v1_21_R2"))
+    implementation(project(":nms:v1_21_R3"))
 }
 
 allprojects {
@@ -41,32 +41,29 @@ allprojects {
         maven(paperRepo)
         maven(sonatypeRepo)
         maven(engineHubRepo)
-        maven(jitpack)
+        maven(mojang)
     }
 
     dependencies {
-        compileOnly("com.github.Euphillya:SGBD-MariaDB:1.3")
-
-        compileOnly("org.apache.logging.log4j:log4j-api:2.24.2")
-        compileOnly("org.apache.logging.log4j:log4j-core:2.24.2")
+        compileOnly("org.apache.maven.resolver:maven-resolver-api:2.0.4")
+        compileOnly("org.apache.logging.log4j:log4j-api:2.24.3")
+        compileOnly("org.apache.logging.log4j:log4j-core:2.24.3")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
         compileOnly("com.zaxxer:HikariCP:6.2.1")
         compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
         compileOnly("com.electronwill.night-config:toml:3.8.1")
         compileOnly("com.google.guava:guava:33.3.1-jre")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
-    }
-
-    tasks.withType<ShadowJar> {
-        relocate("fr.euphyllia.sgbd", "fr.euphyllia.skyllia.dependency.sgbd")
+        implementation("com.mojang:brigadier:1.0.18")
     }
 
     tasks {
+
         compileJava {
             options.encoding = "UTF-8"
         }
         processResources {
-            filesMatching("**/plugin.yml") {
+            filesMatching("**/paper-plugin.yml") {
                 expand(rootProject.project.properties)
             }
 

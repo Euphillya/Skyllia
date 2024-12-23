@@ -34,11 +34,9 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateSubCommand implements SubCommandInterface {
@@ -46,7 +44,7 @@ public class CreateSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(CreateSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
@@ -126,7 +124,7 @@ public class CreateSubCommand implements SubCommandInterface {
                 }
             } else {
                 CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
-                new HomeSubCommand().onCommand(plugin, sender, command, label, args);
+                new HomeSubCommand().onCommand(plugin, sender, args);
             }
         } catch (Exception e) {
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
@@ -139,18 +137,21 @@ public class CreateSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
             List<String> nameSchem = new ArrayList<>();
             ConfigToml.schematicWorldMap.forEach((key, schematicWorld) -> {
-                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, key))) {
+                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, key))
+                        && key.toLowerCase().startsWith(partial)) {
                     nameSchem.add(key);
                 }
             });
+
             return nameSchem;
-        } else {
-            return new ArrayList<>();
         }
+
+        return Collections.emptyList();
     }
 
     private void pasteSchematic(Main plugin, Island island, Location center, SchematicSetting schematicWorld) {

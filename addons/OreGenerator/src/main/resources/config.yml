@@ -1,0 +1,14 @@
+generator_default: test
+
+generators:
+  - name: "test"
+    replace_block:
+      - cobblestone
+      - stone
+    world:
+      - sky-overworld
+    block_chance:
+      - block: cobblestone
+        chance: 90.0
+      - block: oraxen:ore
+        chance: 10.0

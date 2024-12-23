@@ -1,18 +1,19 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
-import fr.euphyllia.sgbd.configuration.MariaDBConfig;
-import fr.euphyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.database.query.DatabaseInitializeQuery;
+import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
+import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
+import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
@@ -164,19 +165,31 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         }
 
         Runnable spiralTask = () -> {
+            List<SpiralBatchInserter.IslandData> islandDataList = new ArrayList<>();
             for (int i = 1; i < ConfigToml.maxIsland; i++) {
                 Position position = RegionUtils.getPositionNewIsland(i);
-                try {
-                    if (api.getDatabaseLoader() == null) {
-                        logger.log(Level.ERROR, "Cannot get connection to the database.");
-                        break;
-                    }
-                    executeQuery(INSERT_SPIRAL.formatted(database),
-                            List.of(i, position.x() * distancePerIsland, position.z() * distancePerIsland));
-                } catch (DatabaseException e) {
-                    logger.log(Level.ERROR, "Error inserting into spiral table", e);
-                    break;
-                }
+                islandDataList.add(new SpiralBatchInserter.IslandData(
+                        i,
+                        position.x() * distancePerIsland,
+                        position.z() * distancePerIsland
+                ));
+            }
+
+            SpiralBatchInserter batchInserter = new SpiralBatchInserter(
+                    String.format(INSERT_SPIRAL, database),
+                    islandDataList
+            );
+
+            try {
+                MariaDBExecute.executeQueryDML(
+                        api.getDatabaseLoader(),
+                        String.format(INSERT_SPIRAL, database),
+                        null,
+                        null,
+                        batchInserter
+                );
+            } catch (DatabaseException e) {
+                logger.log(Level.ERROR, "Error inserting into spiral table", e);
             }
         };
 
@@ -188,16 +201,12 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void executeQuery(String query, List<Object> params) throws DatabaseException {
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null, false);
+        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null);
     }
 
     private void executeAsync(Runnable task) {
-        if (ConfigToml.useVirtualThread) {
-            Thread.startVirtualThread(task);
-        } else {
-            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
-                task.run();
-            });
-        }
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
+            task.run();
+        });
     }
 }

@@ -24,8 +24,8 @@ public class ExplosionEvent implements Listener {
     public ExplosionEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
         explosionByHumanEntity = new CopyOnWriteArrayList<>();
-        explosionByHumanEntity.add(getEntityType("TNT", EntityType.valueOf("PRIMED_TNT")));
-        explosionByHumanEntity.add(getEntityType("TNT_MINECART", EntityType.valueOf("MINECART_TNT")));
+        //explosionByHumanEntity.add(getEntityType("TNT", EntityType.valueOf("PRIMED_TNT"))); Todo ? 1.21.4 not supported...
+        //explosionByHumanEntity.add(getEntityType("TNT_MINECART", EntityType.valueOf("MINECART_TNT")));
 
         explosionByMobEntity = new CopyOnWriteArrayList<>();
         explosionByMobEntity.add(EntityType.CREEPER);

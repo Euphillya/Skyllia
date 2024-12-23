@@ -3,14 +3,13 @@ plugins {
     id("maven-publish")
 }
 
+group = "fr.euphyllia.skyllia";
+version = "1.9";
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
-    implementation("com.github.Euphillya:SGBD-MariaDB:1.3")
+    compileOnly(project(":database"))
 }
-
-group = "fr.euphyllia.skyllia";
-version = "1.8";
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21

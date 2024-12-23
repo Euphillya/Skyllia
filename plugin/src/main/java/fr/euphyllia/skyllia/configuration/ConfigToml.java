@@ -3,12 +3,12 @@ package fr.euphyllia.skyllia.configuration;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.ImmutableMap;
-import fr.euphyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.configuration.model.MariaDB;
+import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +55,6 @@ public class ConfigToml {
     public static boolean teleportPlayerNotIslandWhenJoin = true;
     public static boolean changeGameModeWhenTeleportIsland = true;
     public static @Nullable Location spawnWorld = null;
-    public static boolean useVirtualThread = false;
     public static boolean preventDeletionIfHasMembers = false;
     private static boolean verbose;
 
@@ -216,7 +215,6 @@ public class ConfigToml {
         regionDistance = getInt("config.region-distance-per-island", regionDistance);
         deleteChunkPerimeterIsland = getBoolean("config.optimization.delete-chunk-perimeter-island", deleteChunkPerimeterIsland);
         suppressWarningNetherEndEnabled = getBoolean("config.suppress-warning-nether-end-world-enabled", suppressWarningNetherEndEnabled);
-        useVirtualThread = getBoolean("config.optimization.virtual-thread", useVirtualThread);
     }
 
     private static void typeIsland() {
