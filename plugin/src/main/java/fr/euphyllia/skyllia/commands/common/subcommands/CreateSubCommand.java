@@ -57,6 +57,7 @@ public class CreateSubCommand implements SubCommandInterface {
         }
         CommandCacheExecution.addCommandExecute(player.getUniqueId(), "create");
         if (!player.hasPermission("skyllia.island.command.create")) {
+            CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }

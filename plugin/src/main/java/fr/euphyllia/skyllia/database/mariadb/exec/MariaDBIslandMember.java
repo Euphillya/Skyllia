@@ -161,6 +161,8 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                                     playersList.add(players);
                                 } while (resultSet.next());
                                 completableFuture.complete(playersList);
+                            } else {
+                                completableFuture.complete(null);
                             }
                         } catch (Exception e) {
                             completableFuture.complete(null);

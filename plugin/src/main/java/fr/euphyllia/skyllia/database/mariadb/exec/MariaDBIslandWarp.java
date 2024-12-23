@@ -99,6 +99,8 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
                         }
                         WarpIsland warpIsland = new WarpIsland(island.getId(), warpName, new Location(world, locX, locY, locZ, locYaw, locPitch));
                         completableFuture.complete(warpIsland);
+                    } else {
+                        completableFuture.complete(null);
                     }
                 } catch (SQLException e) {
                     logger.log(Level.FATAL, e.getMessage(), e);
