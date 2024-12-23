@@ -5,7 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import fr.euphyllia.skyllia.database.query.IslandPermissionQuery;
+import fr.euphyllia.skyllia.api.database.IslandPermissionQuery;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
 import org.apache.logging.log4j.Level;

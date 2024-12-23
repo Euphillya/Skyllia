@@ -3,7 +3,7 @@ package fr.euphyllia.skyllia.database.mariadb;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.database.query.DatabaseInitializeQuery;
+import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;

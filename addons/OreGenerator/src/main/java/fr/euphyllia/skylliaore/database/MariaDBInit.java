@@ -1,7 +1,7 @@
 package fr.euphyllia.skylliaore.database;
 
 import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.database.query.DatabaseInitializeQuery;
+import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.sgbd.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.MariaDB;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
