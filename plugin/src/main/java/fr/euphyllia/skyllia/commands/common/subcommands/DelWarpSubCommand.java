@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DelWarpSubCommand implements SubCommandInterface {
 
@@ -87,7 +88,13 @@ public class DelWarpSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (sender.hasPermission("skyllia.island.command.delwarp") && sender instanceof Player player) {
-            return CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+            if (args.length == 1) {
+                String partial = args[0].trim().toLowerCase();
+                List<String> warpList = CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+                return warpList.stream()
+                        .filter(warp -> warp.toLowerCase().startsWith(partial))
+                        .collect(Collectors.toList());
+            }
         }
         return Collections.emptyList();
     }

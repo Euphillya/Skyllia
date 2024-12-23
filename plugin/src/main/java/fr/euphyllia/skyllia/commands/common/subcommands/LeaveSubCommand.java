@@ -71,7 +71,8 @@ public class LeaveSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
-            if ("confirm".startsWith(args[0].toLowerCase())) {
+            String partial = args[0].trim().toLowerCase();
+            if ("confirm".startsWith(partial)) {
                 return Collections.singletonList("confirm");
             }
         }

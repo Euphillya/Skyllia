@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class TrustSubCommand implements SubCommandInterface {
 
@@ -84,6 +85,13 @@ public class TrustSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(CommandSender::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
         return Collections.emptyList();
     }
 }

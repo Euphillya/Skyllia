@@ -170,21 +170,29 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
-            List<String> biomesList = new ArrayList<>();
-            for (String biome : Main.getPlugin(Main.class).getInterneAPI().getBiomesImpl().getBiomeNameList()) {
-                if (sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome))) {
-                    biomesList.add(biome);
-                }
-            }
-            return biomesList;
-        } else if (args.length == 2) {
+            String partial = args[0].trim().toLowerCase();
+
+            return Main.getPlugin(Main.class).getInterneAPI().getBiomesImpl().getBiomeNameList().stream()
+                    .filter(biome -> sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome)))
+                    // Filtre en fonction de la saisie partielle
+                    .filter(biome -> biome.toLowerCase().startsWith(partial))
+                    .toList();
+        }
+
+        if (args.length == 2) {
+            String partial = args[1].trim().toLowerCase();
+
             List<String> options = new ArrayList<>();
             options.add("chunk");
             if (sender.hasPermission("skyllia.island.command.biome_island")) {
                 options.add("island");
             }
-            return options;
+
+            return options.stream()
+                    .filter(opt -> opt.toLowerCase().startsWith(partial))
+                    .toList();
         }
+
         return Collections.emptyList();
     }
 }

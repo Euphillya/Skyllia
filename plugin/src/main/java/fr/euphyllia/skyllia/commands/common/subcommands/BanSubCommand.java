@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BanSubCommand implements SubCommandInterface {
 
@@ -85,6 +86,13 @@ public class BanSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(CommandSender::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
         return Collections.emptyList();
     }
 }

@@ -25,7 +25,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GameRuleSubCommand implements SubCommandInterface {
 
@@ -97,11 +99,18 @@ public class GameRuleSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.stream(GameRuleIsland.values()).map(Enum::name).toList();
+            String partial = args[0].trim().toLowerCase();
+
+            return Arrays.stream(GameRuleIsland.values())
+                    .map(Enum::name)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .toList();
         }
         if (args.length == 2) {
-            return List.of("true", "false");
+            String partial = args[1].trim().toLowerCase();
+            return Stream.of("true", "false").filter(value -> value.startsWith(partial)).toList();
         }
-        return new ArrayList<>();
+
+        return Collections.emptyList();
     }
 }

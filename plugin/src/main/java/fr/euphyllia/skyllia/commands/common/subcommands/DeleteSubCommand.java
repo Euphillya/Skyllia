@@ -148,6 +148,12 @@ public class DeleteSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            if ("confirm".startsWith(partial)) {
+                return Collections.singletonList("confirm");
+            }
+        }
         return Collections.emptyList();
     }
 

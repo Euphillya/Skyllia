@@ -17,9 +17,8 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SkylliaAdminCommand implements SkylliaCommandInterface {
 
@@ -52,19 +51,23 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
         return;
     }
 
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        List<String> tab = new ArrayList<>();
-        if (args.length == 1) {
-            tab.addAll(registry.getCommandMap().keySet());
+    @Override
+    public Collection<String> suggest(CommandSourceStack sender, String[] args) {
+        Set<String> commands = registry.getCommandMap().keySet();
+        if (args.length == 0) {
+            return commands;
+        } else if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return commands.stream().filter(command -> command.toLowerCase().startsWith(partial)).toList();
         } else {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
             SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
             if (subCommandInterface != null) {
-                return subCommandInterface.onTabComplete(this.plugin, sender, listArgs);
+                return subCommandInterface.onTabComplete(this.plugin, sender.getSender(), listArgs);
             }
         }
-        return tab;
+        return Collections.emptyList();
     }
 
     private void registerDefaultCommands() {

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SkylliaCommand implements SkylliaCommandInterface {
 
@@ -71,11 +72,13 @@ public class SkylliaCommand implements SkylliaCommandInterface {
 
     @Override
     public Collection<String> suggest(CommandSourceStack sender, String[] args) {
-        List<String> tab = new ArrayList<>();
+        Set<String> commands = registry.getCommandMap().keySet();
         if (args.length == 0) {
-            tab.addAll(registry.getCommandMap().keySet());
+            return commands;
+        } else if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return commands.stream().filter(command -> command.toLowerCase().startsWith(partial)).toList();
         } else {
-            System.out.println(Arrays.toString(args));
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
             SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
@@ -83,6 +86,6 @@ public class SkylliaCommand implements SkylliaCommandInterface {
                 return subCommandInterface.onTabComplete(this.plugin, sender.getSender(), listArgs);
             }
         }
-        return tab;
+        return Collections.emptyList();
     }
 }

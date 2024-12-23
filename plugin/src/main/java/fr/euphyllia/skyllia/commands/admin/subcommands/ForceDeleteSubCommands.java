@@ -24,9 +24,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ForceDeleteSubCommands implements SubCommandInterface {
 
@@ -87,16 +89,25 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.delete")) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
-
         if (args.length == 1) {
-            return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+            String partial = args[0].trim().toLowerCase();
+
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+
         } else if (args.length == 2) {
-            return List.of("confirm");
+            String partial = args[1].trim().toLowerCase();
+
+            return Stream.of("confirm")
+                    .filter(word -> word.startsWith(partial))
+                    .toList();
         }
 
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     private void updatePlayer(Main plugin, SkyblockManager skyblockManager, Island island) {

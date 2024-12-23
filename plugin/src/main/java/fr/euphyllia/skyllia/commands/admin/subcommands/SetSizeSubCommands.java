@@ -16,11 +16,9 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SetSizeSubCommands implements SubCommandInterface {
 
@@ -80,18 +78,37 @@ public class SetSizeSubCommands implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.setsize")) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
+        // ---------- ARG #1 : Nom du joueur ----------
         if (args.length == 1) {
-            return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
-        } else if (args.length == 2) {
-            return Arrays.asList("100", "200", "300", "500", "1000");
-        } else if (args.length == 3) {
-            if ("confirm".startsWith(args[2].toLowerCase())) {
-                return List.of("confirm");
-            }
+            String partial = args[0].trim().toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
         }
-        return new ArrayList<>();
+
+        // ---------- ARG #2 : Choix de la taille ----------
+        else if (args.length == 2) {
+            String partial = args[1].trim().toLowerCase();
+            List<String> possibleSizes = Arrays.asList("100", "200", "300", "500", "1000");
+
+            return possibleSizes.stream()
+                    .filter(size -> size.startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        // ---------- ARG #3 : "confirm" ----------
+        else if (args.length == 3) {
+            String partial = args[2].trim().toLowerCase();
+
+            return Stream.of("confirm")
+                    .filter(word -> word.startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
     }
 }

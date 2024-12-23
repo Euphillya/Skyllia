@@ -34,11 +34,9 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateSubCommand implements SubCommandInterface {
@@ -141,16 +139,19 @@ public class CreateSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
             List<String> nameSchem = new ArrayList<>();
             ConfigToml.schematicWorldMap.forEach((key, schematicWorld) -> {
-                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, key))) {
+                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, key))
+                        && key.toLowerCase().startsWith(partial)) {
                     nameSchem.add(key);
                 }
             });
+
             return nameSchem;
-        } else {
-            return new ArrayList<>();
         }
+
+        return Collections.emptyList();
     }
 
     private void pasteSchematic(Main plugin, Island island, Location center, SchematicSetting schematicWorld) {

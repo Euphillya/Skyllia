@@ -25,7 +25,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class PermissionSubCommand implements SubCommandInterface {
 
@@ -101,31 +103,61 @@ public class PermissionSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        // ---------- ARG #1 (PermissionsType) ----------
         if (args.length == 1) {
-            return Arrays.stream(PermissionsType.values()).map(Enum::name).toList();
+            String partial = args[0].trim().toLowerCase();
+
+            return Arrays.stream(PermissionsType.values())
+                    .map(Enum::name)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .toList();
         }
+
+        // ---------- ARG #2 (RoleType) ----------
         if (args.length == 2) {
-            return Arrays.stream(RoleType.values()).map(Enum::name).toList();
+            String partial = args[1].trim().toLowerCase();
+
+            return Arrays.stream(RoleType.values())
+                    .map(Enum::name)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .toList();
         }
+
+        // ---------- ARG #3 (PermissionsCommandIsland / PermissionsIsland / PermissionsInventory) ----------
         if (args.length == 3) {
             PermissionsType permissionsType;
             try {
                 permissionsType = PermissionsType.valueOf(args[0].toUpperCase());
             } catch (IllegalArgumentException e) {
-                return new ArrayList<>();
+                return Collections.emptyList();
             }
-            List<String> permissionValues = new ArrayList<>(switch (permissionsType) {
+
+            List<String> permissionValues = switch (permissionsType) {
                 case COMMANDS -> Arrays.stream(PermissionsCommandIsland.values()).map(Enum::name).toList();
-                case ISLAND -> Arrays.stream(PermissionsIsland.values()).map(Enum::name).toList();
+                case ISLAND   -> Arrays.stream(PermissionsIsland.values()).map(Enum::name).toList();
                 case INVENTORY -> Arrays.stream(PermissionsInventory.values()).map(Enum::name).toList();
-            });
-            permissionValues.add(0, "RESET");
-            return permissionValues;
+            };
+
+            List<String> finalValues = new ArrayList<>();
+            finalValues.add("RESET");
+            finalValues.addAll(permissionValues);
+
+            String partial = args[2].trim().toLowerCase();
+            return finalValues.stream()
+                    .filter(val -> val.toLowerCase().startsWith(partial))
+                    .toList();
         }
+
+        // ---------- ARG #4 (true/false) ----------
         if (args.length == 4) {
-            return List.of("true", "false");
+            String partial = args[3].trim().toLowerCase();
+
+            return Stream.of("true", "false")
+                    .filter(val -> val.startsWith(partial))
+                    .toList();
         }
-        return new ArrayList<>();
+
+        return Collections.emptyList();
     }
 
     private PermissionFormat getPermissionFormat(Main main, Entity entity, String permissionsTypeRaw, String roleTypeRaw, String permissionRaw, String valueRaw) {

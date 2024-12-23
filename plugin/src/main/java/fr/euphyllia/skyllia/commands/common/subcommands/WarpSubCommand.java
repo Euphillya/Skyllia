@@ -91,7 +91,13 @@ public class WarpSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (sender.hasPermission("skyllia.island.command.warp") && sender instanceof Player player) {
-            return CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+            if (args.length == 1) {
+                List<String> warpList = CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+                String partial = args[0].trim().toLowerCase();
+                return warpList.stream()
+                        .filter(warp -> warp.toLowerCase().startsWith(partial))
+                        .toList();
+            }
         }
         return Collections.emptyList();
     }

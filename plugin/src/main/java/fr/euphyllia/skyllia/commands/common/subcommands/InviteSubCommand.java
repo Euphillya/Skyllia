@@ -77,9 +77,18 @@ public class InviteSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
-            return List.of("accept", "decline", "add");
+            List<String> possible = List.of("accept", "decline", "add");
+            String partial = args[0].trim().toLowerCase();
+            return possible.stream()
+                    .filter(cmd -> cmd.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
         } else if (args.length == 2) {
-            return Bukkit.getOnlinePlayers().stream().map(CommandSender::getName).collect(Collectors.toList());
+            String partial = args[1].trim().toLowerCase();
+
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(CommandSender::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
