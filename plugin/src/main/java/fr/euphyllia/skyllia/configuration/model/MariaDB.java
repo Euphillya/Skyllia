@@ -45,6 +45,18 @@ public class MariaDB extends ConfigToml {
         return getBoolean(path.formatted("useSSL"), false);
     }
 
+    private int minPool() {
+       return getInt(path.formatted("minPool"), 3);
+    }
+
+    private Long maxLifeTime() {
+        return getLong(path.formatted("maxLifeTime"), 1800000L);
+    }
+
+    private Long keepAliveTime() {
+        return getLong(path.formatted("keepAliveTime"), 0L);
+    }
+
     private int maxPool() {
         return getInt(path.formatted("maxPool"), 5);
     }
@@ -63,6 +75,6 @@ public class MariaDB extends ConfigToml {
     }
 
     public MariaDBConfig getConstructor() {
-        return new MariaDBConfig(hostname(), port(), username(), password(), useSSL(), maxPool(), timeOut(), database(), version());
+        return new MariaDBConfig(hostname(), port(), username(), password(), useSSL(), minPool(), maxPool(), timeOut(), maxLifeTime(), keepAliveTime(), database(), version());
     }
 }

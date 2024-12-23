@@ -41,15 +41,9 @@ public class CacheManager {
     }
 
     public void deleteCacheIsland(Island island) {
-        if (ConfigToml.useVirtualThread) {
-            Thread.startVirtualThread(() -> {
-                this.deleteExecCacheIsland(island);
-            });
-        } else {
-            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
-                this.deleteExecCacheIsland(island);
-            });
-        }
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+            this.deleteExecCacheIsland(island);
+        });
     }
 
     private void deleteExecCacheIsland(Island island) {
@@ -78,15 +72,9 @@ public class CacheManager {
     }
 
     public void updateCacheIsland(Island island, UUID playerId) {
-        if (ConfigToml.useVirtualThread) {
-            Thread.startVirtualThread(() -> {
-                this.updateExecCacheIsland(island, playerId);
-            });
-        } else {
-            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
-                this.updateExecCacheIsland(island, playerId);
-            });
-        }
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
+            this.updateExecCacheIsland(island, playerId);
+        });
     }
 
     private void updateExecCacheIsland(Island island, UUID playerId) {

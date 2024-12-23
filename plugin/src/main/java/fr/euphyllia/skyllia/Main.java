@@ -170,12 +170,7 @@ public class Main extends JavaPlugin {
     private void scheduleCacheUpdate() {
         Runnable cacheUpdateTask = () -> Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
 
-        if (ConfigToml.useVirtualThread) {
-            ScheduledExecutorService service = Executors.newScheduledThreadPool(0, Thread.ofVirtual().factory());
-            service.scheduleAtFixedRate(cacheUpdateTask, 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
-        } else {
-            Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> cacheUpdateTask.run(), 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
-        }
+        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> cacheUpdateTask.run(), 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
     }
 
     private void checkDisabledConfig() {

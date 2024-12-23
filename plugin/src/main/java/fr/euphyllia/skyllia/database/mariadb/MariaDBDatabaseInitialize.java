@@ -205,12 +205,8 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void executeAsync(Runnable task) {
-        if (ConfigToml.useVirtualThread) {
-            Thread.startVirtualThread(task);
-        } else {
-            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
-                task.run();
-            });
-        }
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
+            task.run();
+        });
     }
 }

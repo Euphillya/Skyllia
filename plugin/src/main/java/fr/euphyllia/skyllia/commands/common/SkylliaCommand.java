@@ -64,14 +64,8 @@ public class SkylliaCommand implements SkylliaCommandInterface {
                 LanguageToml.sendMessage(sender.getSender(), LanguageToml.messageSubCommandsNotExists);
                 return;
             }
-            if (ConfigToml.useVirtualThread) {
-                Thread.startVirtualThread(() -> {
-                    subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs);
-                });
-            } else {
-                Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                        subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs));
-            }
+            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                    subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs));
         }
     }
 

@@ -79,13 +79,9 @@ public class AccessSubCommand implements SubCommandInterface {
                                 PlayerUtils.teleportPlayerSpawn(playerInIsland);
                             }
                         };
-                        if (ConfigToml.useVirtualThread) {
-                            Thread.startVirtualThread(teleportPlayerRun);
-                        } else {
-                            Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
-                                teleportPlayerRun.run();
-                            });
-                        }
+                        Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
+                            teleportPlayerRun.run();
+                        });
                     });
                 });
             } else {

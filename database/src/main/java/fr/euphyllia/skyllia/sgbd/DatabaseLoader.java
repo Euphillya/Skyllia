@@ -11,14 +11,29 @@ import java.sql.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The {@code DatabaseLoader} class provides methods to load and close a MariaDB connection pool,
+ * execute SQL queries, and handle prepared statements with various parameter types.
+ */
 public class DatabaseLoader {
 
     private final MariaDB mariaDB;
 
+    /**
+     * Constructs a new {@code DatabaseLoader} with the specified {@link MariaDB} instance.
+     *
+     * @param mariaDB the {@link MariaDB} instance used to manage connections.
+     */
     public DatabaseLoader(MariaDB mariaDB) {
         this.mariaDB = mariaDB;
     }
 
+    /**
+     * Loads the database connection if not already connected.
+     *
+     * @return {@code true} if the database was successfully connected; {@code false} otherwise.
+     * @throws DatabaseException if an error occurs while initializing the connection pool.
+     */
     public boolean loadDatabase() throws DatabaseException {
         if (mariaDB != null && !mariaDB.isConnected()) {
             return mariaDB.onLoad();
@@ -26,23 +41,51 @@ public class DatabaseLoader {
         return false;
     }
 
+    /**
+     * Closes the database connection if it is currently open.
+     */
     public void closeDatabase() {
         if (mariaDB != null) {
             mariaDB.onClose();
         }
     }
 
+    /**
+     * Retrieves a {@link Connection} from the {@link MariaDB} instance.
+     *
+     * @return a valid {@link Connection}, or {@code null} if {@code mariaDB} is {@code null}.
+     * @throws DatabaseException if an error occurs while retrieving the connection.
+     */
     @Nullable
     public Connection getMariaDBConnection() throws DatabaseException {
         return mariaDB != null ? mariaDB.getConnection() : null;
     }
 
+    /**
+     * Executes an SQL statement that modifies data (e.g., INSERT, UPDATE, DELETE)
+     * and returns the number of affected rows.
+     *
+     * @param connection the active SQL {@link Connection}.
+     * @param query the SQL query string to be executed.
+     * @param param a list of parameters (in the correct order) to be bound to the query.
+     * @return the number of rows affected by the query.
+     * @throws SQLException if an error occurs during the SQL execution.
+     */
     public int executeInt(Connection connection, String query, List<?> param) throws SQLException {
         return this.getStatementFinal(connection, query, param).join().executeUpdate();
     }
 
-
-    private CompletableFuture<PreparedStatement> getStatementFinal(Connection connection, String query, List<?> param) throws SQLException {
+    /**
+     * Creates and prepares a {@link PreparedStatement} asynchronously using the provided query and parameters.
+     *
+     * @param connection the active SQL {@link Connection}.
+     * @param query the SQL query string to prepare.
+     * @param param a list of parameters to set on the {@link PreparedStatement}.
+     * @return a {@link CompletableFuture} containing the prepared statement.
+     * @throws SQLException if an error occurs while preparing the statement.
+     */
+    private CompletableFuture<PreparedStatement> getStatementFinal(Connection connection, String query, List<?> param)
+            throws SQLException {
         CompletableFuture<PreparedStatement> completableFuture = new CompletableFuture<>();
         PreparedStatement statement = connection.prepareStatement(query);
         try {
@@ -53,11 +96,21 @@ public class DatabaseLoader {
                 }
             }
         } finally {
+            // Ensure the statement is always completed in the future
             completableFuture.complete(statement);
         }
         return completableFuture;
     }
 
+    /**
+     * Inserts a value into the {@link PreparedStatement} at the specified parameter index,
+     * supporting multiple data types.
+     *
+     * @param i the parameter index.
+     * @param statement the {@link PreparedStatement} where the value will be inserted.
+     * @param value the value to set in the statement parameter.
+     * @throws SQLException if an error occurs while setting the parameter value.
+     */
     private void insertStatement(int i, PreparedStatement statement, Object value) throws SQLException {
         switch (value) {
             case byte[] valueBytes -> statement.setBytes(i, valueBytes);
@@ -83,6 +136,15 @@ public class DatabaseLoader {
         }
     }
 
+    /**
+     * Executes an SQL query that may return a result set.
+     *
+     * @param connection the active SQL {@link Connection}.
+     * @param query the SQL query string to be executed.
+     * @param param a list of parameters (in the correct order) to be bound to the query.
+     * @return a {@link ResultSet} if the query returns a result, or {@code null} otherwise.
+     * @throws SQLException if an error occurs during the SQL execution.
+     */
     public @Nullable ResultSet execute(Connection connection, String query, List<?> param) throws SQLException {
         PreparedStatement statement = this.getStatementFinal(connection, query, param).join();
         boolean hasResult = statement.execute();
