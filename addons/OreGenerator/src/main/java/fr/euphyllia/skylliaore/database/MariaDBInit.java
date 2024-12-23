@@ -16,8 +16,7 @@ public class MariaDBInit extends DatabaseInitializeQuery {
             CREATE TABLE IF NOT EXISTS `%s`.`generators` (
             `island_id` CHAR(36) NOT NULL,
             `generator_id` VARCHAR(255) NOT NULL,
-            PRIMARY KEY (`island_id`),
-            UNIQUE (`generator_id`)
+            PRIMARY KEY (`island_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
     private static DatabaseLoader database;
