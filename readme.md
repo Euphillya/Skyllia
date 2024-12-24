@@ -114,9 +114,9 @@ Each island is generated in a single region file, with configurable region dista
 
 ## Addons
 
-- [SkylliaOre](https://github.com/Euphillya/Skyllia-Ore) by Euphyllia (Ore Generator)
-- [Insight Skyllia](https://github.com/Euphillya/Insights-Skyllia) by Euphyllia
-- [PAPI Skyllia](https://github.com/Euphillya/Skyllia-PAPI) by Euphyllia
+- [SkylliaOre](https://github.com/Euphillya/Skyllia/tree/dev/addons/OreGenerator) by Euphyllia (Ore Generator)
+- [Insight Skyllia](https://github.com/Euphillya/Skyllia/tree/dev/addons/InsightsSkyllia) by Euphyllia
+- [PAPI Skyllia](https://github.com/Euphillya/Skyllia/tree/dev/addons/PapiSkyllia) by Euphyllia
 
 ## Contribution
 

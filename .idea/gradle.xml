@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/addons" />
+            <option value="$PROJECT_DIR$/addons/InsightsSkyllia" />
             <option value="$PROJECT_DIR$/addons/OreGenerator" />
             <option value="$PROJECT_DIR$/addons/PapiSkyllia" />
             <option value="$PROJECT_DIR$/api" />

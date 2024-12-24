@@ -16,6 +16,11 @@ tasks {
     compileJava {
         options.encoding = "UTF-8"
     }
+    javadoc {
+        val standardOptions = options as StandardJavadocDocletOptions
+        // Désactive les vérifications strictes sur la Javadoc
+        standardOptions.addStringOption("Xdoclint:none", "-quiet")
+    }
 }
 
 publishing {
