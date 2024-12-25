@@ -1,0 +1,85 @@
+name: Bug Report / Rapport de Bug
+description: Report a bug encountered with Skyllia / Signalez un bug rencontré avec Skyllia
+title: "[Bug Report] Brief description of the issue / Brève description du problème"
+labels: bug
+assignees: Euphillya
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **English Version**
+
+        Please provide the following information to help us diagnose the issue:
+
+        **Version Française**
+
+        Veuillez fournir les informations suivantes pour nous aider à diagnostiquer le problème :
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version / Version du Plugin
+      description: |
+        **English:** Output of `/version Skyllia` command.
+
+        **Français :** Résultat de la commande `/version Skyllia`.
+      placeholder: "e.g., Skyllia version 1.2.3"
+    validations:
+      required: true
+  - type: textarea
+    id: addons-used
+    attributes:
+      label: Addons Used / Addons Utilisés
+      description: |
+        **English:** List all Skyllia addons you are using.
+
+        **Français :** Listez tous les addons Skyllia que vous utilisez.
+      placeholder: "e.g., OreGenerator, PapiSkyllia"
+    validations:
+      required: true
+  - type: textarea
+    id: other-plugins
+    attributes:
+      label: Other Plugins / Autres Plugins
+      description: |
+        **English:** List all other plugins installed on your server.
+
+        **Français :** Listez tous les autres plugins installés sur votre serveur.
+      placeholder: "e.g., EssentialsX, WorldEdit"
+    validations:
+      required: true
+  - type: input
+    id: server-version
+    attributes:
+      label: Server Version / Version du Serveur
+      description: |
+        **English:** Output of `/version` command.
+
+        **Français :** Résultat de la commande `/version`.
+      placeholder: "e.g., Paper version git-Paper-123 (MC: 1.21.1)"
+    validations:
+      required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description / Description du Bug
+      description: |
+        **English:** Describe the bug in detail, including steps to reproduce.
+
+        **Français :** Décrivez le bug en détail, y compris les étapes pour le reproduire.
+      placeholder: "e.g., When I use the /skyllia command, the server crashes."
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      description: |
+        **English:** Please confirm the following:
+
+        **Français :** Veuillez confirmer les points suivants :
+      options:
+        - label: |
+            **English:** I am not using Spigot; my server is running a Minecraft version higher than 1.20.
+
+            **Français :** Je n'utilise pas Spigot ; mon serveur fonctionne avec une version de Minecraft supérieure à la 1.20.
+          required: true
