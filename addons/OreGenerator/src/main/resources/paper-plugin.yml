@@ -9,11 +9,11 @@ loader: fr.euphyllia.skylliaore.OreLoader
 dependencies:
   server:
     Skyllia:
-      load: OMIT
+      load: BEFORE
       required: true
       join-classpath: true
     Oraxen:
-      load: OMIT
+      load: BEFORE
       required: false
       join-classpath: true
 

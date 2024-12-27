@@ -7,6 +7,6 @@ folia-supported: true
 dependencies:
   server:
     Skyllia:
-      load: OMIT
+      load: BEFORE
       required: true
       join-classpath: true
