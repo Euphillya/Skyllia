@@ -1,7 +1,7 @@
 name: SkylliaOre
 version: '${version}'
 main: fr.euphyllia.skylliaore.Main
-api-version: '1.20'
+api-version: 1.20.1
 authors: [ Euphyllia ]
 folia-supported: true
 loader: fr.euphyllia.skylliaore.OreLoader
