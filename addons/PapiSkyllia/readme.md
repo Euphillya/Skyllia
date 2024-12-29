@@ -40,11 +40,6 @@ This system utilizes **PlaceholderAPI (PAPI)** to manage placeholders via the cu
    - Run the command `/papi reload` to reload PlaceholderAPI and detect new expansions.
    - Verify that the Skyllia expansion is registered using `/papi list`.
 
-5. **Check Available Placeholders:**
-
-   - Use the command `/papi ecloud list` to list available expansions.
-   - If necessary, install the Skyllia expansion via `/papi ecloud download Skyllia`, then `/papi reload`.
-
 ### Optional: Integrate Skyllia-Ore
 
 **Skyllia-Ore** is an optional plugin that extends Skyllia by adding a placeholder for ore generators. You can find it on [GitHub](https://github.com/Euphillya/Skyllia-Ore).
