@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.entity.PlayerFolia;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
@@ -26,17 +27,14 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateSubCommand implements SubCommandInterface {
@@ -54,7 +52,7 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         CommandCacheExecution.addCommandExecute(player.getUniqueId(), "create");
-        if (!player.hasPermission("skyllia.island.command.create")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.create")) {
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
@@ -84,7 +82,7 @@ public class CreateSubCommand implements SubCommandInterface {
                     return true;
                 }
 
-                if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
+                if (!PermissionImp.hasPermission(sender, "skyllia.island.command.create.%s".formatted(schemKey))) {
                     LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                     CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
                     return true;

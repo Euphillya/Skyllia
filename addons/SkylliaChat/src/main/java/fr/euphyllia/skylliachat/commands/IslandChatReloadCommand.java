@@ -1,14 +1,12 @@
 package fr.euphyllia.skylliachat.commands;
 
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skylliachat.Main;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +21,7 @@ public class IslandChatReloadCommand implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skylliachat.reload")) {
+        if (!PermissionImp.hasPermission(sender, "skylliachat.reload")) {
             LanguageToml.sendMessage(sender, "<red>You are not a permission to execute this commands.");
             return true;
         }

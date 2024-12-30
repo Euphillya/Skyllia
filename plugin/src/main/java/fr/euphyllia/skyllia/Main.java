@@ -1,7 +1,5 @@
 package fr.euphyllia.skyllia;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
@@ -28,7 +26,6 @@ import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -43,8 +40,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin {
@@ -192,8 +187,8 @@ public class Main extends JavaPlugin {
         LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-            commands.register("skyllia", "some help description string", List.of("is"), new SkylliaCommand(this));
-            commands.register("skylliaadmin", "some help description string", List.of("isadmin"), new SkylliaAdminCommand(this));
+            commands.register("skyllia", "Islands commands", List.of("is"), new SkylliaCommand(this));
+            commands.register("skylliaadmin", "Administrator commands", List.of("isadmin"), new SkylliaAdminCommand(this));
         });
     }
 }

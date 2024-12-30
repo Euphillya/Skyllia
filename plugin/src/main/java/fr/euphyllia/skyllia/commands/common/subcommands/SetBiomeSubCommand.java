@@ -2,7 +2,7 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -22,16 +22,13 @@ import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +46,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.biome")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome")) {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
@@ -71,7 +68,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.biome.%s".formatted(biomesImpl.getNameBiome(biome)))) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biomesImpl.getNameBiome(biome)))) {
             LanguageToml.sendMessage(player, LanguageToml.messageBiomePermissionDenied.formatted(selectBiome));
             return true;
         }
@@ -135,7 +132,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 String messageToSend;
 
                 if (args.length >= 2 && args[1].equalsIgnoreCase("island")
-                        && player.hasPermission("skyllia.island.command.biome_island")) {
+                        && PermissionImp.hasPermission(player, "skyllia.island.command.biome_island")) {
 
                     changeBiomeFuture = WorldEditUtils.changeBiomeIsland(world, biome, island);
                     messageToSend = LanguageToml.messageBiomeIslandChangeSuccess;
@@ -173,8 +170,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             String partial = args[0].trim().toLowerCase();
 
             return Main.getPlugin(Main.class).getInterneAPI().getBiomesImpl().getBiomeNameList().stream()
-                    .filter(biome -> sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome)))
-                    // Filtre en fonction de la saisie partielle
+                    .filter(biome -> PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biome)))
                     .filter(biome -> biome.toLowerCase().startsWith(partial))
                     .toList();
         }
@@ -184,7 +180,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             List<String> options = new ArrayList<>();
             options.add("chunk");
-            if (sender.hasPermission("skyllia.island.command.biome_island")) {
+            if (PermissionImp.hasPermission(sender, "skyllia.island.command.biome_island")) {
                 options.add("island");
             }
 

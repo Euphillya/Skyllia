@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.entity;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +31,7 @@ public class DamageEvent implements Listener {
         if (!(event.getDamager() instanceof Player damager)) {
             return;
         }
-        if (damager.hasPermission("skyllia.damage.entity.bypass")) {
+        if (PermissionImp.hasPermission(damager, "skyllia.damage.entity.bypass")) {
             return;
         }
         if (event.getEntity() instanceof Player) {

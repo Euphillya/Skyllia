@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +33,7 @@ public class InteractEvent implements Listener {
 
         Player player = event.getPlayer();
 
-        if (player.hasPermission("skyllia.interact.bypass")) {
+        if (PermissionImp.hasPermission(player, "skyllia.interact.bypass")) {
             return;
         }
 
@@ -62,7 +63,7 @@ public class InteractEvent implements Listener {
         if (event.isCancelled()) return;
 
         Player player = event.getPlayer();
-        if (player.hasPermission("skyllia.interact_entity.bypass")) {
+        if (PermissionImp.hasPermission(player, "skyllia.interact_entity.bypass")) {
             return;
         }
         ListenersUtils.checkPermission(event.getRightClicked().getLocation(), player, PermissionsIsland.INTERACT_ENTITIES, event);
@@ -73,7 +74,7 @@ public class InteractEvent implements Listener {
         if (event.isCancelled()) return;
 
         Player player = event.getPlayer();
-        if (player.hasPermission("skyllia.interact_entity.bypass")) {
+        if (PermissionImp.hasPermission(player, "skyllia.interact_entity.bypass")) {
             return;
         }
         ListenersUtils.checkPermission(event.getRightClicked().getLocation(), player, PermissionsIsland.INTERACT_ENTITIES, event);

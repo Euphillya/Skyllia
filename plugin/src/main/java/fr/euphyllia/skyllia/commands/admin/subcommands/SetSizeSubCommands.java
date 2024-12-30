@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -9,14 +10,15 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,7 +28,7 @@ public class SetSizeSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.setsize")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.setsize")) {
             LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
@@ -77,7 +79,7 @@ public class SetSizeSubCommands implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.setsize")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.setsize")) {
             return Collections.emptyList();
         }
 

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -19,14 +20,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.nio.Buffer;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +42,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(player, LanguageToml.messageWarpCommandNotEnoughArgs);
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.setwarp")) {
+        if (!PermissionImp.hasPermission(player, "skyllia.island.command.setwarp")) {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }

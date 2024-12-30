@@ -56,6 +56,7 @@ public class ConfigToml {
     public static boolean changeGameModeWhenTeleportIsland = true;
     public static @Nullable Location spawnWorld = null;
     public static boolean preventDeletionIfHasMembers = false;
+    public static boolean debug_permission = false;
     private static boolean verbose;
 
     public static void init(File configFile) {
@@ -324,5 +325,9 @@ public class ConfigToml {
             float pitch = getDouble("settings.spawn.pitch", 0.0).floatValue();
             spawnWorld = new Location(Bukkit.getWorld(worldName), blockX, blockY, blockZ, yaw, pitch);
         }
+    }
+
+    private static void debug() {
+        debug_permission = getBoolean("debug.permission", debug_permission);
     }
 }

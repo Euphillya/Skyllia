@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -17,15 +18,12 @@ import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class AccessSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.access")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.access")) {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
@@ -72,7 +70,7 @@ public class AccessSubCommand implements SubCommandInterface {
                 ConfigToml.worldConfigs.forEach(worldConfig -> {
                     RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
                         Player playerInIsland = (Player) entity;
-                        if (playerInIsland.hasPermission("skyllia.island.command.access.bypass")) return;
+                        if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
                         Runnable teleportPlayerRun = () -> {
                             Players players = island.getMember(playerInIsland.getUniqueId());
                             if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {

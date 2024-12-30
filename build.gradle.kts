@@ -54,7 +54,7 @@ allprojects {
         compileOnly("com.electronwill.night-config:toml:3.8.1")
         compileOnly("com.google.guava:guava:33.3.1-jre")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
-        implementation("com.mojang:brigadier:1.0.18")
+        compileOnly("com.mojang:brigadier:1.0.18")
     }
 
     tasks {

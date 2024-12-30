@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
@@ -15,12 +16,10 @@ import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +39,7 @@ public class DelWarpSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(player, LanguageToml.messageWarpCommandNotEnoughArgs);
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.delwarp")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.delwarp")) {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
@@ -87,7 +86,7 @@ public class DelWarpSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (sender.hasPermission("skyllia.island.command.delwarp") && sender instanceof Player player) {
+        if (PermissionImp.hasPermission(sender, "skyllia.island.command.delwarp") && sender instanceof Player player) {
             if (args.length == 1) {
                 String partial = args[0].trim().toLowerCase();
                 List<String> warpList = CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());

@@ -1,12 +1,12 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.utils.TPSFormatter;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -23,7 +23,7 @@ public class TPSSubCommand implements SubCommandInterface {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.tps")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.tps")) {
             LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }

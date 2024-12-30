@@ -51,7 +51,7 @@ import org.jetbrains.annotations.NotNull;
  *         }
  *
  *         // Example 3: Preventing the world change under certain conditions
- *         if (player.hasPermission("skyblock.portal.override")) {
+ *         if (player.hasPedrmission("skyblock.portal.override")) {
  *             player.sendMessage("You do not have permission to change to this world.");
  *             event.setCancelled(true);
  *         }

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.admin;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
@@ -8,17 +9,15 @@ import fr.euphyllia.skyllia.commands.admin.subcommands.ForceDeleteSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.ForceTransferSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.SetMaxMembersSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.SetSizeSubCommands;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 public class SkylliaAdminCommand implements SkylliaCommandInterface {
 
@@ -33,7 +32,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
 
     @Override
     public void execute(CommandSourceStack sender, String @NotNull [] args) {
-        if (!sender.getSender().hasPermission("skyllia.admins.commands")) {
+        if (!PermissionImp.hasPermission(sender.getSender(), "skyllia.admins.commands")) {
             LanguageToml.sendMessage(sender.getSender(), LanguageToml.messagePlayerPermissionDenied);
             return;
         }

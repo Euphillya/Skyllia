@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.blocks;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +26,7 @@ public class BlockEvent implements Listener {
     public void onBlockBreakOnIsland(final BlockBreakEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
-        if (player.hasPermission("skyllia.player.break.bypass")) return;
+        if (PermissionImp.hasPermission(player, "skyllia.player.break.bypass")) return;
         ListenersUtils.checkPermission(event.getBlock().getLocation(), player, PermissionsIsland.BLOCK_BREAK, event);
     }
 
@@ -33,7 +34,7 @@ public class BlockEvent implements Listener {
     public void onBlockPlaceOnIsland(final BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
-        if (player.hasPermission("skyllia.player.place.bypass")) return;
+        if (PermissionImp.hasPermission(player, "skyllia.player.place.bypass")) return;
         ListenersUtils.checkPermission(event.getBlock().getLocation(), player, PermissionsIsland.BLOCK_PLACE, event);
     }
 }

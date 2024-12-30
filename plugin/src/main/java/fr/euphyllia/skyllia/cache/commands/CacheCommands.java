@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.cache.commands;
 
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
@@ -19,7 +20,8 @@ public class CacheCommands {
                     new com.google.common.cache.CacheLoader<>() {
                         @Override
                         public @NotNull Boolean load(@NotNull CreateCacheCommandsTabs createCacheCommandsTabs) {
-                            return createCacheCommandsTabs.commandSender.hasPermission("skyllia.island.command.create.%s".formatted(createCacheCommandsTabs.key));
+                            CommandSender sender = createCacheCommandsTabs.commandSender;
+                            return PermissionImp.hasPermission(sender, "skyllia.island.command.create.%s".formatted(createCacheCommandsTabs.key));
                         }
                     }
             );

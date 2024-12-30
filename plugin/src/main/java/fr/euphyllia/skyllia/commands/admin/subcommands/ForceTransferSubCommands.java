@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -12,14 +13,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +30,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.transfer")) {
             LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
             return true;
         }
@@ -121,7 +119,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.transfer")) {
             return Collections.emptyList();
         }
 

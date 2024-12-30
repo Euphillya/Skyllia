@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
@@ -35,7 +36,7 @@ public class TeleportEvent implements Listener {
     @EventHandler
     public void onPlayerHasAccessIsland(final PlayerTeleportEvent event) {
         if (event.isCancelled()) return;
-        if (event.getPlayer().hasPermission("skyllia.island.command.visit.bypass")) return;
+        if (PermissionImp.hasPermission(event.getPlayer(), "skyllia.island.command.visit.bypass")) return;
         Location to = event.getTo();
         Runnable task = () -> {
             World world = to.getWorld();

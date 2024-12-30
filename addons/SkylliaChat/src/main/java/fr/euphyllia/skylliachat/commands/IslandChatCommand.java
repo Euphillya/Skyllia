@@ -1,15 +1,13 @@
 package fr.euphyllia.skylliachat.commands;
 
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skylliachat.Main;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +26,7 @@ public class IslandChatCommand implements SubCommandInterface {
             LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
             return true;
         }
-        if (!sender.hasPermission("skylliachat.use")) {
+        if (!PermissionImp.hasPermission(sender, "skylliachat.use")) {
             LanguageToml.sendMessage(sender, "<red>You are not a permission to execute this commands.");
             return true;
         }
