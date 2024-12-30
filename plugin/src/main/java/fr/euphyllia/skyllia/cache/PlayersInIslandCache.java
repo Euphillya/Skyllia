@@ -47,6 +47,9 @@ public class PlayersInIslandCache {
     }
 
     public static void add(UUID islandId, CopyOnWriteArrayList<Players> members) {
+        if (members == null) {
+            members = new CopyOnWriteArrayList<>();
+        }
         listPlayersInIsland.put(islandId, members);
     }
 
