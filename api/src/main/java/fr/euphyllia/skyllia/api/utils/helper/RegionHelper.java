@@ -11,142 +11,166 @@ import java.util.List;
  * Provides helper methods for working with regions and positions in a Minecraft world.
  */
 public class RegionHelper {
-    private static final double OFFSET = 256D;
 
     /**
-     * Gets the center location of a region in the specified world.
-     *
-     * @param w The world.
-     * @param regionX The X coordinate of the region.
-     * @param regionZ The Z coordinate of the region.
-     * @return The center location of the region.
+     * Half the region size in blocks (512 / 2 = 256).
+     * <p>Used as an offset to find the center of a region.</p>
      */
-    public static Location getCenterRegion(World w, int regionX, int regionZ) {
-        double rx = (regionX << 9) + OFFSET;
-        double rz = (regionZ << 9) + OFFSET;
-        return new Location(w, rx, 0.0d, rz);
+    private static final double REGION_HALF_SIZE = 256.0D;
+
+    /**
+     * Gets the center {@link Location} of a region in the specified world.
+     * <p>A region is 512 blocks wide, so shifting {@code regionX} and {@code regionZ} by 9 bits (<< 9)
+     * multiplies them by 512. Adding {@code REGION_HALF_SIZE} (256) positions us in the center.</p>
+     *
+     * @param world   The target {@link World}.
+     * @param regionX The region's X coordinate.
+     * @param regionZ The region's Z coordinate.
+     * @return The center location of the region (with Y=0).
+     */
+    public static Location getCenterRegion(World world, int regionX, int regionZ) {
+        double centerBlockX = (regionX << 9) + REGION_HALF_SIZE; // regionX * 512 + 256
+        double centerBlockZ = (regionZ << 9) + REGION_HALF_SIZE; // regionZ * 512 + 256
+        return new Location(world, centerBlockX, 0.0D, centerBlockZ);
     }
 
     /**
      * Gets the center chunk position of a region.
+     * <p>This calculates the block center of the region, then converts it to chunk coordinates
+     * by shifting right by 4 (i.e., dividing by 16).</p>
      *
-     * @param regionX The X coordinate of the region.
-     * @param regionZ The Z coordinate of the region.
-     * @return The center chunk position of the region.
+     * @param regionX The region's X coordinate.
+     * @param regionZ The region's Z coordinate.
+     * @return A {@link Position} representing the chunk coordinates of the region center.
      */
-    public static Position getChunkCenterRegion(int regionX, int regionZ) {
-        int chunkX = (regionX << 9) + (int) OFFSET;
-        int chunkZ = (regionZ << 9) + (int) OFFSET;
-
-        return new Position(chunkX >> 4, chunkZ >> 4);
+    public static Position getCenterChunkOfRegion(int regionX, int regionZ) {
+        int centerBlockX = (regionX << 9) + (int) REGION_HALF_SIZE;
+        int centerBlockZ = (regionZ << 9) + (int) REGION_HALF_SIZE;
+        // Convert block coords to chunk coords (>> 4 means /16)
+        return new Position(centerBlockX >> 4, centerBlockZ >> 4);
     }
 
     /**
-     * Gets the region position from chunk coordinates.
+     * Gets the region position (regionX, regionZ) from the given chunk coordinates.
+     * <p>A single region is 32 chunks wide, so shifting right by 5 (>> 5) effectively
+     * does {@code chunkCoord / 32}.</p>
      *
-     * @param chunkX The X coordinate of the chunk.
-     * @param chunkZ The Z coordinate of the chunk.
-     * @return The region position.
+     * @param chunkX The chunk's X coordinate.
+     * @param chunkZ The chunk's Z coordinate.
+     * @return A {@link Position} (regionX, regionZ).
      */
-    public static Position getRegionInChunk(int chunkX, int chunkZ) {
-        int regionX = chunkX >> 5;
-        int regionZ = chunkZ >> 5;
+    public static Position getRegionFromChunk(int chunkX, int chunkZ) {
+        int regionX = chunkX >> 5; // chunkX / 32
+        int regionZ = chunkZ >> 5; // chunkZ / 32
         return new Position(regionX, regionZ);
     }
 
     /**
-     * Gets the region position from a chunk position.
+     * Overload for {@link #getRegionFromChunk(int, int)} using a {@link Position} for chunk coordinates.
      *
-     * @param chunk The chunk position.
-     * @return The region position.
+     * @param chunk A {@link Position} representing chunk coordinates.
+     * @return The corresponding region {@link Position}.
      */
-    public static Position getRegionInChunk(Position chunk) {
-        return getRegionInChunk(chunk.x(), chunk.z());
+    public static Position getRegionFromChunk(Position chunk) {
+        return getRegionFromChunk(chunk.x(), chunk.z());
     }
 
     /**
-     * Gets the region position from location coordinates.
+     * Gets the region position from absolute block coordinates.
+     * <p>This first converts blocks to chunk coordinates (>> 4), then chunk to region (>> 5).
+     * This is effectively {@code (locX >> 4) >> 5}, i.e. {@code locX >> 9}.</p>
      *
-     * @param locX The X coordinate of the location.
-     * @param locZ The Z coordinate of the location.
-     * @return The region position.
+     * @param blockX The absolute block X coordinate.
+     * @param blockZ The absolute block Z coordinate.
+     * @return The corresponding region {@link Position}.
      */
-    public static Position getRegionWithLocation(int locX, int locZ) {
-        return getRegionInChunk(locX >> 4, locZ >> 4);
+    public static Position getRegionFromBlock(int blockX, int blockZ) {
+        // Convert block -> chunk -> region
+        return getRegionFromChunk(blockX >> 4, blockZ >> 4);
     }
 
     /**
-     * Checks if a block is within a specified radius of a center location.
+     * Checks if a block is within a square region (bounding box) centered on a given location.
      *
-     * @param center The center location.
-     * @param blockX The X coordinate of the block.
-     * @param blockZ The Z coordinate of the block.
-     * @param radius The radius to check within.
-     * @return True if the block is within the radius, false otherwise.
+     * <p>Note that this method checks coordinates within a "square" region (bounding box)</p>
+     *
+     * @param center   The center {@link Location}.
+     * @param blockX   The block's X coordinate.
+     * @param blockZ   The block's Z coordinate.
+     * @param halfSize Half the side length of the bounding box.
+     * @return {@code true} if the block is within the square bounds; {@code false} otherwise.
      */
-    public static boolean isBlockWithinRadius(Location center, int blockX, int blockZ, double radius) {
+    public static boolean isBlockWithinSquare(Location center, int blockX, int blockZ, double halfSize) {
         int centerX = center.getBlockX();
         int centerZ = center.getBlockZ();
 
-        return Math.abs(centerX - blockX) <= radius && Math.abs(centerZ - blockZ) <= radius;
+        return Math.abs(centerX - blockX) <= halfSize && Math.abs(centerZ - blockZ) <= halfSize;
     }
 
     /**
-     * Gets a list of regions within a specified block radius of a position.
+     * Gets a list of all region positions within a given block range from the specified region.
+     * <p>This uses a bounding-box approach, not a strict circle. It shifts the region center back
+     * to block coordinates, adjusts by {@link #REGION_HALF_SIZE}, and divides by 512 (<< 9) to find
+     * how many regions fit in that range.</p>
      *
-     * @param position The center position.
-     * @param blockRadius The block radius.
-     * @return A list of regions within the radius.
+     * @param regionX    The region's X coordinate.
+     * @param regionZ    The region's Z coordinate.
+     * @param blockRange The range in blocks around the region center.
+     * @return A list of {@link Position} objects representing all regions in that bounding range.
      */
-    public static List<Position> getRegionsInRadius(Position position, int blockRadius) {
-        return getRegionsInRadius(position.x(), position.z(), blockRadius);
-    }
+    public static List<Position> getRegionsWithinBlockRange(int regionX, int regionZ, int blockRange) {
+        int centerBlockX = (regionX << 9) + (int) REGION_HALF_SIZE;
+        int centerBlockZ = (regionZ << 9) + (int) REGION_HALF_SIZE;
 
-    /**
-     * Gets a list of regions within a specified block radius of a region.
-     *
-     * @param regionX The X coordinate of the region.
-     * @param regionZ The Z coordinate of the region.
-     * @param blockRadius The block radius.
-     * @return A list of regions within the radius.
-     */
-    public static List<Position> getRegionsInRadius(int regionX, int regionZ, int blockRadius) {
-        int centerBlockX = (regionX << 9) + (int) 256D;
-        int centerBlockZ = (regionZ << 9) + (int) 256D;
+        // Convert (blockRange + regionHalfSize) to a region-based radius
+        int regionRadius = (blockRange + (int) REGION_HALF_SIZE) >> 9; // /512
 
         List<Position> regions = new ArrayList<>();
-        int regionRadius = (blockRadius + (int) 256D) >> 9;
-
         for (int x = -regionRadius; x <= regionRadius; x++) {
             for (int z = -regionRadius; z <= regionRadius; z++) {
-                int regionXCoord = (centerBlockX >> 9) + x;
-                int regionZCoord = (centerBlockZ >> 9) + z;
-                regions.add(new Position(regionXCoord, regionZCoord));
+                int neighborRegionX = (centerBlockX >> 9) + x; // re-convert block -> region
+                int neighborRegionZ = (centerBlockZ >> 9) + z; // re-convert block -> region
+                regions.add(new Position(neighborRegionX, neighborRegionZ));
             }
         }
-
         return regions;
     }
 
     /**
-     * Gets the total number of chunks within a specified radius.
+     * Overload of {@link #getRegionsWithinBlockRange(int, int, int)} that takes a {@link Position} for the region.
      *
-     * @param rayon The radius in blocks.
-     * @return The total number of chunks.
+     * @param position   A {@link Position} representing the region coordinates.
+     * @param blockRange The range in blocks around the region center.
+     * @return A list of {@link Position} objects representing all regions in that bounding range.
      */
-    public static int getNumberChunkTotalInRayon(int rayon) {
-        int chunksParCote = (rayon << 1) >> 4; // (rayon * 2) / 16
-        return chunksParCote * chunksParCote;
+    public static List<Position> getRegionsWithinBlockRange(Position position, int blockRange) {
+        return getRegionsWithinBlockRange(position.x(), position.z(), blockRange);
     }
 
     /**
-     * Gets the total number of chunks within a specified perimeter.
+     * Calculates the total number of chunks in a square region of side length {@code 2 * blockRadius}.
+     * <p>It converts the block-based radius to chunks by shifting right by 4 (i.e., dividing by 16),
+     * then squares that value.</p>
      *
-     * @param perimeter The perimeter in blocks.
-     * @return The total number of chunks.
+     * @param blockRadius The radius in blocks.
+     * @return The total number of chunks in the resulting (2 * radius) x (2 * radius) bounding box.
      */
-    public static int getNumberChunkTotalInPerimeter(int perimeter) {
-        int chunksParCote = perimeter >> 4; // perimeter / 16
-        return chunksParCote * chunksParCote;
+    public static int getTotalChunksInBlockRadius(int blockRadius) {
+        // (blockRadius * 2) >> 4 => (blockRadius * 2) / 16 => blockRadius / 8
+        int chunksPerSide = (blockRadius << 1) >> 4;
+        return chunksPerSide * chunksPerSide;
+    }
+
+    /**
+     * Calculates the total number of chunks in a square region of side length {@code perimeter}.
+     * <p>It converts the perimeter in blocks to chunks by shifting right by 4 (dividing by 16),
+     * then squares that value.</p>
+     *
+     * @param blockPerimeter The perimeter (in blocks).
+     * @return The total number of chunks in the (perimeter x perimeter) bounding box.
+     */
+    public static int getTotalChunksInBlockPerimeter(int blockPerimeter) {
+        int chunksPerSide = blockPerimeter >> 4; // blockPerimeter / 16
+        return chunksPerSide * chunksPerSide;
     }
 }

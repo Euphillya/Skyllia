@@ -70,7 +70,7 @@ public final class APISkyllia implements SkylliaImplementation {
 
     @Override
     public @Nullable Island getIslandByChunk(Chunk chunk) {
-        Position position = RegionHelper.getRegionInChunk(chunk.getX(), chunk.getZ());
+        Position position = RegionHelper.getRegionFromChunk(chunk.getX(), chunk.getZ());
         return PositionIslandCache.getIsland(position);
     }
 

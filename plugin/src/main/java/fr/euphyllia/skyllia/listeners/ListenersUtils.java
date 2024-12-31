@@ -21,84 +21,114 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ListenersUtils {
-    public static @Nullable Island checkGameRuleIsland(Location location, GameRuleIsland gamerule, Cancellable cancellable) {
-        Chunk chunk = location.getChunk();
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(chunk.getWorld().getName()))) {
-            return null;
-        }
-        Island island = checkChunkIsIsland(chunk, cancellable);
+
+    private ListenersUtils() {
+
+    }
+
+    /**
+     * Checks if a given {@link Location} is within an island, validates the specified {@link GameRuleIsland},
+     * and cancels the event if needed. If the world is not a Skyblock world, returns {@code null}.
+     *
+     * @param location    The {@link Location} to check.
+     * @param gameRule    The {@link GameRuleIsland} to validate.
+     * @param cancellable The event that can be cancelled.
+     * @return The {@link Island} if valid, or {@code null} if the location is not in a Skyblock world.
+     */
+    public static @Nullable Island checkGameRuleIsland(Location location, GameRuleIsland gameRule, Cancellable cancellable) {
+        Island island = getIslandFromLocation(location, cancellable);
         if (island == null) {
             return null;
         }
-        Position islandOriginPosition = island.getPosition();
-        if (checkBlockInIsland(islandOriginPosition, location, island.getSize(), cancellable)) {
+
+        if (isBlockOutsideIsland(island, location, cancellable)) {
             return island;
         }
-        long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
 
+        long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
         PermissionManager permissionManager = new PermissionManager(permissionChecker);
-        if (permissionManager.hasPermission(gamerule.getPermissionValue())) {
+
+        if (permissionManager.hasPermission(gameRule.getPermissionValue())) {
             cancellable.setCancelled(true);
-            return island;
         }
         return island;
     }
 
-    public static @Nullable Island checkPermission(Location location, Player player, Permissions permissionsIsland, Cancellable cancellable) {
-        Chunk chunk = location.getChunk();
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(chunk.getWorld().getName()))) {
-            return null;
-        }
-        Island island = checkChunkIsIsland(chunk, cancellable);
+    /**
+     * Checks if a given {@link Location} is within an island and if the specified {@link Player} has
+     * the required {@link Permissions} to perform an action. Cancels the event if the conditions are not met.
+     *
+     * @param location          The {@link Location} to check.
+     * @param player            The {@link Player} performing the action.
+     * @param permissionsIsland The {@link Permissions} that need to be validated.
+     * @param cancellable       The event that can be cancelled.
+     * @return The {@link Island} if valid, or {@code null} if the location is not in a Skyblock world.
+     */
+    public static @Nullable Island checkPermission(@NotNull Location location, Player player, Permissions permissionsIsland, Cancellable cancellable) {
+        Island island = getIslandFromLocation(location, cancellable);
         if (island == null) {
             return null;
         }
-        Position islandOriginPosition = island.getPosition();
-        if (checkBlockInIsland(islandOriginPosition, location, island.getSize(), cancellable)) {
+
+        if (isBlockOutsideIsland(island, location, cancellable)) {
             return island;
         }
-        Players players = PlayersInIslandCache.getPlayers(island.getId(), player.getUniqueId());
-        if (players.getRoleType().equals(RoleType.OWNER)) return island;
-        if (players.getRoleType().equals(RoleType.BAN)) {
+
+        Players playersInIsland = PlayersInIslandCache.getPlayers(island.getId(), player.getUniqueId());
+
+        if (playersInIsland.getRoleType().equals(RoleType.OWNER)) {
+            return island;
+        }
+        if (playersInIsland.getRoleType().equals(RoleType.BAN)) {
             cancellable.setCancelled(true);
             return island;
         }
+
         PermissionRoleIsland permissionRoleIsland;
         if (PlayersInIslandCache.playerIsTrustedInIsland(island.getId(), player.getUniqueId())) {
-            permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(island.getId(), RoleType.MEMBER, permissionsIsland.getPermissionType());
+            permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(
+                    island.getId(), RoleType.MEMBER, permissionsIsland.getPermissionType()
+            );
         } else {
-            permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(island.getId(), players.getRoleType(), permissionsIsland.getPermissionType());
+            permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(
+                    island.getId(), playersInIsland.getRoleType(), permissionsIsland.getPermissionType()
+            );
         }
+
         PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
         if (!permissionManager.hasPermission(permissionsIsland)) {
             cancellable.setCancelled(true);
-            return island;
         }
         return island;
     }
 
-    public static Island checkChunkIsIsland(Chunk chunk, Cancellable cancellable) {
-        Position position = RegionHelper.getRegionInChunk(chunk.getX(), chunk.getZ());
+    /**
+     * Retrieves the {@link Island} from a given {@link Chunk}, cancelling the event if no island is found.
+     *
+     * @param chunk       The {@link Chunk} to check.
+     * @param cancellable The event that can be cancelled.
+     * @return The {@link Island} if found, or {@code null} otherwise.
+     */
+    public static @Nullable Island checkChunkIsIsland(Chunk chunk, Cancellable cancellable) {
+        Position position = RegionHelper.getRegionFromChunk(chunk.getX(), chunk.getZ());
         Island island = PositionIslandCache.getIsland(position);
         if (island == null) {
             cancellable.setCancelled(true); // Sécurité !
-            return null;
         }
         return island;
     }
 
-    public static boolean checkBlockInIsland(Position islandOriginPosition, Location location, double islandSize, Cancellable cancellable) {
-        if (!RegionHelper.isBlockWithinRadius(RegionHelper.getCenterRegion(location.getWorld(), islandOriginPosition.x(), islandOriginPosition.z()), location.getBlockX(), location.getBlockZ(), islandSize / 2)) {
-            cancellable.setCancelled(true); // ce n'est pas une ile.
-            return true;
-        }
-        return false;
-    }
-
-
+    /**
+     * Triggers a {@link PlayerPrepareChangeWorldSkyblockEvent} if the specified world is a Skyblock world.
+     *
+     * @param player     The {@link Player} transitioning to another world.
+     * @param portalType The type of portal being used.
+     * @param worldName  The name of the target world.
+     */
     public static void callPlayerPrepareChangeWorldSkyblockEvent(Player player, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, String worldName) {
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(worldName))) {
             return;
@@ -107,4 +137,45 @@ public class ListenersUtils {
         if (worldConfig == null) return;
         Bukkit.getPluginManager().callEvent(new PlayerPrepareChangeWorldSkyblockEvent(player, worldConfig, portalType));
     }
+
+    /**
+     * Checks whether a block is outside the island's boundaries. If it is outside, the event is cancelled.
+     *
+     * @param island      The {@link Island} in question.
+     * @param location    The {@link Location} to check.
+     * @param cancellable The event that can be cancelled.
+     * @return {@code true} if the block is outside the island boundaries, {@code false} otherwise.
+     */
+    public static boolean isBlockOutsideIsland(Island island, Location location, Cancellable cancellable) {
+        Position origin = island.getPosition();
+        double halfSize = island.getSize() / 2.0;
+        boolean outsideIsland = !RegionHelper.isBlockWithinSquare(
+                RegionHelper.getCenterRegion(location.getWorld(), origin.x(), origin.z()),
+                location.getBlockX(), location.getBlockZ(), halfSize);
+        if (outsideIsland) {
+            cancellable.setCancelled(true);
+        }
+        return outsideIsland;
+    }
+
+    /**
+     * Utility method that attempts to retrieve an {@link Island} based on a {@link Location}:
+     * <ul>
+     *     <li>Checks if the world is a Skyblock world</li>
+     *     <li>Checks if the chunk corresponds to a valid island</li>
+     * </ul>
+     *
+     * @param location    The {@link Location} to check.
+     * @param cancellable The event that can be cancelled.
+     * @return The {@link Island} if found, or {@code null} if not a Skyblock world or no island is found.
+     */
+    private static @Nullable Island getIslandFromLocation(Location location, Cancellable cancellable) {
+        Chunk chunk = location.getChunk();
+        String worldName = location.getWorld().getName();
+
+        if (!WorldUtils.isWorldSkyblock(worldName)) return null;
+        return checkChunkIsIsland(chunk, cancellable);
+    }
+
+
 }

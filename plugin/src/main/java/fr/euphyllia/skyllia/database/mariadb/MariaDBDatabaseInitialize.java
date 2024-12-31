@@ -1,13 +1,13 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
+import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.utils.RegionUtils;
+import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
-import fr.euphyllia.skyllia.utils.RegionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -167,7 +167,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         Runnable spiralTask = () -> {
             List<SpiralBatchInserter.IslandData> islandDataList = new ArrayList<>();
             for (int i = 1; i < ConfigToml.maxIsland; i++) {
-                Position position = RegionUtils.getPositionNewIsland(i);
+                Position position = RegionUtils.computeNewIslandRegionPosition(i);
                 islandDataList.add(new SpiralBatchInserter.IslandData(
                         i,
                         position.x() * distancePerIsland,

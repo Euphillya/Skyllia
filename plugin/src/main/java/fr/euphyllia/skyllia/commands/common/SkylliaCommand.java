@@ -5,17 +5,15 @@ import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.commands.common.subcommands.*;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 public class SkylliaCommand implements SkylliaCommandInterface {
 
@@ -87,5 +85,10 @@ public class SkylliaCommand implements SkylliaCommandInterface {
             }
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public @Nullable String permission() {
+        return null;
     }
 }

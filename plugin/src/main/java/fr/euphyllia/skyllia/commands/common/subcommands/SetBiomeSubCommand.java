@@ -117,7 +117,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             Position islandPosition = island.getPosition();
             player.getScheduler().run(plugin, pScheduler -> {
-                Position playerRegionPosition = RegionHelper.getRegionInChunk(
+                Position playerRegionPosition = RegionHelper.getRegionFromChunk(
                         playerLocation.getChunk().getX(), playerLocation.getChunk().getZ());
 
                 if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {

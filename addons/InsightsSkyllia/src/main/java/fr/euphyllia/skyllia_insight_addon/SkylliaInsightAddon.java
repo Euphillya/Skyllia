@@ -73,19 +73,19 @@ public class SkylliaInsightAddon implements InsightsAddon {
         public static List<Position> spiralStartCenter(Position islandRegion, double size) {
             List<Position> positions = new ArrayList<>();
 
-            Position chunk = RegionHelper.getChunkCenterRegion(islandRegion.x(), islandRegion.z());
+            Position chunk = RegionHelper.getCenterChunkOfRegion(islandRegion.x(), islandRegion.z());
             int cx = chunk.x();
             int cz = chunk.z();
             int x = 0, z = 0;
             int dx = 0, dz = -1;
             int maxI = (int) Math.pow((33 * ConfigToml.regionDistance), 2);
-            List<Position> islandPositionWithRadius = RegionHelper.getRegionsInRadius(islandRegion, (int) Math.round(size));
+            List<Position> islandPositionWithRadius = RegionHelper.getRegionsWithinBlockRange(islandRegion, (int) Math.round(size));
             List<Position> regionCleaned = new ArrayList<>();
 
             for (int i = 0; i < maxI; i++) {
                 if ((-size / 2 <= x) && (x <= size / 2) && (-size / 2 <= z) && (z <= size / 2)) {
                     Position chunkPos = new Position(cx + x, cz + z);
-                    Position region = RegionHelper.getRegionInChunk(chunkPos.x(), chunkPos.z());
+                    Position region = RegionHelper.getRegionFromChunk(chunkPos.x(), chunkPos.z());
                     if (islandPositionWithRadius.contains(region)) {
                         if (!regionCleaned.contains(region)) {
                             regionCleaned.add(region);

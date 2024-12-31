@@ -134,7 +134,7 @@ public class SkyblockEvent implements Listener {
     }
 
     @EventHandler
-    public void onSkyblockChangeGamerule(final SkyblockChangeGameRuleEvent event) {
+    public void onSkyblockChangeGameRule(final SkyblockChangeGameRuleEvent event) {
         this.api.getCacheManager().updateGameRuleCacheIsland(event.getIsland());
     }
 

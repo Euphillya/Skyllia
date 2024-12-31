@@ -81,7 +81,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
             player.getScheduler().run(plugin, aScheduled -> {
                 int regionLocX = playerLocation.getChunk().getX();
                 int regionLocZ = playerLocation.getChunk().getZ();
-                Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
+                Position playerRegionPosition = RegionHelper.getRegionFromChunk(regionLocX, regionLocZ);
 
                 if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                     LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);

@@ -46,7 +46,7 @@ public class ExpelSubCommand implements SubCommandInterface {
             int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
 
             Position islandPosition = island.getPosition();
-            Position playerRegionPosition = RegionHelper.getRegionInChunk(chunkLocX, chunkLocZ);
+            Position playerRegionPosition = RegionHelper.getRegionFromChunk(chunkLocX, chunkLocZ);
 
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                 if (!silent) LanguageToml.sendMessage(executor, LanguageToml.messageExpelPlayerFailedNotInIsland);

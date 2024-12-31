@@ -68,7 +68,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
             int regionLocZ = playerLocation.getChunk().getZ();
 
             try {
-                Position playerRegionPosition = RegionHelper.getRegionInChunk(regionLocX, regionLocZ);
+                Position playerRegionPosition = RegionHelper.getRegionFromChunk(regionLocX, regionLocZ);
                 if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                     LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
                     return;

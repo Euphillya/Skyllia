@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.blocks;
 import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -51,8 +50,7 @@ public class PistonEvent implements Listener {
             if (island == null) {
                 return;
             }
-            Position islandOriginPosition = island.getPosition();
-            if (ListenersUtils.checkBlockInIsland(islandOriginPosition, location, island.getSize(), event)) {
+            if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
                 return;
             }
         }
@@ -71,8 +69,7 @@ public class PistonEvent implements Listener {
             if (island == null) {
                 return;
             }
-            Position islandOriginPosition = island.getPosition();
-            if (ListenersUtils.checkBlockInIsland(islandOriginPosition, location, island.getSize(), event)) {
+            if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
                 return;
             }
         }

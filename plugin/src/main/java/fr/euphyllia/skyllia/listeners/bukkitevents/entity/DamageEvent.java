@@ -6,10 +6,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.NPC;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,25 +24,41 @@ public class DamageEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDamageEntity(final EntityDamageByEntityEvent event) {
-        if (event.isCancelled()) return;
-        if (!(event.getDamager() instanceof Player damager)) {
+        if (event.isCancelled()) {
             return;
         }
-        if (PermissionImp.hasPermission(damager, "skyllia.damage.entity.bypass")) {
-            return;
-        }
-        if (event.getEntity() instanceof Player) {
-            ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.PVP, event);
-        } else {
-            if (event.getEntity() instanceof Monster) {
-                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_MONSTER, event);
-            } else if (event.getEntity() instanceof Animals) {
-                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_ANIMAL, event);
-            } else if (event.getEntity() instanceof NPC) {
-                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_NPC, event);
-            } else {
-                ListenersUtils.checkPermission(event.getEntity().getLocation(), damager, PermissionsIsland.KILL_UNKNOWN_ENTITY, event);
+
+        Player damagerPlayer = null;
+
+        if (event.getDamager() instanceof Player directPlayer) {
+            damagerPlayer = directPlayer;
+        } else if (event.getDamager() instanceof Arrow arrow) {
+            if (arrow.getShooter() instanceof Player shooterPlayer) {
+                damagerPlayer = shooterPlayer;
             }
+        }
+
+        if (damagerPlayer == null) {
+            return;
+        }
+
+        if (PermissionImp.hasPermission(damagerPlayer, "skyllia.damage.entity.bypass")) {
+            return;
+        }
+
+        Entity target = event.getEntity();
+        if (target instanceof Player) {
+            ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.PVP, event);
+        } else if (target instanceof Monster) {
+            ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.KILL_MONSTER, event);
+        } else if (target instanceof Animals) {
+            ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.KILL_ANIMAL, event);
+        } else if (target instanceof NPC) {
+            ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.KILL_NPC, event);
+        } else if (target instanceof ItemFrame || target instanceof Painting) {
+            ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.BLOCK_BREAK, event);
+        } else {
+            ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.KILL_UNKNOWN_ENTITY, event);
         }
     }
 }

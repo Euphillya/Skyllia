@@ -18,6 +18,7 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
+import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import org.apache.logging.log4j.Level;
@@ -81,10 +82,10 @@ public class WorldEditUtils {
         }
         Position position = island.getPosition();
         AtomicInteger chunkDeleted = new AtomicInteger(0);
-        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getNumberChunkTotalInPerimeter((int) island.getSize() + 32)); // add secure distance 2 chunk
+        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getTotalChunksInBlockPerimeter((int) island.getSize() + 32)); // add secure distance 2 chunk
         AtomicInteger delay = new AtomicInteger(1);
         boolean deleteChunkPerimeterIsland = ConfigToml.deleteChunkPerimeterIsland;
-        RegionUtils.spiralStartCenter(position, island.getSize(), chunKPosition -> {
+        RegionUtils.spiralStartCenter(position, ConfigToml.regionDistance, island.getSize(), chunKPosition -> {
             if (deleteChunkPerimeterIsland && chunkDeleted.getAndAdd(1) >= numberChunkInIsland.get()) {
                 return;
             }
@@ -133,10 +134,10 @@ public class WorldEditUtils {
         }
         Position position = island.getPosition();
         AtomicInteger delay = new AtomicInteger(1);
-        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getNumberChunkTotalInPerimeter((int) island.getSize() + 16)); // add secure distance 1 chunk
+        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getTotalChunksInBlockPerimeter((int) island.getSize() + 16)); // add secure distance 1 chunk
         AtomicInteger chunkModified = new AtomicInteger(0);
         try {
-            RegionUtils.spiralStartCenter(position, island.getSize(), chunKPosition -> {
+            RegionUtils.spiralStartCenter(position, ConfigToml.regionDistance, island.getSize(), chunKPosition -> {
                 if (chunkModified.getAndAdd(1) >= numberChunkInIsland.get()) {
                     completableFuture.complete(true);
                     return;
