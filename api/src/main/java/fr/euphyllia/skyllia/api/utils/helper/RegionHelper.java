@@ -20,7 +20,7 @@ public class RegionHelper {
 
     /**
      * Gets the center {@link Location} of a region in the specified world.
-     * <p>A region is 512 blocks wide, so shifting {@code regionX} and {@code regionZ} by 9 bits (<< 9)
+     * <p>A region is 512 blocks wide, so shifting {@code regionX} and {@code regionZ} by 9 bits ({@literal <<} 9)
      * multiplies them by 512. Adding {@code REGION_HALF_SIZE} (256) positions us in the center.</p>
      *
      * @param world   The target {@link World}.
@@ -110,7 +110,7 @@ public class RegionHelper {
     /**
      * Gets a list of all region positions within a given block range from the specified region.
      * <p>This uses a bounding-box approach, not a strict circle. It shifts the region center back
-     * to block coordinates, adjusts by {@link #REGION_HALF_SIZE}, and divides by 512 (<< 9) to find
+     * to block coordinates, adjusts by {@link #REGION_HALF_SIZE}, and divides by 512 ({@literal <<} 9) to find
      * how many regions fit in that range.</p>
      *
      * @param regionX    The region's X coordinate.
