@@ -1,0 +1,95 @@
+prefix: "<gray>[<aqua>SkylliaBank<gray>] "
+
+# Message d'erreur générique (utilisé parfois en fallback)
+error: "<red>An error has occurred."
+
+# -----------------------------
+# SECTION "bank" (BankCommand)
+# -----------------------------
+bank:
+  # Si la commande est exécutée par la console / non-joueur
+  playerOnly: "<red>This command can only be used by a player."
+  # Si le joueur n'a pas d'île
+  noIsland: "<red>You do not have an island."
+  # Commande inconnue
+  unknownCommand: "<yellow>Unknown command. Use /is bank [deposit|withdraw|balance]"
+
+  # Permissions
+  noPermissionDeposit: "<red>You do not have permission to deposit money."
+  noPermissionWithdraw: "<red>You do not have permission to withdraw money."
+  noPermissionBalance: "<red>You do not have permission to view the balance."
+
+  # Commande /is bank deposit <amount>
+  usageDeposit: "<yellow>Usage: /is bank deposit <amount>"
+  # Commande /is bank withdraw <amount>
+  usageWithdraw: "<yellow>Usage: /is bank withdraw <amount>"
+
+  # Montants invalides
+  invalidAmount: "<red>Invalid amount."
+  invalidAmountPositive: "<red>The amount must be positive."
+
+  # Pas assez d'argent chez le joueur
+  notEnoughMoneyPlayer: "<red>You do not have enough money."
+
+  # Dépôt réussi
+  successDeposit: "<green>Deposited %amount% into your island's bank."
+  # Erreur lors du dépôt + argent remboursé
+  errorDepositRefunded: "<red>An error occurred. Your money has been refunded."
+  # Erreur critique (échec dépôt + échec remboursement)
+  criticalErrorDeposit: "<red>Critical error: deposit failed, refund also failed. Contact an administrator."
+  # Erreur lors du retrait direct depuis le joueur
+  errorWithdrawPlayer: "<red>Withdrawal error: %errorMessage%"
+
+  # Pas assez d'argent dans la banque de l'île
+  notEnoughMoneyIsland: "<red>Your island bank does not have enough money."
+
+  # Retrait réussi
+  successWithdraw: "<green>Withdrew %amount% from your island's bank."
+  # Erreur critique lors du retrait (échec dépôt joueur + échec remboursement île)
+  criticalErrorWithdraw: "<red>Critical error: deposit to your wallet and island refund both failed. Contact an administrator."
+  # Erreur lors du dépôt dans le portefeuille du joueur, mais remboursement réussi à l'île
+  errorDepositPlayerRefundIsland: "<red>Error depositing to your wallet. The island bank has been refunded."
+  # Erreur lors du retrait de la banque de l'île
+  errorWithdrawIsland: "<red>An error occurred while withdrawing from your island bank."
+  # Erreur générique lors du retrait
+  errorGenericWithdraw: "<red>An error occurred during the withdrawal. Please try again later."
+
+  # Solde
+  balance: "<green>Your island's bank balance: %amount%"
+  errorGetBalance: "<red>Unable to retrieve your island's balance."
+
+# -----------------------------
+# SECTION "admin" (BankAdminCommand)
+# -----------------------------
+admin:
+  # Joueur introuvable
+  playerNotFound: "<red>The player does not exist or was not found."
+  # Joueur sans île
+  playerNotIsland: "<red>The player has no island."
+
+  # Commandes d'usage
+  usageBalance: "<yellow>Usage: /skylliadmin bank balance <player>"
+  usageDeposit: "<yellow>Usage: /skylliadmin bank deposit <player> <amount>"
+  usageWithdraw: "<yellow>Usage: /skylliadmin bank withdraw <player> <amount>"
+  usageSetBalance: "<yellow>Usage: /skylliadmin bank setbalance <player> <amount>"
+
+  # Montants invalides
+  invalidAmount: "<red>Invalid amount."
+  invalidAmountPositive: "<red>Invalid amount. Must be positive."
+  invalidAmountNegative: "<red>Amount cannot be negative."
+
+  # Balance
+  islandBalance: "<green>{player_name}'s Island Balance: <yellow>{amount}."
+  islandErrorBalance: "<red>Unable to recover {player_name}'s Island balance."
+
+  # Dépôt
+  depositSuccess: "<green>Deposited %amount% into {player_name}'s island bank."
+  depositError: "<red>An error occurred while depositing to {player_name}'s island bank."
+
+  # Retrait
+  successWithdraw: "<green>Withdrawn %amount% from {player_name}'s island bank."
+  errorWithdraw: "<red>An error occurred while withdrawing from {player_name}'s island bank."
+
+  # Définir le solde
+  setBalanceSuccess: "<green>Set {player_name}'s island bank balance to %amount%."
+  setBalanceError: "<red>An error occurred while setting {player_name}'s island balance."

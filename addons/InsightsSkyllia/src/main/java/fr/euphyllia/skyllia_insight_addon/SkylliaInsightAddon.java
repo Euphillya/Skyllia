@@ -29,7 +29,7 @@ public class SkylliaInsightAddon implements InsightsAddon {
 
     @Override
     public String getVersion() {
-        return "{version}";
+        return "1.0";
     }
 
     @Override

@@ -79,14 +79,14 @@ When changing the generator, there is a delay of approximately 30 seconds before
 
 - `skylliaore.use`: Permission to use the `/skylliaadmin generator` command.
 
-## Contribution
-
-Contributions are welcome! To contribute, please fork the repository and submit a pull request.
-
 ## Support
 
-For any questions or issues, please open an issue on the GitHub repository.
+For support, please join our [Discord server](https://discord.gg/uUJQEB7XNN).
+
+## Contributing
+
+Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+SkylliaInfo is licensed under the [MIT License](../../LICENSE).

@@ -25,12 +25,6 @@ Skyllia is a Skyblock plugin designed primarily for Folia but also compatible wi
 13. [Contribution](#contribution)
 14. [License](#license)
 
-## Wiki
-
-- [FR_FR](https://github.com/Euphillya/Skyllia/wiki)
-- [EN_EN](https://github.com/Euphillya/Skyllia/tree/dev/wiki/en_en/all_files)
-- [ZH_CN](https://github.com/Euphillya/Skyllia/tree/dev/wiki/zh_cn/all_files)
-
 ## Contact
 
 [![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
