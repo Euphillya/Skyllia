@@ -14,7 +14,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly(project(":api"))
     compileOnly(project(":plugin"))
-    compileOnly(project(":addons:OreGenerator"))
+    compileOnly(project(":addons:SkylliaOre"))
 }
 
 java {
