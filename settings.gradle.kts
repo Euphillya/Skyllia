@@ -1,9 +1,9 @@
 rootProject.name = "Skyllia"
 
+include("api")
 include("database")
 include("plugin")
-include("api")
-include("nms")
+// NMS Version
 include("nms:v1_20_R1")
 include("nms:v1_20_R2")
 include("nms:v1_20_R3")
