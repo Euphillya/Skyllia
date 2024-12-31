@@ -37,8 +37,6 @@ public final class WorldUtils {
         return ConfigToml.worldConfigs.stream().filter(worldConfig -> worldConfig.name().equalsIgnoreCase(worldName)).findFirst().orElse(null);
     }
 
-    // https://www.spigotmc.org/threads/safely-teleport-players.83205/
-
     /**
      * Checks if a location is safe (solid ground with 2 breathable blocks)
      *
@@ -47,14 +45,22 @@ public final class WorldUtils {
      */
     public static boolean isSafeLocation(Location location) {
         Block feet = location.getBlock();
-        if (!feet.getType().isTransparent() && !feet.getLocation().add(0, 1, 0).getBlock().getType().isTransparent()) {
-            return false; // not transparent (will suffocate)
-        }
         Block head = feet.getRelative(BlockFace.UP);
-        if (!head.getType().isTransparent()) {
-            return false; // not transparent (will suffocate)
-        }
+        Block aboveHead = head.getRelative(BlockFace.UP);
         Block ground = feet.getRelative(BlockFace.DOWN);
-        return ground.getType().isSolid(); // not solid
+
+        if (!feet.isPassable() || !head.isPassable()) {
+            return false;
+        }
+
+        if (!aboveHead.isPassable()) {
+            return false;
+        }
+
+        if (!ground.getType().isSolid()) {
+            return false;
+        }
+
+        return true;
     }
 }
