@@ -97,7 +97,7 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
      * @param pt         The type of the portal being used.
      */
     public PlayerPrepareChangeWorldSkyblockEvent(Player player, WorldConfig wc, PortalType pt) {
-        super(true);
+        super(false);
         this.player = player;
         this.worldConfig = wc;
         this.portalType = pt;

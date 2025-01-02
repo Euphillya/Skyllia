@@ -137,7 +137,7 @@ public class Main extends JavaPlugin {
         registerEvent(pluginManager, new PlayerEvent(this.interneAPI));
         registerEvent(pluginManager, new DamageEvent(this.interneAPI));
         registerEvent(pluginManager, new InteractEvent(this.interneAPI));
-        registerEvent(pluginManager, new TeleportEvent(this.interneAPI)); // TODO: Doesn't work with Folia 1.19.4-1.21.3
+        registerEvent(pluginManager, new TeleportEvent(this.interneAPI)); // TODO: Doesn't work with Folia 1.19.4-1.21.4
         registerEvent(pluginManager, new PistonEvent(this.interneAPI));
 
         if (VersionUtils.IS_FOLIA) {
