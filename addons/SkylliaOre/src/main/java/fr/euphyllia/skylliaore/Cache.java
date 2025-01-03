@@ -1,48 +1,44 @@
 package fr.euphyllia.skylliaore;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.database.MariaDBInit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class Cache {
 
     private static final Logger logger = LogManager.getLogger(Cache.class);
 
-    private final LoadingCache<UUID, Generator> generatorLoadingCache = CacheBuilder.newBuilder()
+    private final AsyncLoadingCache<UUID, Generator> generatorLoadingCache = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.SECONDS)
-            .build(
-                    new CacheLoader<>() {
-                        @Override
-                        public @NotNull Generator load(@NotNull UUID cache) {
-                            try {
-                                return MariaDBInit.getMariaDbGenerator().getGenIsland(cache).get(2, TimeUnit.SECONDS);
-                            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                                logger.error(e.getMessage(), e);
-                                return Main.getDefaultConfig().getDefaultGenerator();
-                            }
-                        }
-                    }
-            );
+            .buildAsync((islandId, executor) -> {
+                CompletableFuture<Generator> future = MariaDBInit.getMariaDbGenerator().getGenIsland(islandId);
+                return future.exceptionally(e -> {
+                    logger.error("Error loading generator for island {}: {}", islandId, e.getMessage(), e);
+                    return Main.getDefaultConfig().getDefaultGenerator();
+                });
+            });
 
     public Cache() {
 
     }
 
-    public Generator getGeneratorIsland(UUID island) {
+    public Generator getGeneratorIsland(UUID islandId) {
         try {
-            return generatorLoadingCache.get(island);
+            return generatorLoadingCache.get(islandId).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Réinitialiser le statut d'interruption
+            logger.error("Thread interrupted while accessing cache for island {}: {}", islandId, e.getMessage(), e);
+            return Main.getDefaultConfig().getDefaultGenerator();
         } catch (ExecutionException e) {
-            logger.error(e.getMessage(), e);
+            logger.error("Error accessing cache for island {}: {}", islandId, e.getMessage(), e);
             return Main.getDefaultConfig().getDefaultGenerator();
         }
     }

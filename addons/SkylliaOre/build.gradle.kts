@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.1";
+version = "1.2";
 
 repositories {
     maven("https://repo.oraxen.com/releases")

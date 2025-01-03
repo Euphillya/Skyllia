@@ -1,5 +1,6 @@
 package fr.euphyllia.skylliainfo;
 
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -43,7 +44,7 @@ public class IslandInfoCommand implements SubCommandInterface {
 
         UUID playerId = null;
 
-        if (sender.hasPermission("skyllia.extensions.commands.is_info") && arg.length == 1) {
+        if (PermissionImp.hasPermission(sender, "skyllia.extensions.commands.is_info") && arg.length == 1) {
             playerId = Bukkit.getPlayerUniqueId(arg[0]);
         }
         if (playerId == null) {

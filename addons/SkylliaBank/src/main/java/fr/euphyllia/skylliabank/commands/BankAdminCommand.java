@@ -1,5 +1,6 @@
 package fr.euphyllia.skylliabank.commands;
 
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -481,7 +482,7 @@ public class BankAdminCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         // noPermission
-        if (!sender.hasPermission("skyllia.bank.admin")) {
+        if (!PermissionImp.hasPermission(sender, "skyllia.bank.admin")) {
             LanguageToml.sendMessage(
                     sender,
                     SkylliaBank.getConfiguration().getString(

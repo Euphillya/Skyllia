@@ -1,5 +1,6 @@
 package fr.euphyllia.skylliabank.commands;
 
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -90,7 +91,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleDeposit(Player player, UUID islandId, String[] args) {
         // Permission pour deposit
-        if (!player.hasPermission("skyllia.bank.deposit")) {
+        if (!PermissionImp.hasPermission(player, "skyllia.bank.deposit")) {
             LanguageToml.sendMessage(
                     player,
                     SkylliaBank.getConfiguration().getString(
@@ -227,7 +228,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleWithdraw(Player player, UUID islandId, String[] args) {
         // Permission pour withdraw
-        if (!player.hasPermission("skyllia.bank.withdraw")) {
+        if (!PermissionImp.hasPermission(player, "skyllia.bank.withdraw")) {
             LanguageToml.sendMessage(
                     player,
                     SkylliaBank.getConfiguration().getString(
@@ -372,7 +373,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleBalance(Player player, UUID islandId) {
         // Permission pour voir le solde
-        if (!player.hasPermission("skyllia.bank.balance")) {
+        if (!PermissionImp.hasPermission(player, "skyllia.bank.balance")) {
             LanguageToml.sendMessage(
                     player,
                     SkylliaBank.getConfiguration().getString(

@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
  *         System.out.println("Player " + player.getName() + " is teleporting to spawn at location " + destination + ".");
  *
  *         // Example 2: Modifying the final teleport location
- *         if (player.hasPedrmission("skyblock.teleport.vip")) {
+ *         if (player.hasPermission("skyblock.teleport.vip")) {
  *             Location vipLocation = destination.clone().add(10, 0, 10); // Offset for VIP players
  *             event.setFinalLocation(vipLocation);
  *             player.sendMessage("VIP teleportation: Your spawn location has been adjusted.");
