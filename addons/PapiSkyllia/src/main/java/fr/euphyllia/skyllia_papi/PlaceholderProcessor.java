@@ -12,6 +12,9 @@ import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
 import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
+import fr.euphyllia.skyllia_papi.hook.BankPlaceHolder;
+import fr.euphyllia.skyllia_papi.hook.OrePlaceHolder;
+import fr.euphyllia.skyllia_papi.hook.ValuePlaceHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -24,15 +27,51 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.*;
 
+/**
+ * Main class for processing placeholders in the Skyllia plugin.
+ * Manages the caching of player islands and processes various types of placeholders.
+ */
 public class PlaceholderProcessor {
 
+    /**
+     * Logger used for logging messages.
+     */
     private static final Logger LOGGER = LogManager.getLogger(PlaceholderProcessor.class);
+
+    /**
+     * Formatter for decimal numbers.
+     */
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
     /**
-     * Cache pour associer un UUID de joueur à son île.
-     * — ExpireAfterWrite(5, SECONDS) : supprime du cache 5s après l’écriture.
-     * — RefreshAfterWrite(3, SECONDS) : tente un rafraîchissement en arrière-plan après 3s.
+     * Indicates if the SkylliaOre addon is enabled.
+     */
+    private static final boolean SKYLLIA_ORE_ADDON;
+
+    /**
+     * Indicates if the SkylliaValue addon is enabled.
+     * The plugin is owned by Excalia,
+     * if you want it on your server you have to ask the admins on their <a href="https://discord.gg/excalia">Discord</a>
+     */
+    private static final boolean SKYLLIA_VALUE_ADDON;
+
+    /**
+     * Indicates if the SkylliaBank addon is enabled.
+     */
+    private static final boolean SKYLLIA_BANK_ADDON;
+
+    static {
+        SKYLLIA_ORE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaOre") != null;
+        SKYLLIA_VALUE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaValue") != null;
+        SKYLLIA_BANK_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
+    }
+
+    /**
+     * Cache that maps a player's UUID to their island.
+     * <p>
+     * - {@code expireAfterWrite(5, SECONDS)}: removes from the cache 5 seconds after writing.
+     * - {@code refreshAfterWrite(3, SECONDS)}: attempts a background refresh after 3 seconds.
+     * </p>
      */
     private static final LoadingCache<UUID, Optional<Island>> ISLAND_CACHE = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.SECONDS)
@@ -43,7 +82,14 @@ public class PlaceholderProcessor {
                     return loadIslandByUUID(playerId);
                 }
 
-                // Gestion du rafraîchissement en arrière-plan
+                /**
+                 * Handles the background refresh of a player's island.
+                 *
+                 * @param playerId the player's UUID
+                 * @param oldValue the old island value
+                 * @param executor the executor for the asynchronous task
+                 * @return a {@link CompletableFuture} containing the refreshed island
+                 */
                 @Override
                 public @NotNull CompletableFuture<Optional<Island>> asyncReload(
                         @NotNull UUID playerId,
@@ -55,8 +101,8 @@ public class PlaceholderProcessor {
             });
 
     /**
-     * Cache pour stocker le résultat final d'un placeholder (String) en fonction du playerId et du placeholder.
-     * On utilise la même logique d'expiration + refresh.
+     * Cache that stores the final result of a placeholder (String) based on the playerId and the placeholder.
+     * Uses the same expiration and refresh logic as {@link #ISLAND_CACHE}.
      */
     private static final LoadingCache<CacheKey, String> PLACEHOLDER_CACHE = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.SECONDS)
@@ -69,6 +115,14 @@ public class PlaceholderProcessor {
                     return processIsland(islandOpt, key.playerId(), key.placeholder());
                 }
 
+                /**
+                 * Handles the background refresh of a placeholder.
+                 *
+                 * @param key      the cache key containing the player's UUID and the placeholder
+                 * @param oldValue the old placeholder value
+                 * @param executor the executor for the asynchronous task
+                 * @return a {@link CompletableFuture} containing the new placeholder value
+                 */
                 @Override
                 public @NotNull CompletableFuture<String> asyncReload(
                         @NotNull CacheKey key,
@@ -84,40 +138,42 @@ public class PlaceholderProcessor {
             });
 
     /**
-     * Point d'entrée pour récupérer un placeholder.
+     * Entry point for retrieving a placeholder value.
      *
-     * @param playerId    UUID du joueur
-     * @param placeholder Le placeholder (ex : "island_size", "permissions_modif_command", etc.)
-     * @return La valeur du placeholder
+     * @param playerId    the player's UUID
+     * @param placeholder the placeholder to process (e.g., "island_size", "permissions_modify_command", etc.)
+     * @return the placeholder value as a string
      */
     public static String process(UUID playerId, String placeholder) {
-        // On vérifie rapidement si le joueur a une île
+        // Quickly check if the player has an island
         Optional<Island> islandOpt = Optional.ofNullable(ISLAND_CACHE.get(playerId))
                 .orElse(Optional.empty());
         if (islandOpt.isEmpty()) {
             return "";
         }
 
-        // On détermine quel type de placeholder on traite
         if (placeholder.startsWith("island")) {
-            // Cache plus ciblé sur l'info de l'île
             return PLACEHOLDER_CACHE.get(new CacheKey(playerId, placeholder));
         } else if (placeholder.startsWith("permissions")) {
             return processPermissionsPlaceholder(islandOpt.get(), playerId, placeholder);
         } else if (placeholder.startsWith("gamerule")) {
             return processGamerulePlaceholder(islandOpt.get(), placeholder);
-        } else if (placeholder.startsWith("ore")) {
-            // Si le plugin "SkylliaOre" est présent, on délègue au placeholder dédié
-            if (Bukkit.getPluginManager().getPlugin("SkylliaOre") != null) {
-                return OrePlaceHolder.processOrePlaceholder(islandOpt.get(), playerId, placeholder);
-            }
+        } else if (placeholder.startsWith("ore") && SKYLLIA_ORE_ADDON) {
+            return OrePlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
+        } else if (placeholder.startsWith("value") && SKYLLIA_VALUE_ADDON) {
+            return ValuePlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
+        } else if (placeholder.startsWith("bank") && SKYLLIA_BANK_ADDON) {
+            return BankPlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
         }
 
         return "Not Supported";
     }
 
     /**
-     * Méthode interne pour charger l'île d'un joueur via SkylliaAPI.
+     * Internal method to load a player's island via the SkylliaAPI.
+     *
+     * @param playerId the player's UUID
+     * @return an {@link Optional} containing the island if found, otherwise empty
      */
     private static @NotNull Optional<Island> loadIslandByUUID(@NotNull UUID playerId) {
         CompletableFuture<Island> future = SkylliaAPI.getIslandByPlayerId(playerId);
@@ -127,18 +183,26 @@ public class PlaceholderProcessor {
         try {
             return Optional.ofNullable(future.get(5, TimeUnit.SECONDS));
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            LOGGER.error("Impossible de charger l'île pour le joueur {} : {}", playerId, e.getMessage());
+            LOGGER.error("Unable to load island for player {}: {}", playerId, e.getMessage());
             return Optional.empty();
         }
     }
 
+    /**
+     * Processes placeholders related to the player's island.
+     *
+     * @param islandOpt  the player's island wrapped in an {@link Optional}
+     * @param playerId   the player's UUID
+     * @param placeholder the placeholder to process
+     * @return the placeholder value as a string
+     */
     private static String processIsland(Optional<Island> islandOpt, UUID playerId, String placeholder) {
         if (islandOpt.isEmpty()) {
             return "";
         }
         Island island = islandOpt.get();
 
-        // On gère les placeholders "island_xxx"
+        // Handle "island_xxx" placeholders
         switch (placeholder.toLowerCase(Locale.ROOT)) {
             case "island_size":
                 return String.valueOf(island.getSize());
@@ -163,6 +227,14 @@ public class PlaceholderProcessor {
         }
     }
 
+    /**
+     * Processes placeholders related to permissions.
+     *
+     * @param island     the player's island
+     * @param playerId   the player's UUID
+     * @param placeholder the placeholder to process
+     * @return the placeholder value as a string
+     */
     private static String processPermissionsPlaceholder(Island island, UUID playerId, String placeholder) {
         String[] split = placeholder.split("_", 4);
         if (split.length < 4) {
@@ -211,6 +283,13 @@ public class PlaceholderProcessor {
         return String.valueOf(permissionManager.hasPermission(permissions));
     }
 
+    /**
+     * Processes placeholders related to game rules.
+     *
+     * @param island     the player's island
+     * @param placeholder the placeholder to process
+     * @return the placeholder value as a string
+     */
     private static String processGamerulePlaceholder(Island island, String placeholder) {
         String[] split = placeholder.split("_", 2);
         if (split.length < 2) {
@@ -231,5 +310,11 @@ public class PlaceholderProcessor {
         return String.valueOf(permissionManager.hasPermission(gameRuleIsland.getPermissionValue()));
     }
 
+    /**
+     * Record representing a cache key with playerId and placeholder.
+     *
+     * @param playerId   the player's UUID
+     * @param placeholder the placeholder string
+     */
     private record CacheKey(UUID playerId, String placeholder) {}
 }

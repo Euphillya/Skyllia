@@ -13,6 +13,7 @@ public class SkylliaLoader implements PluginLoader {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build());
         resolver.addRepository(new RemoteRepository.Builder("mojang", "default", "https://libraries.minecraft.net").build());
+        resolver.addRepository(new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build());
 
         // Maven Repo
         resolver.addDependency(new Dependency(new DefaultArtifact("com.zaxxer:HikariCP:6.2.1"), null));
@@ -22,6 +23,8 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("com.google.guava:guava:33.3.1-jre"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.17.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.8.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.1.8"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ExcaliaSI:exp4j:e50bdd65e4"), null));
 
         // Mojang Repo
         resolver.addDependency(new Dependency(new DefaultArtifact("com.mojang:brigadier:1.0.18"), null));

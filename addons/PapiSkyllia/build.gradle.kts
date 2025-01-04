@@ -15,6 +15,9 @@ dependencies {
     compileOnly(project(":api"))
     compileOnly(project(":plugin"))
     compileOnly(project(":addons:SkylliaOre"))
+    compileOnly(project(":addons:SkylliaBank"))
+    compileOnly("com.github.ExcaliaSI:exp4j:e50bdd65e4")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 }
 
 java {

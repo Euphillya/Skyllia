@@ -1,301 +1,294 @@
-# Skyllia Placeholder Processor
+# Skyllia PlaceholderAPI Expansion
 
-This document describes the placeholder system used in [Skyllia](https://modrinth.com/plugin/skyllia), along with the different types of placeholders available, roles, permissions, and game rules.
+**Skyllia Placeholder** is an expansion for [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) that integrates with the Skyllia Plugin, providing dynamic placeholders to enhance in-game displays such as scoreboards, chat messages, and more. This expansion offers placeholders related to island management, permissions, game rules, and integrates with optional addons like SkylliaOre, SkylliaValue, and SkylliaBank.
 
-## Introduction
+## Table of Contents
 
-The **Placeholder Processor** is a system that dynamically displays information related to islands, permissions, ore generators, and game rules in the Skyllia game. These placeholders can be used in various interfaces to display player-specific and island-specific data.
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Available Placeholders](#available-placeholders)
+   - [Island Placeholders](#island-placeholders)
+   - [Permissions Placeholders](#permissions-placeholders)
+   - [Game Rules Placeholders](#game-rules-placeholders)
+   - [Addon Placeholders](#addon-placeholders)
+- [Usage](#usage)
+- [Addons](#addons)
+   - [SkylliaOre](#skylliaore)
+   - [SkylliaValue](#skylliavalue)
+   - [SkylliaBank](#skylliabank)
+- [Contributing](#contributing)
+- [License](#license)
 
-This system utilizes **PlaceholderAPI (PAPI)** to manage placeholders via the custom **SkylliaExpansion**.
+## Features
+
+- **Island Information**: Retrieve dynamic data about a player's Skyblock island.
+- **Permissions Status**: Check and display the status of various permissions.
+- **Game Rules Status**: Display the status of game rules applied to an island.
+- **Addon Integration**: Extend functionality with placeholders from optional addons like Ore management, Value tracking, and Banking systems.
+- **Efficient Caching**: Utilizes caching mechanisms to optimize performance and reduce server load.
+
+## Prerequisites
+
+Before installing Skyllia Placeholder, ensure that the following prerequisites are met:
+
+- **Minecraft Server**: [Folia](https://papermc.io/software/folia) or [Paper](https://papermc.io/software/paper) server.
+- **Skyllia Plugin**: Ensure that the Skyllia Plugin is installed and properly configured on your server.
+- **PlaceholderAPI**: Install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) on your server.
+- **Addons (Optional)**: Depending on the placeholders you intend to use, install the following addons:
+   - [SkylliaOre](#skylliaore)
+   - [SkylliaValue](#skylliavalue)
+   - [SkylliaBank](#skylliabank)
 
 ## Installation
 
-### Prerequisites
+1. **Download**:
+   - Obtain the latest `PapiSkyllia-1.x.x-all.jar` from the [releases](https://github.com/Euphillya/Skyllia/actions) page of the Skyllia Placeholder repository.
 
-- **Minecraft Server with Folia or Paper**.
-- **PlaceholderAPI (PAPI)** installed on the server.
-- **Skyllia Plugin** installed on the server.
+2. **Installation**:
+   - Place the `PapiSkyllia-1.x.x-all.jar` file into your server's `plugins/PlaceholderAPI/expansions` directory.
+   - Start or restart your server to generate the necessary configuration files and load the expansion.
 
-### Installation Steps
+3. **Enable Expansion**:
+   - Skyllia Placeholder automatically registers itself with PlaceholderAPI upon server startup. Ensure there are no errors in the server console related to the expansion.
 
-1. **Download PlaceholderAPI (PAPI):**
+## Available Placeholders
 
-   - Download PAPI from [SpigotMC](https://www.spigotmc.org/resources/placeholderapi.6245/).
-   - Place the `.jar` file in your server's `plugins` folder.
-   - Restart the server to load PAPI.
-
-2. **Download Skyllia:**
-
-   - Download Skyllia from [Modrinth](https://modrinth.com/plugin/skyllia).
-   - Place the `.jar` file in your server's `plugins` folder.
-   - Restart the server to load Skyllia and config it.
-
-3. **Integrate Expansion-skyllia:**
-
-   - Compile the `Expansion-skyllia` class and place the corresponding `.jar` in your server's `plugins/PlaceholderAPI/expansions/` folder.
-   - If the Skyllia plugin already provides the expansion, ensure it is enabled.
-
-4. **Register the Expansion:**
-
-   - Run the command `/papi reload` to reload PlaceholderAPI and detect new expansions.
-   - Verify that the Skyllia expansion is registered using `/papi list`.
-
-### Optional: Integrate Skyllia-Ore
-
-**Skyllia-Ore** is an optional plugin that extends Skyllia by adding a placeholder for ore generators. You can find it on [GitHub](https://github.com/Euphillya/Skyllia-Ore).
-
-If **Skyllia-Ore** is installed, it unlocks the `%skyllia_ore%` placeholder, which displays the current ore generator in use on the player's island. If Skyllia-Ore is not installed, this placeholder will not function, but the rest of the Skyllia plugin will work as expected.
-
-#### Installation Steps:
-
-1. **Download Skyllia-Ore:**
-
-   - Download the latest release from [GitHub](https://github.com/Euphillya/Skyllia-Ore).
-   - Place the `.jar` file in your server's `plugins` folder.
-   - Restart the server to load Skyllia-Ore.
-
-2. **Verify Skyllia-Ore Integration:**
-
-   - Run `/papi reload` to reload PlaceholderAPI.
-   - Test Skyllia-Ore-specific placeholders like `%skyllia_ore%` to ensure proper functionality.
-
-## Using Placeholders
-
-Placeholders are special strings that will be replaced with dynamic values. They generally follow this format:
-
-```
-%skyllia_{placeholder_type_parameters}%
-```
-
-**Important:** Placeholders must be enclosed with `%` symbols and prefixed with `skyllia_` to be recognized by PAPI.
+Skyllia Placeholder provides a variety of placeholders categorized into Island, Permissions, Game Rules, and Addon-specific placeholders.
 
 ### Island Placeholders
 
-Placeholders related to islands provide general information about a specific island.
+Retrieve information about a player's Skyblock island.
 
-#### List of Island Placeholders
-
-- `%skyllia_island_size%`: Size of the island.
-- `%skyllia_island_members_max_size%`: Maximum number of members on the island.
-- `%skyllia_island_members_size%`: Current number of members on the island.
-- `%skyllia_island_rank%`: The player's role on the island.
-- `%skyllia_island_tps%`: TPS (Ticks Per Second) of the island.
-
-**Example Usage:**
-
-```text
-Your island has a size of %skyllia_island_size% blocks.
-```
-
-### Ore Generator Placeholder (Optional)
-
-If the **Skyllia-Ore** plugin is installed, the following placeholder will be available:
-
-- `%skyllia_ore%`: Displays the current ore generator in use on the player's island.
-
-**Example Usage:**
-
-```text
-Your current ore generator is %skyllia_ore%.
-```
-
-If the Skyllia-Ore plugin is not installed, this placeholder will not return any values.
+| **Placeholder**                     | **Description**                                                 |
+|-------------------------------------|-----------------------------------------------------------------|
+| `%skyllia_island_size%`             | Returns the size of the player's island.                        |
+| `%skyllia_island_members_max_size%` | Returns the maximum number of members allowed on the island.    |
+| `%skyllia_island_members_size%`     | Returns the current number of members on the island.            |
+| `%skyllia_island_rank%`             | Returns the rank of the player on the island.                   |
+| `%skyllia_island_tps%`              | Returns the TPS (Ticks Per Second) of the island's world chunk. |
 
 ### Permissions Placeholders
 
-These placeholders allow you to check if a specific role has a certain permission on the island.
+Check the status of various permissions assigned to roles within an island.
 
-#### Format
+| **Placeholder Format**                                      | **Description**                                                                                                                |
+|-------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `%skyllia_permissions_<role>_<type>_<permission>%`          | Checks if a specific role has a particular permission. Replace `<role>`, `<type>`, and `<permission>` with appropriate values. |
+| **Example**: `%skyllia_permissions_admin_commands_promote%` | Checks if the `admin` role has the `PROMOTE` permission under `COMMANDS` type.                                                 |
 
-```
-%skyllia_permissions_{roleType}_{permissionsType}_{permissionName}%
-```
+#### Permissions Types
 
-- **roleType**: The role type (see the [Roles](#roles) section).
-- **permissionsType**: The type of permissions (`COMMANDS`, `ISLAND`, `INVENTORY`).
-- **permissionName**: The name of the permission (see the [Permissions](#permissions) sections).
+- **ISLAND**: General island permissions.
+- **COMMANDS**: Administrative command permissions.
+- **INVENTORY**: Inventory-related permissions.
 
-**Example:**
+### Game Rules Placeholders
 
-```
-%skyllia_permissions_MEMBER_COMMANDS_INVITE%
-```
+Display the status of specific game rules applied to an island.
 
-This placeholder returns `true` if the `MEMBER` role has the `INVITE` permission in commands, otherwise `false`.
+| **Placeholder**                                         | **Description**                                                                                                       |
+|---------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `%skyllia_gamerule_<gamerule>%`                         | Returns the status (`true` or `false`) of a specific game rule. Replace `<gamerule>` with the desired game rule name. |
+| **Example**: `%skyllia_gamerule_disable_spawn_hostile%` | Returns whether hostile mob spawning is disabled on the island.                                                       |
 
-### Gamerule Placeholders
+### Addon Placeholders
 
-These placeholders allow you to check the status of a specific game rule on the island.
+Extend functionality with placeholders from optional addons.
 
-#### Format
+#### SkylliaOre Addon
 
-```
-%skyllia_gamerule_{ruleName}%
-```
+| **Placeholder**                      | **Description**                                               |
+|--------------------------------------|---------------------------------------------------------------|
+| `%skyllia_ore_generator_name%`       | Returns the name of the ore generator on the island.          |
 
-- **ruleName**: The name of the game rule (see the [Game Rules](#game-rules-gamerules) section).
+#### SkylliaValue Addon
 
-**Example:**
+| **Placeholder**              | **Description**                                  |
+|------------------------------|--------------------------------------------------|
+| `%skyllia_value_experience%` | Displays the player's experience on the island.  |
+| `%skyllia_value_level%`      | Displays the player's level based on experience. |
 
-```text
-%skyllia_gamerule_DISABLE_FIRE_SPREADING%
-```
+#### SkylliaBank Addon
 
-This placeholder returns `true` if fire spreading is disabled on the island, otherwise `false`.
+| **Placeholder**         | **Description**                                        |
+|-------------------------|--------------------------------------------------------|
+| `%skyllia_bank_live%`   | Shows the live balance in the player's bank account.   |
+| `%skyllia_bank_cached%` | Shows the cached balance for performance optimization. |
 
-## Roles
+## Game Rules and Permissions
 
-Roles define the access levels of members on an island.
+### Game Rules (`GameRuleIsland`)
 
-| Role Name | Value |
-|-----------|-------|
-| OWNER     | 4     |
-| CO_OWNER  | 3     |
-| MODERATOR | 2     |
-| MEMBER    | 1     |
-| VISITOR   | 0     |
-| BAN       | -1    |
+Represents various game rules that can be applied to a Skyblock island.
 
-## Permission Types
+| **Game Rule**                  | **Description**                                         | **Permission Value** |
+|--------------------------------|---------------------------------------------------------|----------------------|
+| `DISABLE_SPAWN_HOSTILE`        | Disables the spawning of hostile mobs on the island.    | 1                    |
+| `DISABLE_SPAWN_PASSIVE`        | Disables the spawning of passive mobs on the island.    | 2                    |
+| `DISABLE_SPAWN_UNKNOWN`        | Disables the spawning of unknown mobs on the island.    | 4                    |
+| `DISABLE_HUMAN_EXPLOSION`      | Disables explosions caused by players on the island.    | 8                    |
+| `DISABLE_MOB_EXPLOSION`        | Disables explosions caused by mobs on the island.       | 16                   |
+| `DISABLE_ENDERMAN_PICK_BLOCK`  | Disables Endermen from picking up blocks on the island. | 32                   |
+| `DISABLE_FIRE_SPREADING`       | Disables fire spreading on the island.                  | 64                   |
+| `DISABLE_MOB_PICKUP_ITEMS`     | Disables mobs from picking up items on the island.      | 128                  |
+| `DISABLE_UNKNOWN_EXPLOSION`    | Disables unknown explosions on the island.              | 256                  |
+| `DISABLE_PASSIF_MOB_GRIEFING`  | Disables passive mob griefing on the island.            | 512                  |
+| `DISABLE_HOSTILE_MOB_GRIEFING` | Disables hostile mob griefing on the island.            | 1,024                |
+| `DISABLE_UNKNOWN_MOB_GRIEFING` | Disables unknown mob griefing on the island.            | 2,048                |
+| `DISABLE_PLAYER_GRIEFING`      | Disables player griefing on the island.                 | 4,096                |
 
-The available permission types are:
+### Permissions
 
-- **COMMANDS**: Permissions related to commands.
-- **ISLAND**: Permissions related to interactions with the island.
-- **INVENTORY**: Permissions related to the use of inventories.
+Skyllia utilizes a robust permissions system to control player actions and interactions on their islands. Permissions are categorized into different types: **ISLAND**, **COMMANDS**, and **INVENTORY**.
 
-## Permissions
+#### 1. **Island Permissions (`PermissionsIsland`)**
 
-### Command Permissions (COMMANDS)
+Controls general interactions and behaviors on the island.
 
-| Permission Name     | Description                               |
-|---------------------|-------------------------------------------|
-| DEMOTE              | Demote players.                           |
-| PROMOTE             | Promote players.                          |
-| KICK                | Kick players from the island.             |
-| ACCESS              | Access certain island features.           |
-| SET_HOME            | Set the home point on the island.         |
-| INVITE              | Invite players to the island.             |
-| SET_BIOME           | Set the biome of the island.              |
-| SET_WARP            | Set a teleportation point.                |
-| DEL_WARP            | Delete a teleportation point.             |
-| TP_WARP             | Teleport to a warp point.                 |
-| EXPEL               | Expel players from the island.            |
-| MANAGE_PERMISSION   | Manage island permissions.                |
-| BAN                 | Ban players from the island.              |
-| UNBAN               | Unban players from the island.            |
-| MANAGE_TRUST        | Manage trust levels on the island.        |
-| MANAGE_GAMERULE     | Manage game rules of the island.          |
+| **Permission**        | **Description**                                  | **Value** |
+|-----------------------|--------------------------------------------------|-----------|
+| `BLOCK_BREAK`         | Permission to break blocks.                      | 1         |
+| `BLOCK_PLACE`         | Permission to place blocks.                      | 2         |
+| `BUCKETS`             | Permission to use buckets.                       | 4         |
+| `REDSTONE`            | Permission to use redstone components.           | 8         |
+| `PVP`                 | Permission to engage in player vs player combat. | 16        |
+| `KILL_MONSTER`        | Permission to kill monsters.                     | 32        |
+| `KILL_ANIMAL`         | Permission to kill animals.                      | 64        |
+| `DROP_ITEMS`          | Permission to drop items.                        | 128       |
+| `PICKUP_ITEMS`        | Permission to pick up items.                     | 256       |
+| `USE_NETHER_PORTAL`   | Permission to use nether portals.                | 512       |
+| `USE_END_PORTAL`      | Permission to use end portals.                   | 1,024     |
+| `INTERACT_ENTITIES`   | Permission to interact with entities.            | 2,048     |
+| `KILL_UNKNOWN_ENTITY` | Permission to kill unknown entities.             | 4,096     |
+| `KILL_NPC`            | Permission to kill NPCs (non-player characters). | 8,192     |
+| `INTERACT`            | Permission to perform general interactions.      | 16,384    |
 
-### Inventory Permissions (INVENTORY)
+#### 2. **Command Permissions (`PermissionsCommandIsland`)**
 
-| Permission Name       | Description                                   |
-|-----------------------|-----------------------------------------------|
-| OPEN_CHEST            | Open chests.                                  |
-| OPEN_ANVIL            | Use anvils.                                   |
-| OPEN_WORKBENCH        | Use crafting tables.                          |
-| OPEN_ENCHANTING       | Use enchanting tables.                        |
-| OPEN_BREWING          | Use brewing stands.                           |
-| OPEN_SMITHING         | Use smithing tables.                          |
-| OPEN_BEACON           | Use beacons.                                  |
-| OPEN_SHULKER_BOX      | Open shulker boxes.                           |
-| OPEN_FURNACE          | Use furnaces.                                 |
-| OPEN_LECTERN          | Use lecterns.                                 |
-| OPEN_CRAFTER          | Use crafters (version 1.20.4).                |
-| OPEN_LOOM             | Use looms.                                    |
-| OPEN_GRINDSTONE       | Use grindstones.                              |
-| OPEN_STONECUTTER      | Use stonecutters.                             |
-| OPEN_CARTOGRAPHY      | Use cartography tables.                       |
-| OPEN_MERCHANT         | Interact with merchants.                      |
-| OPEN_HOPPER           | Use hoppers.                                  |
-| OPEN_BARREL           | Open barrels.                                 |
-| OPEN_BLAST_FURNACE    | Use blast furnaces.                           |
-| OPEN_SMOKER           | Use smokers.                                  |
-| OPEN_DISPENSER        | Use dispensers.                               |
-| OPEN_DROPPER          | Use droppers.                                 |
+Controls administrative commands on the island.
 
-### Island Permissions (ISLAND)
+| **Permission**      | **Description**                                       | **Value** |
+|---------------------|-------------------------------------------------------|-----------|
+| `DEMOTE`            | Permission to demote players.                         | 1         |
+| `PROMOTE`           | Permission to promote players.                        | 2         |
+| `KICK`              | Permission to kick players from the island.           | 4         |
+| `ACCESS`            | Permission to access certain island features.         | 8         |
+| `SET_HOME`          | Permission to set a home location on the island.      | 16        |
+| `INVITE`            | Permission to invite players to the island.           | 32        |
+| `SET_BIOME`         | Permission to set a biome on the island.              | 64        |
+| `SET_WARP`          | Permission to set a warp point on the island.         | 128       |
+| `DEL_WARP`          | Permission to delete a warp point from the island.    | 256       |
+| `TP_WARP`           | Permission to teleport to a warp point on the island. | 512       |
+| `EXPEL`             | Permission to expel players from the island.          | 1,024     |
+| `MANAGE_PERMISSION` | Permission to manage island permissions.              | 2,048     |
+| `BAN`               | Permission to ban players from the island.            | 4,096     |
+| `UNBAN`             | Permission to unban players from the island.          | 8,192     |
+| `MANAGE_TRUST`      | Permission to manage trust levels on the island.      | 16,384    |
+| `MANAGE_GAMERULE`   | Permission to manage game rules on the island.        | 32,768    |
 
-| Permission Name     | Description                                 |
-|---------------------|---------------------------------------------|
-| BLOCK_BREAK         | Break blocks.                               |
-| BLOCK_PLACE         | Place blocks.                               |
-| BUCKETS             | Use buckets.                                |
-| REDSTONE            | Use redstone components.                    |
-| PVP                 | Engage in player versus player combat.      |
-| KILL_MONSTER        | Kill monsters.                              |
-| KILL_ANIMAL         | Kill animals.                               |
-| DROP_ITEMS          | Drop items.                                 |
-| PICKUP_ITEMS        | Pick up items.                              |
-| USE_NETHER_PORTAL   | Use Nether portals.                         |
-| USE_END_PORTAL      | Use End portals.                            |
-| INTERACT_ENTITIES   | Interact with entities.                     |
-| KILL_UNKNOWN_ENTITY | Kill unknown entities.                      |
-| KILL_NPC            | Kill NPCs (non-player characters).          |
-| INTERACT            | Perform general interactions on the island. |
+#### 3. **Inventory Permissions (`PermissionsInventory`)**
 
-## Game Rules (Gamerules)
+Controls access to various inventory-related blocks and features on the island.
 
-Game rules allow you to customize the behavior of the island by enabling or disabling certain features.
+| **Permission**       | **Description**                                                                                                                   | **Value** |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------|-----------|
+| `OPEN_CHEST`         | Permission to open chests.                                                                                                        | 1         |
+| `OPEN_ANVIL`         | Permission to open anvils.                                                                                                        | 2         |
+| `OPEN_WORKBENCH`     | Permission to open workbenches.                                                                                                   | 4         |
+| `OPEN_ENCHANTING`    | Permission to open enchanting tables.                                                                                             | 8         |
+| `OPEN_BREWING`       | Permission to open brewing stands.                                                                                                | 16        |
+| `OPEN_SMITHING`      | Permission to open smithing tables.                                                                                               | 32        |
+| `OPEN_BEACON`        | Permission to open beacons.                                                                                                       | 64        |
+| `OPEN_SHULKER_BOX`   | Permission to open shulker boxes.                                                                                                 | 128       |
+| `OPEN_FURNACE`       | Permission to open furnaces.                                                                                                      | 256       |
+| `OPEN_LECTERN`       | Permission to open lecterns.                                                                                                      | 512       |
+| `OPEN_CRAFTER`       | Permission to open crafting tables.                                                                                               | 1,024     |
+| `OPEN_LOOM`          | Permission to open looms.                                                                                                         | 2,048     |
+| `OPEN_GRINDSTONE`    | Permission to open grindstones.                                                                                                   | 4,096     |
+| `OPEN_STONECUTTER`   | Permission to open stonecutters.                                                                                                  | 8,192     |
+| `OPEN_CARTOGRAPHY`   | Permission to open cartography tables.                                                                                            | 16,384    |
+| `OPEN_MERCHANT`      | Permission to open merchants.                                                                                                     | 32,768    |
+| `OPEN_HOPPER`        | Permission to open hoppers.                                                                                                       | 65,536    |
+| `OPEN_BARREL`        | Permission to open barrels.                                                                                                       | 131,072   |
+| `OPEN_BLAST_FURNACE` | Permission to open blast furnaces.                                                                                                | 262,144   |
+| `OPEN_SMOKER`        | Permission to open smokers.                                                                                                       | 524,288   |
+| `OPEN_SMITHING_NEW`  | **Deprecated** Permission to open the new smithing tables (old permission). This permission is deprecated and should not be used. | 1,048,576 |
+| `OPEN_DISPENSER`     | Permission to open dispensers.                                                                                                    | 2,097,152 |
+| `OPEN_DROPPER`       | Permission to open droppers.                                                                                                      | 4,194,304 |
 
-| Game Rule Name               | Description                                            |
-|------------------------------|--------------------------------------------------------|
-| DISABLE_SPAWN_HOSTILE        | Disable spawning of hostile mobs on the island.        |
-| DISABLE_SPAWN_PASSIVE        | Disable spawning of passive mobs on the island.        |
-| DISABLE_SPAWN_UNKNOWN        | Disable spawning of unknown mobs on the island.        |
-| DISABLE_HUMAN_EXPLOSION      | Disable explosions caused by players on the island.    |
-| DISABLE_MOB_EXPLOSION        | Disable explosions caused by mobs on the island.       |
-| DISABLE_ENDERMAN_PICK_BLOCK  | Prevent Endermen from picking up blocks on the island. |
-| DISABLE_FIRE_SPREADING       | Disable fire spreading on the island.                  |
-| DISABLE_MOB_PICKUP_ITEMS     | Prevent mobs from picking up items on the island.      |
-| DISABLE_UNKNOWN_EXPLOSION    | Disable unknown explosions on the island.              |
-| DISABLE_PASSIF_MOB_GRIEFING  | Prevent passive mobs from griefing on the island.      |
-| DISABLE_HOSTILE_MOB_GRIEFING | Prevent hostile mobs from griefing on the island.      |
-| DISABLE_UNKNOWN_MOB_GRIEFING | Prevent unknown mobs from griefing on the island.      |
+## Usage
 
-## Usage Examples
+### Integrating Placeholders
 
-### Get the Island Size
+1. **Identify the Placeholder**:
+   - Determine which placeholder you want to use based on the available placeholders listed above.
 
-```text
-Your island has a size of %skyllia_island_size% blocks.
-```
+2. **Insert Placeholder**:
+   - Use the placeholder in your server's configuration files or within plugins that support PlaceholderAPI.
+   - **Example**: Adding placeholders to a scoreboard configuration:
+     ```yaml
+     lines:
+       - "Island Size: %skyllia_island_size%"
+       - "Members: %skyllia_island_members_size%/%skyllia_island_members_max_size%"
+       - "Rank: %skyllia_island_rank%"
+       - "TPS: %skyllia_island_tps%"
+     ```
 
-### Check if a Role Has a Specific Permission
+## Addons
 
-To check if the `MODERATOR` role has the `KICK` permission in commands:
+Skyllia Placeholder supports several addons to extend its functionality. Ensure that these addons are installed in your `plugins` directory to utilize their respective placeholders.
 
-```text
-Kick permission: %skyllia_permissions_MODERATOR_COMMANDS_KICK%
-```
+### SkylliaOre
 
-### Check the Status of a Game Rule on the Island
+Enhances ore management on your Skyblock islands by providing placeholders related to ore generation and management.
 
-To find out if fire spreading is disabled on the island:
+- **Placeholders**:
+   - `%skyllia_ore_generator_name%` - Returns the name of the ore generator on the island.
 
-```text
-Fire spreading disabled: %skyllia_gamerule_DISABLE_FIRE_SPREADING%
-```
+### SkylliaValue
 
-### Check the Ore Generator (Optional)
+Tracks and manages experience and level values for players on their islands.
 
-If **Skyllia-Ore** is installed, you can check the name of the current ore generator:
+- **Placeholders**:
+   - `%skyllia_value_experience%` - Displays the player's experience.
+   - `%skyllia_value_level%` - Displays the player's level based on experience.
 
-```text
-Your current ore generator is %skyllia_ore%.
-```
+### SkylliaBank
 
-## Notes
+Introduces a banking system for players to manage their in-game currency.
 
-- **Case Sensitivity:** Placeholders are case-sensitive for role names, permission names, and game rule names. Use the EXACT names as defined in the tables above.
-- **Version Updates:** Some permissions or rules may be specific to certain game versions (e.g., `OPEN_CRAFTER` for version 1.20.4).
-- **Default Values:** If a placeholder is malformed or references a non-existent value, it will return `"Invalid placeholder format"` or a default value.
-- **PAPI Configuration:** Ensure that custom placeholders are supported by checking PAPI's configuration file and adding support for the Skyllia plugin if necessary.
+- **Placeholders**:
+   - `%skyllia_bank_live%` - Shows the live balance in the player's bank account.
+   - `%skyllia_bank_cached%` - Shows the cached balance for performance optimization.
 
-## Useful Commands
+## Contributing
 
-- **Reload PAPI:** `/papi reload` to reload PAPI configurations.
-- **Check Available Expansions:** `/papi list` to display the list of available expansions.
-- **Install the Skyllia Expansion:** If available on PAPI's cloud, use `/papi ecloud download skyllia` then `/papi reload`.
-- **Install the Skyllia-Ore Expansion:** If Skyllia-Ore is installed, test the ore generator placeholder with `/papi parse me %skyllia_ore%`.
-- **Test a Placeholder:** `/papi parse me %skyllia_island_size%` to test the placeholder directly in-game.
+Contributions are welcome! To contribute to Skyllia Placeholder, please follow these steps:
+
+1. **Fork the Repository**:
+   - Click the "Fork" button on the repository page to create your own copy.
+
+2. **Create a New Branch**:
+   - ```bash
+     git checkout -b feature/YourFeature
+     ```
+
+3. **Commit Your Changes**:
+   - ```bash
+     git commit -am 'Add some feature'
+     ```
+
+4. **Push to the Branch**:
+   - ```bash
+     git push origin feature/YourFeature
+     ```
+
+5. **Open a Pull Request**:
+   - Navigate to your forked repository and click "Compare & pull request".
+
+Please ensure that your contributions adhere to the project's coding standards and include appropriate documentation.
+
+## License
+
+Skyllia Placeholder is released under the [MIT License](../../LICENSE).
