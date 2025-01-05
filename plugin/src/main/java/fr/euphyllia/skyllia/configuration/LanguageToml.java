@@ -95,6 +95,7 @@ public class LanguageToml {
     public static String messageVisitIslandSuccess = "You have been teleported to the island of %player%.";
     public static String messageExpelPlayerFailed = "The player cannot be expelled from your island.";
     public static String messageExpelPlayerFailedNotInIsland = "The player is not on your island.";
+    public static String messageExpelPlayerSuccess = "You have expelled %player% from your island";
     public static String messageExpelCommandNotEnoughArgs = "The command is incomplete: /skyllia expel <player>";
     public static String messagePlayerNotConnected = "The player is not connected";
     public static String messageLocationNotSafe = "The location is not safe! Teleportation impossible.";
@@ -303,6 +304,7 @@ public class LanguageToml {
     private static void islandExpelLanguage() {
         messageExpelCommandNotEnoughArgs = getString("island.expel.not-enough-args", messageExpelCommandNotEnoughArgs);
         messageExpelPlayerFailed = getString("island.expel.player-failed", messageExpelPlayerFailed);
+        messageExpelPlayerSuccess = getString("island.expel.success", messageExpelPlayerSuccess);
         messageExpelPlayerFailedNotInIsland = getString("island.expel.player-not-in-island", messageExpelPlayerFailedNotInIsland);
         messageCannotDeleteIslandWithMembers = getString("island.delete.cannot-delete-with-members", messageCannotDeleteIslandWithMembers);
     }
