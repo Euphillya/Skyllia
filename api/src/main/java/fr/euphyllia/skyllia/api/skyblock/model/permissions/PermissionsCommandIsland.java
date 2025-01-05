@@ -56,7 +56,7 @@ public enum PermissionsCommandIsland implements Permissions {
     /**
      * Permission to teleport to a warp point on the island.
      */
-    TP_WARP(512),
+    TELEPORT_WARP(512),
 
     /**
      * Permission to expel players from the island.
@@ -86,7 +86,12 @@ public enum PermissionsCommandIsland implements Permissions {
     /**
      * Permission to manage game rules on the island.
      */
-    MANAGE_GAMERULE(32_768);
+    MANAGE_GAMERULE(32_768),
+
+    /**
+     * Permission to debug permission on the island.
+     */
+    DEBUG(65_536);
 
     private final long permissionValue;
 
@@ -154,5 +159,10 @@ public enum PermissionsCommandIsland implements Permissions {
     @Override
     public PermissionsType getPermissionType() {
         return PermissionsType.COMMANDS;
+    }
+
+    @Override
+    public String getName() {
+        return this.name();
     }
 }

@@ -18,4 +18,6 @@ public interface Permissions {
      * @return The permission type.
      */
     PermissionsType getPermissionType();
+
+    String getName();
 }

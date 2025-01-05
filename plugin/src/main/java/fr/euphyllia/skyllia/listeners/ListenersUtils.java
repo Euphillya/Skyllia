@@ -15,6 +15,7 @@ import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.PositionIslandCache;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -49,10 +50,7 @@ public class ListenersUtils {
             return island;
         }
 
-        long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
-        PermissionManager permissionManager = new PermissionManager(permissionChecker);
-
-        if (permissionManager.hasPermission(gameRule.getPermissionValue())) {
+        if (PermissionsManagers.testGameRule(gameRule, island)) {
             cancellable.setCancelled(true);
         }
         return island;
@@ -80,6 +78,12 @@ public class ListenersUtils {
 
         Players playersInIsland = PlayersInIslandCache.getPlayers(island.getId(), player.getUniqueId());
 
+        if (!PermissionsManagers.testPermissions(playersInIsland, player, island, permissionsIsland, true)) {
+            cancellable.setCancelled(true);
+        }
+
+        /*Players playersInIsland = PlayersInIslandCache.getPlayers(island.getId(), player.getUniqueId());
+
         if (playersInIsland.getRoleType().equals(RoleType.OWNER)) {
             return island;
         }
@@ -102,7 +106,7 @@ public class ListenersUtils {
         PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
         if (!permissionManager.hasPermission(permissionsIsland)) {
             cancellable.setCancelled(true);
-        }
+        }*/
         return island;
     }
 

@@ -12,6 +12,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsl
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -61,14 +62,8 @@ public class TrustSubCommand implements SubCommandInterface {
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_TRUST)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                    return true;
-                }
+            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.MANAGE_TRUST, false)) {
+                return true;
             }
 
             PlayersInIslandCache.addPlayerTrustedInIsland(island.getId(), playerTrustedId);

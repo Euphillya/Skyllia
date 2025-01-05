@@ -16,6 +16,7 @@ import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.cache.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -102,17 +103,8 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(
-                        island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.SET_BIOME)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                    CommandCacheExecution.removeCommandExec(islandId, "biome");
-                    return true;
-                }
+            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.SET_BIOME, false)) {
+                return true;
             }
 
             Position islandPosition = island.getPosition();

@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,14 +52,8 @@ public class BanSubCommand implements SubCommandInterface {
 
         Players executorPlayer = island.getMember(player.getUniqueId());
 
-        if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-            PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-            PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-            if (!permissionManager.hasPermission(PermissionsCommandIsland.BAN)) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                return true;
-            }
+        if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.BAN, false)) {
+            return true;
         }
 
         String playerBan = args[0];

@@ -13,6 +13,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsl
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -58,13 +59,8 @@ public class WarpSubCommand implements SubCommandInterface {
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.TP_WARP)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                    return true;
-                }
+            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.TELEPORT_WARP, false)) {
+                return true;
             }
 
             WarpIsland warp = island.getWarpByName(warpName);

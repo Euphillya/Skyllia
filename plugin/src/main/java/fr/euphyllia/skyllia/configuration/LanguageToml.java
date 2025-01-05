@@ -46,6 +46,7 @@ public class LanguageToml {
     public static String messageDemotePlayerFailed = "The player %s cannot be demoted.";
     public static String messageDemotePlayerFailedHighOrEqualsStatus = "You cannot demote a player of your rank or higher.";
     public static String messageDemoteCommandNotEnoughArgs = "The command is incomplete: /skyllia demote <member>";
+    public static String messageDebugCommandNotEnoughArgs = "The command is incomplete: /skyllia debug <gamerule/commands/inventory/island>";
     public static String messagePromotePlayer = "The player %s has been promoted.";
     public static String messagePromotePlayerFailed = "The player %s cannot be promoted.";
     public static String messagePromotePlayerFailedLowOrEqualsStatus = "You cannot promote a player to your rank or higher.";
@@ -408,6 +409,10 @@ public class LanguageToml {
         messageVisitIslandIsPrivate = getString("island.visit.island-not-open", messageVisitIslandIsPrivate);
         messageVisitIslandSuccess = getString("island.visit.success", messageVisitIslandSuccess);
         messageVisitIslandPlayerBanned = getString("island.visit.player-banned", messageVisitIslandPlayerBanned);
+    }
+
+    private static void debugLanguage() {
+        messageDebugCommandNotEnoughArgs = getString("island.debug.not-enough-args", messageDebugCommandNotEnoughArgs);
     }
 
 

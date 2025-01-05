@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -53,14 +54,8 @@ public class PromoteSubCommand implements SubCommandInterface {
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.PROMOTE)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                    return true;
-                }
+            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.PROMOTE, false)) {
+                return true;
             }
 
             Players players = island.getMember(playerName);

@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -62,14 +63,9 @@ public class PermissionSubCommand implements SubCommandInterface {
 
             Players executorPlayer = island.getMember(player.getUniqueId());
             if (permissionFormat.permissions != null) {
-                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                    PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                    PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                    if (!permissionManager.hasPermission(PermissionsCommandIsland.MANAGE_PERMISSION)) {
-                        LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                        return true;
-                    }
+                if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.MANAGE_PERMISSION, false)) {
+                    return true;
                 }
                 if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
                     LanguageToml.sendMessage(player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);

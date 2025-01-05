@@ -13,6 +13,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsl
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -41,7 +42,7 @@ public class ExpelSubCommand implements SubCommandInterface {
             return;
         }
 
-        org.bukkit.Bukkit.getRegionScheduler().execute(plugin, bPlayerExpelLocation, () -> {
+        Bukkit.getRegionScheduler().execute(plugin, bPlayerExpelLocation, () -> {
             int chunkLocX = bPlayerExpelLocation.getChunk().getX();
             int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
 
@@ -81,14 +82,9 @@ public class ExpelSubCommand implements SubCommandInterface {
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
 
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.EXPEL)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                    return true;
-                }
+            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.EXPEL, false)) {
+                return true;
             }
 
             String playerToExpel = args[0];

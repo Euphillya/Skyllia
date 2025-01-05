@@ -150,4 +150,9 @@ public enum PermissionsIsland implements Permissions {
     public PermissionsType getPermissionType() {
         return PermissionsType.ISLAND;
     }
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
 }

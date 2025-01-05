@@ -195,4 +195,9 @@ public enum PermissionsInventory implements Permissions {
     public PermissionsType getPermissionType() {
         return PermissionsType.INVENTORY;
     }
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
 }

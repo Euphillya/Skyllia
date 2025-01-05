@@ -13,6 +13,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsl
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.InviteCacheExecution;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -102,14 +103,8 @@ public class InviteSubCommand implements SubCommandInterface {
 
             Players executorPlayer = island.getMember(ownerIsland.getUniqueId());
 
-            if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                PermissionRoleIsland permissionRoleIsland = skyblockManager.getPermissionIsland(island.getId(), PermissionsType.COMMANDS, executorPlayer.getRoleType()).join();
-
-                PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-                if (!permissionManager.hasPermission(PermissionsCommandIsland.INVITE)) {
-                    LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerPermissionDenied);
-                    return;
-                }
+            if (!PermissionsManagers.testPermissions(executorPlayer, ownerIsland, island, PermissionsCommandIsland.INVITE, false)) {
+                return;
             }
 
             UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
