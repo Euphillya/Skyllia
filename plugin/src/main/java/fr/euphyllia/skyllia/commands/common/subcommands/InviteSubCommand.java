@@ -117,6 +117,18 @@ public class InviteSubCommand implements SubCommandInterface {
 
     private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
         try {
+
+            UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
+            if (playerInvitedId == null) {
+                LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerNotFound);
+                return;
+            }
+
+            if (ownerIsland.getUniqueId().equals(playerInvitedId)) {
+                LanguageToml.sendMessage(ownerIsland, LanguageToml.messageInviteCanNotYourSelf);
+                return;
+            }
+
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
             if (island == null) {
@@ -127,12 +139,6 @@ public class InviteSubCommand implements SubCommandInterface {
             Players executorPlayer = island.getMember(ownerIsland.getUniqueId());
 
             if (!PermissionsManagers.testPermissions(executorPlayer, ownerIsland, island, PermissionsCommandIsland.INVITE, false)) {
-                return;
-            }
-
-            UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
-            if (playerInvitedId == null) {
-                LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerNotFound);
                 return;
             }
 
