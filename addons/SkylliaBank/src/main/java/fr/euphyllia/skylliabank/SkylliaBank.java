@@ -55,7 +55,7 @@ public final class SkylliaBank extends JavaPlugin {
 
         bankManager = new BankManager();
 
-        SkylliaAPI.registerCommands(new BankCommand(this), "bank", "money", "bal");
+        SkylliaAPI.registerCommands(new BankCommand(this), "bank", "money", "bal", "balance");
         SkylliaAPI.registerAdminCommands(new BankAdminCommand(this), "bank");
 
         getLogger().info("SkylliaBank has been successfully activated!");
