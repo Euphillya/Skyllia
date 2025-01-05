@@ -51,7 +51,8 @@ public class ExpelSubCommand implements SubCommandInterface {
             }
 
             PlayerUtils.teleportPlayerSpawn(bPlayerToExpel);
-            LanguageToml.sendMessage(executor, LanguageToml.messageExpelPlayerSuccess);
+            LanguageToml.sendMessage(executor, LanguageToml.messageExpelPlayerSuccess
+                    .replace("%player%", bPlayerToExpel.getName()));
         });
     }
 
