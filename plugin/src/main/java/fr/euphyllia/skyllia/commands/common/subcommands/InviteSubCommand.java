@@ -46,14 +46,7 @@ public class InviteSubCommand implements SubCommandInterface {
         }
         String type = args[0];
         Main skyblock = Main.getPlugin(Main.class);
-        if (type.equalsIgnoreCase("add")) {
-            if (args.length < 2) {
-                LanguageToml.sendMessage(player, LanguageToml.messageInviteAddCommandNotEnoughArgs);
-                return true;
-            }
-            String playerOrOwner = args[1];
-            invitePlayer(skyblock, player, playerOrOwner);
-        } else if (type.equalsIgnoreCase("accept")) {
+        if (type.equalsIgnoreCase("accept")) {
             if (args.length < 2) {
                 LanguageToml.sendMessage(player, LanguageToml.messageInviteAcceptCommandNotEnoughArgs);
                 return true;
@@ -74,6 +67,8 @@ public class InviteSubCommand implements SubCommandInterface {
             }
             String playerOrOwner = args[1];
             deleteInvitePlayer(skyblock, player, playerOrOwner);
+        } else {
+            invitePlayer(skyblock, player, args[0]);
         }
         return true;
     }
@@ -81,7 +76,7 @@ public class InviteSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
-            List<String> possible = List.of("accept", "decline", "add", "delete");
+            List<String> possible = List.of("accept", "decline", "delete");
             String partial = args[0].trim().toLowerCase();
             return possible.stream()
                     .filter(cmd -> cmd.toLowerCase().startsWith(partial))
