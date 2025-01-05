@@ -22,9 +22,11 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InviteSubCommand implements SubCommandInterface {
 
@@ -76,11 +78,13 @@ public class InviteSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
-            List<String> possible = List.of("accept", "decline", "delete");
             String partial = args[0].trim().toLowerCase();
-            return possible.stream()
-                    .filter(cmd -> cmd.toLowerCase().startsWith(partial))
-                    .collect(Collectors.toList());
+            return Stream.concat(
+                    Stream.of("accept", "decline", "delete"),
+                    Bukkit.getOnlinePlayers()
+                            .stream()
+                            .map(Player::getName)
+            ).filter(cmd -> cmd.toLowerCase().startsWith(partial)).collect(Collectors.toList());
         } else if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
 
