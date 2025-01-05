@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -79,12 +80,14 @@ public class KickSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 1) {
+        if (args.length == 1 && sender instanceof Player player) {
             String partial = args[0].trim().toLowerCase();
-            return Bukkit.getOnlinePlayers().stream()
-                    .map(CommandSender::getName)
-                    .filter(name -> name.toLowerCase().startsWith(partial))
-                    .collect(Collectors.toList());
+            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            if (island == null) return Collections.emptyList();
+            return island.getMembersCached().stream()
+                    .map(Players::getLastKnowName)
+                    .filter(cmd -> cmd.toLowerCase().startsWith(partial))
+                    .toList();
         }
         return Collections.emptyList();
     }
