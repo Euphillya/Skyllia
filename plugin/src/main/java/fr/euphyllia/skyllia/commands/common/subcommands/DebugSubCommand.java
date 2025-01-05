@@ -54,24 +54,28 @@ public class DebugSubCommand implements SubCommandInterface {
             return true;
         }
 
+        boolean enabledDebug = false;
+
         switch (args[0].toLowerCase(Locale.ROOT)) {
             case "gamerule": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.GAME_RULE);
+                enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.GAME_RULE);
             }
             case "island": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.ISLAND_PERMISSION);
+                enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.ISLAND_PERMISSION);
             }
             case "commands": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.COMMANDS_PERMISSION);
+                enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.COMMANDS_PERMISSION);
             }
             case "inventory": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.INVENTORY_PERMISSION);
+                enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.INVENTORY_PERMISSION);
             }
         }
 
-        LanguageToml.sendMessage(player, "Debug " + args[0] + " enabled");
-
-
+        LanguageToml.sendMessage(player, "Debug " + args[0] + " " + (enabledDebug ? "enabled" : "disabled"));
         return true;
     }
 
