@@ -45,27 +45,35 @@ public class InviteSubCommand implements SubCommandInterface {
             return true;
         }
         String type = args[0];
+        Main skyblock = Main.getPlugin(Main.class);
         if (type.equalsIgnoreCase("add")) {
             if (args.length < 2) {
                 LanguageToml.sendMessage(player, LanguageToml.messageInviteAddCommandNotEnoughArgs);
                 return true;
             }
             String playerOrOwner = args[1];
-            invitePlayer(Main.getPlugin(Main.class), player, playerOrOwner);
+            invitePlayer(skyblock, player, playerOrOwner);
         } else if (type.equalsIgnoreCase("accept")) {
             if (args.length < 2) {
                 LanguageToml.sendMessage(player, LanguageToml.messageInviteAcceptCommandNotEnoughArgs);
                 return true;
             }
             String playerOrOwner = args[1];
-            acceptPlayer(Main.getPlugin(Main.class), player, playerOrOwner);
+            acceptPlayer(skyblock, player, playerOrOwner);
         } else if (type.equalsIgnoreCase("decline")) {
             if (args.length < 2) {
                 LanguageToml.sendMessage(player, LanguageToml.messageInviteDeclineCommandNotEnoughArgs);
                 return true;
             }
             String playerOrOwner = args[1];
-            declinePlayer(Main.getPlugin(Main.class), player, playerOrOwner);
+            declinePlayer(skyblock, player, playerOrOwner);
+        } else if (type.equalsIgnoreCase("delete")) {
+            if (args.length < 2) {
+                LanguageToml.sendMessage(player, LanguageToml.messageInviteRemoveCommandNotEnoughArgs);
+                return true;
+            }
+            String playerOrOwner = args[1];
+            deleteInvitePlayer(skyblock, player, playerOrOwner);
         }
         return true;
     }
@@ -73,7 +81,7 @@ public class InviteSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
-            List<String> possible = List.of("accept", "decline", "add");
+            List<String> possible = List.of("accept", "decline", "add", "delete");
             String partial = args[0].trim().toLowerCase();
             return possible.stream()
                     .filter(cmd -> cmd.toLowerCase().startsWith(partial))
@@ -89,9 +97,32 @@ public class InviteSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
+    private void deleteInvitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
+        SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
+        if (island == null) {
+            LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerHasNotIsland);
+            return;
+        }
+        Players executorPlayer = island.getMember(ownerIsland.getUniqueId());
+
+        if (!PermissionsManagers.testPermissions(executorPlayer, ownerIsland, island, PermissionsCommandIsland.INVITE, false)) {
+            return;
+        }
+
+        UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
+        if (playerInvitedId == null) {
+            LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerNotFound);
+            return;
+        }
+
+        InviteCacheExecution.removeInviteCache(island.getId(), playerInvitedId);
+        LanguageToml.sendMessage(ownerIsland, LanguageToml.messageInviteDeletePlayerInvited.formatted(playerInvited));
+    }
+
     private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
         try {
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
             if (island == null) {
                 LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerHasNotIsland);

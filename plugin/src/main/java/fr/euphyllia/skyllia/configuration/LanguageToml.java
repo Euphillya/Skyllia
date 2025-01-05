@@ -62,9 +62,11 @@ public class LanguageToml {
     public static String messageInviteAlreadyIsland = "You are already on an island!";
     public static String messageInviteCommandNotEnoughArgs = "The command is incomplete: /skyllia invite <add/accept/decline> <player/island_owner>";
     public static String messageInviteAcceptCommandNotEnoughArgs = "You must specify which island you want to join: /skyllia invite accept <island_owner>";
+    public static String messageInviteRemoveCommandNotEnoughArgs = "The command is incomplete: /skyllia invite remove <island_owner>";
     public static String messageInviteDeclineCommandNotEnoughArgs = "You must specify which island you want to decline: /skyllia invite decline <island_owner>";
     public static String messageInviteAddCommandNotEnoughArgs = "You must specify which island you want to decline: /skyllia invite add <player>";
     public static String messageInvitePlayerInvited = "The player %s has been invited. Awaiting a response...";
+    public static String messageInviteDeletePlayerInvited = "You have deleted %s's invitation.";
     public static String messageInvitePlayerNotification = "The player %player_invite% has invited you to their island. To accept: /skyllia invite accept %player_invite%. To decline: /skyllia invite decline %player_invite%";
     public static String messageInviteAcceptOwnerHasNotIsland = "The island of the player %s was not found.";
     public static String messageInviteDeclineOwnerHasNotIsland = "The island of the player %s was not found.";
