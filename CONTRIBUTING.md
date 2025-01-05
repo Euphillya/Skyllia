@@ -13,20 +13,24 @@ First off, thank you for considering contributing to Skyllia! It's people like y
 
 ### Reporting Bugs
 
-This section guides you through submitting a bug report for Skyllia. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
+This section guides you through submitting a bug report for Skyllia. Following these guidelines helps maintainers and
+the community understand your report, reproduce the behavior, and find related reports.
 
 #### Before Submitting A Bug Report
 
-- **Perform a [search](https://github.com/Euphillya/Skyllia/issues)** to see if the bug has already been reported. If it has, and the issue is still open, add a comment to the existing issue instead of opening a new one.
+- **Perform a [search](https://github.com/Euphillya/Skyllia/issues)** to see if the bug has already been reported. If it
+  has, and the issue is still open, add a comment to the existing issue instead of opening a new one.
 
 #### How Do I Submit A (Good) Bug Report?
 
-Bugs are tracked as GitHub issues. Create an issue and provide the following information by filling in the provided template.
+Bugs are tracked as GitHub issues. Create an issue and provide the following information by filling in the provided
+template.
 
 - **Use a clear and descriptive title** for the issue to identify the problem.
 - **Describe the exact steps which reproduce the problem** in as many details as possible.
 - **Provide specific examples to demonstrate the steps**.
-- **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that behavior.
+- **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that
+  behavior.
 - **Explain which behavior you expected to see instead and why.**
 - **Include screenshots and animated GIFs** which show the problem and explain how to reproduce the problem.
 - **If the problem is related to performance or memory**, include a CPU profile capture with your report.
@@ -34,15 +38,18 @@ Bugs are tracked as GitHub issues. Create an issue and provide the following inf
 
 ### Suggesting Enhancements
 
-This section guides you through submitting an enhancement suggestion for Skyllia, including completely new features and minor improvements to existing functionality. 
+This section guides you through submitting an enhancement suggestion for Skyllia, including completely new features and
+minor improvements to existing functionality.
 
 #### Before Submitting An Enhancement Suggestion
 
-- **Perform a [search](https://github.com/Euphillya/Skyllia/issues)** to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
+- **Perform a [search](https://github.com/Euphillya/Skyllia/issues)** to see if the enhancement has already been
+  suggested. If it has, add a comment to the existing issue instead of opening a new one.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
 
-Enhancement suggestions are tracked as GitHub issues. Create an issue on the repository and provide the following information:
+Enhancement suggestions are tracked as GitHub issues. Create an issue on the repository and provide the following
+information:
 
 - **Use a clear and descriptive title** for the issue to identify the suggestion.
 - **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
@@ -56,7 +63,8 @@ Enhancement suggestions are tracked as GitHub issues. Create an issue on the rep
 - **Follow the project's coding style**.
 - **Ensure any install or build dependencies are removed before the end of the layer when doing a build**.
 - **Update the documentation with the details of the pull request**.
-- **Increase the version numbers in any examples files and the README.md to the new version that this pull request would represent**.
+- **Increase the version numbers in any examples files and the README.md to the new version that this pull request would
+  represent**.
 
 #### How Do I Submit A (Good) Pull Request?
 

@@ -1,7 +1,6 @@
 package fr.euphyllia.skylliaore;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skylliaore.commands.OreCommands;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
@@ -10,7 +9,6 @@ import fr.euphyllia.skylliaore.listeners.OreEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 

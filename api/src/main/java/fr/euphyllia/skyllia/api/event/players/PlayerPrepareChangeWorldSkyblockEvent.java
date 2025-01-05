@@ -92,9 +92,9 @@ public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Canc
     /**
      * Constructs a new {@code PlayerPrepareChangeWorldSkyblockEvent}.
      *
-     * @param player     The player who touched the portal.
-     * @param wc         The world configuration for the target world.
-     * @param pt         The type of the portal being used.
+     * @param player The player who touched the portal.
+     * @param wc     The world configuration for the target world.
+     * @param pt     The type of the portal being used.
      */
     public PlayerPrepareChangeWorldSkyblockEvent(Player player, WorldConfig wc, PortalType pt) {
         super(false);

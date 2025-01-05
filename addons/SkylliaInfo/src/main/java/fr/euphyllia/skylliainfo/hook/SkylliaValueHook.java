@@ -35,7 +35,8 @@ public class SkylliaValueHook {
             player.sendMessage(miniMessage.deserialize(
                     "<yellow>Island Value: </yellow><white>" + islandValue + "</white>"));
 
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                 InvocationTargetException e) {
             e.printStackTrace();
         }
     }

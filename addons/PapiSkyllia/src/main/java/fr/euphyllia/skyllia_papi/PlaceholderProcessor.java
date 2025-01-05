@@ -59,13 +59,6 @@ public class PlaceholderProcessor {
      * Indicates if the SkylliaBank addon is enabled.
      */
     private static final boolean SKYLLIA_BANK_ADDON;
-
-    static {
-        SKYLLIA_ORE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaOre") != null;
-        SKYLLIA_VALUE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaValue") != null;
-        SKYLLIA_BANK_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
-    }
-
     /**
      * Cache that maps a player's UUID to their island.
      * <p>
@@ -99,7 +92,6 @@ public class PlaceholderProcessor {
                     return CompletableFuture.supplyAsync(() -> loadIslandByUUID(playerId), executor);
                 }
             });
-
     /**
      * Cache that stores the final result of a placeholder (String) based on the playerId and the placeholder.
      * Uses the same expiration and refresh logic as {@link #ISLAND_CACHE}.
@@ -136,6 +128,12 @@ public class PlaceholderProcessor {
                     }, executor);
                 }
             });
+
+    static {
+        SKYLLIA_ORE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaOre") != null;
+        SKYLLIA_VALUE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaValue") != null;
+        SKYLLIA_BANK_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
+    }
 
     /**
      * Entry point for retrieving a placeholder value.
@@ -191,8 +189,8 @@ public class PlaceholderProcessor {
     /**
      * Processes placeholders related to the player's island.
      *
-     * @param islandOpt  the player's island wrapped in an {@link Optional}
-     * @param playerId   the player's UUID
+     * @param islandOpt   the player's island wrapped in an {@link Optional}
+     * @param playerId    the player's UUID
      * @param placeholder the placeholder to process
      * @return the placeholder value as a string
      */
@@ -230,8 +228,8 @@ public class PlaceholderProcessor {
     /**
      * Processes placeholders related to permissions.
      *
-     * @param island     the player's island
-     * @param playerId   the player's UUID
+     * @param island      the player's island
+     * @param playerId    the player's UUID
      * @param placeholder the placeholder to process
      * @return the placeholder value as a string
      */
@@ -286,7 +284,7 @@ public class PlaceholderProcessor {
     /**
      * Processes placeholders related to game rules.
      *
-     * @param island     the player's island
+     * @param island      the player's island
      * @param placeholder the placeholder to process
      * @return the placeholder value as a string
      */
@@ -313,8 +311,9 @@ public class PlaceholderProcessor {
     /**
      * Record representing a cache key with playerId and placeholder.
      *
-     * @param playerId   the player's UUID
+     * @param playerId    the player's UUID
      * @param placeholder the placeholder string
      */
-    private record CacheKey(UUID playerId, String placeholder) {}
+    private record CacheKey(UUID playerId, String placeholder) {
+    }
 }

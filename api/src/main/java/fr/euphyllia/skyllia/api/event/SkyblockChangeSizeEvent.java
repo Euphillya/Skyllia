@@ -69,7 +69,7 @@ public class SkyblockChangeSizeEvent extends Event {
     /**
      * Constructs a new {@code SkyblockChangeSizeEvent}.
      *
-     * @param island The island whose size is being changed.
+     * @param island     The island whose size is being changed.
      * @param sizeIsland The new radius of the island.
      */
     public SkyblockChangeSizeEvent(Island island, double sizeIsland) {

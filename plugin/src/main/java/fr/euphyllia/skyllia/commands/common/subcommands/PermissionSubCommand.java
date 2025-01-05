@@ -128,7 +128,7 @@ public class PermissionSubCommand implements SubCommandInterface {
 
             List<String> permissionValues = switch (permissionsType) {
                 case COMMANDS -> Arrays.stream(PermissionsCommandIsland.values()).map(Enum::name).toList();
-                case ISLAND   -> Arrays.stream(PermissionsIsland.values()).map(Enum::name).toList();
+                case ISLAND -> Arrays.stream(PermissionsIsland.values()).map(Enum::name).toList();
                 case INVENTORY -> Arrays.stream(PermissionsInventory.values()).map(Enum::name).toList();
             };
 

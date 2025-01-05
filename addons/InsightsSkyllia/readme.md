@@ -1,12 +1,18 @@
 # SkylliaInsight
 
-**SkylliaInsightAddon** is an addon for the [Insights](https://github.com/InsightsPlugin/Insights) plugin, designed to integrate the Skyllia platform's island management features with Insights' region limiting capabilities. This addon allows server administrators to monitor and enforce limits on player islands, ensuring a balanced and optimized gameplay experience.
+**SkylliaInsightAddon** is an addon for the [Insights](https://github.com/InsightsPlugin/Insights) plugin, designed to
+integrate the Skyllia platform's island management features with Insights' region limiting capabilities. This addon
+allows server administrators to monitor and enforce limits on player islands, ensuring a balanced and optimized gameplay
+experience.
 
 ## Features
 
-- **Region Integration:** Seamlessly integrates Skyllia islands with Insights, enabling region-based limits on island activities.
-- **Custom Limit Configurations:** Utilize Insights' powerful limits configuration to manage tile, group, and permission-based restrictions on islands.
-- **Dynamic Region Detection:** Automatically detects island regions based on chunk locations, ensuring accurate limit enforcement.
+- **Region Integration:** Seamlessly integrates Skyllia islands with Insights, enabling region-based limits on island
+  activities.
+- **Custom Limit Configurations:** Utilize Insights' powerful limits configuration to manage tile, group, and
+  permission-based restrictions on islands.
+- **Dynamic Region Detection:** Automatically detects island regions based on chunk locations, ensuring accurate limit
+  enforcement.
 - **Folia Support:** Optimized for Folia, ensuring enhanced performance on multithreaded servers.
 - **Permission-Based Access:** Control access to various functionalities with granular permissions for administrators.
 
@@ -17,30 +23,32 @@
 - **Insights Plugin:** Required for region limiting and monitoring functionalities.
 - **Java:** Java 21 is required for optimal performance.
 - **Dependencies:**
-  - **SkylliaOre:** Optional, for displaying generator types.
-  - **SkylliaBankAddon:** Optional, for displaying bank-related information.
-  - **SkylliaValue:** Optional, for displaying island values (proprietary plugin).
+    - **SkylliaOre:** Optional, for displaying generator types.
+    - **SkylliaBankAddon:** Optional, for displaying bank-related information.
+    - **SkylliaValue:** Optional, for displaying island values (proprietary plugin).
 
 ## Installation
 
 1. **Download SkylliaInsightAddon:**
-   - Obtain the latest version of SkylliaInsightAddon from the [official repository](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaInsight).
+    - Obtain the latest version of SkylliaInsightAddon from
+      the [official repository](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaInsight).
 
 2. **Install Dependencies:**
-   - Ensure that the Skyllia and Insights plugins are installed and properly configured on your server.
-   - Install any optional dependencies (SkylliaOre, SkylliaBankAddon) if you wish to utilize their features.
-   - For SkylliaValue, ensure you have the proprietary plugin installed as it is required for displaying island values.
+    - Ensure that the Skyllia and Insights plugins are installed and properly configured on your server.
+    - Install any optional dependencies (SkylliaOre, SkylliaBankAddon) if you wish to utilize their features.
+    - For SkylliaValue, ensure you have the proprietary plugin installed as it is required for displaying island values.
 
 3. **Configure the Plugin:**
-   - Place the `SkylliaInsightAddon.jar` file into your server's `plugins/Insights/addons/` directory.
-   - Ensure that the `Insights` plugin is properly configured according to your server's requirements.
+    - Place the `SkylliaInsightAddon.jar` file into your server's `plugins/Insights/addons/` directory.
+    - Ensure that the `Insights` plugin is properly configured according to your server's requirements.
 
 4. **Restart the Server:**
-   - Restart your Minecraft server to load the SkylliaInsight plugin.
+    - Restart your Minecraft server to load the SkylliaInsight plugin.
 
 ## Usage
 
-SkylliaInsight works in the background to integrate Skyllia islands with Insights' region limiting system. Administrators can manage and configure limits through the Insights configuration files.
+SkylliaInsight works in the background to integrate Skyllia islands with Insights' region limiting system.
+Administrators can manage and configure limits through the Insights configuration files.
 
 ### Setting Up Limits
 
@@ -119,7 +127,8 @@ limit:
 
 ## Configuration
 
-Customize the limits and how they apply to Skyllia islands by editing the `limits.yml` file in the Insights plugin directory. Below is an overview of the configuration options:
+Customize the limits and how they apply to Skyllia islands by editing the `limits.yml` file in the Insights plugin
+directory. Below is an overview of the configuration options:
 
 ### Basic Layout
 
@@ -158,7 +167,8 @@ For support, please join our [Discord server](https://discord.gg/uUJQEB7XNN).
 
 ## Contributing
 
-Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull request.
+Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull
+request.
 
 ## License
 

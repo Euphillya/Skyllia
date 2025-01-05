@@ -13,7 +13,7 @@ public interface DBConnect {
      * Initializes and loads the database connection.
      *
      * @return {@code true} if the connection is successfully established,
-     *         {@code false} otherwise
+     * {@code false} otherwise
      * @throws DatabaseException if any error occurs during initialization
      */
     boolean onLoad() throws DatabaseException;

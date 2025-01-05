@@ -90,9 +90,7 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
                     .collect(Collectors.toList());
-        }
-
-        else if (args.length == 2) {
+        } else if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
             List<String> possibleValues = Arrays.asList("5", "10", "15", "20", "25");
             return possibleValues.stream()

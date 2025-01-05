@@ -241,7 +241,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         } else {
             io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
             final long currTime = System.nanoTime();
-            return new double[] {
+            return new double[]{
                     regionData.getRegionSchedulingHandle().getTickReport5s(currTime).tpsData().segmentAll().average(),
                     regionData.getRegionSchedulingHandle().getTickReport15s(currTime).tpsData().segmentAll().average(),
                     regionData.getRegionSchedulingHandle().getTickReport1m(currTime).tpsData().segmentAll().average(),

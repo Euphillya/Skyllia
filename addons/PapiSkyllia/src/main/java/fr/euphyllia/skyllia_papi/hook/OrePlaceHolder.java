@@ -11,8 +11,8 @@ public class OrePlaceHolder {
     /**
      * Processes ore-related placeholders.
      *
-     * @param island     the player's island
-     * @param playerId   the player's UUID
+     * @param island      the player's island
+     * @param playerId    the player's UUID
      * @param placeholder the placeholder to process
      * @return the placeholder value as a string
      */

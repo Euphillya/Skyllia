@@ -25,7 +25,7 @@ public abstract class WorldNMS {
      * Resets a chunk at the specified position in the given world.
      *
      * @param craftWorld The world where the chunk is to be reset.
-     * @param position The position of the chunk to reset.
+     * @param position   The position of the chunk to reset.
      */
     public abstract void resetChunk(World craftWorld, Position position);
 

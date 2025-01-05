@@ -1,15 +1,22 @@
 # SkylliaInfo
 
-**SkylliaInfo** is a comprehensive information extension designed for Skyblock servers running on the Skyllia platform. This plugin provides detailed insights into player islands, enhancing the gaming experience by allowing players and administrators to access vital island statistics and information effortlessly.
+**SkylliaInfo** is a comprehensive information extension designed for Skyblock servers running on the Skyllia platform.
+This plugin provides detailed insights into player islands, enhancing the gaming experience by allowing players and
+administrators to access vital island statistics and information effortlessly.
 
 ## Features
 
-- **Detailed Island Information:** Retrieve comprehensive details about any player's island, including owner, size, members, creation date, and location.
-- **Integration with Skyllia Extensions:** Seamlessly integrates with other Skyllia plugins such as SkylliaBank, SkylliaOre, and SkylliaValue to display extended information like bank balances, generator types, and island values.
-- **Customizable Chat Formats:** Define how information is displayed using customizable chat formats to match your server's theme.
-- **Admin and Player Commands:** Provides both player and admin commands for accessing island information and managing configurations.
+- **Detailed Island Information:** Retrieve comprehensive details about any player's island, including owner, size,
+  members, creation date, and location.
+- **Integration with Skyllia Extensions:** Seamlessly integrates with other Skyllia plugins such as SkylliaBank,
+  SkylliaOre, and SkylliaValue to display extended information like bank balances, generator types, and island values.
+- **Customizable Chat Formats:** Define how information is displayed using customizable chat formats to match your
+  server's theme.
+- **Admin and Player Commands:** Provides both player and admin commands for accessing island information and managing
+  configurations.
 - **Folia Support:** Optimized for Folia, ensuring enhanced performance on multithreaded servers.
-- **Permission-Based Access:** Control access to various functionalities with granular permissions for players and administrators.
+- **Permission-Based Access:** Control access to various functionalities with granular permissions for players and
+  administrators.
 
 ## Requirements
 
@@ -17,35 +24,40 @@
 - **Skyllia Platform:** Ensure the Skyllia plugin is installed and active on your server.
 - **Java:** Java 21 or higher is recommended for optimal performance.
 - **Dependencies:**
-  - **Skyllia:** Required for core functionalities.
-  - **SkylliaOre:** Optional, for displaying generator types.
-  - **SkylliaBankAddon:** Optional, for displaying bank-related information.
-  - **SkylliaValue:** Optional, for displaying island values (**Proprietary to excalia.fr**). Contact [excalia.fr](https://www.excalia.fr) or [discord.gg](http://discord.gg/excalia) for access.
+    - **Skyllia:** Required for core functionalities.
+    - **SkylliaOre:** Optional, for displaying generator types.
+    - **SkylliaBankAddon:** Optional, for displaying bank-related information.
+    - **SkylliaValue:** Optional, for displaying island values (**Proprietary to excalia.fr**).
+      Contact [excalia.fr](https://www.excalia.fr) or [discord.gg](http://discord.gg/excalia) for access.
 
 ## Installation
 
 1. **Download SkylliaInfo:**
-   - Obtain the latest version of SkylliaInfo from the [official repository](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaInfo).
+    - Obtain the latest version of SkylliaInfo from
+      the [official repository](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaInfo).
 
 2. **Install Dependencies:**
-   - Ensure that the Skyllia plugin is installed and properly configured on your server.
-   - Install any optional dependencies (SkylliaOre, SkylliaBankAddon, SkylliaValue) if you wish to utilize their features.
+    - Ensure that the Skyllia plugin is installed and properly configured on your server.
+    - Install any optional dependencies (SkylliaOre, SkylliaBankAddon, SkylliaValue) if you wish to utilize their
+      features.
 
 3. **Configure the Plugin:**
-   - Place the `SkylliaInfo.jar` file into your server's `plugins` directory.
-   - Edit the `config.yml` file to customize message formats and other settings as desired.
+    - Place the `SkylliaInfo.jar` file into your server's `plugins` directory.
+    - Edit the `config.yml` file to customize message formats and other settings as desired.
 
 4. **Reload the Plugin:**
-   - Restart your Minecraft server to load the SkylliaInfo plugin.
+    - Restart your Minecraft server to load the SkylliaInfo plugin.
 
 ## Usage
 
 - **Player Commands:**
-  - `/is info` or `/skyllia info` - Display detailed information about your island.
-  - `/is info <player>` or `/skyllia info <player>` - Display detailed information about another player's island (requires appropriate permissions).
+    - `/is info` or `/skyllia info` - Display detailed information about your island.
+    - `/is info <player>` or `/skyllia info <player>` - Display detailed information about another player's island (
+      requires appropriate permissions).
 
 - **Admin Commands:**
-  - `/isadmin info reload` or `/skylliadmin info reload` - Reload the plugin's configuration without restarting the server.
+    - `/isadmin info reload` or `/skylliadmin info reload` - Reload the plugin's configuration without restarting the
+      server.
 
 ## Permissions
 
@@ -54,7 +66,8 @@
 
 ## Configuration
 
-Customize the chat formats and messages by editing the `config.yml` file. Below is an example of the configuration options:
+Customize the chat formats and messages by editing the `config.yml` file. Below is an example of the configuration
+options:
 
 ```yaml
 chat:
@@ -70,7 +83,8 @@ message:
 
 ### Configuration Options
 
-- **chat.format:** Defines the format of the island chat messages. You can customize the colors and placeholders as needed.
+- **chat.format:** Defines the format of the island chat messages. You can customize the colors and placeholders as
+  needed.
 - **message.config.reloaded:** Message displayed when the configuration is successfully reloaded.
 - **message.chat.enabled:** Message displayed when island messaging is enabled for a player.
 - **message.chat.disabled:** Message displayed when island messaging is disabled for a player.
@@ -93,7 +107,8 @@ message:
   ```
   /isadmin info reload
   ```
-  Reloads the `config.yml` file to apply any changes without restarting the server. Requires `skylliainfo.admin.reload` permission.
+  Reloads the `config.yml` file to apply any changes without restarting the server. Requires `skylliainfo.admin.reload`
+  permission.
 
 ## Support
 
@@ -101,7 +116,8 @@ For support, please join our [Discord server](https://discord.gg/uUJQEB7XNN).
 
 ## Contributing
 
-Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull request.
+Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull
+request.
 
 ## License
 

@@ -66,8 +66,8 @@ public class DatabaseLoader {
      * and returns the number of affected rows.
      *
      * @param connection the active SQL {@link Connection}.
-     * @param query the SQL query string to be executed.
-     * @param param a list of parameters (in the correct order) to be bound to the query.
+     * @param query      the SQL query string to be executed.
+     * @param param      a list of parameters (in the correct order) to be bound to the query.
      * @return the number of rows affected by the query.
      * @throws SQLException if an error occurs during the SQL execution.
      */
@@ -79,8 +79,8 @@ public class DatabaseLoader {
      * Creates and prepares a {@link PreparedStatement} asynchronously using the provided query and parameters.
      *
      * @param connection the active SQL {@link Connection}.
-     * @param query the SQL query string to prepare.
-     * @param param a list of parameters to set on the {@link PreparedStatement}.
+     * @param query      the SQL query string to prepare.
+     * @param param      a list of parameters to set on the {@link PreparedStatement}.
      * @return a {@link CompletableFuture} containing the prepared statement.
      * @throws SQLException if an error occurs while preparing the statement.
      */
@@ -106,9 +106,9 @@ public class DatabaseLoader {
      * Inserts a value into the {@link PreparedStatement} at the specified parameter index,
      * supporting multiple data types.
      *
-     * @param i the parameter index.
+     * @param i         the parameter index.
      * @param statement the {@link PreparedStatement} where the value will be inserted.
-     * @param value the value to set in the statement parameter.
+     * @param value     the value to set in the statement parameter.
      * @throws SQLException if an error occurs while setting the parameter value.
      */
     private void insertStatement(int i, PreparedStatement statement, Object value) throws SQLException {
@@ -140,8 +140,8 @@ public class DatabaseLoader {
      * Executes an SQL query that may return a result set.
      *
      * @param connection the active SQL {@link Connection}.
-     * @param query the SQL query string to be executed.
-     * @param param a list of parameters (in the correct order) to be bound to the query.
+     * @param query      the SQL query string to be executed.
+     * @param param      a list of parameters (in the correct order) to be bound to the query.
      * @return a {@link ResultSet} if the query returns a result, or {@code null} otherwise.
      * @throws SQLException if an error occurs during the SQL execution.
      */

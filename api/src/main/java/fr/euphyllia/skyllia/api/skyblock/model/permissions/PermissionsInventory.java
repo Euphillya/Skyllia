@@ -1,7 +1,5 @@
 package fr.euphyllia.skyllia.api.skyblock.model.permissions;
 
-import io.papermc.paper.annotation.DoNotUse;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -111,8 +109,7 @@ public enum PermissionsInventory implements Permissions {
     OPEN_SMOKER(524_288),
 
     /**
-     * @deprecated
-     * Permission to open the new smithing tables (old permission).
+     * @deprecated Permission to open the new smithing tables (old permission).
      * This permission is deprecated and should not be used.
      */
     @Deprecated

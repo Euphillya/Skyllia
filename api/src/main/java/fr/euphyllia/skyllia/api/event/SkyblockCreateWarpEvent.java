@@ -100,9 +100,9 @@ public class SkyblockCreateWarpEvent extends Event implements Cancellable {
     /**
      * Constructs a new {@code SkyblockCreateWarpEvent}.
      *
-     * @param island        The island creating the warp.
-     * @param warpName      The name of the warp.
-     * @param warpLocation  The location of the warp.
+     * @param island       The island creating the warp.
+     * @param warpName     The name of the warp.
+     * @param warpLocation The location of the warp.
      */
     public SkyblockCreateWarpEvent(Island island, String warpName, Location warpLocation) {
         super(true);

@@ -19,7 +19,7 @@ public abstract class IslandUpdateQuery {
      * @param island  the {@link Island} to update
      * @param disable {@code true} to disable the island, {@code false} to enable it
      * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> updateDisable(Island island, boolean disable);
 
@@ -29,7 +29,7 @@ public abstract class IslandUpdateQuery {
      * @param island        the {@link Island} to update
      * @param privateIsland {@code true} to set the island as private, {@code false} to make it public
      * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> updatePrivate(Island island, boolean privateIsland);
 
@@ -38,7 +38,7 @@ public abstract class IslandUpdateQuery {
      *
      * @param island the {@link Island} to check
      * @return a {@link CompletableFuture} that completes with {@code true} if the island is disabled,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> isDisabledIsland(Island island);
 
@@ -47,7 +47,7 @@ public abstract class IslandUpdateQuery {
      *
      * @param island the {@link Island} to check
      * @return a {@link CompletableFuture} that completes with {@code true} if the island is private,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> isPrivateIsland(Island island);
 
@@ -57,17 +57,17 @@ public abstract class IslandUpdateQuery {
      * @param island   the {@link Island} to update
      * @param newValue the new maximum number of members
      * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> setMaxMemberInIsland(Island island, int newValue);
 
     /**
      * Sets the size of the specified island.
      *
-     * @param island  the {@link Island} to update
+     * @param island   the {@link Island} to update
      * @param newValue the new size of the island (e.g., radius or diameter, depending on implementation)
      * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> setSizeIsland(Island island, double newValue);
 }

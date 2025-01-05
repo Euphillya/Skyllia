@@ -12,7 +12,7 @@ public class PlayerFolia {
     /**
      * Sets the game mode for the specified player.
      *
-     * @param player The player whose game mode is to be set.
+     * @param player   The player whose game mode is to be set.
      * @param gameMode The new game mode for the player.
      */
     public static void setGameMode(Player player, GameMode gameMode) {

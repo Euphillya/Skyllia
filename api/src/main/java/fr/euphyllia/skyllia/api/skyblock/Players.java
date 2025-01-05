@@ -17,10 +17,10 @@ public class Players {
     /**
      * Constructs a new Players object.
      *
-     * @param playerId The UUID of the player.
+     * @param playerId   The UUID of the player.
      * @param playerName The last known name of the player.
-     * @param islandId The UUID of the island the player is associated with.
-     * @param role The role of the player on the island.
+     * @param islandId   The UUID of the island the player is associated with.
+     * @param role       The role of the player on the island.
      */
     public Players(UUID playerId, String playerName, UUID islandId, RoleType role) {
         this.mojangId = playerId;

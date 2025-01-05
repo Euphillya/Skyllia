@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.api;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,7 +29,7 @@ public final class SkylliaAPI {
     /**
      * Sets the implementation for the SkylliaAPI.
      *
-     * @param plugin The plugin instance.
+     * @param plugin                The plugin instance.
      * @param skylliaImplementation The implementation of the SkylliaAPI.
      */
     public static void setImplementation(Plugin plugin, SkylliaImplementation skylliaImplementation) {

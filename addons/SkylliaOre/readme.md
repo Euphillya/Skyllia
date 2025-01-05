@@ -16,7 +16,8 @@ This plugin manages custom block generators for SkyBlock islands, with support f
 
 ## Configuration
 
-The configuration file `config.yml` should be located in the `plugins/SkylliaOre/` directory. Here is an example configuration for a generator:
+The configuration file `config.yml` should be located in the `plugins/SkylliaOre/` directory. Here is an example
+configuration for a generator:
 
 ```yml
 generator_default: test
@@ -63,7 +64,9 @@ generators:
         chance: 10.0
 ```
 
-In this example, the default generator is set to "test". The generator named "test" will replace `cobblestone` and `stone` blocks in the `sky-overworld` world. It has a 90% chance to generate `cobblestone` and a 10% chance to generate `oraxen:ore`.
+In this example, the default generator is set to "test". The generator named "test" will replace `cobblestone` and
+`stone` blocks in the `sky-overworld` world. It has a 90% chance to generate `cobblestone` and a 10% chance to generate
+`oraxen:ore`.
 
 ## Usage
 
@@ -85,7 +88,8 @@ For support, please join our [Discord server](https://discord.gg/uUJQEB7XNN).
 
 ## Contributing
 
-Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull request.
+Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull
+request.
 
 ## License
 

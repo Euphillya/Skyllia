@@ -7,7 +7,7 @@ import org.bukkit.block.Biome;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BiomeNMS  extends BiomesImpl {
+public class BiomeNMS extends BiomesImpl {
 
     @Override
     public Biome getBiome(String biomeName) {

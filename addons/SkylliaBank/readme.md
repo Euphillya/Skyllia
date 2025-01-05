@@ -1,17 +1,24 @@
 # SkylliaBank
 
-**SkylliaBank** is a powerful and feature-rich banking extension designed for Skyblock servers running on the Skyllia platform. This plugin seamlessly integrates with Vault to provide robust economic management for player islands, enhancing the overall gameplay experience by allowing players to manage their island's finances with ease.
+**SkylliaBank** is a powerful and feature-rich banking extension designed for Skyblock servers running on the Skyllia
+platform. This plugin seamlessly integrates with Vault to provide robust economic management for player islands,
+enhancing the overall gameplay experience by allowing players to manage their island's finances with ease.
 
 ## Features
 
 - **Comprehensive Banking System:** Manage island balances, deposits, withdrawals, and balance inquiries effortlessly.
-- **Admin Commands:** Administrators can oversee and modify player island balances, ensuring fair play and effective server management.
+- **Admin Commands:** Administrators can oversee and modify player island balances, ensuring fair play and effective
+  server management.
 - **Vault Integration:** Fully compatible with Vault, allowing integration with a wide range of economy plugins.
-- **Asynchronous Database Operations:** Utilizes MariaDB for reliable and efficient data storage, ensuring smooth performance even under heavy load.
-- **Permission-Based Access:** Granular permissions to control access to various banking functionalities for players and administrators.
-- **User-Friendly Commands:** Intuitive command structure for both players and admins to interact with the banking system seamlessly.
+- **Asynchronous Database Operations:** Utilizes MariaDB for reliable and efficient data storage, ensuring smooth
+  performance even under heavy load.
+- **Permission-Based Access:** Granular permissions to control access to various banking functionalities for players and
+  administrators.
+- **User-Friendly Commands:** Intuitive command structure for both players and admins to interact with the banking
+  system seamlessly.
 - **Folia Support:** Optimized for Folia, providing enhanced performance on multithreaded servers.
-- 
+-
+
 ## Requirements
 
 - **Minecraft Server:** Compatible with Paper/Folia servers.
@@ -22,7 +29,8 @@
 ## Installation
 
 1. **Download SkylliaBank:**
-    - Obtain the latest version of SkylliaBank from the [official repository](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaBank).
+    - Obtain the latest version of SkylliaBank from
+      the [official repository](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaBank).
 
 2. **Install Dependencies:**
     - Ensure that Vault and Skyllia are installed on your server.
@@ -54,7 +62,8 @@ For support, please join our [Discord server](https://discord.gg/uUJQEB7XNN).
 
 ## Contributing
 
-Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull request.
+Contributions are welcome! Please read the [contribution guidelines](../../CONTRIBUTING.md) before submitting a pull
+request.
 
 ## License
 

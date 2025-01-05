@@ -44,31 +44,11 @@ public class SkylliaInsightAddon implements InsightsAddon {
 
         private final Island island;
         private final World world;
+
         public SkylliaRegion(Island island, World world) {
             this.island = island;
             this.world = world;
         }
-
-        @Override
-        public String getAddon() {
-            return getPluginName();
-        }
-
-        @Override
-        public String getKey() {
-            return "SKYLLIA_%s".formatted(this.island.getId());
-        }
-
-        @Override
-        public List<ChunkPart> toChunkParts() {
-            List<ChunkPart> parts = new ArrayList<>();
-
-            for (Position position : spiralStartCenter(island.getPosition(), island.getSize())) {
-                parts.add(new ChunkPart(new ChunkLocation(world, position.x(), position.z())));
-            }
-            return parts;
-        }
-
 
         public static List<Position> spiralStartCenter(Position islandRegion, double size) {
             List<Position> positions = new ArrayList<>();
@@ -103,6 +83,26 @@ public class SkylliaInsightAddon implements InsightsAddon {
                 z += dz;
             }
             return positions;
+        }
+
+        @Override
+        public String getAddon() {
+            return getPluginName();
+        }
+
+        @Override
+        public String getKey() {
+            return "SKYLLIA_%s".formatted(this.island.getId());
+        }
+
+        @Override
+        public List<ChunkPart> toChunkParts() {
+            List<ChunkPart> parts = new ArrayList<>();
+
+            for (Position position : spiralStartCenter(island.getPosition(), island.getSize())) {
+                parts.add(new ChunkPart(new ChunkLocation(world, position.x(), position.z())));
+            }
+            return parts;
         }
     }
 }

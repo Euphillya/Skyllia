@@ -7,14 +7,16 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
+import fr.euphyllia.skyllia.api.skyblock.model.permissions.Permissions;
+import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
+import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsInventory;
+import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -23,16 +25,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PermissionsManagers {
-
-    /**
-     * Represents the various types of debugging that can be managed.
-     */
-    public enum DebugType {
-        GAME_RULE,
-        COMMANDS_PERMISSION,
-        ISLAND_PERMISSION,
-        INVENTORY_PERMISSION
-    }
 
     /**
      * A thread-safe map that holds debug permissions for each player and debug type.
@@ -126,7 +118,6 @@ public class PermissionsManagers {
         return false;
     }
 
-
     public static boolean testGameRule(GameRuleIsland gameRule, Island island) {
         long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
         PermissionManager permissionManager = new PermissionManager(permissionChecker);
@@ -155,7 +146,6 @@ public class PermissionsManagers {
         });
     }
 
-
     private static void sendDebugPermissions(Player player,
                                              Permissions permissions,
                                              PermissionRoleIsland permissionRoleIsland,
@@ -174,7 +164,6 @@ public class PermissionsManagers {
         });
     }
 
-
     /**
      * Détermine le type de débogage associé à une permission.
      */
@@ -189,5 +178,16 @@ public class PermissionsManagers {
             return DebugType.INVENTORY_PERMISSION;
         }
         return null;
+    }
+
+
+    /**
+     * Represents the various types of debugging that can be managed.
+     */
+    public enum DebugType {
+        GAME_RULE,
+        COMMANDS_PERMISSION,
+        ISLAND_PERMISSION,
+        INVENTORY_PERMISSION
     }
 }

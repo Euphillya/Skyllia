@@ -23,7 +23,7 @@ public abstract class BitwiseFlag {
     /**
      * Sets or clears a specific flag.
      *
-     * @param flag The flag to set or clear.
+     * @param flag  The flag to set or clear.
      * @param value True to set the flag, false to clear it.
      */
     protected void setFlags(long flag, boolean value) {

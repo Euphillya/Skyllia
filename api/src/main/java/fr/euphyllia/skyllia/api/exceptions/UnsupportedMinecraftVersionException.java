@@ -27,7 +27,7 @@ public class UnsupportedMinecraftVersionException extends Exception {
      * Constructs a new UnsupportedMinecraftVersionException with the specified detail message and cause.
      *
      * @param message The detail message.
-     * @param cause The cause of the exception.
+     * @param cause   The cause of the exception.
      */
     public UnsupportedMinecraftVersionException(String message, Throwable cause) {
         super(message, cause);

@@ -41,7 +41,7 @@ public class PermissionManager extends BitwiseFlag {
      * Defines a specific permission.
      *
      * @param permission The permission to set.
-     * @param value True to enable the permission, false to disable it.
+     * @param value      True to enable the permission, false to disable it.
      */
     public void definePermission(long permission, boolean value) {
         this.setFlags(permission, value);

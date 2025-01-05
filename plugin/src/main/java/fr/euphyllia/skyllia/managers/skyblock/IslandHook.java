@@ -70,19 +70,25 @@ public class IslandHook extends Island {
         return this.createDate;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UUID getId() {
         return this.islandId;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getSize() {
         return this.islandSize;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean setSize(double newSize) throws MaxIslandSizeExceedException {
         if (newSize >= (255 * ConfigToml.regionDistance) || newSize <= 1) {
@@ -108,19 +114,25 @@ public class IslandHook extends Island {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @Nullable CopyOnWriteArrayList<WarpIsland> getWarps() {
         return this.plugin.getInterneAPI().getSkyblockManager().getWarpsIsland(this).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @Nullable WarpIsland getWarpByName(String name) {
         return this.plugin.getInterneAPI().getSkyblockManager().getWarpIslandByName(this, name).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean addWarps(String name, Location loc, boolean ignoreEvent) {
         SkyblockCreateWarpEvent event = new SkyblockCreateWarpEvent(this, name, loc);
@@ -135,7 +147,9 @@ public class IslandHook extends Island {
                 .addWarpsIsland(this, event.getWarpName(), event.getWarpLocation()).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean delWarp(String name) {
         SkyblockDeleteWarpEvent event = new SkyblockDeleteWarpEvent(this, name);
@@ -147,13 +161,17 @@ public class IslandHook extends Island {
                 .delWarpsIsland(this, event.getWarpName()).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isDisable() {
         return this.plugin.getInterneAPI().getSkyblockManager().isDisabledIsland(this).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean setDisable(boolean disable) {
         SkyblockDeleteEvent event = new SkyblockDeleteEvent(this);
@@ -164,13 +182,17 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this, disable).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isPrivateIsland() {
         return this.plugin.getInterneAPI().getSkyblockManager().isPrivateIsland(this).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean setPrivateIsland(boolean privateIsland) {
         SkyblockChangeAccessEvent event = new SkyblockChangeAccessEvent(this);
@@ -181,43 +203,57 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CopyOnWriteArrayList<Players> getMembers() {
         return this.plugin.getInterneAPI().getSkyblockManager().getMembersInIsland(this).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CopyOnWriteArrayList<Players> getMembersCached() {
         return PlayersInIslandCache.getPlayersCached(this.islandId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Players getMember(UUID mojangId) {
         return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, mojangId).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @Nullable Players getMember(String playerName) {
         return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, playerName).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean removeMember(Players oldMember) {
         return this.plugin.getInterneAPI().getSkyblockManager().deleteMember(this, oldMember).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean updateMember(Players member) {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager()
@@ -231,26 +267,34 @@ public class IslandHook extends Island {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Position getPosition() {
         return this.position;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMaxMembers() {
         int value = this.plugin.getInterneAPI().getSkyblockManager().getMaxMemberInIsland(this).join();
         return (value == -1) ? this.maxMemberInIsland : value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean setMaxMembers(int newMax) {
         return this.plugin.getInterneAPI().getSkyblockManager().setMaxMemberInIsland(this, newMax).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean updateGamerule(long gameRuleValue) {
         boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updateGamerule(this, gameRuleValue).join();
@@ -263,13 +307,17 @@ public class IslandHook extends Island {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getGameRulePermission() {
         return this.plugin.getInterneAPI().getSkyblockManager().getGameRulePermission(this).join();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getPermission(PermissionsType permissionsType, RoleType roleType) {
         return this.plugin.getInterneAPI()

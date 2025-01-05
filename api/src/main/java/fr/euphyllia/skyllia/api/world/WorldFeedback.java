@@ -52,7 +52,7 @@ public final class WorldFeedback {
         /**
          * Constructs a new FeedbackWorld with the specified world and feedback.
          *
-         * @param world The world associated with the feedback.
+         * @param world    The world associated with the feedback.
          * @param feedback The feedback state.
          */
         public FeedbackWorld(World world, Feedback feedback) {

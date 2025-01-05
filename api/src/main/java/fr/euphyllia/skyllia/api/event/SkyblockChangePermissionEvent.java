@@ -87,10 +87,10 @@ public class SkyblockChangePermissionEvent extends Event {
     /**
      * Constructs a new {@code SkyblockChangePermissionEvent}.
      *
-     * @param island           The island where the permissions are being changed.
-     * @param permissionsType  The type of permissions being changed.
-     * @param roleType         The role type affected by the permission change.
-     * @param permissions      The new value of the permissions.
+     * @param island          The island where the permissions are being changed.
+     * @param permissionsType The type of permissions being changed.
+     * @param roleType        The role type affected by the permission change.
+     * @param permissions     The new value of the permissions.
      */
     public SkyblockChangePermissionEvent(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {
         super(true);

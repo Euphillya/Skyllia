@@ -125,8 +125,8 @@ public class SkyblockChangeGameRuleEvent extends Event {
     /**
      * Constructs a new {@code SkyblockChangeGameRuleEvent}.
      *
-     * @param island     The {@link Island} where the game rule is being changed.
-     * @param gamerules  The new value of the game rule.
+     * @param island    The {@link Island} where the game rule is being changed.
+     * @param gamerules The new value of the game rule.
      */
     public SkyblockChangeGameRuleEvent(Island island, long gamerules) {
         super(true);

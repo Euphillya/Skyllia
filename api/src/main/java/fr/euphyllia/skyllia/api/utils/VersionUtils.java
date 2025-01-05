@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.api.utils;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import org.bukkit.Bukkit;
 
 /**
  * The VersionUtils class provides utility methods to check the server's type (Paper or Folia).

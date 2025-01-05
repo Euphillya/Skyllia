@@ -79,6 +79,6 @@ public class SpiralBatchInserter implements DBWork {
     /**
      * Represents the data for an island.
      */
-     public record IslandData(int id, int regionX, int regionZ) {
+    public record IslandData(int id, int regionX, int regionZ) {
     }
 }

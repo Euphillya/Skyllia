@@ -1,7 +1,6 @@
 package fr.euphyllia.skylliachat;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skylliachat.commands.IslandChatCommand;
 import fr.euphyllia.skylliachat.commands.IslandChatReloadCommand;
 import org.bukkit.entity.Player;

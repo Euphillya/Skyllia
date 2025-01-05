@@ -1,6 +1,9 @@
 # Skyllia PlaceholderAPI Expansion
 
-**Skyllia Placeholder** is an expansion for [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) that integrates with the Skyllia Plugin, providing dynamic placeholders to enhance in-game displays such as scoreboards, chat messages, and more. This expansion offers placeholders related to island management, permissions, game rules, and integrates with optional addons like SkylliaOre, SkylliaValue, and SkylliaBank.
+**Skyllia Placeholder** is an expansion for [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
+that integrates with the Skyllia Plugin, providing dynamic placeholders to enhance in-game displays such as scoreboards,
+chat messages, and more. This expansion offers placeholders related to island management, permissions, game rules, and
+integrates with optional addons like SkylliaOre, SkylliaValue, and SkylliaBank.
 
 ## Table of Contents
 
@@ -8,15 +11,15 @@
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Available Placeholders](#available-placeholders)
-   - [Island Placeholders](#island-placeholders)
-   - [Permissions Placeholders](#permissions-placeholders)
-   - [Game Rules Placeholders](#game-rules-placeholders)
-   - [Addon Placeholders](#addon-placeholders)
+    - [Island Placeholders](#island-placeholders)
+    - [Permissions Placeholders](#permissions-placeholders)
+    - [Game Rules Placeholders](#game-rules-placeholders)
+    - [Addon Placeholders](#addon-placeholders)
 - [Usage](#usage)
 - [Addons](#addons)
-   - [SkylliaOre](#skylliaore)
-   - [SkylliaValue](#skylliavalue)
-   - [SkylliaBank](#skylliabank)
+    - [SkylliaOre](#skylliaore)
+    - [SkylliaValue](#skylliavalue)
+    - [SkylliaBank](#skylliabank)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -25,7 +28,8 @@
 - **Island Information**: Retrieve dynamic data about a player's Skyblock island.
 - **Permissions Status**: Check and display the status of various permissions.
 - **Game Rules Status**: Display the status of game rules applied to an island.
-- **Addon Integration**: Extend functionality with placeholders from optional addons like Ore management, Value tracking, and Banking systems.
+- **Addon Integration**: Extend functionality with placeholders from optional addons like Ore management, Value
+  tracking, and Banking systems.
 - **Efficient Caching**: Utilizes caching mechanisms to optimize performance and reduce server load.
 
 ## Prerequisites
@@ -36,25 +40,28 @@ Before installing Skyllia Placeholder, ensure that the following prerequisites a
 - **Skyllia Plugin**: Ensure that the Skyllia Plugin is installed and properly configured on your server.
 - **PlaceholderAPI**: Install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) on your server.
 - **Addons (Optional)**: Depending on the placeholders you intend to use, install the following addons:
-   - [SkylliaOre](#skylliaore)
-   - [SkylliaValue](#skylliavalue)
-   - [SkylliaBank](#skylliabank)
+    - [SkylliaOre](#skylliaore)
+    - [SkylliaValue](#skylliavalue)
+    - [SkylliaBank](#skylliabank)
 
 ## Installation
 
 1. **Download**:
-   - Obtain the latest `PapiSkyllia-1.x.x-all.jar` from the [releases](https://github.com/Euphillya/Skyllia/actions) page of the Skyllia Placeholder repository.
+    - Obtain the latest `PapiSkyllia-1.x.x-all.jar` from the [releases](https://github.com/Euphillya/Skyllia/actions)
+      page of the Skyllia Placeholder repository.
 
 2. **Installation**:
-   - Place the `PapiSkyllia-1.x.x-all.jar` file into your server's `plugins/PlaceholderAPI/expansions` directory.
-   - Start or restart your server to generate the necessary configuration files and load the expansion.
+    - Place the `PapiSkyllia-1.x.x-all.jar` file into your server's `plugins/PlaceholderAPI/expansions` directory.
+    - Start or restart your server to generate the necessary configuration files and load the expansion.
 
 3. **Enable Expansion**:
-   - Skyllia Placeholder automatically registers itself with PlaceholderAPI upon server startup. Ensure there are no errors in the server console related to the expansion.
+    - Skyllia Placeholder automatically registers itself with PlaceholderAPI upon server startup. Ensure there are no
+      errors in the server console related to the expansion.
 
 ## Available Placeholders
 
-Skyllia Placeholder provides a variety of placeholders categorized into Island, Permissions, Game Rules, and Addon-specific placeholders.
+Skyllia Placeholder provides a variety of placeholders categorized into Island, Permissions, Game Rules, and
+Addon-specific placeholders.
 
 ### Island Placeholders
 
@@ -98,9 +105,9 @@ Extend functionality with placeholders from optional addons.
 
 #### SkylliaOre Addon
 
-| **Placeholder**                      | **Description**                                               |
-|--------------------------------------|---------------------------------------------------------------|
-| `%skyllia_ore_generator_name%`       | Returns the name of the ore generator on the island.          |
+| **Placeholder**                | **Description**                                      |
+|--------------------------------|------------------------------------------------------|
+| `%skyllia_ore_generator_name%` | Returns the name of the ore generator on the island. |
 
 #### SkylliaValue Addon
 
@@ -140,7 +147,8 @@ Represents various game rules that can be applied to a Skyblock island.
 
 ### Permissions
 
-Skyllia utilizes a robust permissions system to control player actions and interactions on their islands. Permissions are categorized into different types: **ISLAND**, **COMMANDS**, and **INVENTORY**.
+Skyllia utilizes a robust permissions system to control player actions and interactions on their islands. Permissions
+are categorized into different types: **ISLAND**, **COMMANDS**, and **INVENTORY**.
 
 #### 1. **Island Permissions (`PermissionsIsland`)**
 
@@ -222,70 +230,71 @@ Controls access to various inventory-related blocks and features on the island.
 ### Integrating Placeholders
 
 1. **Identify the Placeholder**:
-   - Determine which placeholder you want to use based on the available placeholders listed above.
+    - Determine which placeholder you want to use based on the available placeholders listed above.
 
 2. **Insert Placeholder**:
-   - Use the placeholder in your server's configuration files or within plugins that support PlaceholderAPI.
-   - **Example**: Adding placeholders to a scoreboard configuration:
-     ```yaml
-     lines:
-       - "Island Size: %skyllia_island_size%"
-       - "Members: %skyllia_island_members_size%/%skyllia_island_members_max_size%"
-       - "Rank: %skyllia_island_rank%"
-       - "TPS: %skyllia_island_tps%"
-     ```
+    - Use the placeholder in your server's configuration files or within plugins that support PlaceholderAPI.
+    - **Example**: Adding placeholders to a scoreboard configuration:
+      ```yaml
+      lines:
+        - "Island Size: %skyllia_island_size%"
+        - "Members: %skyllia_island_members_size%/%skyllia_island_members_max_size%"
+        - "Rank: %skyllia_island_rank%"
+        - "TPS: %skyllia_island_tps%"
+      ```
 
 ## Addons
 
-Skyllia Placeholder supports several addons to extend its functionality. Ensure that these addons are installed in your `plugins` directory to utilize their respective placeholders.
+Skyllia Placeholder supports several addons to extend its functionality. Ensure that these addons are installed in your
+`plugins` directory to utilize their respective placeholders.
 
 ### SkylliaOre
 
 Enhances ore management on your Skyblock islands by providing placeholders related to ore generation and management.
 
 - **Placeholders**:
-   - `%skyllia_ore_generator_name%` - Returns the name of the ore generator on the island.
+    - `%skyllia_ore_generator_name%` - Returns the name of the ore generator on the island.
 
 ### SkylliaValue
 
 Tracks and manages experience and level values for players on their islands.
 
 - **Placeholders**:
-   - `%skyllia_value_experience%` - Displays the player's experience.
-   - `%skyllia_value_level%` - Displays the player's level based on experience.
+    - `%skyllia_value_experience%` - Displays the player's experience.
+    - `%skyllia_value_level%` - Displays the player's level based on experience.
 
 ### SkylliaBank
 
 Introduces a banking system for players to manage their in-game currency.
 
 - **Placeholders**:
-   - `%skyllia_bank_live%` - Shows the live balance in the player's bank account.
-   - `%skyllia_bank_cached%` - Shows the cached balance for performance optimization.
+    - `%skyllia_bank_live%` - Shows the live balance in the player's bank account.
+    - `%skyllia_bank_cached%` - Shows the cached balance for performance optimization.
 
 ## Contributing
 
 Contributions are welcome! To contribute to Skyllia Placeholder, please follow these steps:
 
 1. **Fork the Repository**:
-   - Click the "Fork" button on the repository page to create your own copy.
+    - Click the "Fork" button on the repository page to create your own copy.
 
 2. **Create a New Branch**:
-   - ```bash
-     git checkout -b feature/YourFeature
+    - ```bash
+   git checkout -b feature/YourFeature
      ```
 
 3. **Commit Your Changes**:
-   - ```bash
-     git commit -am 'Add some feature'
+    - ```bash
+   git commit -am 'Add some feature'
      ```
 
 4. **Push to the Branch**:
-   - ```bash
-     git push origin feature/YourFeature
+    - ```bash
+   git push origin feature/YourFeature
      ```
 
 5. **Open a Pull Request**:
-   - Navigate to your forked repository and click "Compare & pull request".
+    - Navigate to your forked repository and click "Compare & pull request".
 
 Please ensure that your contributions adhere to the project's coding standards and include appropriate documentation.
 

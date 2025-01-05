@@ -46,7 +46,7 @@ public class MariaDB extends ConfigToml {
     }
 
     private int minPool() {
-       return getInt(path.formatted("minPool"), 3);
+        return getInt(path.formatted("minPool"), 3);
     }
 
     private Long maxLifeTime() {

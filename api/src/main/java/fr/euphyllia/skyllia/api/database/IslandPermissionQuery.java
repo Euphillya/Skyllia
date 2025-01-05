@@ -26,7 +26,7 @@ public abstract class IslandPermissionQuery {
      * @param roleType        the role type (e.g., OWNER, MEMBER) for which permissions are updated
      * @param permissions     the new permission flags as a {@code long} value
      * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> updateIslandsPermission(
             Island island,
@@ -43,7 +43,7 @@ public abstract class IslandPermissionQuery {
      * @param permissionsType the type of permission to retrieve
      * @param roleType        the role type (e.g., OWNER, MEMBER)
      * @return a {@link CompletableFuture} that completes with the corresponding
-     *         {@link PermissionRoleIsland} object
+     * {@link PermissionRoleIsland} object
      */
     public abstract CompletableFuture<PermissionRoleIsland> getIslandPermission(
             UUID islandId,
@@ -65,7 +65,7 @@ public abstract class IslandPermissionQuery {
      * @param island the {@link Island} whose game rule is to be updated
      * @param value  the new game rule value as a {@code long}
      * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     *         or {@code false} otherwise
+     * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> updateIslandGameRule(Island island, long value);
 }

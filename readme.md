@@ -1,6 +1,8 @@
 # Skyllia - Skyblock Plugin for Minecraft
 
-Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Paper (1.20.1+). The plugin has an API that you can use to add feature extensions to customize your server. The plugin will have very little innovative functionality, and it's not my intention at all that there should be external features (like quests, for example).
+Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Paper (1.20.1+). The plugin has an
+API that you can use to add feature extensions to customize your server. The plugin will have very little innovative
+functionality, and it's not my intention at all that there should be external features (like quests, for example).
 
 ## bStats
 
@@ -34,7 +36,8 @@ Skyllia is a Skyblock plugin designed primarily for Folia but also compatible wi
 - A MariaDB database
 - Paper 1.20.1+ or Folia 1.20+
 - Java 21
-- WorldEdit ([Folia](https://github.com/Euphillya/WorldEdit-Folia/actions) or [Original](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
+- WorldEdit ([Folia](https://github.com/Euphillya/WorldEdit-Folia/actions)
+  or [Original](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
 
 ## Installation
 
@@ -52,7 +55,8 @@ Skyllia is a Skyblock plugin designed primarily for Folia but also compatible wi
 
 ## Configuration
 
-Configuration files are located in the `plugins/Skyllia` directory. Customize settings to fit your server's needs. Detailed configuration instructions can be found in the [Wiki](https://github.com/Euphillya/Skyllia/wiki/Configuration).
+Configuration files are located in the `plugins/Skyllia` directory. Customize settings to fit your server's needs.
+Detailed configuration instructions can be found in the [Wiki](https://github.com/Euphillya/Skyllia/wiki/Configuration).
 
 ## API
 
@@ -92,7 +96,9 @@ UUID islandId = playerIsland.getId();
 
 ## Commands & Permissions
 
-Skyllia comes with a set of commands and permissions to manage the plugin effectively. For a full list of commands and their permissions, refer to the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-and-Permissions) section in the Wiki.
+Skyllia comes with a set of commands and permissions to manage the plugin effectively. For a full list of commands and
+their permissions, refer to
+the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-and-Permissions) section in the Wiki.
 
 ## Compatible Software
 

@@ -20,7 +20,7 @@ public abstract class IslandDataQuery {
      *
      * @param playerId the UUID of the island owner
      * @return a {@link CompletableFuture} that will complete with the retrieved {@link Island},
-     *         or {@code null} if no matching island is found
+     * or {@code null} if no matching island is found
      */
     public abstract CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId);
 
@@ -29,7 +29,7 @@ public abstract class IslandDataQuery {
      *
      * @param playerId the UUID of the player
      * @return a {@link CompletableFuture} that will complete with the retrieved {@link Island},
-     *         or {@code null} if no matching island is found
+     * or {@code null} if no matching island is found
      */
     public abstract CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId);
 
@@ -38,7 +38,7 @@ public abstract class IslandDataQuery {
      *
      * @param futurIsland the {@link Island} to be inserted
      * @return a {@link CompletableFuture} that will complete with {@code true} if the insertion
-     *         was successful, or {@code false} otherwise
+     * was successful, or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> insertIslands(Island futurIsland);
 
@@ -47,7 +47,7 @@ public abstract class IslandDataQuery {
      *
      * @param islandId the UUID of the island
      * @return a {@link CompletableFuture} that will complete with the retrieved {@link Island},
-     *         or {@code null} if no island with the specified UUID is found
+     * or {@code null} if no island with the specified UUID is found
      */
     public abstract CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId);
 

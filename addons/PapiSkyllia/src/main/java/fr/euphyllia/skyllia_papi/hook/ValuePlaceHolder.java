@@ -21,8 +21,8 @@ public class ValuePlaceHolder {
     /**
      * Processes value-related placeholders.
      *
-     * @param island     the player's island
-     * @param playerId   the player's UUID
+     * @param island      the player's island
+     * @param playerId    the player's UUID
      * @param placeholder the placeholder to process
      * @return the placeholder value as a string
      */
@@ -65,7 +65,7 @@ public class ValuePlaceHolder {
                 case "value_level" -> String.valueOf(value / expressionValue);
                 default -> "-1";
             };
-        }  catch (Exception e) {
+        } catch (Exception e) {
             return "-1";
         }
     }

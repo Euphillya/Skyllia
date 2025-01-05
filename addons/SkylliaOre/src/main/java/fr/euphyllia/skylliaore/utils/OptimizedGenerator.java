@@ -36,5 +36,6 @@ public class OptimizedGenerator {
         return totalChance;
     }
 
-    public record BlockProbability(String blockKey, double cumulativeChance) {}
+    public record BlockProbability(String blockKey, double cumulativeChance) {
+    }
 }

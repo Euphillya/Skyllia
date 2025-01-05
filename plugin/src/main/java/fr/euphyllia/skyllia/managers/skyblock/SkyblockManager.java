@@ -26,8 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class SkyblockManager {
 
-    private final Main plugin;
     private static final Logger LOGGER = LogManager.getLogger(SkyblockManager.class);
+    private final Main plugin;
 
     public SkyblockManager(Main main) {
         this.plugin = main;
@@ -359,7 +359,7 @@ public class SkyblockManager {
     /**
      * Sets the maximum number of members allowed in the island.
      *
-     * @param island  The {@link Island}.
+     * @param island   The {@link Island}.
      * @param newValue The new maximum.
      * @return A {@link CompletableFuture} with {@code true} if successfully updated, {@code false} otherwise.
      */
@@ -370,7 +370,7 @@ public class SkyblockManager {
     /**
      * Sets the size of the island.
      *
-     * @param island  The {@link Island}.
+     * @param island   The {@link Island}.
      * @param newValue The new size (radius).
      * @return A {@link CompletableFuture} with {@code true} if successfully updated, {@code false} otherwise.
      */

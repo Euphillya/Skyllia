@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigToml;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -19,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -129,6 +131,7 @@ public class DeleteSubCommand implements SubCommandInterface {
             boolean isDisabled = island.setDisable(true);
             if (isDisabled) {
                 this.updatePlayer(Main.getPlugin(Main.class), skyblockManager, island);
+                this.kickAllPlayerOnIsland(island);
 
                 for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
                     WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(worldConfig.name()));
@@ -162,5 +165,15 @@ public class DeleteSubCommand implements SubCommandInterface {
             island.updateMember(players);
             checkClearPlayer(plugin, skyblockManager, players, RemovalCause.ISLAND_DELETED);
         }
+    }
+
+    private void kickAllPlayerOnIsland(final Island island) {
+        ConfigToml.worldConfigs.forEach(worldConfig -> {
+            RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigToml.regionDistance, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
+                Player playerInIsland = (Player) entity;
+                if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
+                PlayerUtils.teleportPlayerSpawn(playerInIsland);
+            });
+        });
     }
 }

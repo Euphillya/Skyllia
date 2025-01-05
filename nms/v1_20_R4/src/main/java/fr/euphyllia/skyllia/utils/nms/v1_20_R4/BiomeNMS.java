@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.utils.nms.v1_20_R4;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
-import org.bukkit.Registry;
 import org.bukkit.block.Biome;
 
 import java.util.ArrayList;

@@ -44,11 +44,9 @@ public class MariaDBExecute {
      *                 <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
      *                 </p>
      * @throws DatabaseException If an error occurs during query execution.
-     *
-     * @implSpec
-     * <ul>
-     *     <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>
-     *     <li>Otherwise, executes the query, invokes the callback if provided, and closes the connection before executing the callback.</li>
+     * @implSpec <ul>
+     * <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>
+     * <li>Otherwise, executes the query, invokes the callback if provided, and closes the connection before executing the callback.</li>
      * </ul>
      */
     public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work) throws DatabaseException {
@@ -95,11 +93,9 @@ public class MariaDBExecute {
      *                 <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
      *                 </p>
      * @throws DatabaseException If an error occurs during query execution.
-     *
-     * @implSpec
-     * <ul>
-     *     <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>
-     *     <li>Otherwise, executes the DML query, invokes the callback if provided, and closes the connection before executing the callback.</li>
+     * @implSpec <ul>
+     * <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>
+     * <li>Otherwise, executes the DML query, invokes the callback if provided, and closes the connection before executing the callback.</li>
      * </ul>
      */
     public static void executeQueryDML(DatabaseLoader pool, String query, List<?> param, DBCallbackInt callback, DBWork work) throws DatabaseException {

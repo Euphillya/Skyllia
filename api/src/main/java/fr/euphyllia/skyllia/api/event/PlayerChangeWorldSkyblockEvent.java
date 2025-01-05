@@ -104,9 +104,9 @@ public class PlayerChangeWorldSkyblockEvent extends Event {
     /**
      * Constructs a new {@code PlayerChangeWorldSkyblockEvent}.
      *
-     * @param player           The player changing worlds.
-     * @param portalType       The type of portal used for the transition.
-     * @param to               The destination location.
+     * @param player            The player changing worlds.
+     * @param portalType        The type of portal used for the transition.
+     * @param to                The destination location.
      * @param checkSafeLocation Whether to perform a safety check on the destination.
      */
     public PlayerChangeWorldSkyblockEvent(Player player, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, Location to, boolean checkSafeLocation) {
