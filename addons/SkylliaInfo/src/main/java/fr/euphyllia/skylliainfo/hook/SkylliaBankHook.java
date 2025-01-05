@@ -11,7 +11,7 @@ public class SkylliaBankHook {
     public static void sendMessage(MiniMessage miniMessage, Player player, UUID islandId) {
         SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
             player.sendMessage(miniMessage.deserialize(
-                    "<yellow>Generator Types: </yellow><white>" + bankAccount.balance() + "</white>"));
+                    "<yellow>Bank: </yellow><white>" + bankAccount.balance() + "</white>"));
         });
     }
 }
