@@ -14,7 +14,7 @@ dependencies:
       load: BEFORE
       required: false
       join-classpath: true
-    SkylliaBankAddon:
+    SkylliaBank:
       load: BEFORE
       required: false
       join-classpath: true

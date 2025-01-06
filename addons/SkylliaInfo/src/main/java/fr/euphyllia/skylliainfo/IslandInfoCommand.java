@@ -30,8 +30,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class IslandInfoCommand implements SubCommandInterface {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private final boolean skylliaBank;
+    private final boolean skylliaValue;
+    private final boolean skylliaOre;
 
     public IslandInfoCommand(Main main) {
+        this.skylliaBank = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
+        this.skylliaValue = Bukkit.getPluginManager().getPlugin("SkylliaValue") != null;
+        this.skylliaOre = Bukkit.getPluginManager().getPlugin("SkylliaOre") != null;
     }
 
 
@@ -71,10 +77,10 @@ public class IslandInfoCommand implements SubCommandInterface {
             player.sendMessage(miniMessage.deserialize("<gold>=== Island Information ===</gold>"));
             player.sendMessage(miniMessage.deserialize(
                     "<yellow>Island ID: </yellow><white>" + islandName + "</white>"));
-            if (Bukkit.getPluginManager().isPluginEnabled("SkylliaBank")) {
+            if (this.skylliaBank) {
                 SkylliaBankHook.sendMessage(miniMessage, player, islandId);
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("SkylliaValue")) {
+            if (this.skylliaValue) {
                 // This plugin is not made public, because it belongs to www.excalia.fr
                 // If you want to have the plugin, you will have to see with
                 // their Excalia administrator (https://discord.gg/excalia)
@@ -92,7 +98,7 @@ public class IslandInfoCommand implements SubCommandInterface {
                     "<yellow>Online Members: </yellow><white>"
                             + members.stream().filter(players -> Bukkit.getOfflinePlayer(players.getMojangId()).isOnline()).count()
                             + "/" + members.size() + "</white>"));
-            if (Bukkit.getPluginManager().isPluginEnabled("SkylliaOre")) {
+            if (this.skylliaOre) {
                 SkylliaOreHook.sendMessage(miniMessage, player, islandId);
             }
 
@@ -109,8 +115,6 @@ public class IslandInfoCommand implements SubCommandInterface {
             }
 
         });
-
-
         return true;
     }
 

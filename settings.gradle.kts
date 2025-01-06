@@ -18,3 +18,6 @@ include("addons:InsightsSkyllia")
 include("addons:SkylliaChat")
 include("addons:SkylliaBank")
 include("addons:SkylliaInfo")
+
+// API Addon interne
+include("addons:SkylliaValueAPI")

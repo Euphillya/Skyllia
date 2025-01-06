@@ -2,8 +2,8 @@ plugins {
     id("java")
 }
 
-group = "fr.euphyllia.skyllia";
-version = "1.2";
+group = "fr.excaliamc.skyllia_value";
+version = "1.1";
 
 repositories {
     maven("https://repo.oraxen.com/releases")
@@ -14,11 +14,6 @@ dependencies {
     compileOnly(project(":database"))
     compileOnly(project(":api"))
     compileOnly(project(":plugin"))
-
-    // Addons
-    compileOnly(project(":addons:SkylliaOre"))
-    compileOnly(project(":addons:SkylliaBank"))
-    compileOnly(project(":addons:SkylliaValueAPI"))
 }
 
 java {
