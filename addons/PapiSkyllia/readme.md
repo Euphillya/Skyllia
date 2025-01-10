@@ -79,10 +79,10 @@ Retrieve information about a player's Skyblock island.
 
 Check the status of various permissions assigned to roles within an island.
 
-| **Placeholder Format**                                      | **Description**                                                                                                                |
-|-------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `%skyllia_permissions_<role>_<type>_<permission>%`          | Checks if a specific role has a particular permission. Replace `<role>`, `<type>`, and `<permission>` with appropriate values. |
-| **Example**: `%skyllia_permissions_admin_commands_promote%` | Checks if the `admin` role has the `PROMOTE` permission under `COMMANDS` type.                                                 |
+| **Placeholder Format**                                          | **Description**                                                                                                                |
+|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `%skyllia_permissions_<role>_<type>_<permission>%`              | Checks if a specific role has a particular permission. Replace `<role>`, `<type>`, and `<permission>` with appropriate values. |
+| **Example**: `%skyllia_permissions_moderator_commands_promote%` | Checks if the `admin` role has the `PROMOTE` permission under `COMMANDS` type.                                                 |
 
 #### Permissions Types
 
@@ -105,9 +105,9 @@ Extend functionality with placeholders from optional addons.
 
 #### SkylliaOre Addon
 
-| **Placeholder**                | **Description**                                      |
-|--------------------------------|------------------------------------------------------|
-| `%skyllia_ore_generator_name%` | Returns the name of the ore generator on the island. |
+| **Placeholder** | **Description**                                      |
+|-----------------|------------------------------------------------------|
+| `%skyllia_ore%` | Returns the name of the ore generator on the island. |
 
 #### SkylliaValue Addon
 
@@ -253,7 +253,7 @@ Skyllia Placeholder supports several addons to extend its functionality. Ensure 
 Enhances ore management on your Skyblock islands by providing placeholders related to ore generation and management.
 
 - **Placeholders**:
-    - `%skyllia_ore_generator_name%` - Returns the name of the ore generator on the island.
+    - `%skyllia_ore%` - Returns the name of the ore generator on the island.
 
 ### SkylliaValue
 
@@ -279,19 +279,19 @@ Contributions are welcome! To contribute to Skyllia Placeholder, please follow t
     - Click the "Fork" button on the repository page to create your own copy.
 
 2. **Create a New Branch**:
-    - ```bash
+```bash
    git checkout -b feature/YourFeature
-     ```
+```
 
 3. **Commit Your Changes**:
-    - ```bash
+```bash
    git commit -am 'Add some feature'
-     ```
+```
 
 4. **Push to the Branch**:
-    - ```bash
+```bash
    git push origin feature/YourFeature
-     ```
+```
 
 5. **Open a Pull Request**:
     - Navigate to your forked repository and click "Compare & pull request".
@@ -300,4 +300,4 @@ Please ensure that your contributions adhere to the project's coding standards a
 
 ## License
 
-Skyllia Placeholder is released under the [MIT License](../../LICENSE).
+Skyllia Placeholder is released under the [MIT Licence](../../LICENSE).
