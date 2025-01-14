@@ -29,6 +29,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Skyllia-Build
-          path: |
-            build/libs/*.jar
-            addons/**/build/libs/*.jar
+          path: release/*.jar
