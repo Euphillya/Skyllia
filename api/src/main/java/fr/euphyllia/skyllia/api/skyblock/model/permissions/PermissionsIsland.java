@@ -16,72 +16,77 @@ public enum PermissionsIsland implements Permissions {
     /**
      * Permission to place blocks.
      */
-    BLOCK_PLACE(2),
+    BLOCK_PLACE(1 << 1),
 
     /**
      * Permission to use buckets.
      */
-    BUCKETS(4),
+    BUCKETS(1 << 2),
 
     /**
      * Permission to use redstone components.
      */
-    REDSTONE(8),
+    REDSTONE(1 << 3),
 
     /**
      * Permission to engage in player vs player (PvP) combat.
      */
-    PVP(16),
+    PVP(1 << 4),
 
     /**
      * Permission to kill monsters.
      */
-    KILL_MONSTER(32),
+    KILL_MONSTER(1 << 5),
 
     /**
      * Permission to kill animals.
      */
-    KILL_ANIMAL(64),
+    KILL_ANIMAL(1 << 6),
 
     /**
      * Permission to drop items.
      */
-    DROP_ITEMS(128),
+    DROP_ITEMS(1 << 7),
 
     /**
      * Permission to pick up items.
      */
-    PICKUP_ITEMS(256),
+    PICKUP_ITEMS(1 << 8),
 
     /**
      * Permission to use nether portals.
      */
-    USE_NETHER_PORTAL(512),
+    USE_NETHER_PORTAL(1 << 9),
 
     /**
      * Permission to use end portals.
      */
-    USE_END_PORTAL(1_024),
+    USE_END_PORTAL(1 << 10),
 
     /**
      * Permission to interact with entities.
      */
-    INTERACT_ENTITIES(2_048),
+    INTERACT_ENTITIES(1 << 11),
 
     /**
      * Permission to kill unknown entities.
      */
-    KILL_UNKNOWN_ENTITY(4_096),
+    KILL_UNKNOWN_ENTITY(1 << 12),
 
     /**
      * Permission to kill NPCs (non-player characters).
      */
-    KILL_NPC(8_192),
+    KILL_NPC(1 << 13),
 
     /**
      * Permission to perform general interactions on the island.
      */
-    INTERACT(16_384);
+    INTERACT(1 << 14),
+
+    /**
+     * Permission to teleport on the island.
+     */
+    TELEPORT(1 << 15);
 
     private final long permissionValue;
 

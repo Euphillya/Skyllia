@@ -33,6 +33,18 @@ public class TeleportEvent implements Listener {
         this.api = interneAPI;
     }
 
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerTeleportCauseEvent(PlayerTeleportEvent event) {
+        if (event.getTo() == null) return;
+        final Player player = event.getPlayer();
+        switch (event.getCause()) {
+            case ENDER_PEARL, CHORUS_FRUIT -> {
+                if (PermissionImp.hasPermission(player, "skyllia.player.teleport.bypass")) return;
+                ListenersUtils.checkPermission(event.getTo(), event.getPlayer(), PermissionsIsland.TELEPORT, event);
+            }
+        }
+    }
+
     @EventHandler
     public void onPlayerHasAccessIsland(final PlayerTeleportEvent event) {
         if (event.isCancelled()) return;

@@ -19,6 +19,12 @@ jobs:
         run: chmod +x gradlew
       - name: Build Skyllia jar
         run: ./gradlew shadowJar
+      - name: Collect jars
+        run: |
+          mkdir -p release
+          cp build/libs/*.jar release/ || true
+          cp addons/*/build/libs/*.jar release/ || true
+          rm -f release/addons-*.jar
       - name: Upload Snapshot jar
         uses: actions/upload-artifact@v4
         with:
