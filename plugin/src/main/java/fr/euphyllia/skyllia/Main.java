@@ -66,14 +66,14 @@ public class Main extends JavaPlugin {
             return;
         }
 
-        loadAddons();
-
         initializeCommandsDispatcher();
 
         initializeManagers();
         registerListeners();
         scheduleCacheUpdate();
         checkDisabledConfig();
+
+        loadAddons();
 
         new Metrics(this, 20874);
     }
@@ -84,7 +84,7 @@ public class Main extends JavaPlugin {
             try {
                 addon.onDisabled();
             } catch (Exception exception) {
-                logger.error("Error addons"); // Todo rename
+                logger.log(Level.ERROR, "Error disabling addon: {}", addon.getClass().getName(), exception);
             }
         }
         Bukkit.getAsyncScheduler().cancelTasks(this);
@@ -210,16 +210,16 @@ public class Main extends JavaPlugin {
 
 
     private void loadAddons() {
-        File extensionsDir = new File(getDataFolder(), "extensions");
+        File extensionsDir = new File(getDataFolder(), "addons");
         if (!extensionsDir.exists()) {
             extensionsDir.mkdirs();
-            logger.info("Création du dossier d'extensions: {}", extensionsDir.getAbsolutePath());
+            logger.info("Addon directory created at {}", extensionsDir.getAbsolutePath());
             return;
         }
 
         File[] files = extensionsDir.listFiles((dir, name) -> name.endsWith(".jar"));
         if (files == null) {
-            logger.warn("Aucun fichier d'extension trouvé dans {}", extensionsDir.getAbsolutePath());
+            logger.warn("No addon files found in {}", extensionsDir.getAbsolutePath());
             return;
         }
 
@@ -233,10 +233,10 @@ public class Main extends JavaPlugin {
                     addon.onLoad(this);
                     addon.onEnable();
                     addons.add(addon);
-                    logger.info("Addon chargé: {}", addon.getClass().getName());
+                    logger.info("Addon loaded: {}", addon.getClass().getName());
                 }
             } catch (Exception e) {
-                logger.log(Level.ERROR, "Erreur lors du chargement de l'addon: {}", file.getName(), e);
+                logger.log(Level.ERROR, "Failed to load addon: {}", file.getName(), e);
             }
         }
     }
