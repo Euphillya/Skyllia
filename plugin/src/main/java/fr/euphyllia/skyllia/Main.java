@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.addons.SkylliaAddon;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.Metrics;
@@ -38,13 +39,19 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin {
 
     private final Logger logger = LogManager.getLogger(this);
+    private final List<SkylliaAddon> addons = new ArrayList<>();
     private InterneAPI interneAPI;
     private SubCommandRegistry commandRegistry;
     private SubCommandRegistry adminCommandRegistry;
@@ -59,6 +66,8 @@ public class Main extends JavaPlugin {
             return;
         }
 
+        loadAddons();
+
         initializeCommandsDispatcher();
 
         initializeManagers();
@@ -71,6 +80,13 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (SkylliaAddon addon : addons) {
+            try {
+                addon.onDisabled();
+            } catch (Exception exception) {
+                logger.error("Error addons"); // Todo rename
+            }
+        }
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
         if (this.interneAPI != null && this.interneAPI.getDatabaseLoader() != null) {
@@ -190,5 +206,38 @@ public class Main extends JavaPlugin {
             commands.register("skyllia", "Islands commands", List.of("is"), new SkylliaCommand(this));
             commands.register("skylliaadmin", "Administrator commands", List.of("isadmin"), new SkylliaAdminCommand(this));
         });
+    }
+
+
+    private void loadAddons() {
+        File extensionsDir = new File(getDataFolder(), "extensions");
+        if (!extensionsDir.exists()) {
+            extensionsDir.mkdirs();
+            logger.info("Création du dossier d'extensions: {}", extensionsDir.getAbsolutePath());
+            return;
+        }
+
+        File[] files = extensionsDir.listFiles((dir, name) -> name.endsWith(".jar"));
+        if (files == null) {
+            logger.warn("Aucun fichier d'extension trouvé dans {}", extensionsDir.getAbsolutePath());
+            return;
+        }
+
+        for (File file : files) {
+            try {
+                URL jarUrl = file.toURI().toURL();
+                URLClassLoader classLoader = new URLClassLoader(new URL[]{jarUrl}, this.getClass().getClassLoader());
+
+                ServiceLoader<SkylliaAddon> serviceLoader = ServiceLoader.load(SkylliaAddon.class, classLoader);
+                for (SkylliaAddon addon : serviceLoader) {
+                    addon.onLoad(this);
+                    addon.onEnable();
+                    addons.add(addon);
+                    logger.info("Addon chargé: {}", addon.getClass().getName());
+                }
+            } catch (Exception e) {
+                logger.log(Level.ERROR, "Erreur lors du chargement de l'addon: {}", file.getName(), e);
+            }
+        }
     }
 }
