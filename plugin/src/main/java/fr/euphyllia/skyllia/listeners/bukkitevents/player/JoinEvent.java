@@ -26,6 +26,7 @@ public class JoinEvent implements Listener {
 
     public JoinEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
+
     }
 
     @EventHandler
