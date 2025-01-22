@@ -26,7 +26,6 @@ public class Main extends JavaPlugin {
 
     private InterneAPI interneAPI;
 
-    // Si vous souhaitez garder un accès aux registries
     private SubCommandRegistry commandRegistry;
     private SubCommandRegistry adminCommandRegistry;
 

@@ -5,24 +5,24 @@ import org.bukkit.plugin.Plugin;
 public interface SkylliaAddon {
 
     /**
-     * Indique la phase de chargement dans laquelle l'addon souhaite être initialisé.
+     * Indicates the loading phase in which the addon wishes to be initialized.
      */
     AddonLoadPhase getLoadPhase();
 
     /**
-     * Chargé quand l'addon est détecté, donc selon la phase (BEFORE/AFTER)
+     * Called when the addon is detected, according to its loading phase (BEFORE/AFTER).
      */
     void onLoad(Plugin plugin);
 
     /**
-     * Appelé juste après onLoad (dans la même phase).
-     * Utile si tu veux séparer la configuration/initialisation (onLoad)
-     * de l'activation réelle (onEnable).
+     * Called immediately after onLoad (within the same phase).
+     * Useful if you want to separate configuration/initialization (onLoad)
+     * from the actual activation (onEnable).
      */
     void onEnable();
 
     /**
-     * Appelé quand on désactive l'addon.
+     * Called when the addon is deactivated.
      */
     void onDisabled();
 }
