@@ -5,7 +5,7 @@ plugins {
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
-    id("io.papermc.paperweight.userdev") version "1.7.7" apply false
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.14" apply false
 }
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
@@ -47,14 +47,14 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("org.apache.maven.resolver:maven-resolver-api:2.0.4")
+        compileOnly("org.apache.maven.resolver:maven-resolver-api:2.0.5")
         compileOnly("org.apache.logging.log4j:log4j-api:2.24.3")
         compileOnly("org.apache.logging.log4j:log4j-core:2.24.3")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
         compileOnly("com.zaxxer:HikariCP:6.2.1")
-        compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
+        compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
         compileOnly("com.electronwill.night-config:toml:3.8.1")
-        compileOnly("com.google.guava:guava:33.3.1-jre")
+        compileOnly("com.google.guava:guava:33.4.0-jre")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
     }

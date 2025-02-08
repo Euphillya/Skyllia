@@ -20,10 +20,10 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("org.mariadb.jdbc:mariadb-java-client:3.5.1"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-core:2.24.2"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-api:2.24.2"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.google.guava:guava:33.3.1-jre"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.17.0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.google.guava:guava:33.4.0-jre"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.18.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.8.1"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.1.8"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.2.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ExcaliaSI:exp4j:e50bdd65e4"), null));
 
         // Mojang Repo

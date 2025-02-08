@@ -3,10 +3,6 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
-repositories {
-    maven("https://github.com/Euphillya/FoliaDevBundle/raw/gh-pages/")
-}
-
 paperweight {
     paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 }
