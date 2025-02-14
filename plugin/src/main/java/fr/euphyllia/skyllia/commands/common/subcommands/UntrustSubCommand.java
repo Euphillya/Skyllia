@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -76,6 +77,13 @@ public class UntrustSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        return new ArrayList<>();
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(CommandSender::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }
