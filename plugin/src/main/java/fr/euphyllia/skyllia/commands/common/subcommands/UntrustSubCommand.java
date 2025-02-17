@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
@@ -16,13 +17,12 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UntrustSubCommand implements SubCommandInterface {
 
@@ -78,9 +78,17 @@ public class UntrustSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
+            if (!(sender instanceof Player player)) {
+                LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+                return Collections.emptyList();
+            }
             String partial = args[0].trim().toLowerCase();
-            return Bukkit.getOnlinePlayers().stream()
-                    .map(CommandSender::getName)
+            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+
+            return PlayersInIslandCache.getPlayersListTrusted(island.getId()).stream()
+                    .map(Player::getPlayer)
+                    .map(Players::getLastKnowName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
                     .collect(Collectors.toList());
         }
