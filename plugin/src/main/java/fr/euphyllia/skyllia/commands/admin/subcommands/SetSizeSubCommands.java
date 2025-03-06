@@ -15,10 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -86,9 +83,10 @@ public class SetSizeSubCommands implements SubCommandInterface {
         // ---------- ARG #1 : Nom du joueur ----------
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
-            return Bukkit.getOnlinePlayers().stream()
+            return new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
+                    .sorted()
                     .collect(Collectors.toList());
         }
 

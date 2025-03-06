@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateSubCommand implements SubCommandInterface {
@@ -139,12 +140,13 @@ public class CreateSubCommand implements SubCommandInterface {
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
             List<String> nameSchem = new ArrayList<>();
-            ConfigToml.schematicWorldMap.forEach((key, schematicWorld) -> {
+            for (Map.Entry<String, ConcurrentHashMap<String, SchematicSetting>> entry : ConfigToml.schematicWorldMap.entrySet()) {
+                String key = entry.getKey();
                 if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, key))
                         && key.toLowerCase().startsWith(partial)) {
                     nameSchem.add(key);
                 }
-            });
+            }
 
             return nameSchem;
         }

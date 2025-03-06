@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -54,13 +55,6 @@ public class ForceTransferSubCommands implements SubCommandInterface {
                 previousOwnerId = UUID.fromString(previousOwnerName);
             } catch (IllegalArgumentException ignored) {
                 previousOwnerId = Bukkit.getPlayerUniqueId(previousOwnerName);
-            }
-
-            UUID newOwnerId;
-            try {
-                newOwnerId = UUID.fromString(newOwnerName);
-            } catch (IllegalArgumentException ignored) {
-                newOwnerId = Bukkit.getPlayerUniqueId(newOwnerName);
             }
 
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
@@ -126,18 +120,20 @@ public class ForceTransferSubCommands implements SubCommandInterface {
         // ARG 1 → Nom du premier joueur
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
-            return Bukkit.getOnlinePlayers().stream()
+            return new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
+                    .sorted()
                     .collect(Collectors.toList());
         }
 
         // ARG 2 → Nom du deuxième joueur
         if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
-            return Bukkit.getOnlinePlayers().stream()
+            return new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
+                    .sorted()
                     .collect(Collectors.toList());
         }
 

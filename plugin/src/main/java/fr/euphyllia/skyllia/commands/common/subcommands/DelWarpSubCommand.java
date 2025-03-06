@@ -84,6 +84,7 @@ public class DelWarpSubCommand implements SubCommandInterface {
                 List<String> warpList = CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
                 return warpList.stream()
                         .filter(warp -> warp.toLowerCase().startsWith(partial))
+                        .sorted()
                         .collect(Collectors.toList());
             }
         }

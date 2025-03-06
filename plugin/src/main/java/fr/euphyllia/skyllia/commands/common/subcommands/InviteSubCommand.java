@@ -21,10 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -81,16 +78,17 @@ public class InviteSubCommand implements SubCommandInterface {
             String partial = args[0].trim().toLowerCase();
             return Stream.concat(
                     Stream.of("accept", "decline", "delete"),
-                    Bukkit.getOnlinePlayers()
+                    new ArrayList<>(Bukkit.getOnlinePlayers())
                             .stream()
                             .map(Player::getName)
             ).filter(cmd -> cmd.toLowerCase().startsWith(partial)).collect(Collectors.toList());
         } else if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
 
-            return Bukkit.getOnlinePlayers().stream()
+            return new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
                     .map(CommandSender::getName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
+                    .sorted()
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

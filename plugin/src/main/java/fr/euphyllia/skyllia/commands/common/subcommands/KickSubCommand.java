@@ -87,6 +87,7 @@ public class KickSubCommand implements SubCommandInterface {
             return island.getMembersCached().stream()
                     .map(Players::getLastKnowName)
                     .filter(cmd -> cmd.toLowerCase().startsWith(partial))
+                    .sorted()
                     .toList();
         }
         return Collections.emptyList();

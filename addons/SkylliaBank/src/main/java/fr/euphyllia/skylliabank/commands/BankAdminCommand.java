@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -535,7 +536,7 @@ public class BankAdminCommand implements SubCommandInterface {
             String partial = args[1].trim().toLowerCase();
 
             return switch (command) {
-                case "balance", "setbalance" -> Bukkit.getOnlinePlayers().stream()
+                case "balance", "setbalance" -> new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
                         .map(Player::getName)
                         .filter(name -> name.toLowerCase().startsWith(partial))
                         .sorted()

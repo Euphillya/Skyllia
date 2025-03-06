@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -106,9 +107,10 @@ public class VisitSubCommand implements SubCommandInterface {
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
-            return Bukkit.getOnlinePlayers().stream()
+            return new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
                     .map(CommandSender::getName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
+                    .sorted()
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
