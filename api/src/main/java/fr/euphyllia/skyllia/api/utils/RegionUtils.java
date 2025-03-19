@@ -145,7 +145,7 @@ public class RegionUtils {
                 } catch (Exception e) {
                     logger.error("Error while processing chunks in batch", e);
                 }
-            }, delay);
+            }, Math.max(1, delay));
         }
     }
 

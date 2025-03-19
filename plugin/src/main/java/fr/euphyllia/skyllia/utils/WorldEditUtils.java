@@ -90,7 +90,7 @@ public class WorldEditUtils {
                 return;
             }
             Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
-                    plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), delay.getAndIncrement());
+                    plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), Math.max(1, delay.getAndIncrement()));
         });
     }
 
@@ -153,7 +153,7 @@ public class WorldEditUtils {
                             }
                         }
                     }
-                }, delay.getAndIncrement());
+                }, Math.max(1, delay.getAndIncrement()));
             });
         } finally {
             completableFuture.complete(true);
