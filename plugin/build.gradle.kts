@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":nms:v1_21_R1"))
     compileOnly(project(":nms:v1_21_R2"))
     compileOnly(project(":nms:v1_21_R3"))
+    compileOnly(project(":nms:v1_21_R4"))
 
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.9") { isTransitive = false }
     compileOnly("com.sk89q.worldedit:worldedit-core:7.3.9") { isTransitive = false }

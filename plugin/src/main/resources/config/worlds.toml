@@ -1,0 +1,16 @@
+suppress-warning-nether-end = false
+
+[worlds.sky-overworld]
+environment = "NORMAL"
+portal-nether = "sky-nether"
+portal-end = "sky-end"
+
+[worlds.sky-nether]
+environment = "NETHER"
+portal-nether = "sky-overworld"
+portal-end = "sky-end"
+
+[worlds.sky-end]
+environment = "THE_END"
+portal-nether = "sky-nether"
+portal-end = "sky-overworld"

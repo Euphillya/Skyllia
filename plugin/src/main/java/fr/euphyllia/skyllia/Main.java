@@ -9,7 +9,7 @@ import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.admin.SubAdminCommandImpl;
 import fr.euphyllia.skyllia.commands.common.SkylliaCommand;
 import fr.euphyllia.skyllia.commands.common.SubCommandImpl;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.BlockEvent;
@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("UnstableApiUsage")
 public class Main extends JavaPlugin {
 
     private final Logger logger = LogManager.getLogger(this);
@@ -105,13 +106,20 @@ public class Main extends JavaPlugin {
     private boolean loadConfigurations() {
         try {
             this.interneAPI.setupFirstSchematic(getDataFolder(), getResource("schematics/default.schem"));
-            if (!this.interneAPI.setupConfigs(getDataFolder(), "config.toml", ConfigToml::init) ||
-                    !this.interneAPI.setupConfigs(getDataFolder(), "language.toml", LanguageToml::init) ||
-                    !this.interneAPI.setupConfigs(getDataFolder(), "permissions.toml", PermissionsToml::init) ||
-                    !this.interneAPI.setupSGBD()) {
+
+            ConfigLoader.init(getDataFolder());
+
+            if (!this.interneAPI.setupConfigs(getDataFolder(), "language.toml", LanguageToml::init) ||
+                    !this.interneAPI.setupConfigs(getDataFolder(), "permissions.toml", PermissionsToml::init)) {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
             }
+
+            if (!this.interneAPI.setupSGBD()) {
+                Bukkit.getPluginManager().disablePlugin(this);
+                return false;
+            }
+
             return true;
         } catch (DatabaseException | IOException exception) {
             logger.log(Level.FATAL, exception, exception);
@@ -165,15 +173,16 @@ public class Main extends JavaPlugin {
     private void scheduleCacheUpdate() {
         Runnable cacheUpdateTask = () -> Bukkit.getOnlinePlayers().forEach(player -> this.interneAPI.updateCache(player));
 
-        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> cacheUpdateTask.run(), 1, ConfigToml.updateCacheTimer, TimeUnit.SECONDS);
+        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> cacheUpdateTask.run(), 1, ConfigLoader.general.getUpdateCacheTimer(), TimeUnit.SECONDS);
     }
+
 
     private void checkDisabledConfig() {
         /* Since 1.20.3, there is a gamerule that allows you to increase the number of ticks between entering a portal and teleporting.
           This makes the configuration possibly useless.
           BUT just in case, I leave the message enabled by default.
          */
-        if (VersionUtils.IS_FOLIA && !ConfigToml.suppressWarningNetherEndEnabled) {
+        if (VersionUtils.IS_FOLIA && !ConfigLoader.worldManager.isSuppressWarnNetherEndWorld()) {
             if (Bukkit.getAllowNether()) {
                 logger.log(Level.WARN, "Disable nether in server.properties to disable nether portals!");
             }
@@ -184,11 +193,11 @@ public class Main extends JavaPlugin {
     }
 
     private void initializeCommandsDispatcher() {
-        LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
+        LifecycleEventManager<@NotNull Plugin> manager = this.getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-            commands.register("skyllia", "Islands commands", List.of("is"), new SkylliaCommand(this));
-            commands.register("skylliaadmin", "Administrator commands", List.of("isadmin"), new SkylliaAdminCommand(this));
+            commands.register("skyllia", "Islands commands", List.of("is", "ob"), new SkylliaCommand(this));
+            commands.register("skylliadmin", "Administrator commands", List.of("isadmin", "skylliaadmin"), new SkylliaAdminCommand(this));
         });
     }
 }

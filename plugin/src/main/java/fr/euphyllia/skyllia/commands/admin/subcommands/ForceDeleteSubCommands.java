@@ -3,13 +3,12 @@ package fr.euphyllia.skyllia.commands.admin.subcommands;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.commands.common.subcommands.DeleteSubCommand;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
@@ -69,9 +68,9 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             if (isDisabled) {
                 this.updatePlayer(Main.getPlugin(Main.class), skyblockManager, island);
 
-                for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(worldConfig.name()));
-                }
+                ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
+                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(name));
+                });
 
                 LanguageToml.sendMessage(sender, LanguageToml.messageIslandDeleteSuccess);
             } else {

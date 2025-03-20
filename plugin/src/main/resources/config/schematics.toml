@@ -1,0 +1,39 @@
+# [island-settings].[world_name]
+# schematic = la schematique de l'île
+# la hauteur de l'île
+
+[my_first_island.sky-overworld]
+schematic = "./schematics/my_first_island.schem"
+height = 64.0
+
+[my_first_island.sky-nether]
+schematic = "./schematics/my_first_island.schem"
+height = 64.0
+
+[my_first_island.sky-end]
+schematic = "./schematics/my_first_island.schem"
+height = 64.0
+
+[my_second_islands.sky-overworld]
+schematic = "./schematics/my_second_islands.schem"
+height = 64.0
+
+[my_second_islands.sky-nether]
+schematic = "./schematics/my_second_islands.schem"
+height = 64.0
+
+[my_second_islands.sky-end]
+schematic = "./schematics/my_second_islands.schem"
+height = 64.0
+
+[my_third_island.sky-overworld]
+schematic = "./schematics/my_third_island.schem"
+height = 64.0
+
+[my_third_island.sky-nether]
+schematic = "./schematics/my_first_island.schem"
+height = 64.0
+
+[my_third_island.sky-end]
+schematic = "./schematics/my_first_island.schem"
+height = 64.0

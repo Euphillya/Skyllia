@@ -15,7 +15,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -59,7 +59,7 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
+        if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
         try {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
@@ -67,7 +67,7 @@ public class CreateSubCommand implements SubCommandInterface {
             if (islandAtomic.get() == null) {
                 String schemKey = args.length == 0 ? "" : args[0];
                 if (schemKey.isEmpty()) {
-                    schemKey = ConfigToml.schematicWorldMap.keySet().iterator().next();
+                    schemKey = ConfigLoader.schematicManager.getSchematics().keySet().iterator().next();
                 }
                 Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
                 if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
@@ -112,7 +112,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.setPermissionsRole(islandAtomic.get());
                         centerPaste.setY(centerPaste.getY() + 0.5);
                         player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        if (ConfigToml.changeGameModeWhenTeleportIsland)
+                        if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
                             PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(islandAtomic.get(), player);
                         Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, centerPaste, islandAtomic.get().getSize(), 0, 0);
@@ -128,7 +128,7 @@ public class CreateSubCommand implements SubCommandInterface {
         } catch (Exception e) {
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
             logger.log(Level.WARN, e.getMessage(), e);
-            if (ConfigToml.changeGameModeWhenTeleportIsland) PlayerFolia.setGameMode(player, olgGM);
+            if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) PlayerFolia.setGameMode(player, olgGM);
             LanguageToml.sendMessage(player, LanguageToml.messageError);
         }
         CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
@@ -140,13 +140,12 @@ public class CreateSubCommand implements SubCommandInterface {
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
             List<String> nameSchem = new ArrayList<>();
-            for (Map.Entry<String, ConcurrentHashMap<String, SchematicSetting>> entry : ConfigToml.schematicWorldMap.entrySet()) {
-                String key = entry.getKey();
-                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, key))
-                        && key.toLowerCase().startsWith(partial)) {
-                    nameSchem.add(key);
+            ConfigLoader.schematicManager.getSchematics().forEach((islandType, islandSchems) -> {
+                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, islandType))
+                        && islandType.toLowerCase().startsWith(partial)) {
+                    nameSchem.add(islandType);
                 }
-            }
+            });
 
             return nameSchem;
         }

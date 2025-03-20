@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
-import fr.euphyllia.skyllia.configuration.model.MariaDB;
+import fr.euphyllia.skyllia.configuration.old_config.model.MariaDB;
 import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConfigToml {
-    private static final Logger logger = LogManager.getLogger(ConfigToml.class);
+public class OldConfigToml {
+    private static final Logger logger = LogManager.getLogger(OldConfigToml.class);
     public static CommentedFileConfig config;
     public static int version;
     public static MariaDBConfig mariaDBConfig;
@@ -70,7 +70,7 @@ public class ConfigToml {
             logger.log(Level.INFO, "Reading configurations");
         }
         try {
-            readConfig(ConfigToml.class, null);
+            readConfig(OldConfigToml.class, null);
         } catch (Exception e) {
             logger.log(Level.FATAL, "Reading error!", e);
         }

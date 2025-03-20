@@ -3,7 +3,7 @@ package fr.euphyllia.skyllia.managers.world;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import fr.euphyllia.skyllia.utils.generators.VoidWorldGen;
 import net.kyori.adventure.util.TriState;
@@ -28,12 +28,12 @@ public class WorldsManager {
 
     public void initWorld() {
         ChunkGenerator chunkGenerator = new VoidWorldGen();
-        for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-            WorldCreator worldCreator = new WorldCreator(worldConfig.name());
+        ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
+            WorldCreator worldCreator = new WorldCreator(name);
             worldCreator.generator(chunkGenerator);
             worldCreator.type(WorldType.FLAT);
             worldCreator.seed(new Random(System.currentTimeMillis()).nextLong());
-            worldCreator.environment(World.Environment.valueOf(worldConfig.environment().toUpperCase()));
+            worldCreator.environment(World.Environment.valueOf(environnements.name().toUpperCase()));
             World w;
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia
@@ -52,6 +52,6 @@ public class WorldsManager {
                 w.setAutoSave(true);
                 w.setSpawnLocation(0, 62, 0);
             }
-        }
+        });
     }
 }

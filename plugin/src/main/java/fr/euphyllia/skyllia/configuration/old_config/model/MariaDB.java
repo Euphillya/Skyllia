@@ -1,11 +1,11 @@
-package fr.euphyllia.skyllia.configuration.model;
+package fr.euphyllia.skyllia.configuration.old_config.model;
 
 import fr.euphyllia.skyllia.api.configuration.DatabaseType;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.OldConfigToml;
 import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import org.apache.logging.log4j.Level;
 
-public class MariaDB extends ConfigToml {
+public class MariaDB extends OldConfigToml {
 
     private final String path = "sgbd.mariadb.%s";
     private final int dbVersion = 3;

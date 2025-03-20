@@ -8,7 +8,8 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -60,8 +61,8 @@ public class AccessSubCommand implements SubCommandInterface {
         if (isUpdate) {
             if (statusAccessUpdate) {
                 LanguageToml.sendMessage(player, LanguageToml.messageAccessIslandClose);
-                ConfigToml.worldConfigs.forEach(worldConfig -> {
-                    RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigToml.regionDistance, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
+                ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
+                    RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(name), island.getPosition(), island.getSize(), entity -> {
                         Player playerInIsland = (Player) entity;
                         if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
                         Runnable teleportPlayerRun = () -> {

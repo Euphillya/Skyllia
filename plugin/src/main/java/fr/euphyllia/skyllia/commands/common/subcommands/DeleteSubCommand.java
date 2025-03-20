@@ -9,7 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
@@ -39,37 +39,37 @@ public class DeleteSubCommand implements SubCommandInterface {
             bPlayer.getScheduler().execute(plugin, () -> {
                 switch (cause) {
                     case KICKED -> {
-                        if (ConfigToml.clearInventoryWhenKickedIsland) {
+                        if (ConfigLoader.playerManager.isClearInventoryWhenKicked()) {
                             bPlayer.getInventory().clear();
                         }
-                        if (ConfigToml.clearEnderChestWhenKickedIsland) {
+                        if (ConfigLoader.playerManager.isClearEnderChestWhenKicked()) {
                             bPlayer.getEnderChest().clear();
                         }
-                        if (ConfigToml.resetExperiencePlayerWhenKickedIsland) {
+                        if (ConfigLoader.playerManager.isResetExperienceWhenKicked()) {
                             bPlayer.setTotalExperience(0);
                             bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
                         }
                     }
                     case ISLAND_DELETED -> {
-                        if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                        if (ConfigLoader.playerManager.isClearInventoryWhenDelete()) {
                             bPlayer.getInventory().clear();
                         }
-                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                        if (ConfigLoader.playerManager.isClearEnderChestWhenDelete()) {
                             bPlayer.getEnderChest().clear();
                         }
-                        if (ConfigToml.resetExperiencePlayerWhenDeleteIsland) {
+                        if (ConfigLoader.playerManager.isResetExperienceWhenDelete()) {
                             bPlayer.setTotalExperience(0);
                             bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
                         }
                     }
                     case LEAVE -> {
-                        if (ConfigToml.clearInventoryWhenLeaveIsland) {
+                        if (ConfigLoader.playerManager.isClearInventoryWhenLeave()) {
                             bPlayer.getInventory().clear();
                         }
-                        if (ConfigToml.clearEnderChestWhenLeaveIsland) {
+                        if (ConfigLoader.playerManager.isClearEnderChestWhenLeave()) {
                             bPlayer.getEnderChest().clear();
                         }
-                        if (ConfigToml.resetExperiencePlayerWhenLeaveIsland) {
+                        if (ConfigLoader.playerManager.isResetExperienceWhenLeave()) {
                             bPlayer.setTotalExperience(0);
                             bPlayer.sendExperienceChange(0, 0);
                         }
@@ -117,7 +117,7 @@ public class DeleteSubCommand implements SubCommandInterface {
             }
 
             // Vérification des membres
-            if (ConfigToml.preventDeletionIfHasMembers) {
+            if (ConfigLoader.general.isPreventDeletionIfHasMembers()) {
                 long memberCount = island.getMembers().stream()
                         .filter(member -> !member.getMojangId().equals(player.getUniqueId()))
                         .count();
@@ -132,11 +132,9 @@ public class DeleteSubCommand implements SubCommandInterface {
             if (isDisabled) {
                 this.updatePlayer(Main.getPlugin(Main.class), skyblockManager, island);
                 this.kickAllPlayerOnIsland(island);
-
-                for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(worldConfig.name()));
-                }
-
+                ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
+                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(s));
+                });
                 LanguageToml.sendMessage(player, LanguageToml.messageIslandDeleteSuccess);
             } else {
                 LanguageToml.sendMessage(player, LanguageToml.messageError);
@@ -168,8 +166,8 @@ public class DeleteSubCommand implements SubCommandInterface {
     }
 
     private void kickAllPlayerOnIsland(final Island island) {
-        ConfigToml.worldConfigs.forEach(worldConfig -> {
-            RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigToml.regionDistance, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
+        ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
+            RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(s), island.getPosition(), island.getSize(), entity -> {
                 Player playerInIsland = (Player) entity;
                 if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
                 PlayerUtils.teleportPlayerSpawn(playerInIsland);

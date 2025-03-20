@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
@@ -117,8 +117,8 @@ public class InterneAPI {
     }
 
     public boolean setupSGBD() throws DatabaseException {
-        if (ConfigToml.mariaDBConfig != null) {
-            MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
+        if (ConfigLoader.database.getMariaDBConfig() != null) {
+            MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
             this.database = new DatabaseLoader(mariaDB);
             if (!this.database.loadDatabase()) {
                 return false;
@@ -130,7 +130,7 @@ public class InterneAPI {
     }
 
     public IslandQuery getIslandQuery() {
-        return new IslandQuery(this, ConfigToml.mariaDBConfig.database());
+        return new IslandQuery(this, ConfigLoader.database.getMariaDBConfig().database());
     }
 
     public Main getPlugin() {
