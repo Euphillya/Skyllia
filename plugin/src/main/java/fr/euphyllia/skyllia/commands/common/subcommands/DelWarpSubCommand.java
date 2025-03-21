@@ -81,7 +81,8 @@ public class DelWarpSubCommand implements SubCommandInterface {
         if (PermissionImp.hasPermission(sender, "skyllia.island.command.delwarp") && sender instanceof Player player) {
             if (args.length == 1) {
                 String partial = args[0].trim().toLowerCase();
-                List<String> warpList = CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+                List<String> warpList = CacheCommands.warpTabCompleteCache.getIfPresent(player.getUniqueId());
+                if (warpList == null || warpList.isEmpty()) return Collections.emptyList();
                 return warpList.stream()
                         .filter(warp -> warp.toLowerCase().startsWith(partial))
                         .sorted()

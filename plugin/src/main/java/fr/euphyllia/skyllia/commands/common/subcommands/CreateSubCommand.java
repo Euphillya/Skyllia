@@ -13,8 +13,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.cache.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
+import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.configuration.PermissionsToml;
@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateSubCommand implements SubCommandInterface {
@@ -59,7 +58,8 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
+        if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
+            PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
         try {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
@@ -141,7 +141,7 @@ public class CreateSubCommand implements SubCommandInterface {
             String partial = args[0].trim().toLowerCase();
             List<String> nameSchem = new ArrayList<>();
             ConfigLoader.schematicManager.getSchematics().forEach((islandType, islandSchems) -> {
-                if (CacheCommands.createTabCompleteCache.getUnchecked(new CacheCommands.CreateCacheCommandsTabs(sender, islandType))
+                if (Boolean.TRUE.equals(CacheCommands.createTabCompleteCache.getIfPresent(new CacheCommands.CreateCacheCommandsTabs(sender, islandType)))
                         && islandType.toLowerCase().startsWith(partial)) {
                     nameSchem.add(islandType);
                 }

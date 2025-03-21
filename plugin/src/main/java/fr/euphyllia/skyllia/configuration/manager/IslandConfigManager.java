@@ -10,10 +10,10 @@ import java.util.Map;
 
 public class IslandConfigManager implements ConfigManager {
 
-    private int configVersion;
-    private String defaultIslandKey;
     private final Map<String, IslandSettings> islandSettingsMap = new HashMap<>();
     private final CommentedFileConfig config;
+    private int configVersion;
+    private String defaultIslandKey;
 
     public IslandConfigManager(CommentedFileConfig config) {
         this.config = config;
@@ -33,9 +33,9 @@ public class IslandConfigManager implements ConfigManager {
         for (String islandType : islandSection.keySet()) {
             CommentedConfig node = config.get("island." + islandType);
             if (node == null) continue;
-            String id        = node.getOrElse("id", islandType);
-            double size      = node.getOrElse("size", 50.0);
-            int maxMembers   = node.getOrElse("max-members", 6);
+            String id = node.getOrElse("id", islandType);
+            double size = node.getOrElse("size", 50.0);
+            int maxMembers = node.getOrElse("max-members", 6);
 
             IslandSettings islandSettings = new IslandSettings(id, maxMembers, size);
             islandSettingsMap.put(islandType, islandSettings);

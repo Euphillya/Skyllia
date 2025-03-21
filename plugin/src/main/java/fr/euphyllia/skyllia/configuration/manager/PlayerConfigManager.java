@@ -4,27 +4,22 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import fr.euphyllia.skyllia.managers.ConfigManager;
 
 public class PlayerConfigManager implements ConfigManager {
+    private final CommentedFileConfig config;
     private boolean clearInventoryWhenLeave;
     private boolean clearEnderChestWhenLeave;
     private boolean resetExperienceWhenLeave;
-
     private boolean clearInventoryWhenKicked;
     private boolean clearEnderChestWhenKicked;
     private boolean resetExperienceWhenKicked;
-
     private boolean clearInventoryWhenDelete;
     private boolean clearEnderChestWhenDelete;
     private boolean resetExperienceWhenDelete;
-
     private boolean teleportOwnIslandOnJoin;
     private boolean teleportSpawnIfNoIsland;
-
     private boolean changeGameModeOnTeleport;
     private boolean grantPermissions;
     private boolean allowTeleportation;
     private boolean preserveInventoryOnLogout;
-
-    private final CommentedFileConfig config;
 
     public PlayerConfigManager(CommentedFileConfig config) {
         this.config = config;
@@ -54,23 +49,63 @@ public class PlayerConfigManager implements ConfigManager {
         this.preserveInventoryOnLogout = config.getOrElse("player.inventory.preserve-inventory-on-logout", true);
     }
 
-    public boolean isClearInventoryWhenLeave() { return clearInventoryWhenLeave; }
-    public boolean isClearEnderChestWhenLeave() { return clearEnderChestWhenLeave; }
-    public boolean isResetExperienceWhenLeave() { return resetExperienceWhenLeave; }
+    public boolean isClearInventoryWhenLeave() {
+        return clearInventoryWhenLeave;
+    }
 
-    public boolean isClearInventoryWhenKicked() { return clearInventoryWhenKicked; }
-    public boolean isClearEnderChestWhenKicked() { return clearEnderChestWhenKicked; }
-    public boolean isResetExperienceWhenKicked() { return resetExperienceWhenKicked; }
+    public boolean isClearEnderChestWhenLeave() {
+        return clearEnderChestWhenLeave;
+    }
 
-    public boolean isClearInventoryWhenDelete() { return clearInventoryWhenDelete; }
-    public boolean isClearEnderChestWhenDelete() { return clearEnderChestWhenDelete; }
-    public boolean isResetExperienceWhenDelete() { return resetExperienceWhenDelete; }
+    public boolean isResetExperienceWhenLeave() {
+        return resetExperienceWhenLeave;
+    }
 
-    public boolean isTeleportOwnIslandOnJoin() { return teleportOwnIslandOnJoin; }
-    public boolean isTeleportSpawnIfNoIsland() { return teleportSpawnIfNoIsland; }
+    public boolean isClearInventoryWhenKicked() {
+        return clearInventoryWhenKicked;
+    }
 
-    public boolean isChangeGameModeOnTeleport() { return changeGameModeOnTeleport; }
-    public boolean isGrantPermissions() { return grantPermissions; }
-    public boolean isAllowTeleportation() { return allowTeleportation; }
-    public boolean isPreserveInventoryOnLogout() { return preserveInventoryOnLogout; }
+    public boolean isClearEnderChestWhenKicked() {
+        return clearEnderChestWhenKicked;
+    }
+
+    public boolean isResetExperienceWhenKicked() {
+        return resetExperienceWhenKicked;
+    }
+
+    public boolean isClearInventoryWhenDelete() {
+        return clearInventoryWhenDelete;
+    }
+
+    public boolean isClearEnderChestWhenDelete() {
+        return clearEnderChestWhenDelete;
+    }
+
+    public boolean isResetExperienceWhenDelete() {
+        return resetExperienceWhenDelete;
+    }
+
+    public boolean isTeleportOwnIslandOnJoin() {
+        return teleportOwnIslandOnJoin;
+    }
+
+    public boolean isTeleportSpawnIfNoIsland() {
+        return teleportSpawnIfNoIsland;
+    }
+
+    public boolean isChangeGameModeOnTeleport() {
+        return changeGameModeOnTeleport;
+    }
+
+    public boolean isGrantPermissions() {
+        return grantPermissions;
+    }
+
+    public boolean isAllowTeleportation() {
+        return allowTeleportation;
+    }
+
+    public boolean isPreserveInventoryOnLogout() {
+        return preserveInventoryOnLogout;
+    }
 }

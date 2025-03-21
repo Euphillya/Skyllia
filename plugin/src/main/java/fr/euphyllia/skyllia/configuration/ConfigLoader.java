@@ -15,20 +15,18 @@ public class ConfigLoader {
 
     private static final Logger logger = LogManager.getLogger(ConfigLoader.class);
     private static final List<ConfigManager> configManagers = new ArrayList<>();
-
-    private static CommentedFileConfig generalConfig;
-    private static CommentedFileConfig databaseConfig;
-    private static CommentedFileConfig worldConfig;
-    private static CommentedFileConfig islandConfig;
-    private static CommentedFileConfig playerConfig;
-    private static CommentedFileConfig schematicConfig;
-
     public static GeneralConfigManager general;
     public static DatabaseConfigManager database;
     public static WorldConfigManager worldManager;
     public static IslandConfigManager islandManager;
     public static PlayerConfigManager playerManager;
     public static SchematicConfigManager schematicManager;
+    private static CommentedFileConfig generalConfig;
+    private static CommentedFileConfig databaseConfig;
+    private static CommentedFileConfig worldConfig;
+    private static CommentedFileConfig islandConfig;
+    private static CommentedFileConfig playerConfig;
+    private static CommentedFileConfig schematicConfig;
 
     public static void init(File configDir) {
 

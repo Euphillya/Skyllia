@@ -9,8 +9,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
-
+import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
+import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -201,6 +201,7 @@ public class IslandHook extends Island {
         if (event.isCancelled()) {
             return false;
         }
+        IslandClosedCache.invalidateIsland(this.getId());
         return this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland).join();
     }
 

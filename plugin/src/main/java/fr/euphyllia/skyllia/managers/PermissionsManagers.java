@@ -11,9 +11,9 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.Permissions;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsInventory;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
-import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
-import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
-import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
+import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
+import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
+import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.bukkit.Bukkit;
@@ -119,7 +119,7 @@ public class PermissionsManagers {
     }
 
     public static boolean testGameRule(GameRuleIsland gameRule, Island island) {
-        long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
+        long permissionChecker = PermissionGameRuleInIslandCache.getGameRule(island.getId());
         PermissionManager permissionManager = new PermissionManager(permissionChecker);
 
         if (permissionManager.hasPermission(gameRule.getPermissionValue())) {

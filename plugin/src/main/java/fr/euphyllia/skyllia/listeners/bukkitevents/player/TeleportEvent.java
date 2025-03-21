@@ -3,12 +3,11 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.cache.CacheIsland;
+import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -60,7 +59,7 @@ public class TeleportEvent implements Listener {
                 LanguageToml.sendMessage(event.getPlayer(), LanguageToml.messageVisitIslandIsPrivate);
                 return;
             }
-            if (CacheIsland.getIslandClosed(island.getId())) {
+            if (IslandClosedCache.isIslandClosed(island.getId())) {
                 event.setCancelled(true);
                 LanguageToml.sendMessage(event.getPlayer(), LanguageToml.messageVisitIslandIsPrivate);
             }

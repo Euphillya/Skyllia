@@ -82,7 +82,8 @@ public class WarpSubCommand implements SubCommandInterface {
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (PermissionImp.hasPermission(sender, "skyllia.island.command.warp") && sender instanceof Player player) {
             if (args.length == 1) {
-                List<String> warpList = CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+                List<String> warpList = CacheCommands.warpTabCompleteCache.getIfPresent(player.getUniqueId());
+                if (warpList == null || warpList.isEmpty()) return Collections.emptyList();
                 String partial = args[0].trim().toLowerCase();
                 return warpList.stream()
                         .filter(warp -> warp.toLowerCase().startsWith(partial))

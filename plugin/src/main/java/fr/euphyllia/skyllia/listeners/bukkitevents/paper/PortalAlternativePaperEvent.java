@@ -1,11 +1,6 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.paper;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.configuration.WorldConfig;
-import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
-
-import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import io.papermc.paper.event.entity.EntityInsideBlockEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -2,13 +2,11 @@ package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
-
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class IslandUtils {
 

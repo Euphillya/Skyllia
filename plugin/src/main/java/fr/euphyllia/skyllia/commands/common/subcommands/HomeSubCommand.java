@@ -48,7 +48,8 @@ public class HomeSubCommand implements SubCommandInterface {
                 LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
                 return true;
             }
-            if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
+            if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
+                PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
             WarpIsland warpIsland = island.getWarpByName("home");
             double rayon = island.getSize();
@@ -62,7 +63,8 @@ public class HomeSubCommand implements SubCommandInterface {
                 }
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
+                if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
+                    PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                 LanguageToml.sendMessage(player, LanguageToml.messageHomeIslandSuccess);
             }, null, 1L);

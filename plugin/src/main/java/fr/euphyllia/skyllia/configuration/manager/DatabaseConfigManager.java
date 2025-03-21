@@ -2,14 +2,13 @@ package fr.euphyllia.skyllia.configuration.manager;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import fr.euphyllia.skyllia.managers.ConfigManager;
-import fr.euphyllia.skyllia.sgbd.MariaDB;
 import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import org.jetbrains.annotations.Nullable;
 
 public class DatabaseConfigManager implements ConfigManager {
 
-    private int configVersion;
     private final CommentedFileConfig config;
+    private int configVersion;
     private MariaDBConfig mariaDBConfig;
 
     public DatabaseConfigManager(CommentedFileConfig config) {
@@ -34,7 +33,8 @@ public class DatabaseConfigManager implements ConfigManager {
         long maxLifeTime = config.getOrElse("mariadb.maxLifeTime", 1800000);
         int timeOut = config.getOrElse("mariadb.timeOut", 5000);
 
-        if (enabledMariaDB) this.mariaDBConfig = new MariaDBConfig(hostname, String.valueOf(port), username, password, useSSL, maxPool, minPool, timeOut, maxLifeTime, keepAliveTime, database);
+        if (enabledMariaDB)
+            this.mariaDBConfig = new MariaDBConfig(hostname, String.valueOf(port), username, password, useSSL, maxPool, minPool, timeOut, maxLifeTime, keepAliveTime, database);
 
         // Todo ? Autre database
     }

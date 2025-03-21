@@ -2,7 +2,6 @@ package fr.euphyllia.skyllia.utils;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.players.PlayerTeleportSpawnEvent;
-
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

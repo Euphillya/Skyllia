@@ -53,7 +53,7 @@ public final class SkylliaAPI {
      * @param islandId The UUID of the island.
      * @return A CompletableFuture that will contain the island associated with the island ID.
      */
-    public static @Nullable CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
+    public static CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
         return implementation.getIslandByIslandId(islandId);
     }
 

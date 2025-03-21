@@ -2,11 +2,12 @@ package fr.euphyllia.skyllia.configuration.manager;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import fr.euphyllia.skyllia.managers.ConfigManager;
-import org.bukkit.Location;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 public class GeneralConfigManager implements ConfigManager {
 
+    private final CommentedFileConfig config;
     private int configVersion;
     private boolean verbose;
     private int updateCacheTimer;
@@ -14,7 +15,6 @@ public class GeneralConfigManager implements ConfigManager {
     private int regionDistance;
     private int maxIslands;
     private boolean deleteChunkPerimeterIsland;
-
     private boolean spawnEnabled;
     private String spawnWorld;
     private double spawnX;
@@ -22,10 +22,7 @@ public class GeneralConfigManager implements ConfigManager {
     private double spawnZ;
     private float spawnYaw;
     private float spawnPitch;
-
     private boolean debugPermission;
-
-    private final CommentedFileConfig config;
 
     public GeneralConfigManager(CommentedFileConfig config) {
         this.config = config;

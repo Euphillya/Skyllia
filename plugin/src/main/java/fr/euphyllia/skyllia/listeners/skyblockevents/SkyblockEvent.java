@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.listeners.skyblockevents;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.*;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
@@ -39,12 +38,12 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockCreate(final SkyblockCreateEvent event) {
-        this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getOwnerId());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockChangePermission(final SkyblockChangePermissionEvent event) {
-        this.api.getCacheManager().updatePermissionCacheIsland(event.getIsland());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -68,7 +67,7 @@ public class SkyblockEvent implements Listener {
     public void onSkyblockLoad(final SkyblockLoadEvent event) {
         Players players = this.api.getSkyblockManager().getOwnerByIslandID(event.getIsland()).join();
         if (players == null) return;
-        this.api.getCacheManager().updateCacheIsland(event.getIsland(), players.getMojangId());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
     @EventHandler
@@ -135,7 +134,7 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler
     public void onSkyblockChangeGameRule(final SkyblockChangeGameRuleEvent event) {
-        this.api.getCacheManager().updateGameRuleCacheIsland(event.getIsland());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
 }

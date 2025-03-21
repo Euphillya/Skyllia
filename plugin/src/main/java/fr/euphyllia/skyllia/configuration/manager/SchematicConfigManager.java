@@ -13,11 +13,12 @@ public class SchematicConfigManager implements ConfigManager {
     /**
      * Map<islandType, Map<worldName, SchematicSetting>>
      * Exemple :
-     *  "my_first_island" -> ("sky-overworld" -> SchematicSetting(64.0, "./schematics/my_first_island.schem"), ...)
+     * "my_first_island" -> ("sky-overworld" -> SchematicSetting(64.0, "./schematics/my_first_island.schem"), ...)
      */
     private final Map<String, Map<String, SchematicSetting>> schematicMap = new HashMap<>();
 
     private final CommentedFileConfig config;
+
     public SchematicConfigManager(CommentedFileConfig config) {
         this.config = config;
         loadConfig();
@@ -31,10 +32,10 @@ public class SchematicConfigManager implements ConfigManager {
             int index = key.lastIndexOf('.');
             if (index <= 0) continue;
             String islandType = key.substring(0, index);
-            String worldName  = key.substring(index + 1);
+            String worldName = key.substring(index + 1);
 
             String schematicFile = node.getOrElse("schematic", "default.schem");
-            double height        = node.getOrElse("height", 64.0);
+            double height = node.getOrElse("height", 64.0);
 
             schematicMap
                     .computeIfAbsent(islandType, k -> new HashMap<>())

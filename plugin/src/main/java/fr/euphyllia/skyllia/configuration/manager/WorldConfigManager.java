@@ -13,13 +13,12 @@ public class WorldConfigManager implements ConfigManager {
     /**
      * Map<nomDuMonde, WorldConfig>
      * Exemple :
-     *   "sky-overworld" -> (Environnements.NORMAL, "sky-nether", "sky-end")
+     * "sky-overworld" -> (Environnements.NORMAL, "sky-nether", "sky-end")
      */
     private final Map<String, WorldConfig> worldConfigs = new HashMap<>();
-
+    private final CommentedFileConfig config;
     private boolean suppressWarnNetherEndWorld = false;
 
-    private final CommentedFileConfig config;
     public WorldConfigManager(CommentedFileConfig config) {
         this.config = config;
         loadConfig();
@@ -36,9 +35,9 @@ public class WorldConfigManager implements ConfigManager {
             CommentedConfig node = config.get("worlds." + worldName);
             if (node == null) continue;
 
-            String envString     = node.getOrElse("environment", "NORMAL");
-            String portalNether  = node.getOrElse("portal-nether", "sky-nether");
-            String portalEnd     = node.getOrElse("portal-end", "sky-end");
+            String envString = node.getOrElse("environment", "NORMAL");
+            String portalNether = node.getOrElse("portal-nether", "sky-nether");
+            String portalEnd = node.getOrElse("portal-end", "sky-end");
 
             WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd);
             worldConfigs.put(worldName, wc);

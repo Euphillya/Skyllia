@@ -55,7 +55,7 @@ allprojects {
         compileOnly("com.zaxxer:HikariCP:6.2.1")
         compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
         compileOnly("com.electronwill.night-config:toml:3.8.1")
-        compileOnly("com.google.guava:guava:33.4.0-jre")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.6")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
     }
