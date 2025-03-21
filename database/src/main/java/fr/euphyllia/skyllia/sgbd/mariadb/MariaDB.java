@@ -1,7 +1,7 @@
-package fr.euphyllia.skyllia.sgbd;
+package fr.euphyllia.skyllia.sgbd.mariadb;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
+import fr.euphyllia.skyllia.sgbd.mariadb.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.model.DBConnect;
 import fr.euphyllia.skyllia.sgbd.model.DBInterface;

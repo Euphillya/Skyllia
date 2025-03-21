@@ -2,7 +2,7 @@ package fr.euphyllia.skylliaore.database;
 
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
 import org.apache.logging.log4j.LogManager;

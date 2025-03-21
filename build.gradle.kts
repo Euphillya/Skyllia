@@ -53,6 +53,7 @@ allprojects {
         compileOnly("org.apache.logging.log4j:log4j-core:2.24.3")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.2")
         compileOnly("com.zaxxer:HikariCP:6.2.1")
+        compileOnly("org.xerial:sqlite-jdbc:3.49.1.0")
         compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
         compileOnly("com.electronwill.night-config:toml:3.8.1")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.6")

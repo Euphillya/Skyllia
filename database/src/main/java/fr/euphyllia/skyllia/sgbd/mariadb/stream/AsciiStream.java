@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.sgbd.stream;
+package fr.euphyllia.skyllia.sgbd.mariadb.stream;
 
 /**
  * The {@code AsciiStream} record represents an ASCII-based input stream along with its length.

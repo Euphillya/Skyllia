@@ -1,8 +1,8 @@
-package fr.euphyllia.skyllia.sgbd;
+package fr.euphyllia.skyllia.sgbd.mariadb;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.stream.AsciiStream;
-import fr.euphyllia.skyllia.sgbd.stream.BinaryStream;
+import fr.euphyllia.skyllia.sgbd.mariadb.stream.AsciiStream;
+import fr.euphyllia.skyllia.sgbd.mariadb.stream.BinaryStream;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;

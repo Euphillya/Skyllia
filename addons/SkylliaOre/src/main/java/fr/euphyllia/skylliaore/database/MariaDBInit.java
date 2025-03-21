@@ -2,10 +2,10 @@ package fr.euphyllia.skylliaore.database;
 
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.sgbd.DatabaseLoader;
-import fr.euphyllia.skyllia.sgbd.MariaDB;
+import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

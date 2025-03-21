@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.configuration;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import fr.euphyllia.skyllia.configuration.manager.*;
 import fr.euphyllia.skyllia.managers.ConfigManager;
+import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,9 +65,14 @@ public class ConfigLoader {
 
     public static void reloadConfigs() {
         logger.log(Level.INFO, "[Config] Reloading configurations...");
-        for (ConfigManager manager : configManagers) {
-            manager.loadConfig();
+        try {
+            for (ConfigManager manager : configManagers) {
+                if (manager instanceof DatabaseConfigManager) continue;
+                manager.loadConfig();
+            }
+            logger.log(Level.INFO, "[Config] Reload complete.");
+        } catch (DatabaseException exception) {
+            logger.error(exception);
         }
-        logger.log(Level.INFO, "[Config] Reload complete.");
     }
 }

@@ -13,3 +13,12 @@ maxPool = 10
 keepAliveTime = 0
 maxLifeTime = 1_800_000
 timeOut = 5_000
+
+[sqlite]
+enabled = false
+files = "skyllia.db"
+minPool = 1
+maxPool = 10
+keepAliveTime = 0
+maxLifeTime = 1_800_000
+timeOut = 30_000

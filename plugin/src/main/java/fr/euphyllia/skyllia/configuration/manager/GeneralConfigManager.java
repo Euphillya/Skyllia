@@ -34,7 +34,7 @@ public class GeneralConfigManager implements ConfigManager {
         this.configVersion = config.getOrElse("config-version", 4);
         this.verbose = config.getOrElse("verbose", false);
         this.updateCacheTimer = config.getOrElse("settings.global.cache.update-timer-seconds", 30);
-        this.regionDistance = config.getOrElse("settings.island.region-distance", 10);
+        this.regionDistance = config.getOrElse("settings.island.region-distance", -1);
         this.maxIslands = config.getOrElse("settings.island.max-islands", 500_000);
 
         this.preventDeletionIfHasMembers = config.getOrElse("settings.island.delete.prevent-deletion-if-has-members", true);
