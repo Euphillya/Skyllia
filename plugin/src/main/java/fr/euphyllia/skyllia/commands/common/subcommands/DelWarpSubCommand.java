@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -29,15 +29,15 @@ public class DelWarpSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageWarpCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.warp.args-missing");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.delwarp")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
@@ -47,12 +47,12 @@ public class DelWarpSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
             if (warpName.equalsIgnoreCase("home")) {
-                LanguageToml.sendMessage(player, LanguageToml.messageIslandNotDeleteHome);
+                ConfigLoader.language.sendMessage(player, "island.warp.delete-home-forbidden");
                 return true;
             }
 
@@ -64,13 +64,13 @@ public class DelWarpSubCommand implements SubCommandInterface {
 
             boolean deleteWarp = island.delWarp(warpName);
             if (deleteWarp) {
-                LanguageToml.sendMessage(player, LanguageToml.messageWarpDeleteSuccess);
+                ConfigLoader.language.sendMessage(player, "island.warp.delete-success");
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageError);
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
 
         return true;

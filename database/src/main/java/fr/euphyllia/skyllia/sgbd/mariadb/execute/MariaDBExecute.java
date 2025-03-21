@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.sgbd.mariadb.execute;
 
-import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.model.DBCallback;
 import fr.euphyllia.skyllia.sgbd.model.DBCallbackInt;
 import fr.euphyllia.skyllia.sgbd.model.DBWork;

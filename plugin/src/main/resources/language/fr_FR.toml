@@ -1,0 +1,125 @@
+config-version = 2
+verbose = false
+
+[island]
+create-in-progress = "L'île est en cours de création"
+create-finish = "Bienvenue sur votre île !"
+delete-success = "L'île a été supprimée avec succès."
+delete-only-owner = "Désolé, seul le propriétaire peut exécuter cette commande."
+delete-has-members = "Vous ne pouvez pas supprimer votre île car elle possède encore des membres. Veuillez les exclure avant de continuer."
+type-not-exist = "Le type d'île sélectionné n'existe pas."
+schematic-not-exist = "Le schéma pour créer l'île n'existe pas."
+generic-error = "Une erreur est survenue lors de la création de l'île."
+only-owner = "Seul le propriétaire de l'île peut exécuter cette commande."
+
+[island.player]
+no-island = "Vous n'avez pas d'île !"
+already-has-island = "Vous avez déjà une île."
+not-found = "Joueur introuvable."
+not-on-island = "Vous devez être sur une île."
+not-on-own-island = "Vous devez être sur votre île."
+permission-denied = "Vous n'avez pas la permission de faire cela."
+not-connected = "Le joueur n'est pas connecté."
+player-only-command = "Cette commande peut être exécutée uniquement par un joueur."
+command-in-progress = "La commande est déjà en cours d'exécution, veuillez patienter un instant."
+
+[island.transfer]
+success = "Vous avez transféré la propriété à %new_owner% avec succès."
+notify-old-owner = "Vous avez été promu propriétaire de l'île par %old_owner%."
+confirm = "Vous êtes sur le point de transférer la propriété de l'île à %new_owner%. Cette action est irréversible. Écrivez /is transfer %new_owner% confirm pour confirmer."
+specify-player = "Merci de spécifier le joueur à qui vous voulez transférer l'île."
+already-owner = "Vous êtes déjà le propriétaire de l'île."
+only-co-owner = "Vous pouvez uniquement transférer la propriété à un co-propriétaire."
+
+[island.rank]
+demote-success = "Le joueur %s a été rétrogradé."
+demote-failed = "Le joueur %s ne peut pas être rétrogradé."
+demote-high-rank = "Vous ne pouvez pas rétrograder un joueur de votre rang ou supérieur."
+demote-args-missing = "La commande est incomplète : /skyllia demote <membre>"
+
+promote-success = "Le joueur %s a été promu."
+promote-failed = "Le joueur %s ne peut pas être promu."
+promote-high-rank = "Vous ne pouvez pas promouvoir un joueur à votre rang ou supérieur."
+promote-args-missing = "La commande est incomplète : /skyllia promote <membre>"
+
+[island.invite]
+already-on-island = "Vous êtes déjà sur une île !"
+args-missing = "La commande est incomplète : /skyllia invite <ajouter/accepter/refuser> <joueur/propriétaire_île>"
+accept-args-missing = "Vous devez spécifier à quelle île vous souhaitez rejoindre : /skyllia invite accept <propriétaire_île>"
+remove-args-missing = "La commande est incomplète : /skyllia invite remove <propriétaire_île>"
+decline-args-missing = "Vous devez spécifier quelle invitation vous souhaitez refuser : /skyllia invite decline <propriétaire_île>"
+invite-yourself = "Vous ne pouvez pas vous inviter vous-même."
+add-args-missing = "Vous devez spécifier le joueur à inviter : /skyllia invite <joueur>"
+player-invited = "Le joueur %s a été invité. En attente de réponse..."
+invite-deleted = "Vous avez supprimé l'invitation envoyée à %s."
+player-notified = "Le joueur %player_invite% vous a invité sur son île. Pour accepter : /skyllia invite accept %player_invite%. Pour refuser : /skyllia invite decline %player_invite%"
+island-not-found = "L'île du joueur %s n'a pas été trouvée."
+join-success = "Vous êtes maintenant membre de l'île !"
+member-limit-reached = "La limite de membres de l'île a été atteinte. Vous ne pouvez pas rejoindre l'île."
+decline-success = "Vous avez refusé l'invitation de %player_invite%."
+invite-not-found = "Vous n'avez pas reçu d'invitation de la part de ce joueur."
+invite-accepted-notify = "%player_accept% a accepté votre invitation."
+invite-declined-notify = "%player_decline% a refusé votre invitation."
+
+[island.kick]
+success = "Le joueur a été expulsé de votre île."
+failed = "Le joueur n'a pas pu être expulsé. Si le problème persiste, contactez un administrateur."
+high-rank = "Vous ne pouvez pas expulser un joueur de votre rang ou supérieur."
+args-missing = "La commande est incomplète : /skyllia kick <joueur>"
+
+[island.ban]
+args-missing = "La commande est incomplète : /skyllia ban <joueur>"
+player-in-island = "Le joueur ne peut pas être banni car il est membre de votre île."
+success = "Le joueur a été banni de votre île."
+
+[island.unban]
+args-missing = "La commande est incomplète : /skyllia unban <joueur>"
+player-not-banned = "Le joueur n'est pas banni."
+success = "Le joueur a été débanni."
+failed = "Le joueur n'a pas pu être débanni pour une raison inconnue."
+
+[island.biome]
+args-missing = "La commande est incomplète : /skyllia biome <biome>"
+only-on-island = "La commande ne peut être exécutée que sur une île."
+not-exist = "Le biome %s n'existe pas."
+permission-denied = "Vous n'avez pas la permission d'utiliser ce biome."
+change-in-progress = "Changement de biome en cours... Un message vous avertira quand ce sera terminé."
+chunk-success = "Le changement de biome dans la zone est terminé ! Quittez puis revenez pour voir les changements."
+island-success = "Le changement de biome sur votre île est terminé ! Quittez puis revenez pour voir les changements."
+
+[island.visit]
+args-missing = "Vous devez spécifier l'île que vous souhaitez visiter : /skyllia visit <joueur>"
+no-island = "Le joueur n'a pas d'île."
+island-private = "L'île est fermée."
+banned = "Vous êtes banni de l'île."
+success = "Vous avez été téléporté sur l'île de %player%."
+
+[island.generic]
+unexpected-error = "Une erreur est survenue. Veuillez contacter un administrateur."
+location-unsafe = "La position n'est pas sécurisée ! Téléportation impossible."
+
+[island.warp]
+create-success = "Votre warp : %s a été créé."
+args-missing = "Spécifiez le warp : /skyllia <set/del>warp <nom>"
+delete-home-forbidden = "Vous ne pouvez pas supprimer le warp principal."
+delete-success = "Le warp a été supprimé."
+warp-not-exist = "Le warp demandé n'existe pas."
+teleport-success = "Vous avez été téléporté au warp demandé."
+
+[admin]
+delete-args-missing = "Le nom du joueur est manquant."
+delete-no-confirm = "Ajoutez 'confirm' à la fin de la commande."
+setsize-args-missing = "Commande incomplète : /skylliadmin setsize <joueur/uuid> <nombre> confirm"
+setsize-no-confirm = "Ajoutez 'confirm' à la fin."
+setsize-nan = "Vous n'avez pas indiqué un nombre entier."
+setsize-failed = "Le changement n'a pas pu être effectué."
+setsize-success = "La taille de l'île a été modifiée."
+setmaxmembers-args-missing = "Commande incomplète : /skyllia setmaxmembers <valeur> confirm"
+setmaxmembers-no-confirm = "Ajoutez 'confirm' à la fin."
+setmaxmembers-nan = "Le nombre indiqué est incorrect."
+transfer-args-missing = "Commande incomplète : /skylliadmin transfer <ancien> <nouveau> confirm"
+transfer-no-confirm = "Ajoutez 'confirm' à la fin."
+transfer-success = "La propriété a été transférée de %previous_owner% à %new_owner%."
+
+[misc]
+unknown-command = "Cette commande n'existe pas."

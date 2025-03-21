@@ -4,7 +4,7 @@ import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -26,19 +26,19 @@ public class SetSizeSubCommands implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.setsize")) {
-            LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return true;
         }
 
         if (args.length < 3) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(sender, "admin.size-args-missing");
             return true;
         }
         String playerName = args[0];
         String changeValue = args[1];
         String confirm = args[2];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeNotConfirmedArgs);
+            ConfigLoader.language.sendMessage(sender, "admin.size-args-missing");
             return true;
         }
         try {
@@ -51,24 +51,24 @@ public class SetSizeSubCommands implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(playerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(sender, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(sender, "island.player.no-island");
                 return true;
             }
 
             double newSize = Double.parseDouble(changeValue);
             boolean updated = island.setSize(newSize);
             if (updated) {
-                LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeSuccess);
+                ConfigLoader.language.sendMessage(sender, "admin.size-success");
             } else {
-                LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeFailed);
+                ConfigLoader.language.sendMessage(sender, "admin.size-failed");
             }
 
         } catch (Exception e) {
             if (e instanceof NumberFormatException ignored) {
-                LanguageToml.sendMessage(sender, LanguageToml.messageASetSizeNAN);
+                ConfigLoader.language.sendMessage(sender, "admin.size-nan");
             } else {
                 logger.log(Level.FATAL, e.getMessage(), e);
-                LanguageToml.sendMessage(sender, LanguageToml.messageError);
+                ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
             }
         }
         return true;

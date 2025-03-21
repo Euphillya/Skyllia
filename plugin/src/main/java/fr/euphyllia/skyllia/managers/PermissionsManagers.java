@@ -14,7 +14,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -114,7 +114,7 @@ public class PermissionsManagers {
         }
 
         // Envoi du message de refus de permission
-        LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+        ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
         return false;
     }
 

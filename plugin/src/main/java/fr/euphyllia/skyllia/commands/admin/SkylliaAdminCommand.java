@@ -9,9 +9,10 @@ import fr.euphyllia.skyllia.commands.admin.subcommands.ForceDeleteSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.ForceTransferSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.SetMaxMembersSubCommands;
 import fr.euphyllia.skyllia.commands.admin.subcommands.SetSizeSubCommands;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -32,8 +33,9 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
 
     @Override
     public void execute(CommandSourceStack sender, String @NotNull [] args) {
+        Player player = sender.getSender() instanceof Player ? (Player) sender.getSender() : null;
         if (!PermissionImp.hasPermission(sender.getSender(), "skyllia.admins.commands")) {
-            LanguageToml.sendMessage(sender.getSender(), LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player != null ? player : sender.getSender(), "island.player.permission-denied");
             return;
         }
         if (args.length != 0) {
@@ -41,7 +43,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
             SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
             if (subCommandInterface == null) {
-                LanguageToml.sendMessage(sender.getSender(), LanguageToml.messageSubCommandsNotExists);
+                ConfigLoader.language.sendMessage(player != null ? player : sender.getSender(), "misc.unknown-command");
                 return;
             }
             Bukkit.getAsyncScheduler().runNow(this.plugin, task ->

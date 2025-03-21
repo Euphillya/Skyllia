@@ -12,9 +12,9 @@ import fr.euphyllia.skyllia.database.IslandQuery;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -230,10 +230,10 @@ public class InterneAPI {
     public IslandQuery getIslandQuery() {
         if (ConfigLoader.database.getMariaDBConfig() != null) {
             return new IslandQuery(this, ConfigLoader.database.getMariaDBConfig().database());
-        } else if (ConfigLoader.database.getSqLiteConfig() != null){
+        } else if (ConfigLoader.database.getSqLiteConfig() != null) {
             return new IslandQuery(this, ConfigLoader.database.getSqLiteConfig().filePath());
         }
-
+        return null;
     }
 
     public Main getPlugin() {

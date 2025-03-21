@@ -10,7 +10,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -85,7 +85,7 @@ public class SkyblockEvent implements Listener {
     private void teleportOtherWorld(Player player, PlayerPrepareChangeWorldSkyblockEvent event, PermissionsIsland permissionsIsland) {
         Island island = ListenersUtils.checkPermission(player.getLocation(), player, permissionsIsland, event);
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return;
         }
         try {
@@ -96,7 +96,7 @@ public class SkyblockEvent implements Listener {
             } else if (permissionsIsland.equals(PermissionsIsland.USE_END_PORTAL)) {
                 portalRedirectWorldName = worldConfig.getPortalEnd();
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+                ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 return;
             }
             if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalRedirectWorldName))) {
@@ -124,7 +124,7 @@ public class SkyblockEvent implements Listener {
                             RegionHelper.getCenterRegion(worldSkyblockEvent.getTo().getWorld(), island.getPosition().x(), island.getPosition().z()),
                             island.getSize(), 0, 0);
                 } else {
-                    LanguageToml.sendMessage(player, LanguageToml.messageLocationNotSafe);
+                    ConfigLoader.language.sendMessage(player, "island.generic.location-unsafe");
                 }
             });
         } catch (Exception e) {

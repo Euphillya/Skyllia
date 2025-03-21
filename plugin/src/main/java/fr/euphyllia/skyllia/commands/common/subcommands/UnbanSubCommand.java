@@ -6,7 +6,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
@@ -26,21 +26,21 @@ public class UnbanSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.unban")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageUnbanCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.unban.not-enough-args");
             return true;
         }
         SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
@@ -54,15 +54,15 @@ public class UnbanSubCommand implements SubCommandInterface {
         Players players = island.getMember(playerBan);
 
         if (players == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messageUnbanPlayerNotBanned);
+            ConfigLoader.language.sendMessage(player, "island.unban.player-not-banned");
             return true;
         }
 
         boolean isRemoved = island.removeMember(players);
         if (isRemoved) {
-            LanguageToml.sendMessage(player, LanguageToml.messageUnBanPlayerSuccess);
+            ConfigLoader.language.sendMessage(player, "island.unban.success");
         } else {
-            LanguageToml.sendMessage(player, LanguageToml.messageUnbanPlayerFailed);
+            ConfigLoader.language.sendMessage(player, "island.unban.failed");
         }
         return true;
     }

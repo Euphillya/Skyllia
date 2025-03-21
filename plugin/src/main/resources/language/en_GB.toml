@@ -1,0 +1,134 @@
+config-version = 2
+verbose = false
+
+[island]
+create-in-progress = "The island is being created"
+create-finish = "Welcome to your island!"
+delete-success = "The island has been successfully deleted"
+delete-only-owner = "Sorry, only the owner can execute this command"
+delete-has-members = "You cannot delete your island because it has members. Please remove all members before deleting."
+type-not-exist = "The selected island type does not exist."
+schematic-not-exist = "The schematic to create the island does not exist."
+generic-error = "An error occurred during island creation"
+only-owner = "Only the island owner can execute this command."
+
+[island.player]
+no-island = "You don't have an island!"
+already-has-island = "You already have an island."
+not-found = "Player not found."
+not-on-island = "You must be on an island."
+not-on-own-island = "You must be on your island."
+permission-denied = "You do not have permission to do this."
+not-connected = "The player is not connected"
+player-only-command = "This command can only be executed by a player."
+command-in-progress = "The command is already being executed, please wait a moment."
+
+[island.transfer]
+success = "You have successfully transferred ownership to %new_owner%"
+notify-old-owner = "You have been made the owner of the island by %old_owner%."
+confirm = "You are about to transfer ownership of the island to %new_owner%; this action is irreversible. Type /is transfer %new_owner% confirm to confirm."
+specify-player = "Please specify a player to transfer ownership to."
+already-owner = "You are already the owner of the island."
+only-co-owner = "You can only transfer ownership to a co-owner."
+
+[island.rank]
+demote-success = "The player %s has been demoted."
+demote-failed = "The player %s cannot be demoted."
+demote-high-rank = "You cannot demote a player of your rank or higher."
+demote-args-missing = "The command is incomplete: /skyllia demote <member>"
+
+promote-success = "The player %s has been promoted."
+promote-failed = "The player %s cannot be promoted."
+promote-high-rank = "You cannot promote a player to your rank or higher."
+promote-args-missing = "The command is incomplete: /skyllia promote <member>"
+
+[island.invite]
+already-on-island = "You are already on an island!"
+args-missing = "The command is incomplete: /skyllia invite <add/accept/decline> <player/island_owner>"
+accept-args-missing = "You must specify which island you want to join: /skyllia invite accept <island_owner>"
+remove-args-missing = "The command is incomplete: /skyllia invite remove <island_owner>"
+decline-args-missing = "You must specify which island you want to decline: /skyllia invite decline <island_owner>"
+invite-yourself = "You cannot invite yourself."
+add-args-missing = "You must specify which island you want to decline: /skyllia invite <player>"
+player-invited = "The player %s has been invited. Awaiting a response..."
+invite-deleted = "You have deleted %s's invitation."
+player-notified = "The player %player_invite% has invited you to their island. To accept: /skyllia invite accept %player_invite%. To decline: /skyllia invite decline %player_invite%"
+island-not-found = "The island of the player %s was not found."
+join-success = "You are now a member of the island!"
+member-limit-reached = "The member limit of the island has been reached. You cannot join the island."
+decline-success = "You have declined the invitation from %player_invite%."
+invite-not-found = "You have not received an invitation from the player."
+invite-accepted-notify = "Player %player_accept% has accepted your island invitation."
+invite-declined-notify = "Player %player_decline% has declined your island invitation."
+
+[island.kick]
+success = "The player has been kicked from your island."
+failed = "The player could not be kicked. If the problem persists, contact an administrator"
+high-rank = "You cannot kick a player of your rank or higher."
+args-missing = "The command is incomplete: /skyllia kick <player>"
+
+[island.ban]
+args-missing = "The command is incomplete: /skyllia ban <player>"
+player-in-island = "The player cannot be banned as they are a member of your island."
+success = "The player has been banned from your island."
+
+[island.unban]
+args-missing = "The command is incomplete: /skyllia unban <player>"
+player-not-banned = "The player is not banned."
+success = "The player has been unbanned."
+failed = "The player could not be unbanned for an unknown reason."
+
+[island.biome]
+args-missing = "The command is incomplete: /skyllia biome <biome>"
+only-on-island = "The command can only be executed on an island"
+not-exist = "The biome %s does not exist."
+permission-denied = "You do not have permission to use this biome."
+change-in-progress = "Biome change in progress. Please note that it takes time... A message will notify you when the process is complete."
+chunk-success = "The biome change in the chunk you were in is complete! You need to leave and return to your island to see the change."
+island-success = "The biome change in your island you were in is complete! You need to leave and return to your island to see the change."
+
+[island.visit]
+args-missing = "You must specify the name of the island you want to visit: /skyllia visit <player>"
+no-island = "The player does not have an island"
+island-private = "The island is closed."
+banned = "You are banned from the island."
+success = "You have been teleported to the island of %player%."
+
+[island.generic]
+unexpected-error = "An error occurred. Please contact an administrator."
+location-unsafe = "The location is not safe! Teleportation impossible."
+
+[island.warp]
+create-success = "Your warp: %s has been created."
+args-missing = "You must specify the name of the warp to register: /skyllia <set/del>warp <warp_name>"
+delete-home-forbidden = "You cannot delete the home warp."
+delete-success = "The warp has been deleted."
+warp-not-exist = "The requested warp does not exist."
+teleport-success = "You have been teleported to the requested warp."
+
+[island.trust]
+success = "The player has been added to your trust list until the next restart or until you remove them. Note that a trusted person has as many permissions as a member of your island."
+args-missing = "The command is incomplete: /skyllia trust <player>"
+
+[island.untrust]
+success = "The member is no longer in your trusted list"
+failed = "An error occurred while removing the person from your trust list. Were they really trusted on your island?"
+args-missing = "The command is incomplete: /skyllia untrust <player>"
+
+[admin]
+delete-args-missing = "The player's name is missing."
+delete-no-confirm = "You must add 'confirm' to the end of your command"
+setsize-args-missing = "The command is incomplete: /skylliadmin setsize <player/uuid> <number> confirm"
+setsize-no-confirm = "You must add the argument 'confirm' to the end of your command."
+setsize-nan = "You did not choose an integer."
+setsize-failed = "The change could not be made."
+setsize-success = "The number of people on the island has been changed."
+setmaxmembers-args-missing = "The command is incomplete: /skyllia setmaxmembers <value> confirm"
+setmaxmembers-no-confirm = "You did not add 'confirm' to the end"
+setmaxmembers-nan = "The indicated number is incorrect."
+transfer-args-missing = "The command is incomplete: /skylliadmin transfer <previousOwner> <newOwner> confirm"
+transfer-no-confirm = "You must add 'confirm' to the end of your command"
+transfer-success = "Ownership has been successfully transferred from %previous_owner% to %new_owner%."
+
+[misc]
+unknown-command = "This subcommand does not exist."

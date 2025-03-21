@@ -1,8 +1,8 @@
 package fr.excaliamc.skyllia_value.database;
 
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
-import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
 
 public class MariaDBInit extends DatabaseInitializeQuery {
 

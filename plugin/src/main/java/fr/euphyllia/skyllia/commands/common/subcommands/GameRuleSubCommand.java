@@ -8,7 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -31,15 +31,15 @@ public class GameRuleSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.gamerule")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 2) {
-            LanguageToml.sendMessage(player, LanguageToml.messageGameRuleCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.gamerule.args-missing");
             return true;
         }
         String permissionRaw = args[0]; // Permission
@@ -48,7 +48,7 @@ public class GameRuleSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
@@ -63,7 +63,7 @@ public class GameRuleSubCommand implements SubCommandInterface {
             try {
                 gameRuleIsland = GameRuleIsland.valueOf(permissionRaw.toUpperCase());
             } catch (IllegalArgumentException exception) {
-                LanguageToml.sendMessage(player, LanguageToml.messageGameRuleInvalid);
+                ConfigLoader.language.sendMessage(player, "island.gamerule.invalid");
                 return true;
             }
 
@@ -74,13 +74,13 @@ public class GameRuleSubCommand implements SubCommandInterface {
             boolean updateGameRuleIsland = island.updateGamerule(permissionManager.getPermissions());
 
             if (updateGameRuleIsland) {
-                LanguageToml.sendMessage(player, LanguageToml.messageGameRuleUpdateSuccess);
+                ConfigLoader.language.sendMessage(player, "island.gamerule.success");
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageGameRuleUpdateFailed);
+                ConfigLoader.language.sendMessage(player, "island.gamerule.failed");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
         return true;
     }

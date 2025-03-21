@@ -11,7 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsl
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
@@ -40,15 +40,15 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageBiomeCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.biome.args-missing");
             return true;
         }
 
@@ -61,12 +61,12 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         try {
             biome = api.getBiomesImpl().getBiome(selectBiome);
         } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(player, LanguageToml.messageBiomeNotExist.formatted(selectBiome));
+            ConfigLoader.language.sendMessage(player, "island.biome.not-exist".formatted(selectBiome));
             return true;
         }
 
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biomesImpl.getNameBiome(biome)))) {
-            LanguageToml.sendMessage(player, LanguageToml.messageBiomePermissionDenied.formatted(selectBiome));
+            ConfigLoader.language.sendMessage(player, "island.biome.permission-denied".formatted(selectBiome));
             return true;
         }
 
@@ -74,7 +74,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         World world = playerLocation.getWorld();
 
         if (world == null || !Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
-            LanguageToml.sendMessage(player, LanguageToml.messageBiomeOnlyIsland);
+            ConfigLoader.language.sendMessage(player, "island.biome.only-on-island");
             return true;
         }
 
@@ -84,14 +84,14 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
             final UUID islandId = island.getId();
 
             if (CommandCacheExecution.isAlreadyExecute(islandId, "biome")) {
-                LanguageToml.sendMessage(player, LanguageToml.messageCommandAlreadyExecution);
+                ConfigLoader.language.sendMessage(player, "island.generic.command-in-progress");
                 return true;
             }
 
@@ -109,12 +109,12 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                         playerLocation.getChunk().getX(), playerLocation.getChunk().getZ());
 
                 if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotInIsland);
+                    ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");
                     CommandCacheExecution.removeCommandExec(islandId, "biome");
                     return;
                 }
 
-                LanguageToml.sendMessage(player, LanguageToml.messageBiomeChangeInProgress);
+                ConfigLoader.language.sendMessage(player, "island.biome.change-in-progress");
 
                 CompletableFuture<Boolean> changeBiomeFuture;
                 String messageToSend;
@@ -123,30 +123,30 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                         && PermissionImp.hasPermission(player, "skyllia.island.command.biome_island")) {
 
                     changeBiomeFuture = WorldEditUtils.changeBiomeIsland(world, biome, island);
-                    messageToSend = LanguageToml.messageBiomeIslandChangeSuccess;
+                    messageToSend = "island.biome.island-success";
 
                 } else {
                     changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getChunk(), biome);
-                    messageToSend = LanguageToml.messageBiomeChangeSuccess;
+                    messageToSend = "island.biome.chunk-success";
                 }
 
                 changeBiomeFuture.thenAccept(success -> {
                     if (success) {
-                        LanguageToml.sendMessage(player, messageToSend);
+                        ConfigLoader.language.sendMessage(player, messageToSend);
                     } else {
-                        LanguageToml.sendMessage(player, LanguageToml.messageError);
+                        ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
                     }
                     CommandCacheExecution.removeCommandExec(islandId, "biome");
                 }).exceptionally(ex -> {
                     logger.log(Level.ERROR, ex.getMessage(), ex);
-                    LanguageToml.sendMessage(player, LanguageToml.messageError);
+                    ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
                     CommandCacheExecution.removeCommandExec(islandId, "biome");
                     return null;
                 });
             }, null);
         } catch (Exception e) {
             logger.log(Level.ERROR, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
 
         return true;

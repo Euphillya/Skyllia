@@ -9,7 +9,6 @@ import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.commands.common.subcommands.DeleteSubCommand;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import org.apache.logging.log4j.Level;
@@ -36,18 +35,18 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.delete")) {
-            LanguageToml.sendMessage(sender, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return true;
         }
 
         if (args.length < 2) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageADeleteCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(sender, "admin.delete-args-missing");
             return true;
         }
         String playerName = args[0];
         String confirm = args[1];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageADeleteNotConfirmedArgs);
+            ConfigLoader.language.sendMessage(sender, "admin.delete-no-confirm");
             return true;
         }
         try {
@@ -60,7 +59,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(playerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(sender, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(sender, "island.player.no-island");
                 return true;
             }
 
@@ -72,13 +71,13 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                     WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(name));
                 });
 
-                LanguageToml.sendMessage(sender, LanguageToml.messageIslandDeleteSuccess);
+                ConfigLoader.language.sendMessage(sender, "island.delete-success");
             } else {
-                LanguageToml.sendMessage(sender, LanguageToml.messageError);
+                ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(sender, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
         }
 
         return true;

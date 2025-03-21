@@ -9,7 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.commands.InviteCacheExecution;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -21,10 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,36 +32,36 @@ public class InviteSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.invite")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageInviteCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.invite.args-missing");
             return true;
         }
         String type = args[0];
         Main skyblock = Main.getPlugin(Main.class);
         if (type.equalsIgnoreCase("accept")) {
             if (args.length < 2) {
-                LanguageToml.sendMessage(player, LanguageToml.messageInviteAcceptCommandNotEnoughArgs);
+                ConfigLoader.language.sendMessage(player, "island.invite.accept-args-missing");
                 return true;
             }
             String playerOrOwner = args[1];
             acceptPlayer(skyblock, player, playerOrOwner);
         } else if (type.equalsIgnoreCase("decline")) {
             if (args.length < 2) {
-                LanguageToml.sendMessage(player, LanguageToml.messageInviteDeclineCommandNotEnoughArgs);
+                ConfigLoader.language.sendMessage(player, "island.invite.decline-args-missing");
                 return true;
             }
             String playerOrOwner = args[1];
             declinePlayer(skyblock, player, playerOrOwner);
         } else if (type.equalsIgnoreCase("delete")) {
             if (args.length < 2) {
-                LanguageToml.sendMessage(player, LanguageToml.messageInviteRemoveCommandNotEnoughArgs);
+                ConfigLoader.language.sendMessage(player, "island.invite.remove-args-missing");
                 return true;
             }
             String playerOrOwner = args[1];
@@ -101,7 +98,7 @@ public class InviteSubCommand implements SubCommandInterface {
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(ownerIsland, "island.player.no-island");
             return;
         }
         Players executorPlayer = island.getMember(ownerIsland.getUniqueId());
@@ -112,12 +109,12 @@ public class InviteSubCommand implements SubCommandInterface {
 
         UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
         if (playerInvitedId == null) {
-            LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerNotFound);
+            ConfigLoader.language.sendMessage(ownerIsland, "island.player.not-found");
             return;
         }
 
         InviteCacheExecution.removeInviteCache(island.getId(), playerInvitedId);
-        LanguageToml.sendMessage(ownerIsland, LanguageToml.messageInviteDeletePlayerInvited.formatted(playerInvited));
+        ConfigLoader.language.sendMessage(ownerIsland, "island.invite.invite-deleted".formatted(playerInvited));
     }
 
     private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
@@ -125,19 +122,19 @@ public class InviteSubCommand implements SubCommandInterface {
 
             UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
             if (playerInvitedId == null) {
-                LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerNotFound);
+                ConfigLoader.language.sendMessage(ownerIsland, "island.player.not-found");
                 return;
             }
 
             if (ownerIsland.getUniqueId().equals(playerInvitedId)) {
-                LanguageToml.sendMessage(ownerIsland, LanguageToml.messageInviteCanNotYourSelf);
+                ConfigLoader.language.sendMessage(ownerIsland, "island.invite.invite-yourself");
                 return;
             }
 
             SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(ownerIsland, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(ownerIsland, "island.player.no-island");
                 return;
             }
 
@@ -148,14 +145,14 @@ public class InviteSubCommand implements SubCommandInterface {
             }
 
             InviteCacheExecution.addInviteCache(island.getId(), playerInvitedId);
-            LanguageToml.sendMessage(ownerIsland, LanguageToml.messageInvitePlayerInvited.formatted(playerInvited));
+            ConfigLoader.language.sendMessage(ownerIsland, "island.invite.player-invited".formatted(playerInvited));
             Player bPlayerInvited = Bukkit.getPlayer(playerInvitedId);
             if (bPlayerInvited != null && bPlayerInvited.isOnline()) {
-                LanguageToml.sendMessage(bPlayerInvited, LanguageToml.messageInvitePlayerNotification.replaceAll("%player_invite%", ownerIsland.getName()));
+                ConfigLoader.language.sendMessage(bPlayerInvited, "island.invite.player-notified", Map.of("%player_invite%", ownerIsland.getName()));
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(ownerIsland, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(ownerIsland, "island.generic.unexpected-error");
         }
     }
 
@@ -163,39 +160,39 @@ public class InviteSubCommand implements SubCommandInterface {
         try {
             Island islandPlayer = SkylliaAPI.getCacheIslandByPlayerId(playerWantJoin.getUniqueId());
             if (islandPlayer != null) {
-                LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteAlreadyIsland);
+                ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.already-on-island");
                 return;
             }
             UUID ownerIslandId = Bukkit.getPlayerUniqueId(ownerIsland);
             if (ownerIslandId == null) {
-                LanguageToml.sendMessage(playerWantJoin, LanguageToml.messagePlayerNotFound);
+                ConfigLoader.language.sendMessage(playerWantJoin, "island.player.not-found");
                 return;
             }
             Island islandOwner = SkylliaAPI.getCacheIslandByPlayerId(ownerIslandId);
             if (islandOwner == null) {
-                LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteAcceptOwnerHasNotIsland);
+                ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.island-not-found");
                 return;
             }
             if (!InviteCacheExecution.isInvitedCache(islandOwner.getId(), playerWantJoin.getUniqueId())) {
-                LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteInviteNotFound);
+                ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.invite-not-found");
                 return;
             }
             InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantJoin.getUniqueId());
             if (islandOwner.getMaxMembers() >= islandOwner.getMembers().size()) {
                 Players newPlayers = new Players(playerWantJoin.getUniqueId(), playerWantJoin.getName(), islandOwner.getId(), RoleType.MEMBER);
                 islandOwner.updateMember(newPlayers);
-                LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteJoinIsland);
+                ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.join-success");
 
                 Player ownerPlayer = Bukkit.getPlayer(ownerIslandId);
                 if (ownerPlayer != null && ownerPlayer.isOnline()) {
-                    LanguageToml.sendMessage(ownerPlayer, LanguageToml.messageInviteAcceptedNotification.replaceAll("%player_accept%", playerWantJoin.getName()));
+                    ConfigLoader.language.sendMessage(ownerPlayer, "island.invite.accept-notify-owner", Map.of("%player_accept%", playerWantJoin.getName()));
                 }
             } else {
-                LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageInviteMaxMemberExceededIsland);
+                ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.member-limit-reached");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(playerWantJoin, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(playerWantJoin, "island.generic.unexpected-error");
         }
     }
 
@@ -204,28 +201,28 @@ public class InviteSubCommand implements SubCommandInterface {
             Island island = SkylliaAPI.getCacheIslandByPlayerId(playerWantDecline.getUniqueId());
 
             if (island == null) {
-                LanguageToml.sendMessage(playerWantDecline, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(playerWantDecline, "island.player.no-island");
                 return;
             }
             UUID ownerIslandId = Bukkit.getPlayerUniqueId(ownerIsland);
             if (ownerIslandId == null) {
-                LanguageToml.sendMessage(playerWantDecline, LanguageToml.messagePlayerNotFound);
+                ConfigLoader.language.sendMessage(playerWantDecline, "island.player.not-found");
                 return;
             }
             Island islandOwner = SkylliaAPI.getCacheIslandByPlayerId(ownerIslandId);
             if (islandOwner == null) {
-                LanguageToml.sendMessage(playerWantDecline, LanguageToml.messageInviteDeclineOwnerHasNotIsland);
+                ConfigLoader.language.sendMessage(playerWantDecline, "island.invite.island-not-found");
                 return;
             }
             InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantDecline.getUniqueId());
-            LanguageToml.sendMessage(playerWantDecline, LanguageToml.messageInviteDeclineDeleteInvitation.replaceAll("%player_invite%", ownerIsland));
+            ConfigLoader.language.sendMessage(playerWantDecline, "island.invite.decline-success", Map.of("%player_invite%", ownerIsland));
             Player ownerPlayer = Bukkit.getPlayer(ownerIslandId);
             if (ownerPlayer != null && ownerPlayer.isOnline()) {
-                LanguageToml.sendMessage(ownerPlayer, LanguageToml.messageInviteDeclinedNotification.replaceAll("%player_decline%", playerWantDecline.getName()));
+                ConfigLoader.language.sendMessage(ownerPlayer, "island.invite.decline-notify-owner", Map.of("%player_decline%", playerWantDecline.getName()));
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(playerWantDecline, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(playerWantDecline, "island.generic.unexpected-error");
         }
     }
 }

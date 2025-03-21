@@ -5,7 +5,7 @@ import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.commands.common.subcommands.*;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ public class SkylliaCommand implements SkylliaCommandInterface {
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
             SubCommandInterface subCommandInterface = registry.getSubCommandByName(subCommand);
             if (subCommandInterface == null) {
-                LanguageToml.sendMessage(sender.getSender(), LanguageToml.messageSubCommandsNotExists);
+                ConfigLoader.language.sendMessage(sender.getSender(), "misc.unknown-command");
                 return;
             }
             Bukkit.getAsyncScheduler().runNow(this.plugin, task ->

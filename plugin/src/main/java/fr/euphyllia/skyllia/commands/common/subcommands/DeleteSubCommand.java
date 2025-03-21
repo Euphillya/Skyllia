@@ -9,7 +9,6 @@ import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
@@ -84,34 +83,34 @@ public class DeleteSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.delete")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length != 1) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageDeleteCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.delete.args-missing");
             return true;
         }
         String confirm = args[0];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageADeleteNotConfirmedArgs);
+            ConfigLoader.language.sendMessage(player, "admin.delete-no-confirm");
             return true;
         }
         try {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
             if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                LanguageToml.sendMessage(player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
+                ConfigLoader.language.sendMessage(player, "island.delete-only-owner");
                 return true;
             }
 
@@ -121,7 +120,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                         .filter(member -> !member.getMojangId().equals(player.getUniqueId()))
                         .count();
                 if (memberCount > 0) {
-                    LanguageToml.sendMessage(player, LanguageToml.messageCannotDeleteIslandWithMembers);
+                    ConfigLoader.language.sendMessage(player, "island.player.delete-has-members");
                     return true;
                 }
             }
@@ -134,13 +133,13 @@ public class DeleteSubCommand implements SubCommandInterface {
                 ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
                     WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(s));
                 });
-                LanguageToml.sendMessage(player, LanguageToml.messageIslandDeleteSuccess);
+                ConfigLoader.language.sendMessage(player, "island.delete-success");
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageError);
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
         return true;
     }

@@ -16,12 +16,15 @@ public class ConfigLoader {
 
     private static final Logger logger = LogManager.getLogger(ConfigLoader.class);
     private static final List<ConfigManager> configManagers = new ArrayList<>();
+
     public static GeneralConfigManager general;
     public static DatabaseConfigManager database;
     public static WorldConfigManager worldManager;
     public static IslandConfigManager islandManager;
     public static PlayerConfigManager playerManager;
     public static SchematicConfigManager schematicManager;
+    public static LanguageConfigManager language;
+
     private static CommentedFileConfig generalConfig;
     private static CommentedFileConfig databaseConfig;
     private static CommentedFileConfig worldConfig;
@@ -44,6 +47,7 @@ public class ConfigLoader {
         islandManager = new IslandConfigManager(islandConfig);
         playerManager = new PlayerConfigManager(playerConfig);
         schematicManager = new SchematicConfigManager(schematicConfig);
+        language = new LanguageConfigManager();
 
         configManagers.add(general);
         configManagers.add(database);
@@ -51,6 +55,7 @@ public class ConfigLoader {
         configManagers.add(islandManager);
         configManagers.add(playerManager);
         configManagers.add(schematicManager);
+        configManagers.add(language);
 
         reloadConfigs();
 
