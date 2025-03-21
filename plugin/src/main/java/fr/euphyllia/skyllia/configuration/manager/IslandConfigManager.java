@@ -23,24 +23,26 @@ public class IslandConfigManager implements ConfigManager {
     @Override
     public void loadConfig() {
         this.configVersion = config.getOrElse("config-version", 1);
-
         this.defaultIslandKey = config.getOrElse("default-island.default-schem-key", "default");
 
         islandSettingsMap.clear();
 
-        Map<String, Object> islandSection = config.getOrElse("island", new HashMap<>());
+        CommentedConfig islandSection = config.get("island");
+        if (islandSection != null) {
+            for (String islandType : islandSection.valueMap().keySet()) {
+                CommentedConfig node = islandSection.get(islandType);
+                if (node == null) continue;
 
-        for (String islandType : islandSection.keySet()) {
-            CommentedConfig node = config.get("island." + islandType);
-            if (node == null) continue;
-            String id = node.getOrElse("id", islandType);
-            double size = node.getOrElse("size", 50.0);
-            int maxMembers = node.getOrElse("max-members", 6);
+                String id = node.getOrElse("id", islandType);
+                double size = node.getOrElse("size", 50.0);
+                int maxMembers = node.getOrElse("max-members", 6);
 
-            IslandSettings islandSettings = new IslandSettings(id, maxMembers, size);
-            islandSettingsMap.put(islandType, islandSettings);
+                IslandSettings islandSettings = new IslandSettings(id, maxMembers, size);
+                islandSettingsMap.put(islandType, islandSettings);
+            }
         }
     }
+
 
     public int getConfigVersion() {
         return configVersion;

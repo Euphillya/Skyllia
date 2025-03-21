@@ -32,7 +32,9 @@ public class ConfigLoader {
     private static CommentedFileConfig playerConfig;
     private static CommentedFileConfig schematicConfig;
 
-    public static void init(File configDir) {
+    public static void init(File allConfig) {
+
+        File configDir = new File(allConfig, "config");
 
         generalConfig = loadFile(new File(configDir, "config.toml"));
         databaseConfig = loadFile(new File(configDir, "database.toml"));

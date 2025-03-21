@@ -25,12 +25,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
+import java.util.Objects;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class InterneAPI {
 
@@ -132,26 +140,45 @@ public class InterneAPI {
         return true;
     }
 
-    /**
-     * Copies a default schematic if it does not exist already.
-     *
-     * @param dataFolder The plugin's data folder
-     * @param resource   The InputStream for the default schematic
-     */
-    public void setupFirstSchematic(@NotNull File dataFolder, @Nullable InputStream resource) {
-        File schematicsDir = new File(dataFolder, "schematics");
-        File defaultSchem = new File(schematicsDir, "default.schem");
-        if (!schematicsDir.exists()) {
-            schematicsDir.mkdirs();
-        } else {
-            return;
+    public void createAndCopyResources(File pluginFile, String folderName) {
+        File targetDir = new File(plugin.getDataFolder(), folderName);
+        if (!targetDir.exists()) {
+            targetDir.mkdirs();
         }
-        if (!defaultSchem.exists() && resource != null) {
-            try (InputStream in = resource) {
-                Files.copy(in, defaultSchem.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
+        copyFilesFromJarResources(pluginFile, folderName, targetDir);
+    }
+
+    private void copyFilesFromJarResources(File file, String resourceFolder, File targetFolder) {
+        try (JarFile jarFile = new JarFile(file)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+
+                // Vérifie que le fichier commence par le dossier spécifié et ignore paper-plugin.yml
+                if (entryName.startsWith(resourceFolder + "/")
+                        && !entry.isDirectory()
+                        && !entryName.endsWith("paper-plugin.yml")) {
+
+                    File outFile = new File(targetFolder, entryName.substring(resourceFolder.length() + 1));
+
+                    // Si le fichier existe déjà, on ignore
+                    if (!outFile.exists()) {
+                        outFile.getParentFile().mkdirs();
+
+                        try (InputStream in = plugin.getResource(entryName);
+                             FileOutputStream out = new FileOutputStream(outFile)) {
+                            byte[] buffer = new byte[1024];
+                            int len;
+                            while ((len = in.read(buffer)) > 0) {
+                                out.write(buffer, 0, len);
+                            }
+                        }
+                    }
+                }
             }
+        } catch (IOException e) {
+            logger.error("Impossible de copier les ressources : {}", resourceFolder, e);
         }
     }
 

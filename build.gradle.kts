@@ -6,6 +6,7 @@ plugins {
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.16" apply false
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
@@ -95,4 +96,12 @@ fun getGitCommitHash(): String {
         standardOutput = stdout
     }
     return stdout.toString().trim()
+}
+
+runPaper.folia.registerTask()
+
+tasks {
+    runServer {
+        minecraftVersion("1.21.4")
+    }
 }

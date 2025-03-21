@@ -26,21 +26,23 @@ public class WorldConfigManager implements ConfigManager {
 
     @Override
     public void loadConfig() {
-        this.suppressWarnNetherEndWorld = config.getOrElse("player.island.leave.clear-inventory", suppressWarnNetherEndWorld);
+        this.suppressWarnNetherEndWorld = config.getOrElse("suppress-warning-nether-end", false);
 
         worldConfigs.clear();
 
-        Map<String, Object> worlds = config.getOrElse("worlds", new HashMap<>());
-        for (String worldName : worlds.keySet()) {
-            CommentedConfig node = config.get("worlds." + worldName);
-            if (node == null) continue;
+        CommentedConfig worlds = config.get("worlds");
+        if (worlds != null) {
+            for (String worldName : worlds.valueMap().keySet()) {
+                CommentedConfig node = worlds.get(worldName);
+                if (node == null) continue;
 
-            String envString = node.getOrElse("environment", "NORMAL");
-            String portalNether = node.getOrElse("portal-nether", "sky-nether");
-            String portalEnd = node.getOrElse("portal-end", "sky-end");
+                String envString = node.getOrElse("environment", "NORMAL");
+                String portalNether = node.getOrElse("portal-nether", "sky-nether");
+                String portalEnd = node.getOrElse("portal-end", "sky-end");
 
-            WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd);
-            worldConfigs.put(worldName, wc);
+                WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd);
+                worldConfigs.put(worldName, wc);
+            }
         }
     }
 

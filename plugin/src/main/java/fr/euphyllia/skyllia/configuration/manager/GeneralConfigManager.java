@@ -45,8 +45,8 @@ public class GeneralConfigManager implements ConfigManager {
         this.spawnX = config.getOrElse("settings.spawn.block-x", 0.0);
         this.spawnY = config.getOrElse("settings.spawn.block-y", 64.0);
         this.spawnZ = config.getOrElse("settings.spawn.block-z", 0.0);
-        this.spawnYaw = config.getOrElse("settings.spawn.yaw", 0.0f);
-        this.spawnPitch = config.getOrElse("settings.spawn.pitch", 0.0f);
+        this.spawnYaw = (float) (double) config.getOrElse("settings.spawn.yaw", 0.0);
+        this.spawnPitch = (float) (double) config.getOrElse("settings.spawn.pitch", 0.0);
 
         this.debugPermission = config.getOrElse("debug.permission", false);
     }

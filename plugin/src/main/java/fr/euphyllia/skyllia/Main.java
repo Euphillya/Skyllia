@@ -88,7 +88,9 @@ public class Main extends JavaPlugin {
 
     private boolean loadConfigurations() {
         try {
-            this.interneAPI.setupFirstSchematic(getDataFolder(), getResource("schematics/default.schem"));
+            for (String folder : new String[]{"config", "language", "schematics"}) {
+                this.interneAPI.createAndCopyResources(getFile(), folder);
+            }
 
             ConfigLoader.init(getDataFolder());
 
