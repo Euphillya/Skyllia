@@ -91,22 +91,22 @@ public class SkyblockEvent implements Listener {
         }
         try {
             WorldConfig worldConfig = event.getWorldConfig();
-            PortalConfig portalConfig;
+            String portalRedirectWorldName;
             if (permissionsIsland.equals(PermissionsIsland.USE_NETHER_PORTAL)) {
-                portalConfig = worldConfig.netherPortal();
+                portalRedirectWorldName = worldConfig.getPortalNether();
             } else if (permissionsIsland.equals(PermissionsIsland.USE_END_PORTAL)) {
-                portalConfig = worldConfig.endPortal();
+                portalRedirectWorldName = worldConfig.getPortalEnd();
             } else {
                 LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
                 return;
             }
-            if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalConfig.direction()))) {
-                logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(portalConfig.direction()));
+            if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalRedirectWorldName))) {
+                logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(portalRedirectWorldName));
                 return;
             }
-            World world = Bukkit.getWorld(portalConfig.direction());
+            World world = Bukkit.getWorld(portalRedirectWorldName);
             if (world == null) {
-                logger.log(Level.ERROR, "The %s world is not loaded or not exist!".formatted(portalConfig.direction()));
+                logger.log(Level.ERROR, "The %s world is not loaded or not exist!".formatted(portalRedirectWorldName));
                 return;
             }
             Location playerLocation = player.getLocation();

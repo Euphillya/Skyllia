@@ -28,12 +28,12 @@ public class WorldsManager {
 
     public void initWorld() {
         ChunkGenerator chunkGenerator = new VoidWorldGen();
-        ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
+        ConfigLoader.worldManager.getWorldConfigs().forEach((name, worldConfig) -> {
             WorldCreator worldCreator = new WorldCreator(name);
             worldCreator.generator(chunkGenerator);
             worldCreator.type(WorldType.FLAT);
             worldCreator.seed(new Random(System.currentTimeMillis()).nextLong());
-            worldCreator.environment(World.Environment.valueOf(environnements.name().toUpperCase()));
+            worldCreator.environment(worldConfig.getEnvironment());
             World w;
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia

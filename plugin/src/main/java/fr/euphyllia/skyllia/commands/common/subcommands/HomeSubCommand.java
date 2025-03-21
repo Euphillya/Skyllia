@@ -56,7 +56,7 @@ public class HomeSubCommand implements SubCommandInterface {
             player.getScheduler().execute(plugin, () -> {
                 Location loc;
                 if (warpIsland == null) {
-                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().name()), island.getPosition().x(), island.getPosition().z());
+                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getPosition().x(), island.getPosition().z());
                 } else {
                     loc = warpIsland.location();
                 }

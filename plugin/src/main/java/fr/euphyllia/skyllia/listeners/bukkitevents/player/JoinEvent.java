@@ -4,7 +4,8 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -37,15 +38,15 @@ public class JoinEvent implements Listener {
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             boolean shouldTeleportSpawn = island == null ||
-                    (ConfigToml.teleportPlayerOnIslandWhenJoin && !WorldUtils.isWorldSkyblock(player.getWorld().getName()));
+                    (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && !WorldUtils.isWorldSkyblock(player.getWorld().getName()));
 
             if (shouldTeleportSpawn) {
-                if (ConfigToml.teleportPlayerNotIslandWhenJoin) {
+                if (ConfigLoader.playerManager.isTeleportSpawnIfNoIsland()) {
                     PlayerUtils.teleportPlayerSpawn(player);
                 }
             } else {
                 api.updateCache(player);
-                if (ConfigToml.teleportPlayerOnIslandWhenJoin && WorldUtils.isWorldSkyblock(player.getWorld().getName())) {
+                if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(player.getWorld().getName())) {
                     Location centerIsland = RegionHelper.getCenterRegion(
                             player.getWorld(), island.getPosition().x(), island.getPosition().z());
                     api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
@@ -86,25 +87,25 @@ public class JoinEvent implements Listener {
     private void clearPlayerData(Player player, RemovalCause cause) {
         switch (cause) {
             case KICKED -> {
-                if (ConfigToml.clearInventoryWhenKickedIsland) player.getInventory().clear();
-                if (ConfigToml.clearEnderChestWhenKickedIsland) player.getEnderChest().clear();
-                if (ConfigToml.resetExperiencePlayerWhenKickedIsland) {
+                if (ConfigLoader.playerManager.isClearInventoryWhenKicked()) player.getInventory().clear();
+                if (ConfigLoader.playerManager.isClearEnderChestWhenKicked()) player.getEnderChest().clear();
+                if (ConfigLoader.playerManager.isResetExperienceWhenKicked()) {
                     player.setTotalExperience(0);
                     player.sendExperienceChange(0, 0);
                 }
             }
             case ISLAND_DELETED -> {
-                if (ConfigToml.clearInventoryWhenDeleteIsland) player.getInventory().clear();
-                if (ConfigToml.clearEnderChestWhenDeleteIsland) player.getEnderChest().clear();
-                if (ConfigToml.resetExperiencePlayerWhenDeleteIsland) {
+                if (ConfigLoader.playerManager.isClearInventoryWhenDelete()) player.getInventory().clear();
+                if (ConfigLoader.playerManager.isClearEnderChestWhenDelete()) player.getEnderChest().clear();
+                if (ConfigLoader.playerManager.isResetExperienceWhenDelete()) {
                     player.setTotalExperience(0);
                     player.sendExperienceChange(0, 0);
                 }
             }
             case LEAVE -> {
-                if (ConfigToml.clearInventoryWhenLeaveIsland) player.getInventory().clear();
-                if (ConfigToml.clearEnderChestWhenLeaveIsland) player.getEnderChest().clear();
-                if (ConfigToml.resetExperiencePlayerWhenLeaveIsland) {
+                if (ConfigLoader.playerManager.isClearInventoryWhenLeave()) player.getInventory().clear();
+                if (ConfigLoader.playerManager.isClearEnderChestWhenLeave()) player.getEnderChest().clear();
+                if (ConfigLoader.playerManager.isResetExperienceWhenLeave()) {
                     player.setTotalExperience(0);
                     player.sendExperienceChange(0, 0);
                 }

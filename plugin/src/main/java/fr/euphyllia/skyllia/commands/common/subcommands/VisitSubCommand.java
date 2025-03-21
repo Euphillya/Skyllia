@@ -8,7 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -83,17 +83,17 @@ public class VisitSubCommand implements SubCommandInterface {
 
             WarpIsland warpIsland = island.getWarpByName("home");
             player.getScheduler().execute(plugin, () -> {
-                if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SPECTATOR);
+                if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) player.setGameMode(GameMode.SPECTATOR);
                 Location loc;
                 if (warpIsland == null) {
-                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().x(), island.getPosition().z());
+                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getPosition().x(), island.getPosition().z());
                 } else {
                     loc = warpIsland.location();
                 }
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
-                if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SURVIVAL);
+                if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) player.setGameMode(GameMode.SURVIVAL);
                 LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
             }, null, 1L);
         } catch (Exception exception) {

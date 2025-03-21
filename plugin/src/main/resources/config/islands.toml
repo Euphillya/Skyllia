@@ -1,6 +1,6 @@
 config-version = 1
 
-# Ici on choisi le type d'île qui sera décidé par defaut si la personne fait juste /is create
+# Ici on choisit le type d'île qui sera décidé par defaut si la personne fait juste /is create
 [default-island]
 default-schem-key = "my_first_island"
 

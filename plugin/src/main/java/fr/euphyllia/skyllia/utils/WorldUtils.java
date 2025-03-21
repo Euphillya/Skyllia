@@ -3,7 +3,8 @@ package fr.euphyllia.skyllia.utils;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
@@ -26,15 +27,15 @@ public final class WorldUtils {
     }
 
     public static Boolean isWorldSkyblock(String name) {
-        return ConfigToml.worldConfigs.stream().anyMatch(worldConfig -> worldConfig.name().equalsIgnoreCase(name));
+        return ConfigLoader.worldManager.getWorldConfigs().keySet().stream().anyMatch(worldName -> worldName.equalsIgnoreCase(name));
     }
 
     public static List<WorldConfig> getWorldConfigs() {
-        return ConfigToml.worldConfigs;
+        return ConfigLoader.worldManager.getWorldConfigs().values().stream().toList();
     }
 
     public static @Nullable WorldConfig getWorldConfig(String worldName) {
-        return ConfigToml.worldConfigs.stream().filter(worldConfig -> worldConfig.name().equalsIgnoreCase(worldName)).findFirst().orElse(null);
+        return ConfigLoader.worldManager.getWorldConfig(worldName);
     }
 
     /**

@@ -20,7 +20,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,9 +85,9 @@ public class WorldEditUtils {
         AtomicInteger chunkDeleted = new AtomicInteger(0);
         AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getTotalChunksInBlockPerimeter((int) island.getSize() + 32)); // add secure distance 2 chunk
         AtomicInteger delay = new AtomicInteger(1);
-        boolean deleteChunkPerimeterIsland = ConfigToml.deleteChunkPerimeterIsland;
-        RegionUtils.spiralStartCenter(position, ConfigToml.regionDistance, island.getSize(), chunKPosition -> {
-            if (deleteChunkPerimeterIsland && chunkDeleted.getAndAdd(1) >= numberChunkInIsland.get()) {
+        boolean deleteChunkPerimeterIsland = ConfigLoader.general.isDeleteChunkPerimeterIsland();
+        RegionUtils.spiralStartCenter(position, ConfigLoader.general.getRegionDistance(), island.getSize(), chunKPosition -> {
+            if (deleteChunkPerimeterIsland && chunkDeleted.getAndAdd(2) >= numberChunkInIsland.get()) {
                 return;
             }
             Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
@@ -137,7 +138,7 @@ public class WorldEditUtils {
         AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getTotalChunksInBlockPerimeter((int) island.getSize() + 16)); // add secure distance 1 chunk
         AtomicInteger chunkModified = new AtomicInteger(0);
         try {
-            RegionUtils.spiralStartCenter(position, ConfigToml.regionDistance, island.getSize(), chunKPosition -> {
+            RegionUtils.spiralStartCenter(position, ConfigLoader.general.getRegionDistance(), island.getSize(), chunKPosition -> {
                 if (chunkModified.getAndAdd(1) >= numberChunkInIsland.get()) {
                     completableFuture.complete(true);
                     return;

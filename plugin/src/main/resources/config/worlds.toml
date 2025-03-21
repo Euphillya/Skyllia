@@ -1,5 +1,6 @@
 suppress-warning-nether-end = false
 
+# [worlds.[nom du monde]
 [worlds.sky-overworld]
 environment = "NORMAL"
 portal-nether = "sky-nether"

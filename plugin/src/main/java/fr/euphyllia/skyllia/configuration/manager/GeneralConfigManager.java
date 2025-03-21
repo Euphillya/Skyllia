@@ -12,6 +12,8 @@ public class GeneralConfigManager implements ConfigManager {
     private int updateCacheTimer;
     private boolean preventDeletionIfHasMembers;
     private int regionDistance;
+    private int maxIslands;
+    private boolean deleteChunkPerimeterIsland;
 
     private boolean spawnEnabled;
     private String spawnWorld;
@@ -36,7 +38,10 @@ public class GeneralConfigManager implements ConfigManager {
         this.verbose = config.getOrElse("verbose", false);
         this.updateCacheTimer = config.getOrElse("settings.global.cache.update-timer-seconds", 30);
         this.regionDistance = config.getOrElse("settings.island.region-distance", 10);
+        this.maxIslands = config.getOrElse("settings.island.max-islands", 500_000);
+
         this.preventDeletionIfHasMembers = config.getOrElse("settings.island.delete.prevent-deletion-if-has-members", true);
+        this.deleteChunkPerimeterIsland = config.getOrElse("settings.island.delete.chunk-perimeter-island", false);
 
         this.spawnEnabled = config.getOrElse("settings.spawn.enable", true);
         this.spawnWorld = config.getOrElse("settings.spawn.world-name", "world");
@@ -103,5 +108,13 @@ public class GeneralConfigManager implements ConfigManager {
 
     public int getRegionDistance() {
         return regionDistance;
+    }
+
+    public int getMaxIslands() {
+        return maxIslands;
+    }
+
+    public boolean isDeleteChunkPerimeterIsland() {
+        return deleteChunkPerimeterIsland;
     }
 }

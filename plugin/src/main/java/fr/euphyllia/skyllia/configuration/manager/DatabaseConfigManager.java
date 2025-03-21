@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DatabaseConfigManager implements ConfigManager {
 
+    private int configVersion;
     private final CommentedFileConfig config;
     private MariaDBConfig mariaDBConfig;
 
@@ -18,6 +19,7 @@ public class DatabaseConfigManager implements ConfigManager {
 
     @Override
     public void loadConfig() {
+        configVersion = config.getOrElse("config-version", 3);
         // MariaDB
         boolean enabledMariaDB = config.getOrElse("mariadb.enabled", true);
         String hostname = config.getOrElse("mariadb.hostname", "127.0.0.1");
@@ -39,5 +41,9 @@ public class DatabaseConfigManager implements ConfigManager {
 
     public @Nullable MariaDBConfig getMariaDBConfig() {
         return mariaDBConfig;
+    }
+
+    public int getConfigVersion() {
+        return configVersion;
     }
 }

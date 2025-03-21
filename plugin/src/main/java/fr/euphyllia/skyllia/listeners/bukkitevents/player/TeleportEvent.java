@@ -102,11 +102,11 @@ public class TeleportEvent implements Listener {
             WorldConfig worldConfig = WorldUtils.getWorldConfig(world.getName());
             if (worldConfig == null) return;
 
-            PortalConfig portalConfig = (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL)
-                    ? worldConfig.endPortal()
-                    : worldConfig.netherPortal();
+            String portalRedirectWorldName = (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL)
+                    ? worldConfig.getPortalEnd()
+                    : worldConfig.getPortalNether();
 
-            if (!portalConfig.enabled()) {
+            if (world.getName().equalsIgnoreCase(portalRedirectWorldName)) { // Identique world
                 event.setCancelled(true);
                 return;
             }

@@ -11,7 +11,10 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+
     compileOnly("io.th0rgal:oraxen:1.180.0")
+    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
+
     compileOnly(project(":database"))
     compileOnly(project(":api"))
     compileOnly(project(":plugin"))

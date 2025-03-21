@@ -4,7 +4,8 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.configuration.MariaDBConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
@@ -106,17 +107,15 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     private final Logger logger = LogManager.getLogger(MariaDBDatabaseInitialize.class);
     private final String database;
     private final InterneAPI api;
-    private final int dbVersion;
 
     public MariaDBDatabaseInitialize(InterneAPI interneAPI) throws DatabaseException {
         this.api = interneAPI;
-        MariaDBConfig dbConfig = ConfigToml.mariaDBConfig;
+        MariaDBConfig dbConfig = ConfigLoader.database.getMariaDBConfig();
 
         if (dbConfig == null) {
             throw new DatabaseException("No database is mentioned in the configuration of the plugin.", null);
         }
         this.database = dbConfig.database();
-        this.dbVersion = dbConfig.dbVersion();
     }
 
     @Override
@@ -147,7 +146,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void applyMigrations() throws DatabaseException {
-        if (dbVersion <= 1) {
+        if (ConfigLoader.database.getConfigVersion() <= 1) {
             executeQuery("ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(database));
             executeQuery("""
                     ALTER TABLE `%s`.`islands_gamerule` DROP PRIMARY KEY,
@@ -157,7 +156,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void initializeSpiralTable() {
-        int distancePerIsland = ConfigToml.regionDistance;
+        int distancePerIsland = ConfigLoader.general.getRegionDistance();
         if (distancePerIsland <= 0) {
             logger.log(Level.FATAL, "You must set a value greater than 1 for region distance per island (config.toml -> config.region-distance-per-island). " +
                     "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
@@ -166,7 +165,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
         Runnable spiralTask = () -> {
             List<SpiralBatchInserter.IslandData> islandDataList = new ArrayList<>();
-            for (int i = 1; i < ConfigToml.maxIsland; i++) {
+            for (int i = 1; i < ConfigLoader.general.getMaxIslands(); i++) {
                 Position position = RegionUtils.computeNewIslandRegionPosition(i);
                 islandDataList.add(new SpiralBatchInserter.IslandData(
                         i,

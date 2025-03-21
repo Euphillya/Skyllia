@@ -1,4 +1,4 @@
-config-version = 1
+config-version = 3
 
 [mariadb]
 enabled = true

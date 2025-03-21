@@ -1,7 +1,7 @@
 package fr.euphyllia.skylliaore.database;
 
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.MariaDB;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
@@ -36,7 +36,7 @@ public class MariaDBInit extends DatabaseInitializeQuery {
     }
 
     private void initializeDatabase() {
-        MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
+        MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
         database = new DatabaseLoader(mariaDB);
     }
 
@@ -56,7 +56,7 @@ public class MariaDBInit extends DatabaseInitializeQuery {
     private void createGeneratorTable() {
         try {
             MariaDBExecute.executeQuery(database,
-                    CREATE_GENERATOR.formatted(ConfigToml.mariaDBConfig.database()));
+                    CREATE_GENERATOR.formatted(ConfigLoader.database.getMariaDBConfig().database()));
         } catch (Exception exception) {
             log.error("Error creating generator table: {}", exception.getMessage(), exception);
         }

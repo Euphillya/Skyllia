@@ -1,6 +1,6 @@
 package fr.euphyllia.skylliaore.database;
 
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
 import fr.euphyllia.skylliaore.api.Generator;
@@ -33,7 +33,7 @@ public class MariaDBGenerator {
     private final String databaseName;
 
     public MariaDBGenerator() {
-        this.databaseName = ConfigToml.mariaDBConfig.database();
+        this.databaseName = ConfigLoader.database.getMariaDBConfig().database();
     }
 
     public CompletableFuture<Generator> getGenIsland(UUID islandId) {
