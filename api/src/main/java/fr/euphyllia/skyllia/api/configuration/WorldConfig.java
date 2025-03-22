@@ -12,7 +12,6 @@ public class WorldConfig {
     private final String portalEnd;
 
     public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd) {
-        // Convertit la chaîne en enum (si la chaîne n'est pas valide, on tombe par défaut sur NORMAL)
         World.Environment env;
         try {
             env = World.Environment.valueOf(environmentStr.toUpperCase());

@@ -127,7 +127,7 @@ public class RegionUtils {
             long delay = (long) ((startIndex / (double) batchSize) * delayIncrement);
 
             // Use the first chunk in the batch as a "representative" for region scheduling
-            Chunk representativeChunk = batch.get(0);
+            Chunk representativeChunk = batch.getFirst();
             int repChunkX = representativeChunk.getX();
             int repChunkZ = representativeChunk.getZ();
 

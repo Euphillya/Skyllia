@@ -118,7 +118,7 @@ public abstract class Island {
     public abstract CopyOnWriteArrayList<Players> getMembers();
 
     /**
-     * Gets the cached list of all members in the island (from memory/cache).
+     * Gets the cached list of all members on the island (from memory/cache).
      *
      * @return A {@link CopyOnWriteArrayList} of {@link Players}.
      */
@@ -149,7 +149,7 @@ public abstract class Island {
     public abstract boolean removeMember(Players players);
 
     /**
-     * Updates a member's information in the island.
+     * Updates a member's information on the island.
      *
      * @param member The {@link Players} object containing new data.
      * @return {@code true} if successfully updated, {@code false} otherwise.

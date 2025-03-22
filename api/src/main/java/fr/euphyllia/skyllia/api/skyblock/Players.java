@@ -73,4 +73,13 @@ public class Players {
     public UUID getMojangId() {
         return mojangId;
     }
+
+    /**
+     * Gets the IslandId of the player
+     *
+     * @return The Island UUID.
+     */
+    public UUID getIslandId() {
+        return islandId;
+    }
 }
