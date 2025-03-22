@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.database;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.*;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.mariadb.MariaDBDatabaseInitialize;
 import fr.euphyllia.skyllia.database.mariadb.exec.*;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
@@ -33,12 +34,19 @@ public class IslandQuery {
 
     private void init() throws DatabaseException {
         // Todo future support database
-        this.databaseInitializeQuery = new MariaDBDatabaseInitialize(this.api);
-        this.islandDataQuery = new MariaDBIslandData(api, databaseName);
-        this.islandUpdateQuery = new MariaDBIslandUpdate(api, databaseName);
-        this.islandWarpQuery = new MariaDBIslandWarp(api, databaseName);
-        this.islandMemberQuery = new MariaDBIslandMember(api, databaseName);
-        this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
+        if (ConfigLoader.database.getMariaDBConfig() != null) {
+            this.databaseInitializeQuery = new MariaDBDatabaseInitialize(this.api);
+            this.islandDataQuery = new MariaDBIslandData(api, databaseName);
+            this.islandUpdateQuery = new MariaDBIslandUpdate(api, databaseName);
+            this.islandWarpQuery = new MariaDBIslandWarp(api, databaseName);
+            this.islandMemberQuery = new MariaDBIslandMember(api, databaseName);
+            this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
+        }
+        if (ConfigLoader.database.getSqLiteConfig() != null) {
+
+        }
+
+        throw new DatabaseException("No Database configured!");
     }
 
     public DatabaseInitializeQuery getDatabaseInitializeQuery() {

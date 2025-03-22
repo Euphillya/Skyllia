@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
@@ -30,21 +30,21 @@ public class BanSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.ban")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageBanCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.ban.args-missing");
             return true;
         }
         SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
@@ -58,20 +58,20 @@ public class BanSubCommand implements SubCommandInterface {
         Players players = island.getMember(playerBan);
 
         if (players != null) {
-            LanguageToml.sendMessage(player, LanguageToml.messageBanImpossiblePlayerInIsland);
+            ConfigLoader.language.sendMessage(player, "island.ban.failed-player-in-island");
             return true;
         }
 
         Player bPlayerBan = Bukkit.getPlayerExact(playerBan);
         if (bPlayerBan == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
+            ConfigLoader.language.sendMessage(player, "island.player.not-found");
             return true;
         }
 
         players = new Players(bPlayerBan.getUniqueId(), playerBan, island.getId(), RoleType.BAN);
 
         island.updateMember(players);
-        LanguageToml.sendMessage(player, LanguageToml.messageBanPlayerSuccess);
+        ConfigLoader.language.sendMessage(player, "island.ban.success");
         ExpelSubCommand.expelPlayer(Main.getPlugin(Main.class), island, bPlayerBan, player, true);
         return true;
     }

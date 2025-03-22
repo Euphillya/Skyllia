@@ -8,8 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
@@ -32,11 +31,11 @@ public class AccessSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.access")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
@@ -44,7 +43,7 @@ public class AccessSubCommand implements SubCommandInterface {
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
@@ -59,9 +58,9 @@ public class AccessSubCommand implements SubCommandInterface {
         boolean isUpdate = island.setPrivateIsland(statusAccessUpdate);
         if (isUpdate) {
             if (statusAccessUpdate) {
-                LanguageToml.sendMessage(player, LanguageToml.messageAccessIslandClose);
-                ConfigToml.worldConfigs.forEach(worldConfig -> {
-                    RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigToml.regionDistance, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
+                ConfigLoader.language.sendMessage(player, "island.access.close");
+                ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
+                    RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(name), island.getPosition(), island.getSize(), entity -> {
                         Player playerInIsland = (Player) entity;
                         if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
                         Runnable teleportPlayerRun = () -> {
@@ -76,7 +75,7 @@ public class AccessSubCommand implements SubCommandInterface {
                     });
                 });
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageAccessIslandOpen);
+                ConfigLoader.language.sendMessage(player, "island.access.open");
             }
         }
         return true;

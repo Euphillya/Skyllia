@@ -3,7 +3,8 @@ package fr.euphyllia.skylliachat;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -15,6 +16,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public class ChatListeners implements Listener {
 
     private final Main plugin;
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public ChatListeners(Main plugin) {
         this.plugin = plugin;
@@ -30,7 +32,7 @@ public class ChatListeners implements Listener {
             Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
                 Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
                 if (island == null) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                    ConfigLoader.language.sendMessage(player, "island.player.no-island");
                     return;
                 }
 
@@ -68,7 +70,7 @@ public class ChatListeners implements Listener {
                 for (Players islandMember : island.getMembersCached()) {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(islandMember.getMojangId());
                     if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
-                        LanguageToml.sendMessage(offlinePlayer.getPlayer(), format);
+                        offlinePlayer.getPlayer().sendMessage(miniMessage.deserialize(format));
                     }
                 }
             });

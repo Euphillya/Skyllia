@@ -7,14 +7,14 @@ import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.sgbd.DatabaseLoader;
-import fr.euphyllia.skyllia.sgbd.MariaDB;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -25,35 +25,180 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
+import java.util.Objects;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class InterneAPI {
 
     private final Logger logger = LogManager.getLogger(this);
+
     private final Main plugin;
     private final SkyblockManager skyblockManager;
     private final CacheManager cacheManager;
-    private @Nullable DatabaseLoader database;
-    private DatabaseLoader databaseLoader;
-    private Managers managers;
+
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
     private BiomesImpl biomesImpl;
+
+    private @Nullable DatabaseLoader database;
+    private Managers managers;
 
     public InterneAPI(Main plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
         this.setVersionNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager, this);
+        loadAPI();
     }
 
-    public @Nullable DatabaseLoader getDatabaseLoader() {
-        return this.database;
+    /**
+     * Determines the version of NMS to use based on the Bukkit server version.
+     *
+     * @throws UnsupportedMinecraftVersionException if the version is not supported
+     */
+    private void setVersionNMS() throws UnsupportedMinecraftVersionException {
+        final String[] bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-");
+        switch (bukkitVersion[0]) {
+            case "1.20", "1.20.1" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.BiomeNMS();
+            }
+            case "1.20.2" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.BiomeNMS();
+            }
+            case "1.20.3", "1.20.4" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.BiomeNMS();
+            }
+            case "1.20.5", "1.20.6" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.BiomeNMS();
+            }
+            case "1.21", "1.21.1" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.BiomeNMS();
+            }
+            case "1.21.2", "1.21.3" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.BiomeNMS();
+            }
+            case "1.21.4" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.BiomeNMS();
+            }
+            case "1.21.5" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.BiomeNMS();
+            }
+            default -> {
+                throw new UnsupportedMinecraftVersionException("Version " + bukkitVersion[0] + " not supported!");
+            }
+        }
+    }
+
+    /**
+     * Loads a config file if it doesn't exist, then initializes it via a ConfigInitializer.
+     *
+     * @param dataFolder  Path to the plugin's data folder
+     * @param fileName    The config file name
+     * @param initializer The ConfigInitializer functional interface
+     * @return true if successful, false otherwise
+     * @throws IOException if file creation fails
+     */
+    public boolean setupConfigs(File dataFolder, String fileName, ConfigInitializer initializer) throws IOException {
+        File configFile = checkFileExist(dataFolder, fileName);
+        if (configFile == null) {
+            return false;
+        }
+        try {
+            initializer.initConfig(configFile);
+        } catch (Exception ex) {
+            logger.error("Error while initializing config: ", ex);
+            return false;
+        }
+        return true;
+    }
+
+    public void createAndCopyResources(File pluginFile, String folderName) {
+        File targetDir = new File(plugin.getDataFolder(), folderName);
+        if (!targetDir.exists()) {
+            targetDir.mkdirs();
+        }
+        copyFilesFromJarResources(pluginFile, folderName, targetDir);
+    }
+
+    private void copyFilesFromJarResources(File file, String resourceFolder, File targetFolder) {
+        try (JarFile jarFile = new JarFile(file)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+
+                // Vérifie que le fichier commence par le dossier spécifié et ignore paper-plugin.yml
+                if (entryName.startsWith(resourceFolder + "/")
+                        && !entry.isDirectory()
+                        && !entryName.endsWith("paper-plugin.yml")) {
+
+                    File outFile = new File(targetFolder, entryName.substring(resourceFolder.length() + 1));
+
+                    // Si le fichier existe déjà, on ignore
+                    if (!outFile.exists()) {
+                        outFile.getParentFile().mkdirs();
+
+                        try (InputStream in = plugin.getResource(entryName);
+                             FileOutputStream out = new FileOutputStream(outFile)) {
+                            byte[] buffer = new byte[1024];
+                            int len;
+                            while ((len = in.read(buffer)) > 0) {
+                                out.write(buffer, 0, len);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Impossible de copier les ressources : {}", resourceFolder, e);
+        }
+    }
+
+    /**
+     * Initializes the SGBD (e.g., MariaDB) from the config, creating the database schema if necessary.
+     *
+     * @return true if successful, false otherwise
+     * @throws DatabaseException if database initialization fails
+     */
+    public boolean setupSGBD() throws DatabaseException {
+        if (ConfigLoader.database.getMariaDBConfig() != null) {
+            MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
+            this.database = new DatabaseLoader(mariaDB);
+            if (!this.database.loadDatabase()) {
+                return false;
+            }
+            return getIslandQuery().getDatabaseInitializeQuery().init();
+        } else {
+            return false;
+        }
     }
 
     public Managers getManagers() {
@@ -64,6 +209,14 @@ public class InterneAPI {
         this.managers = managers;
     }
 
+    /**
+     * Ensures a config file exists in the dataFolder, creating it if necessary.
+     *
+     * @param dataFolder The plugin data folder
+     * @param fileName   The file name
+     * @return The File object or null if creation fails
+     * @throws IOException if file creation fails
+     */
     private @Nullable File checkFileExist(File dataFolder, String fileName) throws IOException {
         if (!dataFolder.exists() && (!dataFolder.mkdir())) {
             logger.log(Level.FATAL, "Unable to create the configuration folder.");
@@ -80,61 +233,42 @@ public class InterneAPI {
         return configFile;
     }
 
-    public boolean setupConfigs(File dataFolder, String fileName, ConfigInitializer initializer) throws IOException {
-        File configFile = this.checkFileExist(dataFolder, fileName);
-        if (configFile == null) {
-            return false;
-        }
-
-        try {
-            initializer.initConfig(configFile);
-        } catch (Exception ex) {
-            logger.log(Level.FATAL, ex.getMessage(), ex);
-            return false;
-        }
-        return true;
+    /**
+     * Loads the public API implementation.
+     */
+    private void loadAPI() {
+        fr.euphyllia.skyllia.api.SkylliaAPI.setImplementation(this.plugin, new APISkyllia(this));
     }
 
-    public void setupFirstSchematic(@NotNull File dataFolder, @Nullable InputStream resource) {
-        File schematicsDir = new File(dataFolder, "schematics");
-        File defaultSchem = new File(schematicsDir, "default.schem");
-        if (!schematicsDir.exists()) {
-            schematicsDir.mkdirs();
-        } else {
-            return;
-        }
-        if (!defaultSchem.exists()) {
-            try {
-                try (InputStream in = resource) {
-                    if (in != null) {
-                        Files.copy(in, defaultSchem.toPath());
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    /**
+     * Periodically updates the cache for a given player.
+     *
+     * @param player The player whose cache is updated
+     */
+    public void updateCache(Player player) {
+        this.cacheManager.updateCache(player);
     }
 
-    public boolean setupSGBD() throws DatabaseException {
-        if (ConfigToml.mariaDBConfig != null) {
-            MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
-            this.database = new DatabaseLoader(mariaDB);
-            if (!this.database.loadDatabase()) {
-                return false;
-            }
-            return getIslandQuery().getDatabaseInitializeQuery().init();
-        } else {
-            return false;
-        }
-    }
-
+    /**
+     * Returns an IslandQuery instance to access or modify island data.
+     *
+     * @return A new IslandQuery instance
+     */
     public IslandQuery getIslandQuery() {
-        return new IslandQuery(this, ConfigToml.mariaDBConfig.database());
+        if (ConfigLoader.database.getMariaDBConfig() != null) {
+            return new IslandQuery(this, ConfigLoader.database.getMariaDBConfig().database());
+        } else if (ConfigLoader.database.getSqLiteConfig() != null) {
+            return new IslandQuery(this, ConfigLoader.database.getSqLiteConfig().filePath());
+        }
+        return null;
     }
 
     public Main getPlugin() {
         return this.plugin;
+    }
+
+    public @Nullable DatabaseLoader getDatabaseLoader() {
+        return this.database;
     }
 
     public SkyblockManager getSkyblockManager() {
@@ -145,55 +279,8 @@ public class InterneAPI {
         return MiniMessage.miniMessage();
     }
 
-    public void updateCache(Player player) {
-        this.cacheManager.updateCache(skyblockManager, player);
-    }
-
     public CacheManager getCacheManager() {
         return this.cacheManager;
-    }
-
-    private void setVersionNMS() throws UnsupportedMinecraftVersionException {
-        final String[] bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-");
-        switch (bukkitVersion[0]) {
-            case "1.20", "1.20.1" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
-                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.BiomeNMS();
-            }
-            case "1.20.2" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.PlayerNMS();
-                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.BiomeNMS();
-            }
-            case "1.20.3", "1.20.4" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
-                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.BiomeNMS();
-            }
-            case "1.20.5", "1.20.6" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
-                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.BiomeNMS();
-            }
-            case "1.21", "1.21.1" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.PlayerNMS();
-                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.BiomeNMS();
-            }
-            case "1.21.2", "1.21.3" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.PlayerNMS();
-                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.BiomeNMS();
-            }
-            case "1.21.4" -> {
-                worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.WorldNMS();
-                playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.PlayerNMS();
-                biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.BiomeNMS();
-            }
-            default ->
-                    throw new UnsupportedMinecraftVersionException("Version %s not supported !".formatted(bukkitVersion[0]));
-        }
     }
 
     public WorldNMS getWorldNMS() {
@@ -202,10 +289,6 @@ public class InterneAPI {
 
     public PlayerNMS getPlayerNMS() {
         return this.playerNMS;
-    }
-
-    public void loadAPI() {
-        SkylliaAPI.setImplementation(this.plugin, new APISkyllia(this));
     }
 
     public BiomesImpl getBiomesImpl() {
