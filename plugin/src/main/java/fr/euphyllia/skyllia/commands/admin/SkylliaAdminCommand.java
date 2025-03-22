@@ -5,10 +5,7 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
-import fr.euphyllia.skyllia.commands.admin.subcommands.ForceDeleteSubCommands;
-import fr.euphyllia.skyllia.commands.admin.subcommands.ForceTransferSubCommands;
-import fr.euphyllia.skyllia.commands.admin.subcommands.SetMaxMembersSubCommands;
-import fr.euphyllia.skyllia.commands.admin.subcommands.SetSizeSubCommands;
+import fr.euphyllia.skyllia.commands.admin.subcommands.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
@@ -76,5 +73,6 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new SetMaxMembersSubCommands(), "set_max_member", "setmaxmembers");
         registry.registerSubCommand(new SetSizeSubCommands(), "set_size", "setsize");
         registry.registerSubCommand(new ForceTransferSubCommands(), "force_transfer", "forcetransfer");
+        registry.registerSubCommand(new ReloadSubCommands(), "reload");
     }
 }

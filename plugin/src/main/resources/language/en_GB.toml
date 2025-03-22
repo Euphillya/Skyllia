@@ -129,6 +129,7 @@ setmaxmembers-nan = "The indicated number is incorrect."
 transfer-args-missing = "The command is incomplete: /skylliadmin transfer <previousOwner> <newOwner> confirm"
 transfer-no-confirm = "You must add 'confirm' to the end of your command"
 transfer-success = "Ownership has been successfully transferred from %previous_owner% to %new_owner%."
+reload = "The configurations have been reloaded."
 
 [misc]
 unknown-command = "This subcommand does not exist."

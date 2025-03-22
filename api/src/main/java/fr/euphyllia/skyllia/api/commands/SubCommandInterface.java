@@ -35,4 +35,8 @@ public interface SubCommandInterface {
      */
     @NotNull
     List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args);
+
+    default String permission() {
+        return "";
+    }
 }

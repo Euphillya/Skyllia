@@ -120,6 +120,7 @@ setmaxmembers-nan = "Le nombre indiqué est incorrect."
 transfer-args-missing = "Commande incomplète : /skylliadmin transfer <ancien> <nouveau> confirm"
 transfer-no-confirm = "Ajoutez 'confirm' à la fin."
 transfer-success = "La propriété a été transférée de %previous_owner% à %new_owner%."
+reload = "Les configurations ont été rechargés.."
 
 [misc]
 unknown-command = "Cette commande n'existe pas."
