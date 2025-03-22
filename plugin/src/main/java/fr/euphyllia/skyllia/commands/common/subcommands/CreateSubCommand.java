@@ -16,7 +16,6 @@ import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.configuration.PermissionsToml;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.IslandUtils;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
@@ -176,9 +175,9 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private void setPermissionsRole(Island island) {
         for (RoleType roleType : RoleType.values()) {
-            island.updatePermission(PermissionsType.ISLAND, roleType, PermissionsToml.flagsRoleDefaultPermissionsIsland.get(roleType));
-            island.updatePermission(PermissionsType.COMMANDS, roleType, PermissionsToml.flagsRoleDefaultPermissionsCommandIsland.get(roleType));
-            island.updatePermission(PermissionsType.INVENTORY, roleType, PermissionsToml.flagsRoleDefaultPermissionInventory.get(roleType));
+            island.updatePermission(PermissionsType.ISLAND, roleType, ConfigLoader.permissions.getPermissionIsland().get(roleType));
+            island.updatePermission(PermissionsType.COMMANDS, roleType, ConfigLoader.permissions.getPermissionsCommands().get(roleType));
+            island.updatePermission(PermissionsType.INVENTORY, roleType, ConfigLoader.permissions.getPermissionInventory().get(roleType));
         }
     }
 }

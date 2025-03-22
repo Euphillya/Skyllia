@@ -10,7 +10,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.configuration.PermissionsToml;
+
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -198,9 +198,9 @@ public class PermissionSubCommand implements SubCommandInterface {
         PermissionsType permissionsType = permissionFormat.permissionsType;
         RoleType roleType = permissionFormat.roleType;
         long value = switch (permissionsType) {
-            case INVENTORY -> PermissionsToml.flagsRoleDefaultPermissionInventory.getOrDefault(roleType, 0L);
-            case COMMANDS -> PermissionsToml.flagsRoleDefaultPermissionsCommandIsland.getOrDefault(roleType, 0L);
-            case ISLAND -> PermissionsToml.flagsRoleDefaultPermissionsIsland.getOrDefault(roleType, 0L);
+            case INVENTORY -> ConfigLoader.permissions.getPermissionInventory().getOrDefault(roleType, 0L);
+            case COMMANDS -> ConfigLoader.permissions.getPermissionsCommands().getOrDefault(roleType, 0L);
+            case ISLAND -> ConfigLoader.permissions.getPermissionIsland().getOrDefault(roleType, 0L);
         };
         return island.updatePermission(permissionsType, roleType, value);
     }

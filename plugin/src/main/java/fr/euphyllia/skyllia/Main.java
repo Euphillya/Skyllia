@@ -8,7 +8,7 @@ import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.cache.CacheScheduler;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.configuration.PermissionsToml;
+
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.apache.logging.log4j.Level;
@@ -94,13 +94,8 @@ public class Main extends JavaPlugin {
 
             ConfigLoader.init(getDataFolder());
 
-            if (!this.interneAPI.setupConfigs(getDataFolder(), "permissions.toml", PermissionsToml::init)) {
-                Bukkit.getPluginManager().disablePlugin(this);
-                return false;
-            }
-
             return this.interneAPI.setupSGBD();
-        } catch (DatabaseException | IOException exception) {
+        } catch (DatabaseException exception) {
             logger.log(Level.FATAL, exception, exception);
             return false;
         }
