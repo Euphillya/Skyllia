@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class SetWarpSubCommand implements SubCommandInterface {
 
@@ -82,7 +83,8 @@ public class SetWarpSubCommand implements SubCommandInterface {
                 Bukkit.getAsyncScheduler().runNow(plugin, aScheduler -> {
                     boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation, false);
                     if (updateOrCreateWarps) {
-                        ConfigLoader.language.sendMessage(player, "island.warp.create-success".formatted(warpName));
+                        ConfigLoader.language.sendMessage(player, "island.warp.create-success", Map.of(
+                                "%s", warpName));
                     } else {
                         ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
                     }

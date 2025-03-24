@@ -23,10 +23,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VisitSubCommand implements SubCommandInterface {
@@ -93,7 +90,8 @@ public class VisitSubCommand implements SubCommandInterface {
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                 if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) player.setGameMode(GameMode.SURVIVAL);
-                ConfigLoader.language.sendMessage(player, "island.visit.success".replaceAll("%player%", visitPlayer));
+                ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
+                        "%player%", visitPlayer));
             }, null, 1L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);

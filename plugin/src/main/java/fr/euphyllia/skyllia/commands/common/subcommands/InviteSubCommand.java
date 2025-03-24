@@ -114,7 +114,8 @@ public class InviteSubCommand implements SubCommandInterface {
         }
 
         InviteCacheExecution.removeInviteCache(island.getId(), playerInvitedId);
-        ConfigLoader.language.sendMessage(ownerIsland, "island.invite.invite-deleted".formatted(playerInvited));
+        ConfigLoader.language.sendMessage(ownerIsland, "island.invite.invite-deleted", Map.of(
+                "%s", playerInvited));
     }
 
     private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
@@ -145,7 +146,8 @@ public class InviteSubCommand implements SubCommandInterface {
             }
 
             InviteCacheExecution.addInviteCache(island.getId(), playerInvitedId);
-            ConfigLoader.language.sendMessage(ownerIsland, "island.invite.player-invited".formatted(playerInvited));
+            ConfigLoader.language.sendMessage(ownerIsland, "island.invite.player-invited", Map.of(
+                    "%s", playerInvited));
             Player bPlayerInvited = Bukkit.getPlayer(playerInvitedId);
             if (bPlayerInvited != null && bPlayerInvited.isOnline()) {
                 ConfigLoader.language.sendMessage(bPlayerInvited, "island.invite.player-notified", Map.of("%player_invite%", ownerIsland.getName()));

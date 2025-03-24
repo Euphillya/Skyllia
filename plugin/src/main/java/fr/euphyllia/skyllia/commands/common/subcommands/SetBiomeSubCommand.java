@@ -28,10 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class SetBiomeSubCommand implements SubCommandInterface {
@@ -62,12 +59,14 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         try {
             biome = api.getBiomesImpl().getBiome(selectBiome);
         } catch (IllegalArgumentException e) {
-            ConfigLoader.language.sendMessage(player, "island.biome.not-exist".formatted(selectBiome));
+            ConfigLoader.language.sendMessage(player, "island.biome.not-exist", Map.of(
+                    "%s", selectBiome));
             return true;
         }
 
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biomesImpl.getNameBiome(biome)))) {
-            ConfigLoader.language.sendMessage(player, "island.biome.permission-denied".formatted(selectBiome));
+            ConfigLoader.language.sendMessage(player, "island.biome.permission-denied", Map.of(
+                    "%s", selectBiome));
             return true;
         }
 

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class DemoteSubCommand implements SubCommandInterface {
 
@@ -70,12 +71,14 @@ public class DemoteSubCommand implements SubCommandInterface {
 
             RoleType demoteResult = RoleType.getRoleById(players.getRoleType().getValue() - 1);
             if (demoteResult.getValue() == 0 || demoteResult.getValue() == -1) {
-                ConfigLoader.language.sendMessage(player, "island.rank.demote-failed".formatted(playerName));
+                ConfigLoader.language.sendMessage(player, "island.rank.demote-failed", Map.of(
+                        "%s", playerName));
                 return true;
             }
             players.setRoleType(demoteResult);
             island.updateMember(players);
-            ConfigLoader.language.sendMessage(player, "island.rank.demote-success".formatted(playerName));
+            ConfigLoader.language.sendMessage(player, "island.rank.demote-success", Map.of(
+                    "%s", playerName));
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class PromoteSubCommand implements SubCommandInterface {
 
@@ -70,12 +71,14 @@ public class PromoteSubCommand implements SubCommandInterface {
 
             RoleType promoteResult = RoleType.getRoleById(players.getRoleType().getValue() + 1);
             if (promoteResult.getValue() == 0 || promoteResult.getValue() == RoleType.OWNER.getValue()) {
-                ConfigLoader.language.sendMessage(player, "island.rank.promote-failed".formatted(playerName));
+                ConfigLoader.language.sendMessage(player, "island.rank.promote-failed", Map.of(
+                        "%s", playerName));
                 return true;
             }
             players.setRoleType(promoteResult);
             island.updateMember(players);
-            ConfigLoader.language.sendMessage(player, "admin.rank.promote-success".formatted(playerName));
+            ConfigLoader.language.sendMessage(player, "admin.rank.promote-success", Map.of(
+                    "%s", playerName));
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
