@@ -57,23 +57,23 @@ public class WorldEditUtils {
         return Type.UNDEFINED;
     }
 
-    public static void pasteSchematicWE(InterneAPI api, Location loc, SchematicSetting schematicWorld) {
+    public static void pasteSchematicWE(InterneAPI api, Location loc, SchematicSetting settings) {
         try {
-            File file = new File(api.getPlugin().getDataFolder() + File.separator + schematicWorld.schematicFile());
+            File file = new File(api.getPlugin().getDataFolder() + File.separator + settings.schematicFile());
             ClipboardFormat format = cachedIslandSchematic.getOrDefault(file, ClipboardFormats.findByFile(file));
+            cachedIslandSchematic.putIfAbsent(file, format);
             try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
                 Clipboard clipboard = reader.read();
                 World w = BukkitAdapter.adapt(loc.getWorld());
                 try (EditSession editSession = WorldEdit.getInstance().newEditSession(w)) {
                     editSession.setSideEffectApplier(SideEffectSet.defaults());
-                    editSession.setReorderMode(EditSession.ReorderMode.MULTI_STAGE);
+                    editSession.setReorderMode(EditSession.ReorderMode.FAST);
                     Operation operation = new ClipboardHolder(clipboard)
                             .createPaste(editSession)
                             .to(BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()))
-                            .copyEntities(true) // Si la schem a des entités
-                            .ignoreAirBlocks(true) // On ne colle pas les blocks d'air de la schematic, gain de performance accru
+                            .copyEntities(settings.copyEntities()) // Si la schem a des entités
+                            .ignoreAirBlocks(settings.ignoreAirBlocks()) // On ne colle pas les blocks d'air de la schematic, gain de performance accru
                             .build();
-                    cachedIslandSchematic.putIfAbsent(file, format);
                     Operations.complete(operation);
                 }
             }

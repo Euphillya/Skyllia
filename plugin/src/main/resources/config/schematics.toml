@@ -1,39 +1,67 @@
 # [island-settings].[world_name]
-# schematic = la schematique de l'île
-# la hauteur de l'île
+# schematic = file schematics
+# height = height of the island where the island will be placed
+# ignore-air-blocks = Should we also install the air blocks? For more complex schematics.
+# copy-entities = If there is a cow in my schematic, do you want it there too?
 
-[my_first_island.sky-overworld]
-schematic = "./schematics/my_first_island.schem"
+["my_first_island.sky-overworld"]
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
 
-[my_first_island.sky-nether]
-schematic = "./schematics/my_first_island.schem"
+["my_first_island.sky-nether"]
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+
 
 [my_first_island.sky-end]
-schematic = "./schematics/my_first_island.schem"
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+
 
 [my_second_islands.sky-overworld]
-schematic = "./schematics/my_second_islands.schem"
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+
 
 [my_second_islands.sky-nether]
-schematic = "./schematics/my_second_islands.schem"
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+
 
 [my_second_islands.sky-end]
-schematic = "./schematics/my_second_islands.schem"
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+
 
 [my_third_island.sky-overworld]
-schematic = "./schematics/my_third_island.schem"
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+
 
 [my_third_island.sky-nether]
-schematic = "./schematics/my_first_island.schem"
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+
 
 [my_third_island.sky-end]
-schematic = "./schematics/my_first_island.schem"
+schematic = "./schematics/default.schem"
 height = 64.0
+ignore-air-blocks = true
+copy-entities = true
+

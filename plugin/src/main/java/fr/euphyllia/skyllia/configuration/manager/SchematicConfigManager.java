@@ -45,10 +45,12 @@ public class SchematicConfigManager implements ConfigManager {
 
             String schematicFile = node.getOrElse("schematic", "default.schem");
             double height = node.getOrElse("height", 64.0);
+            boolean ignoreAirBlocks = node.getOrElse("ignore-air-blocks", true);
+            boolean copyEntities = node.getOrElse("copy-entities", true);
 
             schematicMap
                     .computeIfAbsent(islandType, k -> new HashMap<>())
-                    .put(worldName, new SchematicSetting(height, schematicFile));
+                    .put(worldName, new SchematicSetting(height, schematicFile, ignoreAirBlocks, copyEntities));
         }
         if (schematicMap.isEmpty()) {
             log.warn("[Skyllia] No schematics loaded from schematics.toml!");
@@ -58,7 +60,7 @@ public class SchematicConfigManager implements ConfigManager {
     public SchematicSetting getSchematicSetting(String islandType, String worldName) {
         return schematicMap
                 .getOrDefault(islandType, new HashMap<>())
-                .getOrDefault(worldName, new SchematicSetting(64.0, "default.schem"));
+                .getOrDefault(worldName, new SchematicSetting(64.0, "./schematics/default.schem", true, true));
     }
 
     public Map<String, Map<String, SchematicSetting>> getSchematics() {
