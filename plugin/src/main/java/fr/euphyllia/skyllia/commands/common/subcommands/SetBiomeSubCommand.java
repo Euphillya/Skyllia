@@ -19,6 +19,7 @@ import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -104,46 +105,44 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             }
 
             Position islandPosition = island.getPosition();
-            player.getScheduler().run(plugin, pScheduler -> {
-                Position playerRegionPosition = RegionHelper.getRegionFromChunk(
-                        playerLocation.getChunk().getX(), playerLocation.getChunk().getZ());
 
-                if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                    ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");
-                    CommandCacheExecution.removeCommandExec(islandId, "biome");
-                    return;
-                }
+            Position playerRegionPosition = RegionHelper.getRegionFromLocation(playerLocation);
 
-                ConfigLoader.language.sendMessage(player, "island.biome.change-in-progress");
+            if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
+                ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");
+                CommandCacheExecution.removeCommandExec(islandId, "biome");
+                return true;
+            }
 
-                CompletableFuture<Boolean> changeBiomeFuture;
-                String messageToSend;
+            ConfigLoader.language.sendMessage(player, "island.biome.change-in-progress");
 
-                if (args.length >= 2 && args[1].equalsIgnoreCase("island")
-                        && PermissionImp.hasPermission(player, "skyllia.island.command.biome_island")) {
+            CompletableFuture<Boolean> changeBiomeFuture;
+            String messageToSend;
 
-                    changeBiomeFuture = WorldEditUtils.changeBiomeIsland(world, biome, island);
-                    messageToSend = "island.biome.island-success";
+            if (args.length >= 2 && args[1].equalsIgnoreCase("island")
+                    && PermissionImp.hasPermission(player, "skyllia.island.command.biome_island")) {
 
+                changeBiomeFuture = WorldEditUtils.changeBiomeIsland(world, biome, island);
+                messageToSend = "island.biome.island-success";
+
+            } else {
+                changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getChunk(), biome);
+                messageToSend = "island.biome.chunk-success";
+            }
+
+            changeBiomeFuture.thenAccept(success -> {
+                if (success) {
+                    ConfigLoader.language.sendMessage(player, messageToSend);
                 } else {
-                    changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getChunk(), biome);
-                    messageToSend = "island.biome.chunk-success";
-                }
-
-                changeBiomeFuture.thenAccept(success -> {
-                    if (success) {
-                        ConfigLoader.language.sendMessage(player, messageToSend);
-                    } else {
-                        ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
-                    }
-                    CommandCacheExecution.removeCommandExec(islandId, "biome");
-                }).exceptionally(ex -> {
-                    logger.log(Level.ERROR, ex.getMessage(), ex);
                     ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
-                    CommandCacheExecution.removeCommandExec(islandId, "biome");
-                    return null;
-                });
-            }, null);
+                }
+                CommandCacheExecution.removeCommandExec(islandId, "biome");
+            }).exceptionally(ex -> {
+                logger.log(Level.ERROR, ex.getMessage(), ex);
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+                CommandCacheExecution.removeCommandExec(islandId, "biome");
+                return null;
+            });
         } catch (Exception e) {
             logger.log(Level.ERROR, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");

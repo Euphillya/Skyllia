@@ -8,12 +8,15 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsl
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsInventory;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.managers.ConfigManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class PermissionsConfigManager implements ConfigManager {
 
+    private static final Logger log = LogManager.getLogger(PermissionsConfigManager.class);
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionsCommandIsland = new ConcurrentHashMap<>();
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionInventory = new ConcurrentHashMap<>();
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionsIsland = new ConcurrentHashMap<>();
@@ -33,40 +36,48 @@ public class PermissionsConfigManager implements ConfigManager {
 
         CommentedConfig islands = config.get("islands");
         CommentedConfig inventory = config.get("inventory");
-        CommentedConfig commands = config.get("inventory");
+        CommentedConfig commands = config.get("commands");
 
-        if (islands == null || inventory == null || commands == null) return;
+        if (islands == null || inventory == null || commands == null) {
+            log.warn("[Skyllia] One or more permission sections (islands, inventory, commands) are missing from permissions.toml.");
+            return;
+        }
 
         for (RoleType roleType : RoleType.values()) {
-            boolean isOwner = roleType.equals(RoleType.OWNER) || roleType.equals(RoleType.CO_OWNER);
-            for (PermissionsCommandIsland permissionsCommandIsland : PermissionsCommandIsland.values()) {
-                CommentedConfig node = islands.get(roleType.name());
-                if (node == null) continue;
-
-                boolean permissionsValue = node.getOrElse(permissionsCommandIsland.name(), false);
-                PermissionManager permissionManager = new PermissionManager(flagsRoleDefaultPermissionsCommandIsland.getOrDefault(roleType, 0L));
-                permissionManager.definePermission(permissionsCommandIsland.getPermissionValue(), permissionsValue);
-                flagsRoleDefaultPermissionsCommandIsland.put(roleType, permissionManager.getPermissions());
+            // === ISLAND PERMISSIONS ===
+            CommentedConfig islandNode = islands.get(roleType.name());
+            if (islandNode != null) {
+                PermissionManager manager = new PermissionManager(0L);
+                for (PermissionsIsland perm : PermissionsIsland.values()) {
+                    boolean value = islandNode.getOrElse(perm.name(), false);
+                    manager.definePermission(perm.getPermissionValue(), value);
+                }
+                flagsRoleDefaultPermissionsIsland.put(roleType, manager.getPermissions());
             }
-            for (PermissionsInventory permissionsInventory : PermissionsInventory.values()) {
-                CommentedConfig node = inventory.get(roleType.name());
-                if (node == null) continue;
 
-                boolean permissionsValue = node.getOrElse(permissionsInventory.name(), false);
-                PermissionManager permissionManager = new PermissionManager(flagsRoleDefaultPermissionsCommandIsland.getOrDefault(roleType, 0L));
-                permissionManager.definePermission(permissionsInventory.getPermissionValue(), permissionsValue);
-                flagsRoleDefaultPermissionsCommandIsland.put(roleType, permissionManager.getPermissions());
+            // === INVENTORY PERMISSIONS ===
+            CommentedConfig inventoryNode = inventory.get(roleType.name());
+            if (inventoryNode != null) {
+                PermissionManager manager = new PermissionManager(0L);
+                for (PermissionsInventory perm : PermissionsInventory.values()) {
+                    boolean value = inventoryNode.getOrElse(perm.name(), false);
+                    manager.definePermission(perm.getPermissionValue(), value);
+                }
+                flagsRoleDefaultPermissionInventory.put(roleType, manager.getPermissions());
             }
-            for (PermissionsIsland permissionsIsland : PermissionsIsland.values()) {
-                CommentedConfig node = commands.get(roleType.name());
-                if (node == null) continue;
 
-                boolean permissionsValue = node.getOrElse(permissionsIsland.name(), false);
-                PermissionManager permissionManager = new PermissionManager(flagsRoleDefaultPermissionsCommandIsland.getOrDefault(roleType, 0L));
-                permissionManager.definePermission(permissionsIsland.getPermissionValue(), permissionsValue);
-                flagsRoleDefaultPermissionsCommandIsland.put(roleType, permissionManager.getPermissions());
+            // === COMMAND PERMISSIONS ===
+            CommentedConfig commandNode = commands.get(roleType.name());
+            if (commandNode != null) {
+                PermissionManager manager = new PermissionManager(0L);
+                for (PermissionsCommandIsland perm : PermissionsCommandIsland.values()) {
+                    boolean value = commandNode.getOrElse(perm.name(), false);
+                    manager.definePermission(perm.getPermissionValue(), value);
+                }
+                flagsRoleDefaultPermissionsCommandIsland.put(roleType, manager.getPermissions());
             }
         }
+        log.info("[Skyllia] Loaded permissions for {} roles.", RoleType.values().length);
     }
 
     public ConcurrentMap<RoleType, Long> getPermissionInventory() {

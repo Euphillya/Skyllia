@@ -4,12 +4,15 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.managers.ConfigManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SchematicConfigManager implements ConfigManager {
 
+    private static final Logger log = LogManager.getLogger(SchematicConfigManager.class);
     /**
      * Map<islandType, Map<worldName, SchematicSetting>>
      * Exemple :
@@ -26,11 +29,17 @@ public class SchematicConfigManager implements ConfigManager {
 
     @Override
     public void loadConfig() {
+        schematicMap.clear();
         for (String key : config.valueMap().keySet()) {
-            CommentedConfig node = config.get(key);
-            if (node == null) continue;
+            Object value = config.valueMap().get(key);
+            if (!(value instanceof CommentedConfig node)) {
+                log.warn("[Skyllia] Key '{}' is not a CommentedConfig (type: {})", key, value == null ? "null" : value.getClass().getName());
+                continue;
+            }
+
             int index = key.lastIndexOf('.');
             if (index <= 0) continue;
+
             String islandType = key.substring(0, index);
             String worldName = key.substring(index + 1);
 
@@ -40,6 +49,9 @@ public class SchematicConfigManager implements ConfigManager {
             schematicMap
                     .computeIfAbsent(islandType, k -> new HashMap<>())
                     .put(worldName, new SchematicSetting(height, schematicFile));
+        }
+        if (schematicMap.isEmpty()) {
+            log.warn("[Skyllia] No schematics loaded from schematics.toml!");
         }
     }
 

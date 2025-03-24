@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.cache.island;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
@@ -48,10 +49,11 @@ public class PlayersInIslandCache {
     // =====================================================================
 
     private static CopyOnWriteArrayList<Players> loadPlayersFromIslandCache(UUID islandId) {
-        Island island = IslandCache.getIsland(islandId);
+        Island island = SkylliaAPI.getIslandByIslandId(islandId).join();
         if (island == null) {
             return new CopyOnWriteArrayList<>();
         }
+        if (island.getMembers() == null || island.getMembers().isEmpty()) return new CopyOnWriteArrayList<>();
         return new CopyOnWriteArrayList<>(island.getMembers());
     }
 

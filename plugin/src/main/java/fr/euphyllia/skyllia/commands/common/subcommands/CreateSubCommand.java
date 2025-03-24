@@ -64,9 +64,13 @@ public class CreateSubCommand implements SubCommandInterface {
             AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByPlayerId(player.getUniqueId()).join());
             if (islandAtomic.get() == null) {
                 String schemKey = args.length == 0 ? "" : args[0];
-                if (schemKey.isEmpty()) {
-                    schemKey = ConfigLoader.schematicManager.getSchematics().keySet().iterator().next();
+                Set<String> schematicsKeys = ConfigLoader.schematicManager.getSchematics().keySet();
+                if (schematicsKeys.isEmpty()) {
+                    ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
+                    CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
+                    return true;
                 }
+                schemKey = schematicsKeys.iterator().next();
                 Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
                 if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                     ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");

@@ -41,6 +41,7 @@ public class IslandQuery {
             this.islandWarpQuery = new MariaDBIslandWarp(api, databaseName);
             this.islandMemberQuery = new MariaDBIslandMember(api, databaseName);
             this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
+            return;
         }
         if (ConfigLoader.database.getSqLiteConfig() != null) {
 

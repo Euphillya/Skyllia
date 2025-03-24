@@ -22,7 +22,7 @@ public class LanguageConfigManager implements ConfigManager {
     private static final Logger log = LogManager.getLogger(LanguageConfigManager.class);
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final Map<Locale, Map<String, String>> translations = new HashMap<>();
-    private final Locale defaultLocale = Locale.ENGLISH;
+    private final Locale defaultLocale = Locale.of("en", "GB");
     private final Main plugin = Main.getPlugin(Main.class);
 
     @Override
@@ -31,8 +31,7 @@ public class LanguageConfigManager implements ConfigManager {
         if (!langDir.exists()) langDir.mkdirs();
         File[] files = langDir.listFiles((dir, name) -> name.endsWith(".toml"));
         if (files == null || files.length == 0) {
-            log.error("No language files found!");
-            return;
+            throw new IllegalStateException("No language files were found in the 'language' directory. Expected at least one '.toml' file (e.g., 'en_GB.toml').");
         }
 
         translations.clear();
@@ -45,10 +44,16 @@ public class LanguageConfigManager implements ConfigManager {
             Map<String, String> messages = new HashMap<>();
             parseConfig("", tomlConfig, messages);
             translations.put(locale, messages);
+
+            log.info("Loaded language file: {} ({} keys)", file.getName(), messages.size());
         }
 
         if (!translations.containsKey(defaultLocale)) {
-            plugin.getLogger().warning("Default language (en_GB.toml) not found!");
+            throw new IllegalStateException(
+                    "Default language file not loaded. Expected a file named '"
+                            + defaultLocale.toLanguageTag().replace("-", "_")
+                            + ".toml' (e.g., 'en_GB.toml') in the 'language' folder, but it was not found or could not be parsed correctly."
+            );
         }
 
     }
@@ -75,11 +80,14 @@ public class LanguageConfigManager implements ConfigManager {
     }
 
     public Component translate(Locale locale, String key, Map<String, String> placeholders) {
-        Map<String, String> langMessages = translations.getOrDefault(locale, translations.get(defaultLocale));
-        String message = langMessages.getOrDefault(
-                key,
-                translations.get(defaultLocale).getOrDefault(key, "<red>Missing translation: " + key)
-        );
+        Map<String, String> langMessages = translations.get(locale);
+        if (langMessages == null) {
+            langMessages = translations.get(defaultLocale);
+            if (langMessages == null) {
+                throw new IllegalStateException("No translations found for locale: " + locale + " or default locale.");
+            }
+        }
+        String message = langMessages.getOrDefault(key, "<red>Missing translation: " + key);
 
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
             message = message.replace(entry.getKey(), entry.getValue());
