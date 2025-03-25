@@ -9,6 +9,10 @@ loader: fr.euphyllia.skyllia.SkylliaLoader
 
 dependencies:
   server:
+    FastAsyncWorldEdit:
+      load: OMIT
+      required: false
+      join-classpath: false
     WorldEdit:
       load: OMIT
       required: true
