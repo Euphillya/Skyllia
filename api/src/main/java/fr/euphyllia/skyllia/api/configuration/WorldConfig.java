@@ -46,4 +46,9 @@ public class WorldConfig {
     public String getGenerator() {
         return generator;
     }
+
+    @Override
+    public String toString() {
+        return "{class=WorldConfig, worldName=" + getWorldName() + ", environnement" + environment.name() +", portalNether=" + getPortalNether() + ", portalEnd=" + getPortalEnd() + "}";
+    }
 }

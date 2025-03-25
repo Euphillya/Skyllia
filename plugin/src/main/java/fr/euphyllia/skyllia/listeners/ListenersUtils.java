@@ -124,16 +124,13 @@ public class ListenersUtils {
     /**
      * Triggers a {@link PlayerPrepareChangeWorldSkyblockEvent} if the specified world is a Skyblock world.
      *
-     * @param player     The {@link Player} transitioning to another world.
-     * @param portalType The type of portal being used.
-     * @param worldName  The name of the target world.
+     * @param player      The {@link Player} transitioning to another world.
+     * @param worldConfig
+     * @param portalType  The type of portal being used.
+     * @param cancellable Event can be canceled
      */
-    public static void callPlayerPrepareChangeWorldSkyblockEvent(Player player, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, String worldName) {
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(worldName))) {
-            return;
-        }
-        WorldConfig worldConfig = WorldUtils.getWorldConfig(worldName);
-        if (worldConfig == null) return;
+    public static void callPlayerPrepareChangeWorldSkyblockEvent(Player player, WorldConfig worldConfig, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, @Nullable Cancellable cancellable) {
+        if (cancellable != null) cancellable.setCancelled(true);
         Bukkit.getPluginManager().callEvent(new PlayerPrepareChangeWorldSkyblockEvent(player, worldConfig, portalType));
     }
 
