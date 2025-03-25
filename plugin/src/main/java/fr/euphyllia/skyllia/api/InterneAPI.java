@@ -64,8 +64,8 @@ public class InterneAPI {
      * @throws UnsupportedMinecraftVersionException if the version is not supported
      */
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
-        final String[] bukkitVersion = Bukkit.getServer().getBukkitVersion().split("-");
-        switch (bukkitVersion[0]) {
+        final String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
+        switch (minecraftVersion) {
             case "1.20", "1.20.1" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
@@ -107,32 +107,9 @@ public class InterneAPI {
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.BiomeNMS();
             }
             default -> {
-                throw new UnsupportedMinecraftVersionException("Version " + bukkitVersion[0] + " not supported!");
+                throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
             }
         }
-    }
-
-    /**
-     * Loads a config file if it doesn't exist, then initializes it via a ConfigInitializer.
-     *
-     * @param dataFolder  Path to the plugin's data folder
-     * @param fileName    The config file name
-     * @param initializer The ConfigInitializer functional interface
-     * @return true if successful, false otherwise
-     * @throws IOException if file creation fails
-     */
-    public boolean setupConfigs(File dataFolder, String fileName, ConfigInitializer initializer) throws IOException {
-        File configFile = checkFileExist(dataFolder, fileName);
-        if (configFile == null) {
-            return false;
-        }
-        try {
-            initializer.initConfig(configFile);
-        } catch (Exception ex) {
-            logger.error("Error while initializing config: ", ex);
-            return false;
-        }
-        return true;
     }
 
     public void createAndCopyResources(File pluginFile, String folderName) {
@@ -202,30 +179,6 @@ public class InterneAPI {
 
     public void setManagers(Managers managers) {
         this.managers = managers;
-    }
-
-    /**
-     * Ensures a config file exists in the dataFolder, creating it if necessary.
-     *
-     * @param dataFolder The plugin data folder
-     * @param fileName   The file name
-     * @return The File object or null if creation fails
-     * @throws IOException if file creation fails
-     */
-    private @Nullable File checkFileExist(File dataFolder, String fileName) throws IOException {
-        if (!dataFolder.exists() && (!dataFolder.mkdir())) {
-            logger.log(Level.FATAL, "Unable to create the configuration folder.");
-            return null;
-
-        }
-        FileSystem fs = FileSystems.getDefault();
-        Path configFolder = fs.getPath(dataFolder.getAbsolutePath());
-
-        File configFile = new File(configFolder + File.separator + fileName);
-        if (!configFile.exists()) {
-            configFile.createNewFile();
-        }
-        return configFile;
     }
 
     /**
