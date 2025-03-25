@@ -39,8 +39,9 @@ public class WorldConfigManager implements ConfigManager {
                 String envString = node.getOrElse("environment", "NORMAL");
                 String portalNether = node.getOrElse("portal-nether", "sky-nether");
                 String portalEnd = node.getOrElse("portal-end", "sky-end");
+                String generator = node.getOrElse("generator", "default");
 
-                WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd);
+                WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd, generator);
                 worldConfigs.put(worldName, wc);
             }
         }

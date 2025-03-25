@@ -12,7 +12,6 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
@@ -30,10 +29,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,6 +100,7 @@ public class WorldEditUtils {
     public static CompletableFuture<Boolean> changeBiomeChunk(org.bukkit.Chunk chunk, Biome biome) {
         return changeBiomeChunk(chunk.getWorld(), chunk.getX(), chunk.getZ(), biome);
     }
+
     public static CompletableFuture<Boolean> changeBiomeChunk(org.bukkit.World world, int chunkX, int chunkZ, Biome biome) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
@@ -132,7 +130,7 @@ public class WorldEditUtils {
     }
 
     public static CompletableFuture<Boolean> changeBiomeIsland(org.bukkit.World world, Biome biome, Island island) {
-        CompletableFuture<Boolean> future  = new CompletableFuture<>();
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
         if (world == null) {
             future.completeExceptionally(new RuntimeException("World is not loaded or doesn't exist"));
             return future;

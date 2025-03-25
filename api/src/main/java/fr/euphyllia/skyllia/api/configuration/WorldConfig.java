@@ -10,8 +10,9 @@ public class WorldConfig {
     private final World.Environment environment;
     private final String portalNether;
     private final String portalEnd;
+    private final String generator;
 
-    public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd) {
+    public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd, String generator) {
         World.Environment env;
         try {
             env = World.Environment.valueOf(environmentStr.toUpperCase());
@@ -23,6 +24,7 @@ public class WorldConfig {
         this.environment = env;
         this.portalNether = portalNether;
         this.portalEnd = portalEnd;
+        this.generator = generator;
     }
 
     public World.Environment getEnvironment() {
@@ -39,5 +41,9 @@ public class WorldConfig {
 
     public String getWorldName() {
         return worldName;
+    }
+
+    public String getGenerator() {
+        return generator;
     }
 }

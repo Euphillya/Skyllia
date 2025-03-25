@@ -9,10 +9,11 @@ import net.kyori.adventure.util.TriState;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Random;
 
@@ -26,10 +27,25 @@ public class WorldsManager {
     }
 
     public void initWorld() {
-        ChunkGenerator chunkGenerator = new VoidWorldGen();
+
         ConfigLoader.worldManager.getWorldConfigs().forEach((name, worldConfig) -> {
             WorldCreator worldCreator = new WorldCreator(name);
-            worldCreator.generator(chunkGenerator);
+
+            String generatorId = worldConfig.getGenerator();
+            if (generatorId.equalsIgnoreCase("default")) {
+                worldCreator.generator(new VoidWorldGen());
+            } else {
+                Plugin plugin = Bukkit.getPluginManager().getPlugin(generatorId);
+                if (plugin == null) {
+                    String message = String.format(
+                            "[WorldInit] Failed to load world \"%s\": generator plugin \"%s\" not found. " +
+                                    "Please ensure the plugin providing this generator is installed.",
+                            name, generatorId
+                    );
+                    throw new IllegalArgumentException(message);
+                }
+            }
+
             worldCreator.type(WorldType.FLAT);
             worldCreator.seed(new Random(System.currentTimeMillis()).nextLong());
             worldCreator.environment(worldConfig.getEnvironment());

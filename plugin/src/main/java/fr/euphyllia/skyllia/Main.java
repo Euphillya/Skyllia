@@ -8,7 +8,6 @@ import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.cache.CacheScheduler;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.apache.logging.log4j.Level;
@@ -17,8 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 @SuppressWarnings("UnstableApiUsage")
 public class Main extends JavaPlugin {

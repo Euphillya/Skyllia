@@ -17,10 +17,10 @@ import java.util.concurrent.ConcurrentMap;
 public class PermissionsConfigManager implements ConfigManager {
 
     private static final Logger log = LogManager.getLogger(PermissionsConfigManager.class);
+    private final CommentedFileConfig config;
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionsCommandIsland = new ConcurrentHashMap<>();
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionInventory = new ConcurrentHashMap<>();
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionsIsland = new ConcurrentHashMap<>();
-    private final CommentedFileConfig config;
 
     public PermissionsConfigManager(CommentedFileConfig config) {
         this.config = config;
