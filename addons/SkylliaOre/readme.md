@@ -6,6 +6,7 @@ This plugin manages custom block generators for SkyBlock islands, with support f
 
 - [Skyllia](https://github.com/Euphillya/Skyllia)
 - [Oraxen](https://oraxen.com/) (optional)
+- [Nexo](https://docs.nexomc.com) (optinal)
 
 ## Installation
 
@@ -31,8 +32,10 @@ generators:
       - sky-overworld
     block_chance:
       - block: cobblestone
-        chance: 90.0
+        chance: 80.0
       - block: oraxen:ore
+        chance: 10.0
+      - block: nexo:ore
         chance: 10.0
 ```
 
@@ -59,14 +62,16 @@ generators:
       - sky-overworld
     block_chance:
       - block: cobblestone
-        chance: 90.0
+        chance: 80.0
       - block: oraxen:ore
+        chance: 10.0
+      - block: nexo:ore
         chance: 10.0
 ```
 
 In this example, the default generator is set to "test". The generator named "test" will replace `cobblestone` and
-`stone` blocks in the `sky-overworld` world. It has a 90% chance to generate `cobblestone` and a 10% chance to generate
-`oraxen:ore`.
+`stone` blocks in the `sky-overworld` world. It has an 80% chance to generate `cobblestone`, a 10% chance to generate
+`oraxen:ore` and  a 10% chance to generate `nexo:ore`.
 
 ## Usage
 
