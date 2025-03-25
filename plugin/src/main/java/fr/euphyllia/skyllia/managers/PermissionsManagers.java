@@ -139,8 +139,8 @@ public class PermissionsManagers {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(players.getMojangId());
                     if (offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null) continue;
                     offlinePlayer.getPlayer().sendMessage(
-                            "GameRule testé : " + gameRule.name() + "\n" +
-                                    "Activé : " + (value ? "oui" : "non"));
+                            "GameRule tested : " + gameRule.name() + "\n" +
+                                    "Enabled : " + (value ? "yes" : "no"));
                 }
             }
         });
@@ -157,9 +157,9 @@ public class PermissionsManagers {
                 player.sendMessage(
                         "Player tested : " + player.getName() + "\n" +
                                 "Type : " + permissions.getPermissionType().name() + "\n" +
-                                "Permission " + permissions.getName() + " : " + (value ? "oui" : "non") + "\n" +
+                                "Permission " + permissions.getName() + " : " + (value ? "yes" : "no") + "\n" +
                                 "RoleType : " + permissionRoleIsland.roleType() + "\n" +
-                                "Trusted : " + (isTrusted ? "oui" : "non"));
+                                "Trusted : " + (isTrusted ? "yes" : "no"));
             }
         });
     }
