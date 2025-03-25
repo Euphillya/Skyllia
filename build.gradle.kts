@@ -31,8 +31,8 @@ dependencies {
 
 allprojects {
     group = "fr.euphyllia";
-    version = "1.0-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
-    description = "First Skyblock Plugin for Folia";
+    version = "2.0-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
+    description = "First Skyblock plugin on Folia. If you want features, join us on our Discord.";
 
     apply(plugin = "java-library")
     apply(plugin = "io.github.goooler.shadow")

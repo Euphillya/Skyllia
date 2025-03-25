@@ -3,7 +3,7 @@ version: ${version}
 main: fr.euphyllia.skyllia.Main
 api-version: 1.20.1
 author: Euphyllia
-description: "Plugin Skyblock pour Folia / PaperMC"
+description: "First Skyblock plugin on Folia. If you want features, join us on our Discord."
 folia-supported: true
 loader: fr.euphyllia.skyllia.SkylliaLoader
 

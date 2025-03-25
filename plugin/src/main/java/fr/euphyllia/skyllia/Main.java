@@ -17,6 +17,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 @SuppressWarnings("UnstableApiUsage")
 public class Main extends JavaPlugin {
 
@@ -27,6 +29,21 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        File oldConfig = new File(getDataFolder(), "config.toml");
+        if (oldConfig.exists()) {
+            getLogger().severe("══════════════════════════════════════════════════════");
+            getLogger().severe("          ❌ OUTDATED CONFIGURATION DETECTED ❌");
+            getLogger().severe(" ");
+            getLogger().severe("  The file 'config.toml' is no longer supported.");
+            getLogger().severe("  Major internal changes have been made.");
+            getLogger().severe(" ");
+            getLogger().severe("  ⚠️ Please delete or manually migrate your configuration.");
+            getLogger().severe("  The plugin will not continue with an outdated config.");
+            getLogger().severe("══════════════════════════════════════════════════════");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+        
         if (!initializeInterneAPI()) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
