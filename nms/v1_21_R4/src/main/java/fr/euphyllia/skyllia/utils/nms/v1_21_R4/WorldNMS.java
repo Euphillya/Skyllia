@@ -6,6 +6,7 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
+import io.papermc.paper.FeatureHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -50,6 +51,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 
@@ -131,17 +134,17 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
                 dynamic = worldSession.getDataTag();
                 worldinfo = worldSession.getSummary(dynamic);
             } catch (NbtException | ReportedNbtException | IOException ioexception) {
-                LevelStorageSource.LevelDirectory convertable_b = worldSession.getLevelDirectory();
+                LevelStorageSource.LevelDirectory levelDirectory = worldSession.getLevelDirectory();
 
-                MinecraftServer.LOGGER.warn("Failed to load world data from {}", convertable_b.dataFile(), ioexception);
+                MinecraftServer.LOGGER.warn("Failed to load world data from {}", levelDirectory.dataFile(), ioexception);
                 MinecraftServer.LOGGER.info("Attempting to use fallback");
 
                 try {
                     dynamic = worldSession.getDataTagFallback();
                     worldinfo = worldSession.getSummary(dynamic);
                 } catch (NbtException | ReportedNbtException | IOException ioexception1) {
-                    MinecraftServer.LOGGER.error("Failed to load world data from {}", convertable_b.oldDataFile(), ioexception1);
-                    MinecraftServer.LOGGER.error("Failed to load world data from {} and {}. World files may be corrupted. Shutting down.", convertable_b.dataFile(), convertable_b.oldDataFile());
+                    MinecraftServer.LOGGER.error("Failed to load world data from {}", levelDirectory.oldDataFile(), ioexception1);
+                    MinecraftServer.LOGGER.error("Failed to load world data from {} and {}. World files may be corrupted. Shutting down.", levelDirectory.dataFile(), levelDirectory.oldDataFile());
                     return null;
                 }
 
@@ -164,26 +167,24 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         boolean hardcore = creator.hardcore();
 
         PrimaryLevelData worlddata;
-        WorldLoader.DataLoadContext worldloader_a = console.worldLoader;
-        RegistryAccess.Frozen iregistrycustom_dimension = worldloader_a.datapackDimensions();
+        WorldLoader.DataLoadContext context = console.worldLoader;
+        RegistryAccess.Frozen iregistrycustom_dimension = context.datapackDimensions();
         net.minecraft.core.Registry<LevelStem> iregistry = iregistrycustom_dimension.lookupOrThrow(Registries.LEVEL_STEM);
         if (dynamic != null) {
-            LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(dynamic, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen());
+            LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(dynamic, context.dataConfiguration(), iregistry, context.datapackWorldgen());
 
             worlddata = (PrimaryLevelData) leveldataanddimensions.worldData();
             iregistrycustom_dimension = leveldataanddimensions.dimensions().dimensionsRegistryAccess();
         } else {
-            LevelSettings worldsettings;
             WorldOptions worldoptions = new WorldOptions(creator.seed(), creator.generateStructures(), false);
-            WorldDimensions worlddimensions;
 
             DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(GsonHelper.parse((creator.generatorSettings().isEmpty()) ? "{}" : creator.generatorSettings()), creator.type().name().toLowerCase(Locale.ROOT));
 
-            worldsettings = new LevelSettings(name, GameType.byId(craftServer.getDefaultGameMode().getValue()), hardcore, Difficulty.EASY, false, new GameRules(worldloader_a.dataConfiguration().enabledFeatures()), worldloader_a.dataConfiguration());
-            worlddimensions = properties.create(worldloader_a.datapackWorldgen());
+            LevelSettings worldsettings = new LevelSettings(name, GameType.byId(craftServer.getDefaultGameMode().getValue()), hardcore, Difficulty.EASY, false, new GameRules(context.dataConfiguration().enabledFeatures()), context.dataConfiguration());
+            WorldDimensions worlddimensions = properties.create(context.datapackWorldgen());
 
             WorldDimensions.Complete worlddimensions_b = worlddimensions.bake(iregistry);
-            Lifecycle lifecycle = worlddimensions_b.lifecycle().add(worldloader_a.datapackWorldgen().allRegistriesLifecycle());
+            Lifecycle lifecycle = worlddimensions_b.lifecycle().add(context.datapackWorldgen().allRegistriesLifecycle());
 
             worlddata = new PrimaryLevelData(worldsettings, worldoptions, worlddimensions_b.specialWorldProperty(), lifecycle);
             iregistrycustom_dimension = worlddimensions_b.dimensionsRegistryAccess();
@@ -195,7 +196,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         // Paper start - fix and optimise world upgrading
         if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
+            net.minecraft.server.Main.forceUpgrade(worldSession, worlddata, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
         }
         // Paper end - fix and optimise world upgrading
 
@@ -225,22 +226,40 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
         }
 
-        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
+        ServerLevel serverLevel = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
                 worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
 
-        internal.randomSpawnSelection = new ChunkPos(internal.getChunkSource().randomState().sampler().findSpawnPosition());
+
+        // serverLevel.randomSpawnSelection = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
+        try {
+            setRandomSpawnSelection(serverLevel);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
 
-        console.addLevel(internal);
+        console.addLevel(serverLevel);
 
-        internal.setSpawnSettings(true);
+        serverLevel.setSpawnSettings(true);
 
-        console.prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
+        console.prepareLevels(serverLevel.getChunkSource().chunkMap.progressListener, serverLevel);
 
-        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
+        //io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(serverLevel);
+        try {
+            Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
+            getInstanceMethod.setAccessible(true);
+            Object regionizedServerInstance = getInstanceMethod.invoke(null);
+            Method addWorldMethod = regionizedServerClass.getDeclaredMethod("addWorld", ServerLevel.class);
+            addWorldMethod.setAccessible(true);
+            addWorldMethod.invoke(regionizedServerInstance, serverLevel);
+        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
 
-        Bukkit.getPluginManager().callEvent(new WorldLoadEvent(internal.getWorld()));
-        return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());
+        FeatureHooks.tickEntityManager(serverLevel);
+        new WorldLoadEvent(serverLevel.getWorld()).callEvent();
+        return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(serverLevel.getWorld());
     }
 
     @Override
