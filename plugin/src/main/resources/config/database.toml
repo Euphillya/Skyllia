@@ -1,7 +1,7 @@
 config-version = 3
 
 [mariadb]
-enabled = true
+enabled = false
 hostname = "127.0.0.1"
 port = 3306
 database = "skyblock"
@@ -15,7 +15,7 @@ maxLifeTime = 1_800_000
 timeOut = 5_000
 
 [sqlite]
-enabled = false
+enabled = true
 file = "plugins/Skyllia/data/skyllia.db"
 minPool = 1
 maxPool = 10
