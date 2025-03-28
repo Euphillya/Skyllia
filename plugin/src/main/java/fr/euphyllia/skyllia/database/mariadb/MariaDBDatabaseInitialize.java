@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
+import fr.euphyllia.skyllia.api.skyblock.IslandData;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -157,16 +158,16 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     private void initializeSpiralTable() {
         int distancePerIsland = ConfigLoader.general.getRegionDistance();
         if (distancePerIsland <= 0) {
-            logger.log(Level.FATAL, "You must set a value greater than 1 for region distance per island (config.toml -> config.region-distance-per-island). " +
+            logger.log(Level.FATAL, "You must set a value greater than 1 for region distance per island (config/config.toml -> settings.island.region-distance). " +
                     "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
             return;
         }
 
         Runnable spiralTask = () -> {
-            List<SpiralBatchInserter.IslandData> islandDataList = new ArrayList<>();
+            List<IslandData> islandDataList = new ArrayList<>();
             for (int i = 1; i < ConfigLoader.general.getMaxIslands(); i++) {
                 Position position = RegionUtils.computeNewIslandRegionPosition(i);
-                islandDataList.add(new SpiralBatchInserter.IslandData(
+                islandDataList.add(new IslandData(
                         i,
                         position.x() * distancePerIsland,
                         position.z() * distancePerIsland

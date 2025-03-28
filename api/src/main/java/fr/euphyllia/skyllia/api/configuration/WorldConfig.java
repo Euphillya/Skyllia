@@ -49,6 +49,6 @@ public class WorldConfig {
 
     @Override
     public String toString() {
-        return "{class=WorldConfig, worldName=" + getWorldName() + ", environnement" + environment.name() +", portalNether=" + getPortalNether() + ", portalEnd=" + getPortalEnd() + "}";
+        return "{class=WorldConfig, worldName=" + getWorldName() + ", environnement" + environment.name() + ", portalNether=" + getPortalNether() + ", portalEnd=" + getPortalEnd() + "}";
     }
 }

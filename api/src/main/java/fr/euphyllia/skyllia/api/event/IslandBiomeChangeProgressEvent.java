@@ -58,6 +58,15 @@ public class IslandBiomeChangeProgressEvent extends Event {
     }
 
     /**
+     * Returns the static handler list used by the Bukkit event system.
+     *
+     * @return The handler list.
+     */
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
+    /**
      * Gets the island associated with this biome change progress update.
      *
      * @return The island being modified.
@@ -91,15 +100,6 @@ public class IslandBiomeChangeProgressEvent extends Event {
      */
     @Override
     public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    /**
-     * Returns the static handler list used by the Bukkit event system.
-     *
-     * @return The handler list.
-     */
-    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 }

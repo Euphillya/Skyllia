@@ -3,9 +3,10 @@ package fr.euphyllia.skylliabank.database;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
+import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
 import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
 
     private void initializeDatabase() {
         MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
-        database = new DatabaseLoader(mariaDB);
+        database = new MariaDBLoader(mariaDB);
     }
 
     private void initializeGenerator() {

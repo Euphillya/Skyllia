@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.sgbd.mariadb;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.stream.AsciiStream;
 import fr.euphyllia.skyllia.sgbd.mariadb.stream.BinaryStream;
+import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
  * The {@code DatabaseLoader} class provides methods to load and close a MariaDB connection pool,
  * execute SQL queries, and handle prepared statements with various parameter types.
  */
-public class DatabaseLoader {
+public class MariaDBLoader implements DatabaseLoader {
 
     private final MariaDB mariaDB;
 
@@ -24,7 +25,7 @@ public class DatabaseLoader {
      *
      * @param mariaDB the {@link MariaDB} instance used to manage connections.
      */
-    public DatabaseLoader(MariaDB mariaDB) {
+    public MariaDBLoader(MariaDB mariaDB) {
         this.mariaDB = mariaDB;
     }
 
@@ -34,6 +35,7 @@ public class DatabaseLoader {
      * @return {@code true} if the database was successfully connected; {@code false} otherwise.
      * @throws DatabaseException if an error occurs while initializing the connection pool.
      */
+    @Override
     public boolean loadDatabase() throws DatabaseException {
         if (mariaDB != null && !mariaDB.isConnected()) {
             return mariaDB.onLoad();
@@ -44,6 +46,7 @@ public class DatabaseLoader {
     /**
      * Closes the database connection if it is currently open.
      */
+    @Override
     public void closeDatabase() {
         if (mariaDB != null) {
             mariaDB.onClose();
@@ -57,7 +60,8 @@ public class DatabaseLoader {
      * @throws DatabaseException if an error occurs while retrieving the connection.
      */
     @Nullable
-    public Connection getMariaDBConnection() throws DatabaseException {
+    @Override
+    public Connection getConnection() throws DatabaseException {
         return mariaDB != null ? mariaDB.getConnection() : null;
     }
 

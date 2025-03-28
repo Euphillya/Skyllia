@@ -5,7 +5,11 @@ import fr.euphyllia.skyllia.api.database.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.mariadb.MariaDBDatabaseInitialize;
 import fr.euphyllia.skyllia.database.mariadb.exec.*;
+import fr.euphyllia.skyllia.database.sqlite.SQLiteDatabaseInitialize;
+import fr.euphyllia.skyllia.database.sqlite.exec.*;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
+import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,7 +48,15 @@ public class IslandQuery {
             return;
         }
         if (ConfigLoader.database.getSqLiteConfig() != null) {
+            SQLiteDatabaseLoader loader = (SQLiteDatabaseLoader) this.api.getDatabaseLoader();
 
+            this.databaseInitializeQuery = new SQLiteDatabaseInitialize(this.api, loader);
+            this.islandDataQuery = new SQLiteIslandData(this.api, loader);
+            this.islandUpdateQuery = new SQLiteIslandUpdate(this.api, loader);
+            this.islandWarpQuery = new SQLiteIslandWarp(this.api, loader);
+            this.islandMemberQuery = new SQLiteIslandMember(this.api, loader);
+            this.islandPermissionQuery = new SQLiteIslandPermission(this.api, loader);
+            return;
         }
 
         throw new DatabaseException("No Database configured!");

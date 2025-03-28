@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SQLite implements DBConnect, DBInterface {
 
@@ -41,17 +42,16 @@ public class SQLite implements DBConnect, DBInterface {
         pool.setMaxLifetime(sqliteConfig.maxLifetime());
         pool.setKeepaliveTime(sqliteConfig.keepAliveTime());
 
-        try (Connection connection = pool.getConnection()) {
-            if (connection.isValid(2)) {
-                connected = true;
-                logger.info("SQLite connection pool initialized successfully.");
-                return true;
-            }
+        try (Connection connection = pool.getConnection(); Statement st = connection.createStatement()) {
+            // Exécuter un petit SELECT 1 qui devrait réussir si tout va bien
+            st.execute("SELECT 1;");
+            // Si on arrive là sans exception, c’est que la connexion marche
+            connected = true;
+            logger.info("SQLite connection pool initialized successfully.");
+            return true;
         } catch (SQLException e) {
             throw new DatabaseException("Failed to initialize SQLite pool", e);
         }
-
-        return false;
     }
 
     @Override

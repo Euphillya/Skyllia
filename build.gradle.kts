@@ -60,6 +60,8 @@ allprojects {
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.6")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
+        compileOnly("org.mongodb:mongodb-driver-sync:5.4.0-alpha0")
+        compileOnly("org.mongodb:bson:5.4.0-alpha0")
     }
 
     tasks {

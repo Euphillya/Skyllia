@@ -27,6 +27,8 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.8.1"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.2.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ExcaliaSI:exp4j:e50bdd65e4"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:5.4.0-alpha0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:bson:5.4.0-alpha0"), null));
 
         // Mojang Repo
         resolver.addDependency(new Dependency(new DefaultArtifact("com.mojang:brigadier:1.0.18"), null));

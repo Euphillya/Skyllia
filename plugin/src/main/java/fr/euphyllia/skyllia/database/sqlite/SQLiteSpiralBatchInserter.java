@@ -1,6 +1,5 @@
-package fr.euphyllia.skyllia.database.mariadb;
+package fr.euphyllia.skyllia.database.sqlite;
 
-import fr.euphyllia.skyllia.api.skyblock.IslandData;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.model.DBWork;
 import org.apache.logging.log4j.LogManager;
@@ -12,22 +11,22 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Handles batch insertion of spiral data into the database.
+ * Handles batch insertion of spiral data into the database (SQLite version).
  */
-public class SpiralBatchInserter implements DBWork {
+public class SQLiteSpiralBatchInserter implements DBWork {
 
-    private static final Logger logger = LogManager.getLogger(SpiralBatchInserter.class);
+    private static final Logger logger = LogManager.getLogger(SQLiteSpiralBatchInserter.class);
+    // Vous pouvez adapter la taille du batch ou le supprimer.
     private static final int BATCH_SIZE = 1000;
+
     private final String insertQuery;
     private final List<IslandData> islands;
 
     /**
-     * Constructs a SpiralBatchInserter.
-     *
-     * @param insertQuery The formatted SQL insert query.
-     * @param islands     The list of island data to insert.
+     * @param insertQuery La requête de type "INSERT OR IGNORE INTO spiral (id, region_x, region_z) VALUES (?, ?, ?)"
+     * @param islands     Les données d’îles à insérer.
      */
-    public SpiralBatchInserter(String insertQuery, List<IslandData> islands) {
+    public SQLiteSpiralBatchInserter(String insertQuery, List<IslandData> islands) {
         this.insertQuery = insertQuery;
         this.islands = islands;
     }
@@ -36,8 +35,9 @@ public class SpiralBatchInserter implements DBWork {
     public void run(Connection connection) throws DatabaseException {
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(insertQuery);
             connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(insertQuery);
+
             int count = 0;
             for (IslandData island : islands) {
                 preparedStatement.setInt(1, island.id());
@@ -50,30 +50,33 @@ public class SpiralBatchInserter implements DBWork {
                     connection.commit();
                 }
             }
-
             preparedStatement.executeBatch();
             connection.commit();
+
         } catch (SQLException e) {
-            logger.error("Error during batch insertion", e);
+            logger.error("Error during batch insertion (SQLite)", e);
             try {
                 connection.rollback();
             } catch (SQLException rollbackEx) {
-                logger.error("Error during rollback", rollbackEx);
+                logger.error("Error during rollback (SQLite)", rollbackEx);
             }
-            throw new DatabaseException("Error during batch insertion", e);
+            throw new DatabaseException("Error during batch insertion (SQLite)", e);
         } finally {
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
                 } catch (SQLException e) {
-                    logger.error("Error closing PreparedStatement", e);
+                    logger.error("Error closing PreparedStatement (SQLite)", e);
                 }
             }
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
-                logger.error("Error resetting auto-commit", e);
+                logger.error("Error resetting auto-commit (SQLite)", e);
             }
         }
+    }
+
+    public record IslandData(int id, int regionX, int regionZ) {
     }
 }

@@ -43,7 +43,7 @@ public class Main extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        
+
         if (!initializeInterneAPI()) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;

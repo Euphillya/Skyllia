@@ -1,10 +1,11 @@
 package fr.euphyllia.skyllia.sgbd.mariadb.execute;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
 import fr.euphyllia.skyllia.sgbd.model.DBCallback;
 import fr.euphyllia.skyllia.sgbd.model.DBCallbackInt;
 import fr.euphyllia.skyllia.sgbd.model.DBWork;
+import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,13 +50,14 @@ public class MariaDBExecute {
      * <li>Otherwise, executes the query, invokes the callback if provided, and closes the connection before executing the callback.</li>
      * </ul>
      */
-    public static void executeQuery(DatabaseLoader pool, String query, List<?> param, DBCallback callback, DBWork work) throws DatabaseException {
-        if (pool == null) {
+    public static void executeQuery(DatabaseLoader databaseLoader, String query, List<?> param, DBCallback callback, DBWork work) throws DatabaseException {
+        if (databaseLoader == null) {
             throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
         }
+        MariaDBLoader pool = (MariaDBLoader) databaseLoader;
         Connection connection = null;
         try {
-            connection = pool.getMariaDBConnection();
+            connection = pool.getConnection();
             if (connection == null) {
                 throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
             }
@@ -98,13 +100,14 @@ public class MariaDBExecute {
      * <li>Otherwise, executes the DML query, invokes the callback if provided, and closes the connection before executing the callback.</li>
      * </ul>
      */
-    public static void executeQueryDML(DatabaseLoader pool, String query, List<?> param, DBCallbackInt callback, DBWork work) throws DatabaseException {
-        if (pool == null) {
+    public static void executeQueryDML(DatabaseLoader databaseLoader, String query, List<?> param, DBCallbackInt callback, DBWork work) throws DatabaseException {
+        if (databaseLoader == null) {
             throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
         }
+        MariaDBLoader pool = (MariaDBLoader) databaseLoader;
         Connection connection = null;
         try {
-            connection = pool.getMariaDBConnection();
+            connection = pool.getConnection();
             if (connection == null) {
                 throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
             }

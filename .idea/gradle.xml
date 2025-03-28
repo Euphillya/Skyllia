@@ -31,6 +31,7 @@
             <option value="$PROJECT_DIR$/plugin" />
           </set>
         </option>
+        <option name="resolveExternalAnnotations" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

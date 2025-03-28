@@ -71,7 +71,7 @@ generators:
 
 In this example, the default generator is set to "test". The generator named "test" will replace `cobblestone` and
 `stone` blocks in the `sky-overworld` world. It has an 80% chance to generate `cobblestone`, a 10% chance to generate
-`oraxen:ore` and  a 10% chance to generate `nexo:ore`.
+`oraxen:ore` and a 10% chance to generate `nexo:ore`.
 
 ## Usage
 

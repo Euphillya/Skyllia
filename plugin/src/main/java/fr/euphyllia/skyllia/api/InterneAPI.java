@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.Main;
-import fr.euphyllia.skyllia.api.configuration.ConfigInitializer;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
@@ -13,10 +12,12 @@ import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
+import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
+import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
+import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -28,9 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -163,7 +161,14 @@ public class InterneAPI {
     public boolean setupSGBD() throws DatabaseException {
         if (ConfigLoader.database.getMariaDBConfig() != null) {
             MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
-            this.database = new DatabaseLoader(mariaDB);
+            this.database = new MariaDBLoader(mariaDB);
+            if (!this.database.loadDatabase()) {
+                return false;
+            }
+            return getIslandQuery().getDatabaseInitializeQuery().init();
+        } else if (ConfigLoader.database.getSqLiteConfig() != null) {
+            SQLite sqlite = new SQLite(ConfigLoader.database.getSqLiteConfig());
+            this.database = new SQLiteDatabaseLoader(sqlite);
             if (!this.database.loadDatabase()) {
                 return false;
             }

@@ -50,14 +50,14 @@ public class DatabaseConfigManager implements ConfigManager {
         // SQlite
         boolean enabledSQlite = config.getOrElse("sqlite.enabled", false);
         if (enabledSQlite) {
-            if (true) throw new DatabaseException("SQLite is still not supported.");
-            String file = config.getOrElse("sqlite.file", "skyllia.db");
+            String file = config.getOrElse("sqlite.file", "plugins/Skyllia/data/skyllia.db");
             int minPool = config.getOrElse("sqlite.minPool", 1);
             int maxPool = config.getOrElse("sqlite.maxPool", 10);
             long keepAliveTime = config.getOrElse("sqlite.keepAliveTime", 0);
             long maxLifeTime = config.getOrElse("sqlite.maxLifeTime", 1800000);
             int timeOut = config.getOrElse("sqlite.timeOut", 30000);
             this.sqLiteConfig = new SQLiteConfig(file, minPool, maxPool, keepAliveTime, maxLifeTime, timeOut);
+            return;
         }
 
         throw new DatabaseException("No Database configured!");
