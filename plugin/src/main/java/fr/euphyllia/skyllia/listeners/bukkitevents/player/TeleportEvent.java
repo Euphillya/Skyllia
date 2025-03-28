@@ -3,13 +3,12 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.cache.CacheIsland;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -57,12 +56,12 @@ public class TeleportEvent implements Listener {
             Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
             if (island == null) {
                 event.setCancelled(true);
-                LanguageToml.sendMessage(event.getPlayer(), LanguageToml.messageVisitIslandIsPrivate);
+                ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.island-private");
                 return;
             }
-            if (CacheIsland.getIslandClosed(island.getId())) {
+            if (IslandClosedCache.isIslandClosed(island.getId())) {
                 event.setCancelled(true);
-                LanguageToml.sendMessage(event.getPlayer(), LanguageToml.messageVisitIslandIsPrivate);
+                ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.island-private");
             }
         };
         Bukkit.getRegionScheduler().execute(api.getPlugin(), to, task);
@@ -102,11 +101,11 @@ public class TeleportEvent implements Listener {
             WorldConfig worldConfig = WorldUtils.getWorldConfig(world.getName());
             if (worldConfig == null) return;
 
-            PortalConfig portalConfig = (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL)
-                    ? worldConfig.endPortal()
-                    : worldConfig.netherPortal();
+            String portalRedirectWorldName = (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL)
+                    ? worldConfig.getPortalEnd()
+                    : worldConfig.getPortalNether();
 
-            if (!portalConfig.enabled()) {
+            if (world.getName().equalsIgnoreCase(portalRedirectWorldName)) { // Identique world
                 event.setCancelled(true);
                 return;
             }

@@ -4,7 +4,7 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.utils.TPSFormatter;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -20,23 +20,23 @@ public class TPSSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.tps")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
         Location playerLocation = player.getLocation();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerIsNotOnAnIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
             return true;
         }
 
         double @Nullable [] tpsIsland = SkylliaAPI.getTPS(playerLocation);
         if (tpsIsland == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerIsNotOnAnIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
             return true;
         }
         player.sendMessage(TPSFormatter.displayTPS(tpsIsland).asComponent());

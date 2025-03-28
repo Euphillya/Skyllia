@@ -10,8 +10,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
-import fr.euphyllia.skyllia.cache.PermissionGameRuleInIslandCache;
-import fr.euphyllia.skyllia.cache.PermissionRoleInIslandCache;
+import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
+import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia_papi.hook.BankPlaceHolder;
 import fr.euphyllia.skyllia_papi.hook.OrePlaceHolder;
 import fr.euphyllia.skyllia_papi.hook.ValuePlaceHolder;
@@ -302,7 +302,7 @@ public class PlaceholderProcessor {
             return "Invalid GameRule";
         }
 
-        long permissionChecker = PermissionGameRuleInIslandCache.getGameruleInIsland(island.getId());
+        long permissionChecker = PermissionGameRuleInIslandCache.getGameRule(island.getId());
         PermissionManager permissionManager = new PermissionManager(permissionChecker);
 
         return String.valueOf(permissionManager.hasPermission(gameRuleIsland.getPermissionValue()));

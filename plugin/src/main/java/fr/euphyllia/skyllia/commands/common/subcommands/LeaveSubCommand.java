@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,11 +26,11 @@ public class LeaveSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.leave")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
@@ -38,14 +38,14 @@ public class LeaveSubCommand implements SubCommandInterface {
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
         Players players = island.getMember(player.getUniqueId());
 
         if (players.getRoleType().equals(RoleType.OWNER)) {
-            LanguageToml.sendMessage(player, LanguageToml.messageLeaveFailedIsOwnerIsland);
+            ConfigLoader.language.sendMessage(player, "island.leave.he-is-owner");
             return true;
         }
 
@@ -55,13 +55,13 @@ public class LeaveSubCommand implements SubCommandInterface {
 
             if (hasLeft) {
                 DeleteSubCommand.checkClearPlayer(Main.getPlugin(Main.class), skyblockManager, players, RemovalCause.LEAVE);
-                LanguageToml.sendMessage(player, LanguageToml.messageLeaveSuccess);
+                ConfigLoader.language.sendMessage(player, "island.leave.success");
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageLeavePlayerFailed);
+                ConfigLoader.language.sendMessage(player, "island.leave.failed");
             }
 
         } else {
-            LanguageToml.sendMessage(player, LanguageToml.messageLeaveConfirmation);
+            ConfigLoader.language.sendMessage(player, "island.leave.confirm");
         }
         return true;
     }

@@ -9,12 +9,11 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class KickSubCommand implements SubCommandInterface {
 
@@ -31,21 +29,21 @@ public class KickSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.kick")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageKickCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.kick.args-missing");
             return true;
         }
         SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
@@ -59,21 +57,21 @@ public class KickSubCommand implements SubCommandInterface {
         Players players = island.getMember(playerKick);
 
         if (players == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
+            ConfigLoader.language.sendMessage(player, "island.player.not-found");
             return true;
         }
 
         if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
-            LanguageToml.sendMessage(player, LanguageToml.messageKickPlayerFailedHighOrEqualsStatus);
+            ConfigLoader.language.sendMessage(player, "island.kick.high-rank");
             return true;
         }
 
         boolean isRemoved = island.removeMember(players);
         if (isRemoved) {
-            LanguageToml.sendMessage(player, LanguageToml.messageKickPlayerSuccess);
+            ConfigLoader.language.sendMessage(player, "island.kick.success");
             DeleteSubCommand.checkClearPlayer(Main.getPlugin(Main.class), skyblockManager, players, RemovalCause.KICKED);
         } else {
-            LanguageToml.sendMessage(player, LanguageToml.messageKickPlayerFailed);
+            ConfigLoader.language.sendMessage(player, "island.kick.failed");
         }
         return true;
     }

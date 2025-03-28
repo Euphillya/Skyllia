@@ -4,8 +4,9 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliaore.Main;
 import fr.euphyllia.skylliaore.api.Generator;
+import fr.euphyllia.skylliaore.hook.NexoHook;
+import fr.euphyllia.skylliaore.hook.OraxenHook;
 import fr.euphyllia.skylliaore.utils.OptimizedGenerator;
-import io.th0rgal.oraxen.api.OraxenBlocks;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
@@ -25,6 +26,7 @@ public class OreEvent implements Listener {
 
     private static final Logger log = LoggerFactory.getLogger(OreEvent.class);
     private static final boolean isOraxenLoaded = Main.isOraxenLoaded();
+    private static final boolean isNexoLoaded = Main.isNexoLoaded();
     private static final ConcurrentHashMap<String, BlockData> blockDataCache = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, OptimizedGenerator> optimizedGeneratorCache = new ConcurrentHashMap<>();
 
@@ -86,17 +88,18 @@ public class OreEvent implements Listener {
             try {
                 if (k.startsWith("oraxen:") && isOraxenLoaded) {
                     String oraxenBlock = k.substring("oraxen:".length());
-                    BlockData data = OraxenBlocks.getOraxenBlockData(oraxenBlock);
+                    BlockData data = OraxenHook.getBlockData(oraxenBlock);
                     if (data != null) return data;
-                } else {
-                    return Material.valueOf(k.toUpperCase()).createBlockData();
+                } else if (k.startsWith("nexo") && isNexoLoaded) {
+                    String nexoBlock = k.substring("nexo:".length());
+                    BlockData data = NexoHook.getBlockData(nexoBlock);
+                    if (data != null) return data;
                 }
+                return Material.valueOf(k.toUpperCase()).createBlockData();
             } catch (Exception e) {
-                if (log.isErrorEnabled()) {
-                    log.error("{} is not a valid block in Minecraft or Oraxen", k);
-                }
+                log.error("{} is not a valid block in Minecraft, Oraxen or Nexo", k, e);
+                return Material.COBBLESTONE.createBlockData();
             }
-            return Material.COBBLESTONE.createBlockData();
         });
     }
 }

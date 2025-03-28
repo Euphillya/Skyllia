@@ -66,6 +66,20 @@ public class RegionHelper {
     }
 
     /**
+     * Gets the region position (regionX, regionZ) from a {@link Location}.
+     * <p>This method converts the location to chunk coordinates, then determines
+     * the region by dividing by 32 (using bit shifting: {@code >> 5}).</p>
+     *
+     * @param location The Bukkit {@link Location} (block coordinates).
+     * @return A {@link Position} representing the region (regionX, regionZ).
+     */
+    public static Position getRegionFromLocation(Location location) {
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        return getRegionFromChunk(chunkX, chunkZ);
+    }
+
+    /**
      * Overload for {@link #getRegionFromChunk(int, int)} using a {@link Position} for chunk coordinates.
      *
      * @param chunk A {@link Position} representing chunk coordinates.

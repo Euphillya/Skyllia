@@ -1,0 +1,20 @@
+suppress-warning-nether-end = false
+
+# [worlds.[nom du monde]]
+[worlds.sky-overworld]
+environment = "NORMAL"
+portal-nether = "sky-nether"
+portal-end = "sky-end"
+generator = "default"
+
+[worlds.sky-nether]
+environment = "NETHER"
+portal-nether = "sky-overworld"
+portal-end = "sky-end"
+generator = "default"
+
+[worlds.sky-end]
+environment = "THE_END"
+portal-nether = "sky-nether"
+portal-end = "sky-overworld"
+generator = "default"

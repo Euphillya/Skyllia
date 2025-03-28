@@ -1,0 +1,24 @@
+config-version = 4
+verbose = false
+
+[settings.global.cache]
+update-timer-seconds = 30
+
+[settings.island]
+region-distance = 10
+max-islands = 500_000
+
+[settings.island.delete]
+prevent-deletion-if-has-members = true
+
+[settings.spawn]
+enable = true
+world-name = "world"
+block-x = 0.0
+block-y = 0.0
+block-z = 0.0
+yaw = 0.0
+pitch = 0.0
+
+[debug]
+permission = false

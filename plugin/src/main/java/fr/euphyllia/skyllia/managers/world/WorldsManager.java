@@ -1,19 +1,19 @@
 package fr.euphyllia.skyllia.managers.world;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import fr.euphyllia.skyllia.utils.generators.VoidWorldGen;
 import net.kyori.adventure.util.TriState;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Random;
 
@@ -27,13 +27,28 @@ public class WorldsManager {
     }
 
     public void initWorld() {
-        ChunkGenerator chunkGenerator = new VoidWorldGen();
-        for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-            WorldCreator worldCreator = new WorldCreator(worldConfig.name());
-            worldCreator.generator(chunkGenerator);
+
+        ConfigLoader.worldManager.getWorldConfigs().forEach((name, worldConfig) -> {
+            WorldCreator worldCreator = new WorldCreator(name);
+
+            String generatorId = worldConfig.getGenerator();
+            if (generatorId.equalsIgnoreCase("default")) {
+                worldCreator.generator(new VoidWorldGen());
+            } else {
+                Plugin plugin = Bukkit.getPluginManager().getPlugin(generatorId);
+                if (plugin == null) {
+                    String message = String.format(
+                            "[WorldInit] Failed to load world \"%s\": generator plugin \"%s\" not found. " +
+                                    "Please ensure the plugin providing this generator is installed.",
+                            name, generatorId
+                    );
+                    throw new IllegalArgumentException(message);
+                }
+            }
+
             worldCreator.type(WorldType.FLAT);
             worldCreator.seed(new Random(System.currentTimeMillis()).nextLong());
-            worldCreator.environment(World.Environment.valueOf(worldConfig.environment().toUpperCase()));
+            worldCreator.environment(worldConfig.getEnvironment());
             World w;
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia
@@ -52,6 +67,6 @@ public class WorldsManager {
                 w.setAutoSave(true);
                 w.setSpawnLocation(0, 62, 0);
             }
-        }
+        });
     }
 }

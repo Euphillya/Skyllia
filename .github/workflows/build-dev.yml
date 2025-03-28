@@ -1,5 +1,12 @@
 name: Build Skyllia
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
 jobs:
   skyllia-dev:
     runs-on: ubuntu-22.04

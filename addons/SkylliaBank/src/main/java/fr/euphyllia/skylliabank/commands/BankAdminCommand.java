@@ -4,9 +4,9 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
 import fr.euphyllia.skylliabank.EconomyManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +29,7 @@ public class BankAdminCommand implements SubCommandInterface {
     private static final Logger log = LogManager.getLogger(BankAdminCommand.class);
     private final Plugin plugin;
     private final Economy economy;
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public BankAdminCommand(Plugin plugin) {
         this.plugin = plugin;
@@ -38,12 +39,11 @@ public class BankAdminCommand implements SubCommandInterface {
     private void handleBalance(CommandSender sender, String[] args) {
         // usageBalance
         if (args.length < 2) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
                             "admin.usageBalance",
                             "<yellow>Usage: /skylliadmin bank balance <player>"
-                    )
+                    ))
             );
             return;
         }
@@ -53,13 +53,12 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // playerNotFound
         if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotFound",
-                            "<red>The player does not exist or was not found."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotFound",
+                                    "<red>The player does not exist or was not found."
+                            )
+                    ));
             return;
         }
 
@@ -68,26 +67,24 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // error
         if (islandFuture == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "error",
-                            "<red>An error has occurred."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "error",
+                                    "<red>An error has occurred."
+                            )
+                    ));
             return;
         }
 
         Island island = islandFuture.join();
         // playerNotIsland
         if (island == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotIsland",
-                            "<red>The player has no island."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotIsland",
+                                    "<red>The player has no island."
+                            )
+                    ));
             return;
         }
 
@@ -105,7 +102,7 @@ public class BankAdminCommand implements SubCommandInterface {
                     String msg = msgTemplate
                             .replace("{player_name}", offlinePlayer.getName())
                             .replace("{amount}", economy.format(bankAccount.balance()));
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 } else {
                     // islandErrorBalance
                     String msgTemplate = SkylliaBank.getConfiguration().getString(
@@ -113,7 +110,7 @@ public class BankAdminCommand implements SubCommandInterface {
                             "<red>Unable to recover {player_name}'s Island balance."
                     );
                     String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 }
             }).exceptionally(ex -> {
                 String msgTemplate = SkylliaBank.getConfiguration().getString(
@@ -121,7 +118,7 @@ public class BankAdminCommand implements SubCommandInterface {
                         "<red>Unable to recover {player_name}'s Island balance."
                 );
                 String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                LanguageToml.sendMessage(sender, msg);
+                sender.sendMessage(miniMessage.deserialize(msg));
                 log.error("An error occurred while getting island balance of {}: {}", offlinePlayer.getName(), ex.getMessage());
                 return null;
             });
@@ -131,13 +128,12 @@ public class BankAdminCommand implements SubCommandInterface {
     private void handleDeposit(CommandSender sender, String[] args) {
         // usageDeposit
         if (args.length < 3) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.usageDeposit",
-                            "<yellow>Usage: /skylliadmin bank deposit <player> <amount>"
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.usageDeposit",
+                                    "<yellow>Usage: /skylliadmin bank deposit <player> <amount>"
+                            )
+                    ));
             return;
         }
 
@@ -146,13 +142,12 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // playerNotFound
         if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotFound",
-                            "<red>The player does not exist or was not found."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotFound",
+                                    "<red>The player does not exist or was not found."
+                            )
+                    ));
             return;
         }
 
@@ -161,26 +156,24 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // error
         if (islandFuture == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "error",
-                            "<red>An error has occurred."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "error",
+                                    "<red>An error has occurred."
+                            )
+                    ));
             return;
         }
 
         Island island = islandFuture.join();
         // playerNotIsland
         if (island == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotIsland",
-                            "<red>The player has no island."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotIsland",
+                                    "<red>The player has no island."
+                            )
+                    ));
             return;
         }
 
@@ -189,24 +182,22 @@ public class BankAdminCommand implements SubCommandInterface {
             amount = Double.parseDouble(args[2]);
             if (amount <= 0) {
                 // invalidAmountPositive
-                LanguageToml.sendMessage(
-                        sender,
-                        SkylliaBank.getConfiguration().getString(
-                                "admin.invalidAmountPositive",
-                                "<red>Invalid amount. Must be positive."
-                        )
-                );
+                sender.sendMessage(
+                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                        "admin.invalidAmountPositive",
+                                        "<red>Invalid amount. Must be positive."
+                                )
+                        ));
                 return;
             }
         } catch (NumberFormatException e) {
             // invalidAmount
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.invalidAmount",
-                            "<red>Invalid amount."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.invalidAmount",
+                                    "<red>Invalid amount."
+                            )
+                    ));
             return;
         }
 
@@ -222,7 +213,7 @@ public class BankAdminCommand implements SubCommandInterface {
                     String msg = msgTemplate
                             .replace("%amount%", economy.format(amount))
                             .replace("{player_name}", offlinePlayer.getName());
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 } else {
                     // depositError
                     String msgTemplate = SkylliaBank.getConfiguration().getString(
@@ -230,17 +221,16 @@ public class BankAdminCommand implements SubCommandInterface {
                             "<red>An error occurred while depositing to {player_name}'s island bank."
                     );
                     String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 }
             }).exceptionally(ex -> {
                 log.error("Error depositing to island bank for {}: {}", offlinePlayer.getName(), ex.getMessage());
-                LanguageToml.sendMessage(
-                        sender,
-                        SkylliaBank.getConfiguration().getString(
-                                "error",
-                                "<red>An error has occurred."
-                        )
-                );
+                sender.sendMessage(
+                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                        "error",
+                                        "<red>An error has occurred."
+                                )
+                        ));
                 return null;
             });
         });
@@ -249,13 +239,12 @@ public class BankAdminCommand implements SubCommandInterface {
     private void handleWithdraw(CommandSender sender, String[] args) {
         // usageWithdraw
         if (args.length < 3) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.usageWithdraw",
-                            "<yellow>Usage: /skylliadmin bank withdraw <player> <amount>"
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.usageWithdraw",
+                                    "<yellow>Usage: /skylliadmin bank withdraw <player> <amount>"
+                            )
+                    ));
             return;
         }
 
@@ -264,13 +253,12 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // playerNotFound
         if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotFound",
-                            "<red>The player does not exist or was not found."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotFound",
+                                    "<red>The player does not exist or was not found."
+                            )
+                    ));
             return;
         }
 
@@ -279,26 +267,24 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // error
         if (islandFuture == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "error",
-                            "<red>An error has occurred."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "error",
+                                    "<red>An error has occurred."
+                            )
+                    ));
             return;
         }
 
         Island island = islandFuture.join();
         // playerNotIsland
         if (island == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotIsland",
-                            "<red>The player has no island."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotIsland",
+                                    "<red>The player has no island."
+                            )
+                    ));
             return;
         }
 
@@ -307,24 +293,22 @@ public class BankAdminCommand implements SubCommandInterface {
             amount = Double.parseDouble(args[2]);
             if (amount <= 0) {
                 // invalidAmountPositive
-                LanguageToml.sendMessage(
-                        sender,
-                        SkylliaBank.getConfiguration().getString(
-                                "admin.invalidAmountPositive",
-                                "<red>Invalid amount. Must be positive."
-                        )
-                );
+                sender.sendMessage(
+                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                        "admin.invalidAmountPositive",
+                                        "<red>Invalid amount. Must be positive."
+                                )
+                        ));
                 return;
             }
         } catch (NumberFormatException e) {
             // invalidAmount
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.invalidAmount",
-                            "<red>Invalid amount."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.invalidAmount",
+                                    "<red>Invalid amount."
+                            )
+                    ));
             return;
         }
 
@@ -340,7 +324,7 @@ public class BankAdminCommand implements SubCommandInterface {
                     String msg = msgTemplate
                             .replace("%amount%", economy.format(amount))
                             .replace("{player_name}", offlinePlayer.getName());
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 } else {
                     // errorWithdraw
                     String msgTemplate = SkylliaBank.getConfiguration().getString(
@@ -348,17 +332,16 @@ public class BankAdminCommand implements SubCommandInterface {
                             "<red>An error occurred while withdrawing from {player_name}'s island bank."
                     );
                     String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 }
             }).exceptionally(ex -> {
                 log.error("Error withdrawing from island bank for {}: {}", offlinePlayer.getName(), ex.getMessage());
-                LanguageToml.sendMessage(
-                        sender,
-                        SkylliaBank.getConfiguration().getString(
-                                "error",
-                                "<red>An error has occurred."
-                        )
-                );
+                sender.sendMessage(
+                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                        "error",
+                                        "<red>An error has occurred."
+                                )
+                        ));
                 return null;
             });
         });
@@ -367,13 +350,12 @@ public class BankAdminCommand implements SubCommandInterface {
     private void handleSetBalance(CommandSender sender, String[] args) {
         // usageSetBalance
         if (args.length < 3) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.usageSetBalance",
-                            "<yellow>Usage: /skylliadmin bank setbalance <player> <amount>"
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.usageSetBalance",
+                                    "<yellow>Usage: /skylliadmin bank setbalance <player> <amount>"
+                            )
+                    ));
             return;
         }
 
@@ -382,13 +364,12 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // playerNotFound
         if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotFound",
-                            "<red>The player does not exist or was not found."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotFound",
+                                    "<red>The player does not exist or was not found."
+                            )
+                    ));
             return;
         }
 
@@ -397,26 +378,24 @@ public class BankAdminCommand implements SubCommandInterface {
 
         // error
         if (islandFuture == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "error",
-                            "<red>An error has occurred."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "error",
+                                    "<red>An error has occurred."
+                            )
+                    ));
             return;
         }
 
         Island island = islandFuture.join();
         // playerNotIsland
         if (island == null) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.playerNotIsland",
-                            "<red>The player has no island."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.playerNotIsland",
+                                    "<red>The player has no island."
+                            )
+                    ));
             return;
         }
 
@@ -424,23 +403,21 @@ public class BankAdminCommand implements SubCommandInterface {
         try {
             amount = Double.parseDouble(args[2]);
             if (amount < 0) {
-                LanguageToml.sendMessage(
-                        sender,
-                        SkylliaBank.getConfiguration().getString(
-                                "admin.invalidAmountNegative",
-                                "<red>Amount cannot be negative."
-                        )
-                );
+                sender.sendMessage(
+                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                        "admin.invalidAmountNegative",
+                                        "<red>Amount cannot be negative."
+                                )
+                        ));
                 return;
             }
         } catch (NumberFormatException e) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "admin.invalidAmount",
-                            "<red>Invalid amount."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "admin.invalidAmount",
+                                    "<red>Invalid amount."
+                            )
+                    ));
             return;
         }
 
@@ -456,7 +433,7 @@ public class BankAdminCommand implements SubCommandInterface {
                     String msg = msgTemplate
                             .replace("{player_name}", offlinePlayer.getName())
                             .replace("%amount%", economy.format(amount));
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 } else {
                     // setBalanceError
                     String msgTemplate = SkylliaBank.getConfiguration().getString(
@@ -464,17 +441,16 @@ public class BankAdminCommand implements SubCommandInterface {
                             "<red>An error occurred while setting {player_name}'s island balance."
                     );
                     String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    LanguageToml.sendMessage(sender, msg);
+                    sender.sendMessage(miniMessage.deserialize(msg));
                 }
             }).exceptionally(ex -> {
                 log.error("Error setting island balance for player {}: {}", offlinePlayer.getName(), ex.getMessage());
-                LanguageToml.sendMessage(
-                        sender,
-                        SkylliaBank.getConfiguration().getString(
-                                "error",
-                                "<red>An error has occurred."
-                        )
-                );
+                sender.sendMessage(
+                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                        "error",
+                                        "<red>An error has occurred."
+                                )
+                        ));
                 return null;
             });
         });
@@ -484,23 +460,19 @@ public class BankAdminCommand implements SubCommandInterface {
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         // noPermission
         if (!PermissionImp.hasPermission(sender, "skyllia.bank.admin")) {
-            LanguageToml.sendMessage(
-                    sender,
-                    SkylliaBank.getConfiguration().getString(
-                            "noPermission",
-                            "<red>You do not have permission to perform this action."
-                    )
-            );
+            sender.sendMessage(
+                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
+                                    "noPermission",
+                                    "<red>You do not have permission to perform this action."
+                            )
+                    ));
             return true;
         }
 
         // /skylliadmin bank ...
         if (args.length == 0) {
-            // commande inconnue => petit rappel
-            LanguageToml.sendMessage(
-                    sender,
-                    "<yellow>Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"
-            );
+            // commande inconnue → petit rappel
+            sender.sendMessage(miniMessage.deserialize("<yellow>Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"));
             return true;
         }
 
@@ -510,10 +482,8 @@ public class BankAdminCommand implements SubCommandInterface {
             case "deposit" -> handleDeposit(sender, args);
             case "withdraw" -> handleWithdraw(sender, args);
             case "setbalance" -> handleSetBalance(sender, args);
-            default -> LanguageToml.sendMessage(
-                    sender,
-                    "<yellow>Unknown command. Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"
-            );
+            default ->
+                    sender.sendMessage(miniMessage.deserialize("<yellow>Unknown command. Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"));
         }
         return true;
     }
