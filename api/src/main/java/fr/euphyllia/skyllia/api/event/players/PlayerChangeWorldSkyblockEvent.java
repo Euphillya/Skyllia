@@ -1,6 +1,5 @@
-package fr.euphyllia.skyllia.api.event;
+package fr.euphyllia.skyllia.api.event.players;
 
-import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
