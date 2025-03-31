@@ -16,7 +16,6 @@ public class PlayerConfigManager implements ConfigManager {
     private boolean resetExperienceWhenDelete;
     private boolean teleportOwnIslandOnJoin;
     private boolean teleportSpawnIfNoIsland;
-    private boolean changeGameModeOnTeleport;
     private boolean grantPermissions;
     private boolean allowTeleportation;
     private boolean preserveInventoryOnLogout;
@@ -43,7 +42,6 @@ public class PlayerConfigManager implements ConfigManager {
         this.teleportOwnIslandOnJoin = config.getOrElse("player.join.teleport.own-island", true);
         this.teleportSpawnIfNoIsland = config.getOrElse("player.join.teleport.spawn-not-island", false);
 
-        this.changeGameModeOnTeleport = config.getOrElse("player.island.teleport.change-gamemode", false);
         this.grantPermissions = config.getOrElse("player.permissions.grant-permissions", true);
         this.allowTeleportation = config.getOrElse("player.permissions.allow-teleportation", true);
         this.preserveInventoryOnLogout = config.getOrElse("player.inventory.preserve-inventory-on-logout", true);
@@ -91,10 +89,6 @@ public class PlayerConfigManager implements ConfigManager {
 
     public boolean isTeleportSpawnIfNoIsland() {
         return teleportSpawnIfNoIsland;
-    }
-
-    public boolean isChangeGameModeOnTeleport() {
-        return changeGameModeOnTeleport;
     }
 
     public boolean isGrantPermissions() {

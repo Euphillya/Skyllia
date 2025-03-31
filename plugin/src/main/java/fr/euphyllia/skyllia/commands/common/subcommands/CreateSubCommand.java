@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.api.entity.PlayerFolia;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -56,8 +55,6 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
         GameMode olgGM = player.getGameMode();
-        if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
-            PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
         try {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
@@ -114,8 +111,6 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.setPermissionsRole(islandAtomic.get());
                         centerPaste.setY(centerPaste.getY() + 0.5);
                         player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
-                            PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                         this.addOwnerIslandInMember(islandAtomic.get(), player);
                         Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                         CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(islandAtomic.get())));
@@ -130,7 +125,6 @@ public class CreateSubCommand implements SubCommandInterface {
         } catch (Exception e) {
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");
             logger.log(Level.WARN, e.getMessage(), e);
-            if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) PlayerFolia.setGameMode(player, olgGM);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
         CommandCacheExecution.removeCommandExec(player.getUniqueId(), "create");

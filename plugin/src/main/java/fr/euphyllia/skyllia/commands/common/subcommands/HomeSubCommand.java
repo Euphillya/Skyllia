@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.api.entity.PlayerFolia;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -47,8 +46,6 @@ public class HomeSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
-            if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
-                PlayerFolia.setGameMode(player, GameMode.SPECTATOR);
 
             WarpIsland warpIsland = island.getWarpByName("home");
             double rayon = island.getSize();
@@ -62,8 +59,6 @@ public class HomeSubCommand implements SubCommandInterface {
                 }
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                if (ConfigLoader.playerManager.isChangeGameModeOnTeleport())
-                    PlayerFolia.setGameMode(player, GameMode.SURVIVAL);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                 ConfigLoader.language.sendMessage(player, "island.home.success");
             }, null, 1L);

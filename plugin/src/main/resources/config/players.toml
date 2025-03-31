@@ -8,10 +8,6 @@ clear-enderchest = true
 # Détermine si l'expérience du joueur est réinitialisée lorsqu'il quitte son île
 clear-experience = true
 
-[player.island.teleport]
-# Permet de changer le mode de jeu du joueur lors de son téléportation sur une île
-change-gamemode = false
-
 [player.island.kicked]
 # Détermine si l'inventaire du joueur est vidé lorsqu'il est expulsé de l'île
 clear-inventory = false

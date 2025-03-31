@@ -79,7 +79,6 @@ public class VisitSubCommand implements SubCommandInterface {
 
             WarpIsland warpIsland = island.getWarpByName("home");
             player.getScheduler().execute(plugin, () -> {
-                if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) player.setGameMode(GameMode.SPECTATOR);
                 Location loc;
                 if (warpIsland == null) {
                     loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getPosition().x(), island.getPosition().z());
@@ -89,7 +88,6 @@ public class VisitSubCommand implements SubCommandInterface {
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
-                if (ConfigLoader.playerManager.isChangeGameModeOnTeleport()) player.setGameMode(GameMode.SURVIVAL);
                 ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
                         "%player%", visitPlayer));
             }, null, 1L);
