@@ -133,18 +133,12 @@ public class RegionHelper {
      * @return A list of {@link Position} objects representing all regions in that bounding range.
      */
     public static List<Position> getRegionsWithinBlockRange(int regionX, int regionZ, int blockRange) {
-        int centerBlockX = (regionX << 9) + (int) REGION_HALF_SIZE;
-        int centerBlockZ = (regionZ << 9) + (int) REGION_HALF_SIZE;
-
         // Convert (blockRange + regionHalfSize) to a region-based radius
-        int regionRadius = (blockRange + (int) REGION_HALF_SIZE) >> 9; // /512
-
-        List<Position> regions = new ArrayList<>();
+        int regionRadius = (blockRange + (int) REGION_HALF_SIZE) >> 9;
+        List<Position> regions = new ArrayList<>((2 * regionRadius + 1) * (2 * regionRadius + 1));
         for (int x = -regionRadius; x <= regionRadius; x++) {
             for (int z = -regionRadius; z <= regionRadius; z++) {
-                int neighborRegionX = (centerBlockX >> 9) + x; // re-convert block -> region
-                int neighborRegionZ = (centerBlockZ >> 9) + z; // re-convert block -> region
-                regions.add(new Position(neighborRegionX, neighborRegionZ));
+                regions.add(new Position(regionX + x, regionZ + z));
             }
         }
         return regions;

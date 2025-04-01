@@ -176,7 +176,7 @@ public class RegionUtils {
         int maxIterations = (int) Math.pow(33 * regionDistance, 2);
 
         // Retrieve all regions within the specified block size around the island region
-        List<Position> validRegions = RegionHelper.getRegionsWithinBlockRange(islandRegion, (int) Math.round(size));
+        Set<Position> validRegions = new HashSet<>(RegionHelper.getRegionsWithinBlockRange(islandRegion, (int) Math.round(size)));
 
         // We'll track visited regions to avoid repeated checks
         Set<Position> visitedRegions = new HashSet<>();
