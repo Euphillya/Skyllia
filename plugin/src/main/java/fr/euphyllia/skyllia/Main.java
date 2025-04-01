@@ -29,6 +29,8 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        printStartupBanner();
         File oldConfig = new File(getDataFolder(), "config.toml");
         if (oldConfig.exists()) {
             getLogger().severe("══════════════════════════════════════════════════════");
@@ -145,4 +147,29 @@ public class Main extends JavaPlugin {
             }
         }
     }
+
+    private void printStartupBanner() {
+        String pluginName = getPluginMeta().getName();
+        String pluginVersion = getPluginMeta().getVersion();
+        String description = getPluginMeta().getDescription();
+        String serverType = Bukkit.getName(); // ex: Bloom, Paper
+        String serverVersion = Bukkit.getVersion();
+        String threadModel = VersionUtils.IS_FOLIA ? "Folia (multi-thread)" : "Vanilla (single-thread)";
+        int cpuCores = Runtime.getRuntime().availableProcessors();
+
+        String violet = "§d";
+        String gray = "§7";
+        String white = "§f";
+        String separator = violet + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+
+        Bukkit.getConsoleSender().sendMessage(separator);
+        Bukkit.getConsoleSender().sendMessage(violet + "           %s - %s".formatted(pluginName, description));
+        Bukkit.getConsoleSender().sendMessage(separator);
+        Bukkit.getConsoleSender().sendMessage(gray + " » " + white + "Version: " + violet + pluginVersion);
+        Bukkit.getConsoleSender().sendMessage(gray + " » " + white + "Server: " + violet + serverType + white + " (" + violet + serverVersion + white + ")");
+        Bukkit.getConsoleSender().sendMessage(gray + " » " + white + "Thread Model: " + violet + threadModel);
+        Bukkit.getConsoleSender().sendMessage(gray + " » " + white + "CPU Cores: " + violet + cpuCores);
+        Bukkit.getConsoleSender().sendMessage(separator);
+    }
+
 }
