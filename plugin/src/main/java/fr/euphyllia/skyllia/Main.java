@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import net.md_5.bungee.api.ChatColor;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -163,7 +164,7 @@ public class Main extends JavaPlugin {
         String separator = violet + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
 
         Bukkit.getConsoleSender().sendMessage(separator);
-        Bukkit.getConsoleSender().sendMessage(violet + "           %s - %s".formatted(pluginName, description));
+        Bukkit.getConsoleSender().sendMessage(violet + center(pluginName + " - " + description, 50));
         Bukkit.getConsoleSender().sendMessage(separator);
         Bukkit.getConsoleSender().sendMessage(gray + " » " + white + "Version: " + violet + pluginVersion);
         Bukkit.getConsoleSender().sendMessage(gray + " » " + white + "Server: " + violet + serverType + white + " (" + violet + serverVersion + white + ")");
@@ -172,4 +173,9 @@ public class Main extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(separator);
     }
 
+    private String center(String text, int lineWidth) {
+        int textLength = ChatColor.stripColor(text).length();
+        int padding = (lineWidth - textLength) / 2;
+        return " ".repeat(Math.max(0, padding)) + text;
+    }
 }

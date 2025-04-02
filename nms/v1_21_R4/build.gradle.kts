@@ -10,6 +10,7 @@ paperweight {
 dependencies {
     paperweight.paperDevBundle("1.21.5-no-moonrise-SNAPSHOT")
     compileOnly(project(":api"))
+    compileOnly(project(":nms:v1_21_R3"))
 }
 
 
