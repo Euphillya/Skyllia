@@ -16,7 +16,7 @@ timeOut = 5_000
 
 [sqlite]
 enabled = true
-file = "plugins/Skyllia/data/skyllia.db"
+file = "plugins/Skyllia/skyllia.db"
 minPool = 1
 maxPool = 10
 keepAliveTime = 0
