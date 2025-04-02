@@ -8,7 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -31,15 +31,15 @@ public class WarpSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageWarpCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.warp.args-missing");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.warp")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
@@ -49,7 +49,7 @@ public class WarpSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
@@ -61,17 +61,17 @@ public class WarpSubCommand implements SubCommandInterface {
 
             WarpIsland warp = island.getWarpByName(warpName);
             if (warp == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messageWarpNotExist);
+                ConfigLoader.language.sendMessage(player, "island.warp.warp-not-exist");
                 return true;
             }
 
             Location warpLocation = warp.location();
             warpLocation.setY(warpLocation.getY() + 0.5);
             player.teleportAsync(warpLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            LanguageToml.sendMessage(player, LanguageToml.messageWarpTeleportSuccess);
+            ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
 
 
@@ -82,7 +82,8 @@ public class WarpSubCommand implements SubCommandInterface {
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (PermissionImp.hasPermission(sender, "skyllia.island.command.warp") && sender instanceof Player player) {
             if (args.length == 1) {
-                List<String> warpList = CacheCommands.warpTabCompleteCache.getUnchecked(player.getUniqueId());
+                List<String> warpList = CacheCommands.warpTabCompleteCache.getIfPresent(player.getUniqueId());
+                if (warpList == null || warpList.isEmpty()) return Collections.emptyList();
                 String partial = args[0].trim().toLowerCase();
                 return warpList.stream()
                         .filter(warp -> warp.toLowerCase().startsWith(partial))

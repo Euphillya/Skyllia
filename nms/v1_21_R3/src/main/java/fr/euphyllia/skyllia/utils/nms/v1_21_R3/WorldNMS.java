@@ -291,7 +291,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         return getTPSFromRegion(world, x, z);
     }
 
-    private double[] getTPSFromRegion(ServerLevel world, int x, int z) {
+    public static double[] getTPSFromRegion(ServerLevel world, int x, int z) {
         io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
                 region = world.regioniser.getRegionAtSynchronised(x, z);
         if (region == null) {

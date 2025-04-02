@@ -3,7 +3,7 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.paper;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import io.papermc.paper.event.entity.EntityInsideBlockEvent;
 import org.apache.logging.log4j.LogManager;
@@ -32,31 +32,21 @@ public class PortalAlternativePaperEvent implements Listener {
             World world = block.getWorld();
             if (!SkylliaAPI.isWorldSkyblock(world)) return;
             Material blockType = block.getType();
-            switch (blockType) {
-                case NETHER_PORTAL -> {
-                    event.setCancelled(true);
-                    for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                        if (worldConfig.name().equalsIgnoreCase(world.getName())) {
-                            if (worldConfig.netherPortal().enabled()) {
-                                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, world.getName());
-                            }
-                            break;
-                        }
-                    }
-                }
-                case END_PORTAL -> {
-                    event.setCancelled(true);
-                    for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                        if (worldConfig.name().equalsIgnoreCase(world.getName())) {
-                            if (worldConfig.endPortal().enabled()) {
-                                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(player, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, world.getName());
-                            }
-                            break;
-                        }
-                    }
-                }
+            WorldConfig worldConfig = ConfigLoader.worldManager.getWorldConfig(world.getName());
+            if (blockType.equals(Material.NETHER_PORTAL)) {
+                if (worldConfig.getPortalEnd().equalsIgnoreCase(world.getName())) return;
+                if (!player.hasPermission("skyllia.use.portal.nether")) return;
+                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(
+                        player, worldConfig, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, event
+                );
             }
-
+            if (blockType.equals(Material.END_PORTAL)) {
+                if (worldConfig.getPortalEnd().equalsIgnoreCase(world.getName())) return;
+                if (!player.hasPermission("skyllia.use.portal.end")) return;
+                ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(
+                        player, worldConfig, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, event
+                );
+            }
         }
     }
 }

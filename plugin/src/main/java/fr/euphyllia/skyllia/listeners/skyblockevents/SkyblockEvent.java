@@ -3,15 +3,15 @@ package fr.euphyllia.skyllia.listeners.skyblockevents;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.configuration.PortalConfig;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.*;
+import fr.euphyllia.skyllia.api.event.players.PlayerChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -39,12 +39,12 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockCreate(final SkyblockCreateEvent event) {
-        this.api.getCacheManager().updateCacheIsland(event.getIsland(), event.getOwnerId());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSkyblockChangePermission(final SkyblockChangePermissionEvent event) {
-        this.api.getCacheManager().updatePermissionCacheIsland(event.getIsland());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -68,7 +68,7 @@ public class SkyblockEvent implements Listener {
     public void onSkyblockLoad(final SkyblockLoadEvent event) {
         Players players = this.api.getSkyblockManager().getOwnerByIslandID(event.getIsland()).join();
         if (players == null) return;
-        this.api.getCacheManager().updateCacheIsland(event.getIsland(), players.getMojangId());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
     @EventHandler
@@ -86,56 +86,114 @@ public class SkyblockEvent implements Listener {
     private void teleportOtherWorld(Player player, PlayerPrepareChangeWorldSkyblockEvent event, PermissionsIsland permissionsIsland) {
         Island island = ListenersUtils.checkPermission(player.getLocation(), player, permissionsIsland, event);
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return;
         }
-        try {
-            WorldConfig worldConfig = event.getWorldConfig();
-            PortalConfig portalConfig;
-            if (permissionsIsland.equals(PermissionsIsland.USE_NETHER_PORTAL)) {
-                portalConfig = worldConfig.netherPortal();
-            } else if (permissionsIsland.equals(PermissionsIsland.USE_END_PORTAL)) {
-                portalConfig = worldConfig.endPortal();
-            } else {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
-                return;
-            }
-            if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalConfig.direction()))) {
-                logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(portalConfig.direction()));
-                return;
-            }
-            World world = Bukkit.getWorld(portalConfig.direction());
-            if (world == null) {
-                logger.log(Level.ERROR, "The %s world is not loaded or not exist!".formatted(portalConfig.direction()));
-                return;
-            }
-            Location playerLocation = player.getLocation();
-            Location futurLocation = new Location(world, playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
-            Bukkit.getRegionScheduler().execute(SkylliaAPI.getPlugin(), futurLocation, () -> {
-                int y = world.getMinHeight();
-                while (!WorldUtils.isSafeLocation(futurLocation)) {
-                    if (futurLocation.getBlockY() >= world.getMaxHeight()) return;
-                    futurLocation.setY(y++);
-                }
-                PlayerChangeWorldSkyblockEvent worldSkyblockEvent = new PlayerChangeWorldSkyblockEvent(player, event.getPortalType(), futurLocation, true);
-                Bukkit.getPluginManager().callEvent(worldSkyblockEvent);
-                if (!worldSkyblockEvent.checkSafeLocation() || WorldUtils.isSafeLocation(worldSkyblockEvent.getTo())) {
-                    player.teleportAsync(worldSkyblockEvent.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    this.api.getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player,
-                            RegionHelper.getCenterRegion(worldSkyblockEvent.getTo().getWorld(), island.getPosition().x(), island.getPosition().z()),
-                            island.getSize(), 0, 0);
-                } else {
-                    LanguageToml.sendMessage(player, LanguageToml.messageLocationNotSafe);
-                }
-            });
-        } catch (Exception e) {
-            logger.log(Level.ERROR, e.getMessage(), e);
+
+        WorldConfig worldConfig = event.getWorldConfig();
+        String portalRedirectWorldName;
+
+        if (permissionsIsland.equals(PermissionsIsland.USE_NETHER_PORTAL)) {
+            portalRedirectWorldName = worldConfig.getPortalNether();
+        } else if (permissionsIsland.equals(PermissionsIsland.USE_END_PORTAL)) {
+            portalRedirectWorldName = worldConfig.getPortalEnd();
+        } else {
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
+            return;
         }
+
+        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalRedirectWorldName))) {
+            logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(portalRedirectWorldName));
+            return;
+        }
+
+        World world = Bukkit.getWorld(portalRedirectWorldName);
+        if (world == null) {
+            logger.log(Level.ERROR, "The %s world is not loaded or does not exist!".formatted(portalRedirectWorldName));
+            return;
+        }
+
+        Location playerLocation = player.getLocation();
+
+
+        Bukkit.getRegionScheduler().execute(SkylliaAPI.getPlugin(), world, playerLocation.getBlockX() >> 4, playerLocation.getBlockZ() >> 4, () -> {
+            Location initialLocation = findSafeLocation(world,
+                    playerLocation.getBlockX(),
+                    playerLocation.getBlockY(),
+                    playerLocation.getBlockZ()
+            );
+            PlayerChangeWorldSkyblockEvent worldSkyblockEvent = new PlayerChangeWorldSkyblockEvent(
+                    player, event.getPortalType(), initialLocation, true
+            );
+            Bukkit.getPluginManager().callEvent(worldSkyblockEvent);
+
+            Location to = worldSkyblockEvent.getTo();
+
+            // Retry with center island if the initial location is unsafe
+            if (to == null || !WorldUtils.isSafeLocation(to)) {
+                Location centerPaste = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+
+                if (!sameChunk(initialLocation, centerPaste)) {
+                    Bukkit.getRegionScheduler().execute(SkylliaAPI.getPlugin(), centerPaste, () -> {
+                        Location fallbackLocation = findSafeLocation(
+                                world,
+                                centerPaste.getX(),
+                                playerLocation.getBlockY(),
+                                centerPaste.getZ()
+                        );
+                        teleportIfSafe(player, island, fallbackLocation);
+                    });
+                } else {
+                    Location fallbackLocation = findSafeLocation(
+                            world,
+                            centerPaste.getX(),
+                            playerLocation.getBlockY(),
+                            centerPaste.getZ()
+                    );
+                    teleportIfSafe(player, island, fallbackLocation);
+                }
+
+            } else {
+                teleportIfSafe(player, island, to);
+            }
+        });
     }
 
     @EventHandler
     public void onSkyblockChangeGameRule(final SkyblockChangeGameRuleEvent event) {
-        this.api.getCacheManager().updateGameRuleCacheIsland(event.getIsland());
+        this.api.getCacheManager().updateCacheIsland(event.getIsland());
+    }
+
+    private Location findSafeLocation(World world, double x, double baseY, double z) {
+        int minY = world.getMinHeight();
+        int maxY = world.getMaxHeight();
+        int y = minY;
+
+        Location location = new Location(world, x, baseY, z);
+        while (!WorldUtils.isSafeLocation(location) && y < maxY) {
+            location.setY(y++);
+        }
+
+        return location;
+    }
+
+    private void teleportIfSafe(Player player, Island island, Location to) {
+        if (to != null && WorldUtils.isSafeLocation(to)) {
+            player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            this.api.getPlayerNMS().setOwnWorldBorder(
+                    Main.getPlugin(Main.class), player,
+                    RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z()),
+                    island.getSize(), 0, 0
+            );
+        } else {
+            ConfigLoader.language.sendMessage(player, "island.generic.location-unsafe");
+        }
+    }
+
+    private boolean sameChunk(Location loc1, Location loc2) {
+        return loc1.getWorld().equals(loc2.getWorld())
+                && (loc1.getBlockX() >> 4) == (loc2.getBlockX() >> 4)
+                && (loc1.getBlockZ() >> 4) == (loc2.getBlockZ() >> 4);
     }
 
 }

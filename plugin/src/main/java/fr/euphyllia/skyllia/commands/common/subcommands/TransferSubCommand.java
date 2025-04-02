@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class TransferSubCommand implements SubCommandInterface {
 
@@ -27,17 +28,17 @@ public class TransferSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
 
         if (args.length == 0) {
-            LanguageToml.sendMessage(player, LanguageToml.messageTransfertSpecifyPlayer);
+            ConfigLoader.language.sendMessage(player, "island.transfer.specify-player");
             return true;
         }
 
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.transfer")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
@@ -46,8 +47,7 @@ public class TransferSubCommand implements SubCommandInterface {
         boolean isConfirm = args.length >= 2 && args[1].equalsIgnoreCase("confirm");
 
         if (!isConfirm) {
-            LanguageToml.sendMessage(player, LanguageToml.messageTransfertConfirmation
-                    .replace("%new_owner%", newOwnerName));
+            ConfigLoader.language.sendMessage(player, "island.transfer.confirm", Map.of("%new_owner%", newOwnerName));
             return true;
         }
 
@@ -55,31 +55,31 @@ public class TransferSubCommand implements SubCommandInterface {
         Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
 
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
         Players ownerIsland = skyblockManager.getOwnerByIslandID(island).join();
 
         if (ownerIsland == null || !ownerIsland.getMojangId().equals(player.getUniqueId())) {
-            LanguageToml.sendMessage(player, LanguageToml.messageOnlyOwner);
+            ConfigLoader.language.sendMessage(player, "island.only-owner");
             return true;
         }
 
         Players newOwner = island.getMember(newOwnerName);
 
         if (newOwner == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerIsNotOnAnIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
             return true;
         }
 
         if (newOwner.getMojangId().equals(player.getUniqueId())) {
-            LanguageToml.sendMessage(player, LanguageToml.messageTransfertAlreadyOwner);
+            ConfigLoader.language.sendMessage(player, "island.transfer.already-owner");
             return true;
         }
 
         if (!newOwner.getRoleType().equals(RoleType.CO_OWNER)) {
-            LanguageToml.sendMessage(player, LanguageToml.messageTransfertOnlyCoOwner);
+            ConfigLoader.language.sendMessage(player, "island.transfer.only-co-owner");
             return true;
         }
 
@@ -93,11 +93,11 @@ public class TransferSubCommand implements SubCommandInterface {
         SkyblockChangeOwnerEvent event = new SkyblockChangeOwnerEvent(island, oldOwner.getMojangId(), newOwner.getMojangId());
         Bukkit.getPluginManager().callEvent(event);
 
-        LanguageToml.sendMessage(player, LanguageToml.messageTransfertSuccess.replace("%new_owner%", newOwner.getLastKnowName()));
+        ConfigLoader.language.sendMessage(player, "island.transfer.success", Map.of("%new_owner%", newOwner.getLastKnowName()));
 
         Player newOwnerPlayer = plugin.getServer().getPlayer(newOwner.getMojangId());
         if (newOwnerPlayer != null && newOwnerPlayer.isOnline()) {
-            LanguageToml.sendMessage(newOwnerPlayer, LanguageToml.messageTransfertSuccessOldOwnerNotification.replace("%old_owner%", player.getName()));
+            ConfigLoader.language.sendMessage(newOwnerPlayer, "island.transfer.notify-old-owner", Map.of("%old_owner%", player.getName()));
         }
 
         return true;

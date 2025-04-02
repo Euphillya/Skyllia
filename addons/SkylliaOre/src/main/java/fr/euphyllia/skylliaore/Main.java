@@ -18,6 +18,7 @@ public final class Main extends JavaPlugin {
     private static DefaultConfig config;
     private static Cache cache;
     private static boolean oraxenLoaded = false;
+    private static boolean nexoLoaded = false;
 
     @NotNull
     public static DefaultConfig getDefaultConfig() {
@@ -32,9 +33,14 @@ public final class Main extends JavaPlugin {
         return oraxenLoaded;
     }
 
+    public static boolean isNexoLoaded() {
+        return nexoLoaded;
+    }
+
     @Override
     public void onEnable() {
-        oraxenLoaded = Bukkit.getPluginManager().isPluginEnabled("Oraxen");
+        oraxenLoaded = Bukkit.getPluginManager().getPlugin("Oraxen") != null;
+        nexoLoaded = Bukkit.getPluginManager().getPlugin("Nexo") != null;
         // Plugin startup logic
         initializeConfig();
         initializeDatabase();

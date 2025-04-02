@@ -9,8 +9,9 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
+import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -55,9 +56,9 @@ public class IslandHook extends Island {
         this.maxMemberInIsland = maxMembers;
 
         // Validate the island size
-        if (size >= (255 * ConfigToml.regionDistance) || size <= 1) {
+        if (size >= (255 * ConfigLoader.general.getRegionDistance()) || size <= 1) {
             throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! "
-                    + "Must be between 2 and " + (255 * ConfigToml.regionDistance) + ".");
+                    + "Must be between 2 and " + (255 * ConfigLoader.general.getRegionDistance()) + ".");
         }
         this.islandSize = size;
     }
@@ -91,10 +92,10 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean setSize(double newSize) throws MaxIslandSizeExceedException {
-        if (newSize >= (255 * ConfigToml.regionDistance) || newSize <= 1) {
+        if (newSize >= (255 * ConfigLoader.general.getRegionDistance()) || newSize <= 1) {
             throw new MaxIslandSizeExceedException(
                     "The size of the island exceeds the permitted limit! Must be between 2 and "
-                            + (255 * ConfigToml.regionDistance) + ".");
+                            + (255 * ConfigLoader.general.getRegionDistance()) + ".");
         }
 
         this.islandSize = newSize;
@@ -200,6 +201,7 @@ public class IslandHook extends Island {
         if (event.isCancelled()) {
             return false;
         }
+        IslandClosedCache.invalidateIsland(this.getId());
         return this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland).join();
     }
 

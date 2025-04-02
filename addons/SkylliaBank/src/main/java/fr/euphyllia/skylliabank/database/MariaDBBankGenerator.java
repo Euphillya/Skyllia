@@ -1,8 +1,8 @@
 package fr.euphyllia.skylliabank.database;
 
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import fr.euphyllia.skylliabank.model.BankAccount;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +31,7 @@ public class MariaDBBankGenerator {
     private final String databaseName;
 
     public MariaDBBankGenerator() {
-        this.databaseName = ConfigToml.mariaDBConfig.database();
+        this.databaseName = ConfigLoader.database.getMariaDBConfig().database();
     }
 
     public CompletableFuture<BankAccount> getBankAccount(UUID islandId) {

@@ -2,8 +2,9 @@ package fr.euphyllia.skylliachat.commands;
 
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachat.Main;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -15,6 +16,7 @@ import java.util.List;
 public class IslandChatCommand implements SubCommandInterface {
 
     private final Main plugin;
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public IslandChatCommand(Main main) {
         plugin = main;
@@ -23,11 +25,11 @@ public class IslandChatCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skylliachat.use")) {
-            LanguageToml.sendMessage(sender, "<red>You are not a permission to execute this commands.");
+            sender.sendMessage(miniMessage.deserialize("<red>You are not a permission to execute this commands."));
             return true;
         }
 
@@ -41,7 +43,7 @@ public class IslandChatCommand implements SubCommandInterface {
         } else {
             msg = this.plugin.getConfig().getString("message.chat.enabled", "<green>Island Messaging Enabled.");
         }
-        LanguageToml.sendMessage(sender, msg);
+        sender.sendMessage(miniMessage.deserialize(msg));
         return true;
     }
 

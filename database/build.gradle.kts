@@ -2,8 +2,8 @@ plugins {
     id("java")
     id("maven-publish")
 }
-group = "fr.euphyllia.skyllia";
-version = "2.0";
+group = "fr.euphyllia.skyllia"
+version = "2.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21

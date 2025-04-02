@@ -11,7 +11,7 @@ public class PlayerNMS extends fr.euphyllia.skyllia.api.utils.nms.PlayerNMS {
         player.getScheduler().execute(main, () -> {
             final net.minecraft.world.level.border.WorldBorder worldBorderPlayer = new net.minecraft.world.level.border.WorldBorder();
             worldBorderPlayer.world = ((org.bukkit.craftbukkit.v1_20_R3.CraftWorld) centerBorder.getWorld()).getHandle();
-            worldBorderPlayer.setCenter(centerBorder.getBlockX(), centerBorder.getBlockZ());
+            worldBorderPlayer.setCenter(centerBorder.getX(), centerBorder.getZ());
             worldBorderPlayer.setSize(borderSize);
             worldBorderPlayer.setWarningBlocks(warningBlocks);
             worldBorderPlayer.setWarningTime(warningTime);

@@ -8,8 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -24,10 +23,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VisitSubCommand implements SubCommandInterface {
@@ -37,15 +33,15 @@ public class VisitSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.visit")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageVisitCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.visit.args-missing");
             return true;
         }
 
@@ -58,47 +54,46 @@ public class VisitSubCommand implements SubCommandInterface {
                 visitPlayerId = Bukkit.getPlayerUniqueId(visitPlayer);
             }
             if (visitPlayerId == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
+                ConfigLoader.language.sendMessage(player, "island.player.not-found");
                 return true;
             }
 
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(visitPlayerId).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messageVisitPlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.visit.no-island");
                 return true;
             }
 
             if (!PermissionImp.hasPermission(sender, "skyllia.island.command.visit.bypass")) {
                 if (island.isPrivateIsland()) {
-                    LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandIsPrivate);
+                    ConfigLoader.language.sendMessage(player, "island.visit.island-private");
                     return true;
                 }
                 Players memberIsland = island.getMember(player.getUniqueId());
                 if (memberIsland != null && memberIsland.getRoleType().equals(RoleType.BAN)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandPlayerBanned);
+                    ConfigLoader.language.sendMessage(player, "island.visit.banned");
                     return true;
                 }
             }
 
             WarpIsland warpIsland = island.getWarpByName("home");
             player.getScheduler().execute(plugin, () -> {
-                if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SPECTATOR);
                 Location loc;
                 if (warpIsland == null) {
-                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().get(0).name()), island.getPosition().x(), island.getPosition().z());
+                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getPosition().x(), island.getPosition().z());
                 } else {
                     loc = warpIsland.location();
                 }
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
-                if (ConfigToml.changeGameModeWhenTeleportIsland) player.setGameMode(GameMode.SURVIVAL);
-                LanguageToml.sendMessage(player, LanguageToml.messageVisitIslandSuccess.replaceAll("%player%", visitPlayer));
+                ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
+                        "%player%", visitPlayer));
             }, null, 1L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
         return true;
     }
