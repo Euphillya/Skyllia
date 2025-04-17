@@ -34,7 +34,7 @@ public class IslandInfoCommand implements SubCommandInterface {
     private final boolean skylliaValue;
     private final boolean skylliaOre;
 
-    public IslandInfoCommand(Main main) {
+    public IslandInfoCommand(SkylliaInfo main) {
         this.skylliaBank = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
         this.skylliaValue = Bukkit.getPluginManager().getPlugin("SkylliaValue") != null;
         this.skylliaOre = Bukkit.getPluginManager().getPlugin("SkylliaOre") != null;

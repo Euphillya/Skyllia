@@ -35,7 +35,7 @@ public class IslandHook extends Island {
     /**
      * Constructs a new {@code IslandHook} instance.
      *
-     * @param Skyllia       The {@link Skyllia} plugin instance.
+     * @param Skyllia    The {@link Skyllia} plugin instance.
      * @param islandId   The UUID of the island.
      * @param maxMembers The maximum number of members allowed on the island.
      * @param position   The region-based position of the island (X/Z).

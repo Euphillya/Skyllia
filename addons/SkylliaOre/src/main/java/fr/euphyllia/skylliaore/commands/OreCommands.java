@@ -4,7 +4,7 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skylliaore.Main;
+import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
 import fr.euphyllia.skylliaore.database.MariaDBInit;
@@ -27,6 +27,12 @@ import java.util.stream.Collectors;
 
 public class OreCommands implements SubCommandInterface {
 
+    private SkylliaOre plugin;
+
+    public OreCommands(SkylliaOre plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!PermissionImp.hasPermission(sender, "skylliaore.use")) return true;
@@ -35,7 +41,7 @@ public class OreCommands implements SubCommandInterface {
             return false;
         }
 
-        Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), task -> {
+        Bukkit.getAsyncScheduler().runNow(plugin, task -> {
             OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(args[0]);
             CompletableFuture<@Nullable Island> future = SkylliaAPI.getIslandByPlayerId(offPlayer.getUniqueId());
             if (future == null) {
@@ -76,7 +82,7 @@ public class OreCommands implements SubCommandInterface {
         // ---------- ARG #2 : Liste de générateurs ----------
         else if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
-            DefaultConfig config = Main.getDefaultConfig();
+            DefaultConfig config = SkylliaOre.getDefaultConfig();
             Map<String, Generator> generators = config.getGenerators();
             return generators.keySet().stream()
                     .filter(genName -> genName.toLowerCase().startsWith(partial))

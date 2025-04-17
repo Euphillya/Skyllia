@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class Main extends JavaPlugin {
+public final class SkylliaChat extends JavaPlugin {
 
     private final ConcurrentHashMap<Player, Boolean> islandChatEnabled = new ConcurrentHashMap<>();
 

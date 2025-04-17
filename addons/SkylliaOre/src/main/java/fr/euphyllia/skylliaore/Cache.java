@@ -22,7 +22,7 @@ public class Cache {
                 CompletableFuture<Generator> future = MariaDBInit.getMariaDbGenerator().getGenIsland(islandId);
                 return future.exceptionally(e -> {
                     logger.error("Error loading generator for island {}: {}", islandId, e.getMessage(), e);
-                    return Main.getDefaultConfig().getDefaultGenerator();
+                    return SkylliaOre.getDefaultConfig().getDefaultGenerator();
                 });
             });
 
@@ -36,10 +36,10 @@ public class Cache {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Réinitialiser le statut d'interruption
             logger.error("Thread interrupted while accessing cache for island {}: {}", islandId, e.getMessage(), e);
-            return Main.getDefaultConfig().getDefaultGenerator();
+            return SkylliaOre.getDefaultConfig().getDefaultGenerator();
         } catch (ExecutionException e) {
             logger.error("Error accessing cache for island {}: {}", islandId, e.getMessage(), e);
-            return Main.getDefaultConfig().getDefaultGenerator();
+            return SkylliaOre.getDefaultConfig().getDefaultGenerator();
         }
     }
 }

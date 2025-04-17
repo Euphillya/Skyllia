@@ -12,9 +12,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public final class Main extends JavaPlugin {
+public final class SkylliaOre extends JavaPlugin {
 
-    private static final Logger logger = LogManager.getLogger(Main.class);
+    private static final Logger logger = LogManager.getLogger(SkylliaOre.class);
     private static DefaultConfig config;
     private static Cache cache;
     private static boolean oraxenLoaded = false;
@@ -79,6 +79,6 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        SkylliaAPI.registerAdminCommands(new OreCommands(), "generator");
+        SkylliaAPI.registerAdminCommands(new OreCommands(this), "generator");
     }
 }

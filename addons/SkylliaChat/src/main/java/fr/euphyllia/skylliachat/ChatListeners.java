@@ -15,10 +15,10 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatListeners implements Listener {
 
-    private final Main plugin;
+    private final SkylliaChat plugin;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    public ChatListeners(Main plugin) {
+    public ChatListeners(SkylliaChat plugin) {
         this.plugin = plugin;
     }
 
@@ -26,10 +26,10 @@ public class ChatListeners implements Listener {
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
-        if (Main.getPlugin(Main.class).getIslandChatEnabled().getOrDefault(player, false)) {
+        if (plugin.getIslandChatEnabled().getOrDefault(player, false)) {
             event.setCancelled(true);
 
-            Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
+            Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
                 Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
                 if (island == null) {
                     ConfigLoader.language.sendMessage(player, "island.player.no-island");

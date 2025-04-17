@@ -3,7 +3,7 @@ package fr.euphyllia.skylliachat.commands;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skylliachat.Main;
+import fr.euphyllia.skylliachat.SkylliaChat;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,10 +15,10 @@ import java.util.List;
 
 public class IslandChatCommand implements SubCommandInterface {
 
-    private final Main plugin;
+    private final SkylliaChat plugin;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    public IslandChatCommand(Main main) {
+    public IslandChatCommand(SkylliaChat main) {
         plugin = main;
     }
 

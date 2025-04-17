@@ -1,6 +1,6 @@
 name: SkylliaInfo
 version: '${version}'
-main: fr.euphyllia.skylliainfo.Main
+main: fr.euphyllia.skylliainfo.SkylliaInfo
 api-version: 1.20.1
 folia-supported: true
 

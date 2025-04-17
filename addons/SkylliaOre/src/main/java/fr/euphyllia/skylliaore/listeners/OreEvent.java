@@ -2,7 +2,7 @@ package fr.euphyllia.skylliaore.listeners;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skylliaore.Main;
+import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.hook.NexoHook;
 import fr.euphyllia.skylliaore.hook.OraxenHook;
@@ -25,8 +25,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OreEvent implements Listener {
 
     private static final Logger log = LoggerFactory.getLogger(OreEvent.class);
-    private static final boolean isOraxenLoaded = Main.isOraxenLoaded();
-    private static final boolean isNexoLoaded = Main.isNexoLoaded();
+    private static final boolean isOraxenLoaded = SkylliaOre.isOraxenLoaded();
+    private static final boolean isNexoLoaded = SkylliaOre.isNexoLoaded();
     private static final ConcurrentHashMap<String, BlockData> blockDataCache = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, OptimizedGenerator> optimizedGeneratorCache = new ConcurrentHashMap<>();
 
@@ -48,7 +48,7 @@ public class OreEvent implements Listener {
         String worldName = world.getName().toLowerCase();
         Material blockType = event.getNewState().getType();
 
-        Generator generator = Main.getCache().getGeneratorIsland(island.getId());
+        Generator generator = SkylliaOre.getCache().getGeneratorIsland(island.getId());
         if (generator == null) return;
 
         // Utiliser un cache pour OptimizedGenerator

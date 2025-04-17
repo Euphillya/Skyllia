@@ -3,6 +3,7 @@ package fr.euphyllia.skylliaore.database;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
 import org.apache.logging.log4j.LogManager;
@@ -75,12 +76,12 @@ public class MariaDBGenerator {
     }
 
     private Generator getGeneratorById(String generatorId) {
-        DefaultConfig config = fr.euphyllia.skylliaore.Main.getDefaultConfig();
+        DefaultConfig config = SkylliaOre.getDefaultConfig();
         return config.getGenerators().getOrDefault(generatorId,
                 getDefaultGenerator());
     }
 
     private Generator getDefaultGenerator() {
-        return fr.euphyllia.skylliaore.Main.getDefaultConfig().getDefaultGenerator();
+        return SkylliaOre.getDefaultConfig().getDefaultGenerator();
     }
 }

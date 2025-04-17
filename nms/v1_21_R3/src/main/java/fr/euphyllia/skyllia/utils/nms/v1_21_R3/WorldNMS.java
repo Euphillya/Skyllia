@@ -75,6 +75,24 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         randomSpawnSelectionField.set(serverLevel, newValue);
     }
 
+    public static double[] getTPSFromRegion(ServerLevel world, int x, int z) {
+        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+                region = world.regioniser.getRegionAtSynchronised(x, z);
+        if (region == null) {
+            return null;
+        } else {
+            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
+            final long currTime = System.nanoTime();
+            return new double[]{
+                    regionData.getRegionSchedulingHandle().getTickReport5s(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport15s(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport1m(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
+            };
+        }
+    }
+
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
@@ -289,23 +307,5 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final int z = chunk.getZ();
         final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
         return getTPSFromRegion(world, x, z);
-    }
-
-    public static double[] getTPSFromRegion(ServerLevel world, int x, int z) {
-        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
-                region = world.regioniser.getRegionAtSynchronised(x, z);
-        if (region == null) {
-            return null;
-        } else {
-            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
-            final long currTime = System.nanoTime();
-            return new double[]{
-                    regionData.getRegionSchedulingHandle().getTickReport5s(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport15s(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport1m(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
-            };
-        }
     }
 }

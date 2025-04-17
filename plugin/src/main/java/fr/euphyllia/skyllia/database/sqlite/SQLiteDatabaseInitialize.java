@@ -20,18 +20,18 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
     private static final Logger logger = LogManager.getLogger(SQLiteDatabaseInitialize.class);
 
     private static final String CREATE_ISLANDS_TABLE = """
-CREATE TABLE IF NOT EXISTS islands (
-    island_id TEXT NOT NULL,
-    region_x  INTEGER NOT NULL,
-    region_z  INTEGER NOT NULL,
-    disable   INTEGER DEFAULT 0,
-    private   INTEGER DEFAULT 0,
-    size      REAL NOT NULL,
-    create_time TEXT,
-    max_members INTEGER NOT NULL,
-    PRIMARY KEY (island_id, region_x, region_z),
-    UNIQUE(island_id)
-);
+            CREATE TABLE IF NOT EXISTS islands (
+                island_id TEXT NOT NULL,
+                region_x  INTEGER NOT NULL,
+                region_z  INTEGER NOT NULL,
+                disable   INTEGER DEFAULT 0,
+                private   INTEGER DEFAULT 0,
+                size      REAL NOT NULL,
+                create_time TEXT,
+                max_members INTEGER NOT NULL,
+                PRIMARY KEY (island_id, region_x, region_z),
+                UNIQUE(island_id)
+            );
             """;
     private static final String CREATE_ISLANDS_GAMERULE_TABLE = """
             CREATE TABLE IF NOT EXISTS islands_gamerule (
@@ -41,15 +41,15 @@ CREATE TABLE IF NOT EXISTS islands (
             );
             """;
     private static final String CREATE_ISLANDS_MEMBERS_TABLE = """
-CREATE TABLE IF NOT EXISTS members_in_islands (
-    island_id   TEXT NOT NULL,
-    uuid_player TEXT NOT NULL,
-    player_name TEXT DEFAULT NULL,
-    role        TEXT DEFAULT NULL,
-    joined      TEXT,
-    PRIMARY KEY (island_id, uuid_player),
-    FOREIGN KEY(island_id) REFERENCES islands(island_id)
-);
+            CREATE TABLE IF NOT EXISTS members_in_islands (
+                island_id   TEXT NOT NULL,
+                uuid_player TEXT NOT NULL,
+                player_name TEXT DEFAULT NULL,
+                role        TEXT DEFAULT NULL,
+                joined      TEXT,
+                PRIMARY KEY (island_id, uuid_player),
+                FOREIGN KEY(island_id) REFERENCES islands(island_id)
+            );
             """;
     private static final String CREATE_ISLANDS_WARP_TABLE = """
             CREATE TABLE IF NOT EXISTS islands_warp (
