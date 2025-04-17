@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -40,7 +40,7 @@ public class HomeSubCommand implements SubCommandInterface {
         }
 
         try {
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -59,7 +59,7 @@ public class HomeSubCommand implements SubCommandInterface {
                 }
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
+                Skyllia.getPlugin(Skyllia.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getPlugin(Skyllia.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                 ConfigLoader.language.sendMessage(player, "island.home.success");
             }, null, 1L);
         } catch (Exception exception) {

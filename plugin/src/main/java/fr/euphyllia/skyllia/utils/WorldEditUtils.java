@@ -16,7 +16,7 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.event.IslandBiomeChangeProgressEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -79,7 +79,7 @@ public class WorldEditUtils {
         }
     }
 
-    public static void deleteIsland(Main plugin, Island island, org.bukkit.World w) {
+    public static void deleteIsland(Skyllia plugin, Island island, org.bukkit.World w) {
         if (w == null) {
             throw new RuntimeException("World is not loaded or not exist");
         }
@@ -110,7 +110,7 @@ public class WorldEditUtils {
         int baseZ = chunkZ << 4;
 
         String biomeKey = biome.getKey().getKey().toLowerCase();
-        Bukkit.getRegionScheduler().execute(Main.getPlugin(Main.class), world, chunkX, chunkZ, () -> {
+        Bukkit.getRegionScheduler().execute(Skyllia.getPlugin(Skyllia.class), world, chunkX, chunkZ, () -> {
 
             com.sk89q.worldedit.world.World weWorld = new BukkitWorld(world);
             BiomeType biomeType = BiomeType.REGISTRY.get(biomeKey);
@@ -150,14 +150,14 @@ public class WorldEditUtils {
             affectedChunks.add(BlockVector2.at(chunkPos.x(), chunkPos.z()));
         });
 
-        AtomicInteger remaining = new AtomicInteger(affectedChunks.size());
+        AtomicInteger reSkylliaing = new AtomicInteger(affectedChunks.size());
 
         for (BlockVector2 chunkVec : affectedChunks) {
             int chunkX = chunkVec.x();
             int chunkZ = chunkVec.z();
             try {
                 if (changeBiomeChunk(world, chunkX, chunkZ, biome).join()) {
-                    int left = remaining.decrementAndGet();
+                    int left = reSkylliaing.decrementAndGet();
                     new IslandBiomeChangeProgressEvent(island, left, affectedChunks.size()).callEvent();
                     if (left == 0) {
                         future.complete(true);

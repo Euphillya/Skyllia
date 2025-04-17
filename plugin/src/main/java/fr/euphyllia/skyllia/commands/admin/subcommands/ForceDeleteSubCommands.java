@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -56,7 +56,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             } catch (IllegalArgumentException ignored) {
                 playerId = Bukkit.getPlayerUniqueId(playerName);
             }
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(playerId).join();
             if (island == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.no-island");
@@ -65,10 +65,10 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
 
             boolean isDisabled = island.setDisable(true);
             if (isDisabled) {
-                this.updatePlayer(Main.getPlugin(Main.class), skyblockManager, island);
+                this.updatePlayer(Skyllia.getPlugin(Skyllia.class), skyblockManager, island);
 
                 ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
-                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(name));
+                    WorldEditUtils.deleteIsland(Skyllia.getPlugin(Skyllia.class), island, Bukkit.getWorld(name));
                 });
 
                 ConfigLoader.language.sendMessage(sender, "island.delete-success");
@@ -108,7 +108,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private void updatePlayer(Main plugin, SkyblockManager skyblockManager, Island island) {
+    private void updatePlayer(Skyllia plugin, SkyblockManager skyblockManager, Island island) {
         for (Players players : island.getMembers()) {
             players.setRoleType(RoleType.VISITOR);
             island.updateMember(players);

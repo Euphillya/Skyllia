@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.managers;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -71,7 +71,7 @@ public class PermissionsManagers {
      * @return true si la permission est refusée, false sinon.
      */
     public static boolean testPermissions(Players executorPlayer, Player player, Island island, Permissions permissions, boolean cached) {
-        SkyblockManager manager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+        SkyblockManager manager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
 
         if (executorPlayer.getRoleType() == RoleType.OWNER) {
             return true;
@@ -132,7 +132,7 @@ public class PermissionsManagers {
     }
 
     private static void sendDebugGameRule(GameRuleIsland gameRule, Island island, boolean value) {
-        Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), task -> {
+        Bukkit.getAsyncScheduler().runNow(Skyllia.getPlugin(Skyllia.class), task -> {
             DebugType debugType = getDebugType(null, gameRule);
             for (Players players : island.getMembersCached()) {
                 if (debugType != null && isDebugEnabled(players.getMojangId(), debugType)) {
@@ -151,7 +151,7 @@ public class PermissionsManagers {
                                              PermissionRoleIsland permissionRoleIsland,
                                              boolean isTrusted,
                                              boolean value) {
-        Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), task -> {
+        Bukkit.getAsyncScheduler().runNow(Skyllia.getPlugin(Skyllia.class), task -> {
             DebugType debugType = getDebugType(permissions, null);
             if (debugType != null && isDebugEnabled(player.getUniqueId(), debugType)) {
                 player.sendMessage(

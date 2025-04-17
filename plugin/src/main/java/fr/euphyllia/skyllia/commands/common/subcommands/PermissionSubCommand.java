@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -51,9 +51,9 @@ public class PermissionSubCommand implements SubCommandInterface {
         String valueRaw = args[3]; // true / false
 
         try {
-            PermissionFormat permissionFormat = this.getPermissionFormat(Main.getPlugin(Main.class), player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
+            PermissionFormat permissionFormat = this.getPermissionFormat(Skyllia.getPlugin(Skyllia.class), player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
             if (permissionFormat == null) return true;
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -153,7 +153,7 @@ public class PermissionSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private PermissionFormat getPermissionFormat(Main main, Entity entity, String permissionsTypeRaw, String roleTypeRaw, String permissionRaw, String valueRaw) {
+    private PermissionFormat getPermissionFormat(Skyllia Skyllia, Entity entity, String permissionsTypeRaw, String roleTypeRaw, String permissionRaw, String valueRaw) {
         PermissionsType permissionsType;
         try {
             permissionsType = PermissionsType.valueOf(permissionsTypeRaw.toUpperCase());

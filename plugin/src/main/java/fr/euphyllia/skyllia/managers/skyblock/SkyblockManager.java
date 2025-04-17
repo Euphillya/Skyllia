@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.event.PrepareSkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -27,10 +27,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class SkyblockManager {
 
     private static final Logger LOGGER = LogManager.getLogger(SkyblockManager.class);
-    private final Main plugin;
+    private final Skyllia plugin;
 
-    public SkyblockManager(Main main) {
-        this.plugin = main;
+    public SkyblockManager(Skyllia Skyllia) {
+        this.plugin = Skyllia;
     }
 
     /**

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 @SuppressWarnings("UnstableApiUsage")
-public class Main extends JavaPlugin {
+public class Skyllia extends JavaPlugin {
 
     private final Logger logger = LogManager.getLogger(this);
     private InterneAPI interneAPI;

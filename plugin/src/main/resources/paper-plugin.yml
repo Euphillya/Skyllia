@@ -1,6 +1,6 @@
 name: Skyllia
 version: ${version}
-main: fr.euphyllia.skyllia.Main
+main: fr.euphyllia.skyllia.Skyllia
 api-version: 1.20.1
 author: Euphyllia
 description: "First Skyblock plugin on Folia"

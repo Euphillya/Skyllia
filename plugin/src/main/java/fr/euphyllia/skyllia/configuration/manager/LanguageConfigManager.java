@@ -2,7 +2,7 @@ package fr.euphyllia.skyllia.configuration.manager;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.managers.ConfigManager;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.kyori.adventure.text.Component;
@@ -23,7 +23,7 @@ public class LanguageConfigManager implements ConfigManager {
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final Map<Locale, Map<String, String>> translations = new HashMap<>();
     private final Locale defaultLocale = Locale.of("en", "GB");
-    private final Main plugin = Main.getPlugin(Main.class);
+    private final Skyllia plugin = Skyllia.getPlugin(Skyllia.class);
 
     @Override
     public void loadConfig() throws DatabaseException {

@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.cache;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.LogManager;
@@ -14,15 +14,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class CacheScheduler {
 
-    private final Main plugin;
+    private final Skyllia plugin;
     private final InterneAPI interneAPI;
     private final Logger logger = LogManager.getLogger(this);
 
     /**
-     * @param plugin     the main plugin instance
+     * @param plugin     the Skyllia plugin instance
      * @param interneAPI the internal API
      */
-    public CacheScheduler(Main plugin, InterneAPI interneAPI) {
+    public CacheScheduler(Skyllia plugin, InterneAPI interneAPI) {
         this.plugin = plugin;
         this.interneAPI = interneAPI;
     }

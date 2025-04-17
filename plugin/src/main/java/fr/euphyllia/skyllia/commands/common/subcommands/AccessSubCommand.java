@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -39,7 +39,7 @@ public class AccessSubCommand implements SubCommandInterface {
             return true;
         }
 
-        SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
         if (island == null) {
@@ -60,7 +60,7 @@ public class AccessSubCommand implements SubCommandInterface {
             if (statusAccessUpdate) {
                 ConfigLoader.language.sendMessage(player, "island.access.close");
                 ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
-                    RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(name), island.getPosition(), island.getSize(), entity -> {
+                    RegionUtils.getEntitiesInRegion(Skyllia.getPlugin(Skyllia.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(name), island.getPosition(), island.getSize(), entity -> {
                         Player playerInIsland = (Player) entity;
                         if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
                         Runnable teleportPlayerRun = () -> {
@@ -69,7 +69,7 @@ public class AccessSubCommand implements SubCommandInterface {
                                 PlayerUtils.teleportPlayerSpawn(playerInIsland);
                             }
                         };
-                        Bukkit.getAsyncScheduler().runNow(Main.getPlugin(Main.class), scheduledTask -> {
+                        Bukkit.getAsyncScheduler().runNow(Skyllia.getPlugin(Skyllia.class), scheduledTask -> {
                             teleportPlayerRun.run();
                         });
                     });

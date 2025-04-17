@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.listeners;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.BlockEvent;
@@ -25,17 +25,17 @@ import org.bukkit.plugin.PluginManager;
  */
 public class ListenersRegistrar {
 
-    private final Main plugin;
+    private final Skyllia plugin;
     private final InterneAPI interneAPI;
     private final Logger logger = LogManager.getLogger(this);
 
     /**
      * Constructs a ListenersRegistrar.
      *
-     * @param plugin     the main plugin instance
+     * @param plugin     the Skyllia plugin instance
      * @param interneAPI the internal API
      */
-    public ListenersRegistrar(Main plugin, InterneAPI interneAPI) {
+    public ListenersRegistrar(Skyllia plugin, InterneAPI interneAPI) {
         this.plugin = plugin;
         this.interneAPI = interneAPI;
     }

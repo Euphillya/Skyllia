@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
@@ -54,7 +54,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
                 previousOwnerId = Bukkit.getPlayerUniqueId(previousOwnerName);
             }
 
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(previousOwnerId).join();
 
             if (island == null) {

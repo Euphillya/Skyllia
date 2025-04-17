@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -34,7 +34,7 @@ public class LeaveSubCommand implements SubCommandInterface {
             return true;
         }
 
-        SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
         if (island == null) {
@@ -54,7 +54,7 @@ public class LeaveSubCommand implements SubCommandInterface {
             boolean hasLeft = island.removeMember(players);
 
             if (hasLeft) {
-                DeleteSubCommand.checkClearPlayer(Main.getPlugin(Main.class), skyblockManager, players, RemovalCause.LEAVE);
+                DeleteSubCommand.checkClearPlayer(Skyllia.getPlugin(Skyllia.class), skyblockManager, players, RemovalCause.LEAVE);
                 ConfigLoader.language.sendMessage(player, "island.leave.success");
             } else {
                 ConfigLoader.language.sendMessage(player, "island.leave.failed");

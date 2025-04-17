@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.api;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
@@ -37,7 +37,7 @@ public class InterneAPI {
 
     private final Logger logger = LogManager.getLogger(this);
 
-    private final Main plugin;
+    private final Skyllia plugin;
     private final SkyblockManager skyblockManager;
     private final CacheManager cacheManager;
 
@@ -48,7 +48,7 @@ public class InterneAPI {
     private @Nullable DatabaseLoader database;
     private Managers managers;
 
-    public InterneAPI(Main plugin) throws UnsupportedMinecraftVersionException {
+    public InterneAPI(Skyllia plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
         this.setVersionNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
@@ -216,7 +216,7 @@ public class InterneAPI {
         return null;
     }
 
-    public Main getPlugin() {
+    public Skyllia getPlugin() {
         return this.plugin;
     }
 

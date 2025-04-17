@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
@@ -40,7 +40,7 @@ public class KickSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.kick.args-missing");
             return true;
         }
-        SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -69,7 +69,7 @@ public class KickSubCommand implements SubCommandInterface {
         boolean isRemoved = island.removeMember(players);
         if (isRemoved) {
             ConfigLoader.language.sendMessage(player, "island.kick.success");
-            DeleteSubCommand.checkClearPlayer(Main.getPlugin(Main.class), skyblockManager, players, RemovalCause.KICKED);
+            DeleteSubCommand.checkClearPlayer(Skyllia.getPlugin(Skyllia.class), skyblockManager, players, RemovalCause.KICKED);
         } else {
             ConfigLoader.language.sendMessage(player, "island.kick.failed");
         }

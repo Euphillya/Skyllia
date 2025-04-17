@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -33,7 +33,7 @@ public class ExpelSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(ExpelSubCommand.class);
 
-    public static void expelPlayer(Main plugin, Island island, Player bPlayerToExpel, Player executor, boolean silent) {
+    public static void expelPlayer(Skyllia plugin, Island island, Player bPlayerToExpel, Player executor, boolean silent) {
         Location bPlayerExpelLocation = bPlayerToExpel.getLocation();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(bPlayerExpelLocation.getWorld().getName()))) {
             if (!silent) ConfigLoader.language.sendMessage(executor, "island.expel.player-not-in-island");
@@ -72,7 +72,7 @@ public class ExpelSubCommand implements SubCommandInterface {
             return true;
         }
         try {
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
@@ -101,7 +101,7 @@ public class ExpelSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            expelPlayer(Main.getPlugin(Main.class), island, bPlayerToExpel, player, false);
+            expelPlayer(Skyllia.getPlugin(Skyllia.class), island, bPlayerToExpel, player, false);
 
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

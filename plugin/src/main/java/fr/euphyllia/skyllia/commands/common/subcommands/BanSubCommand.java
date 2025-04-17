@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -41,7 +41,7 @@ public class BanSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.ban.args-missing");
             return true;
         }
-        SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -72,7 +72,7 @@ public class BanSubCommand implements SubCommandInterface {
 
         island.updateMember(players);
         ConfigLoader.language.sendMessage(player, "island.ban.success");
-        ExpelSubCommand.expelPlayer(Main.getPlugin(Main.class), island, bPlayerBan, player, true);
+        ExpelSubCommand.expelPlayer(Skyllia.getPlugin(Skyllia.class), island, bPlayerBan, player, true);
         return true;
     }
 

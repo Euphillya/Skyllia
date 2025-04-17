@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
@@ -57,7 +57,7 @@ public class CreateSubCommand implements SubCommandInterface {
         GameMode olgGM = player.getGameMode();
 
         try {
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByPlayerId(player.getUniqueId()).join());
             if (islandAtomic.get() == null) {
                 String schemKey = args.length == 0 ? "" : args[0];
@@ -105,14 +105,14 @@ public class CreateSubCommand implements SubCommandInterface {
                     SchematicSetting schematicSetting = entry.getValue();
                     Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), islandAtomic.get().getPosition().x(), islandAtomic.get().getPosition().z());
                     centerPaste.setY(schematicSetting.height());
-                    this.pasteSchematic(Main.getPlugin(Main.class), islandAtomic.get(), centerPaste, schematicSetting);
+                    this.pasteSchematic(Skyllia.getPlugin(Skyllia.class), islandAtomic.get(), centerPaste, schematicSetting);
                     if (isFirstIteration) {
                         this.setFirstHome(islandAtomic.get(), centerPaste);
                         this.setPermissionsRole(islandAtomic.get());
                         centerPaste.setY(centerPaste.getY() + 0.5);
                         player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN);
                         this.addOwnerIslandInMember(islandAtomic.get(), player);
-                        Main.getPlugin(Main.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Main.getPlugin(Main.class), player, centerPaste, islandAtomic.get().getSize(), 0, 0);
+                        Skyllia.getPlugin(Skyllia.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getPlugin(Skyllia.class), player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                         CompletableFuture.runAsync(() -> Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(islandAtomic.get())));
                         isFirstIteration = false;
                     }
@@ -149,7 +149,7 @@ public class CreateSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private void pasteSchematic(Main plugin, Island island, Location center, SchematicSetting schematicWorld) {
+    private void pasteSchematic(Skyllia plugin, Island island, Location center, SchematicSetting schematicWorld) {
         switch (WorldEditUtils.worldEditVersion()) {
             case WORLD_EDIT ->
                     Bukkit.getRegionScheduler().execute(plugin, center, () -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld));

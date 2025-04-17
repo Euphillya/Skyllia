@@ -39,5 +39,21 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN") ?: ""
             }
         }
+        maven {
+            name = "excalia-repo"
+            val isSnapshot = version.toString().endsWith("SNAPSHOT")
+
+            url = uri(
+                if (isSnapshot)
+                    "http://172.29.17.1:8081/repository/maven-snapshots/"
+                else
+                    "http://172.29.17.1:8081/repository/maven-releases/"
+            )
+            isAllowInsecureProtocol = true
+            credentials {
+                username = System.getenv("NEXUS_USERNAME") ?: error("Variable NEXUS_USERNAME introuvable !")
+                password = System.getenv("NEXUS_PASSWORD") ?: error("Variable NEXUS_PASSWORD introuvable !")
+            }
+        }
     }
 }

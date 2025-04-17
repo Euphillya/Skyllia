@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
@@ -44,7 +44,7 @@ public class InviteSubCommand implements SubCommandInterface {
             return true;
         }
         String type = args[0];
-        Main skyblock = Main.getPlugin(Main.class);
+        Skyllia skyblock = Skyllia.getPlugin(Skyllia.class);
         if (type.equalsIgnoreCase("accept")) {
             if (args.length < 2) {
                 ConfigLoader.language.sendMessage(player, "island.invite.accept-args-missing");
@@ -94,7 +94,7 @@ public class InviteSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private void deleteInvitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
+    private void deleteInvitePlayer(Skyllia plugin, Player ownerIsland, String playerInvited) {
         SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
         if (island == null) {
@@ -118,7 +118,7 @@ public class InviteSubCommand implements SubCommandInterface {
                 "%s", playerInvited));
     }
 
-    private void invitePlayer(Main plugin, Player ownerIsland, String playerInvited) {
+    private void invitePlayer(Skyllia plugin, Player ownerIsland, String playerInvited) {
         try {
 
             UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
@@ -158,7 +158,7 @@ public class InviteSubCommand implements SubCommandInterface {
         }
     }
 
-    private void acceptPlayer(Main plugin, Player playerWantJoin, String ownerIsland) {
+    private void acceptPlayer(Skyllia plugin, Player playerWantJoin, String ownerIsland) {
         try {
             Island islandPlayer = SkylliaAPI.getCacheIslandByPlayerId(playerWantJoin.getUniqueId());
             if (islandPlayer != null) {
@@ -198,7 +198,7 @@ public class InviteSubCommand implements SubCommandInterface {
         }
     }
 
-    private void declinePlayer(Main plugin, Player playerWantDecline, String ownerIsland) {
+    private void declinePlayer(Skyllia plugin, Player playerWantDecline, String ownerIsland) {
         try {
             Island island = SkylliaAPI.getCacheIslandByPlayerId(playerWantDecline.getUniqueId());
 

@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
@@ -52,7 +52,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         String selectBiome = args[0];
         Biome biome;
 
-        InterneAPI api = Main.getPlugin(Main.class).getInterneAPI();
+        InterneAPI api = Skyllia.getPlugin(Skyllia.class).getInterneAPI();
         BiomesImpl biomesImpl = api.getBiomesImpl();
 
         try {
@@ -79,7 +79,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
         try {
 
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
@@ -154,7 +154,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
 
-            return Main.getPlugin(Main.class).getInterneAPI().getBiomesImpl().getBiomeNameList().stream()
+            return Skyllia.getPlugin(Skyllia.class).getInterneAPI().getBiomesImpl().getBiomeNameList().stream()
                     .filter(biome -> PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biome)))
                     .filter(biome -> biome.toLowerCase().startsWith(partial))
                     .toList();

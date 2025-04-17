@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
@@ -17,11 +17,11 @@ import java.util.Set;
 
 public class SkylliaCommand implements SkylliaCommandInterface {
 
-    private final Main plugin;
+    private final Skyllia plugin;
     private final SubCommandRegistry registry;
 
-    public SkylliaCommand(Main main) {
-        this.plugin = main;
+    public SkylliaCommand(Skyllia Skyllia) {
+        this.plugin = Skyllia;
         this.registry = this.plugin.getCommandRegistry();
         registerDefaultCommands();
     }

@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -48,7 +48,7 @@ public class SetSizeSubCommands implements SubCommandInterface {
             } catch (IllegalArgumentException ignored) {
                 playerId = Bukkit.getPlayerUniqueId(playerName);
             }
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(playerId).join();
             if (island == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.no-island");

@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.listeners.skyblockevents;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
@@ -181,7 +181,7 @@ public class SkyblockEvent implements Listener {
         if (to != null && WorldUtils.isSafeLocation(to)) {
             player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
             this.api.getPlayerNMS().setOwnWorldBorder(
-                    Main.getPlugin(Main.class), player,
+                    Skyllia.getPlugin(Skyllia.class), player,
                     RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z()),
                     island.getSize(), 0, 0
             );

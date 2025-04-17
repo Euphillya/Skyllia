@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -30,7 +30,7 @@ public class DeleteSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(DeleteSubCommand.class);
 
-    public static void checkClearPlayer(Main plugin, SkyblockManager skyblockManager, Players players, RemovalCause cause) {
+    public static void checkClearPlayer(Skyllia plugin, SkyblockManager skyblockManager, Players players, RemovalCause cause) {
         Player bPlayer = Bukkit.getPlayer(players.getMojangId());
         if (bPlayer != null && bPlayer.isOnline()) {
             PlayerUtils.teleportPlayerSpawn(bPlayer);
@@ -100,7 +100,7 @@ public class DeleteSubCommand implements SubCommandInterface {
             return true;
         }
         try {
-            SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -128,10 +128,10 @@ public class DeleteSubCommand implements SubCommandInterface {
 
             boolean isDisabled = island.setDisable(true);
             if (isDisabled) {
-                this.updatePlayer(Main.getPlugin(Main.class), skyblockManager, island);
+                this.updatePlayer(Skyllia.getPlugin(Skyllia.class), skyblockManager, island);
                 this.kickAllPlayerOnIsland(island);
                 ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
-                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(s));
+                    WorldEditUtils.deleteIsland(Skyllia.getPlugin(Skyllia.class), island, Bukkit.getWorld(s));
                 });
                 ConfigLoader.language.sendMessage(player, "island.delete-success");
             } else {
@@ -155,7 +155,7 @@ public class DeleteSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private void updatePlayer(Main plugin, SkyblockManager skyblockManager, Island island) {
+    private void updatePlayer(Skyllia plugin, SkyblockManager skyblockManager, Island island) {
         for (Players players : island.getMembers()) {
             players.setRoleType(RoleType.VISITOR);
             island.updateMember(players);
@@ -165,7 +165,7 @@ public class DeleteSubCommand implements SubCommandInterface {
 
     private void kickAllPlayerOnIsland(final Island island) {
         ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
-            RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(s), island.getPosition(), island.getSize(), entity -> {
+            RegionUtils.getEntitiesInRegion(Skyllia.getPlugin(Skyllia.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(s), island.getPosition(), island.getSize(), entity -> {
                 Player playerInIsland = (Player) entity;
                 if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
                 PlayerUtils.teleportPlayerSpawn(playerInIsland);

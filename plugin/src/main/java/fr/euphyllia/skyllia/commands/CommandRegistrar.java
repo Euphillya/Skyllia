@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.commands;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.commands.admin.SkylliaAdminCommand;
 import fr.euphyllia.skyllia.commands.admin.SubAdminCommandImpl;
@@ -17,16 +17,16 @@ import org.bukkit.plugin.Plugin;
 @SuppressWarnings("UnstableApiUsage")
 public class CommandRegistrar {
 
-    private final Main plugin;
+    private final Skyllia plugin;
     private final SubCommandRegistry commandRegistry;
     private final SubCommandRegistry adminCommandRegistry;
 
     /**
      * Constructs a CommandRegistrar that will register Skyllia commands.
      *
-     * @param plugin The main plugin instance
+     * @param plugin The Skyllia plugin instance
      */
-    public CommandRegistrar(Main plugin) {
+    public CommandRegistrar(Skyllia plugin) {
         this.plugin = plugin;
 
         // Création des SubCommandRegistry

@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
-import fr.euphyllia.skyllia.Main;
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.event.*;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -25,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class IslandHook extends Island {
 
-    private final Main plugin;
+    private final Skyllia plugin;
     private final UUID islandId;
     private final Timestamp createDate;
     private final Position position;
@@ -35,7 +35,7 @@ public class IslandHook extends Island {
     /**
      * Constructs a new {@code IslandHook} instance.
      *
-     * @param main       The {@link Main} plugin instance.
+     * @param Skyllia       The {@link Skyllia} plugin instance.
      * @param islandId   The UUID of the island.
      * @param maxMembers The maximum number of members allowed on the island.
      * @param position   The region-based position of the island (X/Z).
@@ -43,13 +43,13 @@ public class IslandHook extends Island {
      * @param date       The creation date, or {@code null} if unknown.
      * @throws MaxIslandSizeExceedException If the specified size is out of the allowed range.
      */
-    public IslandHook(Main main,
+    public IslandHook(Skyllia Skyllia,
                       UUID islandId,
                       int maxMembers,
                       Position position,
                       double size,
                       Timestamp date) throws MaxIslandSizeExceedException {
-        this.plugin = main;
+        this.plugin = Skyllia;
         this.islandId = islandId;
         this.createDate = date;
         this.position = position;
