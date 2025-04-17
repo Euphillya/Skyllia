@@ -1,0 +1,21 @@
+config-version = 1
+
+# Ici on choisit le type d'île qui sera décidé par defaut si la personne fait juste /is create
+[default-island]
+default-schem-key = "my_first_island"
+
+# c'est /is create my_first_island/my_second_island/my_third_island
+[island.my_first_island]
+id = "my_first_island"
+size = 50.0
+max-members = 6
+
+[island.my_second_island]
+id = "my_second_island"
+size = 50.0
+max-members = 6
+
+[island.my_third_island]
+id = "my_third_island"
+size = 50.0
+max-members = 6

@@ -8,8 +8,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.Permissions;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
-import fr.euphyllia.skyllia.cache.PositionIslandCache;
+import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
+import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
@@ -124,16 +124,13 @@ public class ListenersUtils {
     /**
      * Triggers a {@link PlayerPrepareChangeWorldSkyblockEvent} if the specified world is a Skyblock world.
      *
-     * @param player     The {@link Player} transitioning to another world.
-     * @param portalType The type of portal being used.
-     * @param worldName  The name of the target world.
+     * @param player      The {@link Player} transitioning to another world.
+     * @param worldConfig
+     * @param portalType  The type of portal being used.
+     * @param cancellable Event can be canceled
      */
-    public static void callPlayerPrepareChangeWorldSkyblockEvent(Player player, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, String worldName) {
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(worldName))) {
-            return;
-        }
-        WorldConfig worldConfig = WorldUtils.getWorldConfig(worldName);
-        if (worldConfig == null) return;
+    public static void callPlayerPrepareChangeWorldSkyblockEvent(Player player, WorldConfig worldConfig, PlayerPrepareChangeWorldSkyblockEvent.PortalType portalType, @Nullable Cancellable cancellable) {
+        if (cancellable != null) cancellable.setCancelled(true);
         Bukkit.getPluginManager().callEvent(new PlayerPrepareChangeWorldSkyblockEvent(player, worldConfig, portalType));
     }
 

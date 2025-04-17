@@ -1,11 +1,12 @@
 package fr.euphyllia.skylliabank.database;
 
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.sgbd.DatabaseLoader;
-import fr.euphyllia.skyllia.sgbd.MariaDB;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
+import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
+import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,8 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
     }
 
     private void initializeDatabase() {
-        MariaDB mariaDB = new MariaDB(ConfigToml.mariaDBConfig);
-        database = new DatabaseLoader(mariaDB);
+        MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
+        database = new MariaDBLoader(mariaDB);
     }
 
     private void initializeGenerator() {
@@ -56,7 +57,7 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
     private void createBankTable() {
         try {
             MariaDBExecute.executeQuery(database,
-                    CREATE_BANK_TABLE.formatted(ConfigToml.mariaDBConfig.database()));
+                    CREATE_BANK_TABLE.formatted(ConfigLoader.database.getMariaDBConfig().database()));
         } catch (Exception exception) {
             log.error("Error creating island_bank table: {}", exception.getMessage(), exception);
         }

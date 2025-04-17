@@ -9,8 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
-import fr.euphyllia.skyllia.configuration.PermissionsToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -35,15 +34,15 @@ public class PermissionSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.permission")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 4) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePermissionCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.permission.args-missing");
             return true;
         }
         String permissionsTypeRaw = args[0]; // ISLAND / COMMANDS / INVENTORY
@@ -57,7 +56,7 @@ public class PermissionSubCommand implements SubCommandInterface {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
@@ -68,29 +67,29 @@ public class PermissionSubCommand implements SubCommandInterface {
                     return true;
                 }
                 if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionPlayerFailedHighOrEqualsStatus);
+                    ConfigLoader.language.sendMessage(player, "island.permission.fail-high-equals-status");
                     return true;
                 }
 
                 if (updatePermissions(skyblockManager, island, permissionFormat)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateSuccess);
+                    ConfigLoader.language.sendMessage(player, "island.permission.update.success");
                 } else {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateFailed);
+                    ConfigLoader.language.sendMessage(player, "island.permission.update.failed");
                 }
             } else {
                 // RESET !
                 if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messageOnlyOwner);
+                    ConfigLoader.language.sendMessage(player, "island.only-owner");
                 }
                 if (resetPermission(island, permissionFormat)) {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateSuccess);
+                    ConfigLoader.language.sendMessage(player, "island.permission.update.success");
                 } else {
-                    LanguageToml.sendMessage(player, LanguageToml.messagePermissionsUpdateFailed);
+                    ConfigLoader.language.sendMessage(player, "island.permission.update.failed");
                 }
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
         return true;
     }
@@ -159,14 +158,14 @@ public class PermissionSubCommand implements SubCommandInterface {
         try {
             permissionsType = PermissionsType.valueOf(permissionsTypeRaw.toUpperCase());
         } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(entity, LanguageToml.messagePermissionPermissionTypeInvalid);
+            ConfigLoader.language.sendMessage(entity, "island.permission.permission-type-invalid");
             return null;
         }
         RoleType roleType;
         try {
             roleType = RoleType.valueOf(roleTypeRaw.toUpperCase());
         } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(entity, LanguageToml.messagePermissionRoleTypeInvalid);
+            ConfigLoader.language.sendMessage(entity, "island.permission.role-invalid");
             return null;
         }
         Permissions permissions = null;
@@ -179,7 +178,7 @@ public class PermissionSubCommand implements SubCommandInterface {
                 };
             }
         } catch (IllegalArgumentException e) {
-            LanguageToml.sendMessage(entity, LanguageToml.messagePermissionsPermissionsValueInvalid);
+            ConfigLoader.language.sendMessage(entity, "island.permission.permissions-invalid");
             return null;
         }
         boolean value = Boolean.parseBoolean(valueRaw);
@@ -198,9 +197,9 @@ public class PermissionSubCommand implements SubCommandInterface {
         PermissionsType permissionsType = permissionFormat.permissionsType;
         RoleType roleType = permissionFormat.roleType;
         long value = switch (permissionsType) {
-            case INVENTORY -> PermissionsToml.flagsRoleDefaultPermissionInventory.getOrDefault(roleType, 0L);
-            case COMMANDS -> PermissionsToml.flagsRoleDefaultPermissionsCommandIsland.getOrDefault(roleType, 0L);
-            case ISLAND -> PermissionsToml.flagsRoleDefaultPermissionsIsland.getOrDefault(roleType, 0L);
+            case INVENTORY -> ConfigLoader.permissions.getPermissionInventory().getOrDefault(roleType, 0L);
+            case COMMANDS -> ConfigLoader.permissions.getPermissionsCommands().getOrDefault(roleType, 0L);
+            case ISLAND -> ConfigLoader.permissions.getPermissionIsland().getOrDefault(roleType, 0L);
         };
         return island.updatePermission(permissionsType, roleType, value);
     }

@@ -33,10 +33,10 @@ functionality, and it's not my intention at all that there should be external fe
 
 ## Prerequisites
 
-- A MariaDB database
+- A MariaDB database (recommended)
 - Paper 1.20.1+ or Folia 1.20+
 - Java 21
-- WorldEdit ([Folia](https://github.com/Euphillya/WorldEdit-Folia/actions)
+- WorldEdit or FAWE ([Folia](https://github.com/Euphillya/WorldEdit-Folia/actions)
   or [Original](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
 
 ## Installation
@@ -104,9 +104,9 @@ the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-
 
 |                   Software                    |    Version    |
 |:---------------------------------------------:|:-------------:|
-| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.4 |
-|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.4 |
-|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.4  |
+| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.5 |
+|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.5 |
+|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.5  |
 
 ## Island Generation
 
@@ -132,7 +132,7 @@ For more detailed guidelines, refer to the [Contributing Guide](CONTRIBUTING.md)
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENCE](LICENSE) file for details.
 
 For more information and detailed documentation, please refer to the [Wiki](https://github.com/Euphillya/Skyllia/wiki).
 

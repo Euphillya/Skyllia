@@ -3,14 +3,12 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Main;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
-import fr.euphyllia.skyllia.configuration.ConfigToml;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldEditUtils;
@@ -39,37 +37,37 @@ public class DeleteSubCommand implements SubCommandInterface {
             bPlayer.getScheduler().execute(plugin, () -> {
                 switch (cause) {
                     case KICKED -> {
-                        if (ConfigToml.clearInventoryWhenKickedIsland) {
+                        if (ConfigLoader.playerManager.isClearInventoryWhenKicked()) {
                             bPlayer.getInventory().clear();
                         }
-                        if (ConfigToml.clearEnderChestWhenKickedIsland) {
+                        if (ConfigLoader.playerManager.isClearEnderChestWhenKicked()) {
                             bPlayer.getEnderChest().clear();
                         }
-                        if (ConfigToml.resetExperiencePlayerWhenKickedIsland) {
+                        if (ConfigLoader.playerManager.isResetExperienceWhenKicked()) {
                             bPlayer.setTotalExperience(0);
                             bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
                         }
                     }
                     case ISLAND_DELETED -> {
-                        if (ConfigToml.clearInventoryWhenDeleteIsland) {
+                        if (ConfigLoader.playerManager.isClearInventoryWhenDelete()) {
                             bPlayer.getInventory().clear();
                         }
-                        if (ConfigToml.clearEnderChestWhenDeleteIsland) {
+                        if (ConfigLoader.playerManager.isClearEnderChestWhenDelete()) {
                             bPlayer.getEnderChest().clear();
                         }
-                        if (ConfigToml.resetExperiencePlayerWhenDeleteIsland) {
+                        if (ConfigLoader.playerManager.isResetExperienceWhenDelete()) {
                             bPlayer.setTotalExperience(0);
                             bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
                         }
                     }
                     case LEAVE -> {
-                        if (ConfigToml.clearInventoryWhenLeaveIsland) {
+                        if (ConfigLoader.playerManager.isClearInventoryWhenLeave()) {
                             bPlayer.getInventory().clear();
                         }
-                        if (ConfigToml.clearEnderChestWhenLeaveIsland) {
+                        if (ConfigLoader.playerManager.isClearEnderChestWhenLeave()) {
                             bPlayer.getEnderChest().clear();
                         }
-                        if (ConfigToml.resetExperiencePlayerWhenLeaveIsland) {
+                        if (ConfigLoader.playerManager.isResetExperienceWhenLeave()) {
                             bPlayer.setTotalExperience(0);
                             bPlayer.sendExperienceChange(0, 0);
                         }
@@ -85,44 +83,44 @@ public class DeleteSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.delete")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length != 1) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageDeleteCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.delete.args-missing");
             return true;
         }
         String confirm = args[0];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageADeleteNotConfirmedArgs);
+            ConfigLoader.language.sendMessage(player, "admin.delete-no-confirm");
             return true;
         }
         try {
             SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
             if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                LanguageToml.sendMessage(player, LanguageToml.messageOnlyOwnerCanDeleteIsland);
+                ConfigLoader.language.sendMessage(player, "island.delete-only-owner");
                 return true;
             }
 
             // Vérification des membres
-            if (ConfigToml.preventDeletionIfHasMembers) {
+            if (ConfigLoader.general.isPreventDeletionIfHasMembers()) {
                 long memberCount = island.getMembers().stream()
                         .filter(member -> !member.getMojangId().equals(player.getUniqueId()))
                         .count();
                 if (memberCount > 0) {
-                    LanguageToml.sendMessage(player, LanguageToml.messageCannotDeleteIslandWithMembers);
+                    ConfigLoader.language.sendMessage(player, "island.player.delete-has-members");
                     return true;
                 }
             }
@@ -132,18 +130,16 @@ public class DeleteSubCommand implements SubCommandInterface {
             if (isDisabled) {
                 this.updatePlayer(Main.getPlugin(Main.class), skyblockManager, island);
                 this.kickAllPlayerOnIsland(island);
-
-                for (WorldConfig worldConfig : ConfigToml.worldConfigs) {
-                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(worldConfig.name()));
-                }
-
-                LanguageToml.sendMessage(player, LanguageToml.messageIslandDeleteSuccess);
+                ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
+                    WorldEditUtils.deleteIsland(Main.getPlugin(Main.class), island, Bukkit.getWorld(s));
+                });
+                ConfigLoader.language.sendMessage(player, "island.delete-success");
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageError);
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
         return true;
     }
@@ -168,8 +164,8 @@ public class DeleteSubCommand implements SubCommandInterface {
     }
 
     private void kickAllPlayerOnIsland(final Island island) {
-        ConfigToml.worldConfigs.forEach(worldConfig -> {
-            RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigToml.regionDistance, EntityType.PLAYER, Bukkit.getWorld(worldConfig.name()), island.getPosition(), island.getSize(), entity -> {
+        ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
+            RegionUtils.getEntitiesInRegion(Main.getPlugin(Main.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(s), island.getPosition(), island.getSize(), entity -> {
                 Player playerInIsland = (Player) entity;
                 if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
                 PlayerUtils.teleportPlayerSpawn(playerInIsland);

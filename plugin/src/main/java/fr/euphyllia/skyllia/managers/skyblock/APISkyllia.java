@@ -7,8 +7,9 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
-import fr.euphyllia.skyllia.cache.PositionIslandCache;
+import fr.euphyllia.skyllia.cache.island.IslandCache;
+import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
+import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -44,7 +45,11 @@ public final class APISkyllia implements SkylliaImplementation {
      */
     @Override
     public @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
-        return PlayersInIslandCache.getIslandByPlayerId().getOrDefault(playerUniqueId, null);
+        UUID islandId = PlayersInIslandCache.getIslandIdByPlayer(playerUniqueId);
+        if (islandId == null) {
+            return null;
+        }
+        return IslandCache.getIsland(islandId);
     }
 
     @Override
@@ -60,7 +65,7 @@ public final class APISkyllia implements SkylliaImplementation {
      */
     @Override
     public @Nullable Island getCacheIslandByIslandId(UUID islandId) {
-        return PlayersInIslandCache.getIslandByIslandId().getOrDefault(islandId, null);
+        return IslandCache.getIsland(islandId);
     }
 
     @Override

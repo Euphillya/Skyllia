@@ -6,8 +6,8 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.cache.PlayersInIslandCache;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
@@ -30,21 +30,21 @@ public class UntrustSubCommand implements SubCommandInterface {
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            LanguageToml.sendMessage(sender, LanguageToml.messageCommandPlayerOnly);
+            ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skyllia.island.command.access")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageUntrustCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.untrust.args-missing");
             return true;
         }
         try {
             UUID playerTrustedId = Bukkit.getPlayerUniqueId(args[0]);
             if (playerTrustedId == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerNotFound);
+                ConfigLoader.language.sendMessage(player, "island.player.not-found");
                 return true;
             }
 
@@ -52,7 +52,7 @@ public class UntrustSubCommand implements SubCommandInterface {
             Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
             if (island == null) {
-                LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+                ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
@@ -63,13 +63,13 @@ public class UntrustSubCommand implements SubCommandInterface {
 
             boolean isRemove = PlayersInIslandCache.removePlayerTrustedInIsland(island.getId(), playerTrustedId);
             if (isRemove) {
-                LanguageToml.sendMessage(player, LanguageToml.messageUntrustSuccess);
+                ConfigLoader.language.sendMessage(player, "island.untrust.success");
             } else {
-                LanguageToml.sendMessage(player, LanguageToml.messageUntrustFailed);
+                ConfigLoader.language.sendMessage(player, "island.untrust.failed");
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            LanguageToml.sendMessage(player, LanguageToml.messageError);
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
         return true;
     }

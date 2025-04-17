@@ -279,16 +279,19 @@ Contributions are welcome! To contribute to Skyllia Placeholder, please follow t
     - Click the "Fork" button on the repository page to create your own copy.
 
 2. **Create a New Branch**:
+
 ```bash
    git checkout -b feature/YourFeature
 ```
 
 3. **Commit Your Changes**:
+
 ```bash
    git commit -am 'Add some feature'
 ```
 
 4. **Push to the Branch**:
+
 ```bash
    git push origin feature/YourFeature
 ```

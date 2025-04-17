@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api;
 
-import fr.euphyllia.skyllia.configuration.ConfigToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.configuration.manager.GeneralConfigManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.command.CommandSender;
@@ -24,7 +25,7 @@ public class PermissionImp {
     /**
      * Checks whether an {@link Entity} has a specific permission.
      * <p>
-     * If the debug option {@link ConfigToml#debug_permission} is enabled,
+     * If the debug option {@link GeneralConfigManager#isDebugPermission()} is enabled,
      * a message showing the permission name and its value (true/false) will be logged.
      *
      * @param entity      The entity for which you want to check the permission.
@@ -33,7 +34,7 @@ public class PermissionImp {
      */
     public static boolean hasPermission(Entity entity, String permissions) {
         boolean hasPerm = entity.hasPermission(permissions);
-        if (ConfigToml.debug_permission) {
+        if (ConfigLoader.general.isDebugPermission()) {
             debugPermissionCheck(permissions, hasPerm);
         }
         return hasPerm;
@@ -42,7 +43,7 @@ public class PermissionImp {
     /**
      * Checks whether a {@link CommandSender} has a specific permission.
      * <p>
-     * If the debug option {@link ConfigToml#debug_permission} is enabled,
+     * If the debug option {@link GeneralConfigManager#isDebugPermission()} is enabled,
      * a message showing the permission name and its value (true/false) will be logged.
      *
      * @param sender      The sender of a command (e.g., console, player).
@@ -51,7 +52,7 @@ public class PermissionImp {
      */
     public static boolean hasPermission(CommandSender sender, String permissions) {
         boolean hasPerm = sender.hasPermission(permissions);
-        if (ConfigToml.debug_permission) {
+        if (ConfigLoader.general.isDebugPermission()) {
             debugPermissionCheck(permissions, hasPerm);
         }
         return hasPerm;

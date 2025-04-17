@@ -6,7 +6,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
-import fr.euphyllia.skyllia.configuration.LanguageToml;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
@@ -32,19 +32,19 @@ public class DebugSubCommand implements SubCommandInterface {
             return true;
         }
         if (!PermissionImp.hasPermission(player, "skyllia.island.command.debug")) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerPermissionDenied);
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
         if (args.length < 1) {
-            LanguageToml.sendMessage(player, LanguageToml.messageDebugCommandNotEnoughArgs);
+            ConfigLoader.language.sendMessage(player, "island.debug.args-missing");
             return true;
         }
 
         SkyblockManager skyblockManager = Main.getPlugin(Main.class).getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
         if (island == null) {
-            LanguageToml.sendMessage(player, LanguageToml.messagePlayerHasNotIsland);
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
@@ -75,7 +75,7 @@ public class DebugSubCommand implements SubCommandInterface {
             }
         }
 
-        LanguageToml.sendMessage(player, "Debug " + args[0] + " " + (enabledDebug ? "enabled" : "disabled"));
+        ConfigLoader.language.sendMessage(player, "Debug " + args[0] + " " + (enabledDebug ? "enabled" : "disabled"));
         return true;
     }
 
