@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 group = "fr.euphyllia.skyllia"
-version = "2.0"
+version = "2.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
