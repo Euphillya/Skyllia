@@ -58,7 +58,11 @@ public class BanSubCommand implements SubCommandInterface {
         Players players = island.getMember(playerBan);
 
         if (players != null) {
-            ConfigLoader.language.sendMessage(player, "island.ban.failed-player-in-island");
+            if (players.getRoleType().equals(RoleType.BAN)) {
+                ConfigLoader.language.sendMessage(player, "island.ban.already-banned");
+            } else {
+                ConfigLoader.language.sendMessage(player, "island.ban.failed-player-in-island");
+            }
             return true;
         }
 

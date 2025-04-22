@@ -71,6 +71,7 @@ args-missing = "The command is incomplete: /skyllia kick <player>"
 args-missing = "The command is incomplete: /skyllia ban <player>"
 player-in-island = "The player cannot be banned as they are a member of your island."
 success = "The player has been banned from your island."
+already-banned = "The player is already banned."
 
 [island.unban]
 args-missing = "The command is incomplete: /skyllia unban <player>"

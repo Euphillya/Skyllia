@@ -70,6 +70,7 @@ args-missing = "La commande est incomplète : /skyllia kick <joueur>"
 [island.ban]
 args-missing = "La commande est incomplète : /skyllia ban <joueur>"
 player-in-island = "Le joueur ne peut pas être banni car il est membre de votre île."
+already-banned = "Le joueur est déjà banni."
 success = "Le joueur a été banni de votre île."
 
 [island.unban]
