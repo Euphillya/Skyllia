@@ -21,6 +21,10 @@ success = "Your island home has been set."
 [island.delete]
 args-missing = "You must add 'confirm' to the end of your command."
 
+[island.access]
+open = "Your island is now accessible to visitors."
+close = "Your island is no longer accessible to visitors."
+
 [island.player]
 no-island = "You don't have an island!"
 already-has-island = "You already have an island."
