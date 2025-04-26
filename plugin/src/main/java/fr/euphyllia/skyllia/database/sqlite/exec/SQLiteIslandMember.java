@@ -187,29 +187,23 @@ public class SQLiteIslandMember extends IslandMemberQuery {
                     List.of(island.getId().toString()),
                     rs -> {
                         try {
-                            boolean any = false;
                             while (rs.next()) {
-                                any = true;
                                 UUID uuid = UUID.fromString(rs.getString("uuid_player"));
                                 RoleType roleType = RoleType.valueOf(rs.getString("role"));
                                 String name = rs.getString("player_name");
                                 Players p = new Players(uuid, name, island.getId(), roleType);
                                 playersList.add(p);
                             }
-                            if (!any) {
-                                future.complete(null);
-                            } else {
-                                future.complete(playersList);
-                            }
+                            future.complete(playersList);
                         } catch (Exception ex) {
                             logger.error("getMembersInIsland", ex);
-                            future.complete(null);
+                            future.complete(new CopyOnWriteArrayList<>());
                         }
                     },
                     null
             );
         } catch (DatabaseException e) {
-            future.complete(null);
+            future.complete(new CopyOnWriteArrayList<>());
         }
         return future;
     }

@@ -162,14 +162,14 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                                 } while (resultSet.next());
                                 completableFuture.complete(playersList);
                             } else {
-                                completableFuture.complete(null);
+                                completableFuture.complete(new CopyOnWriteArrayList<>());
                             }
                         } catch (Exception e) {
-                            completableFuture.complete(null);
+                            completableFuture.complete(new CopyOnWriteArrayList<>());
                         }
                     }, null);
         } catch (DatabaseException e) {
-            completableFuture.complete(null);
+            completableFuture.complete(new CopyOnWriteArrayList<>());
         }
         return completableFuture;
     }
