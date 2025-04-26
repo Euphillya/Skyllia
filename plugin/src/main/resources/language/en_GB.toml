@@ -12,6 +12,9 @@ schematic-not-exist = "The schematic to create the island does not exist."
 generic-error = "An error occurred during island creation"
 only-owner = "Only the island owner can execute this command."
 
+[island.home]
+success = "You have been teleported to your island."
+
 [island.player]
 no-island = "You don't have an island!"
 already-has-island = "You already have an island."

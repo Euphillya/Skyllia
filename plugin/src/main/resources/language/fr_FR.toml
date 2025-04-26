@@ -12,6 +12,9 @@ schematic-not-exist = "Le schéma pour créer l'île n'existe pas."
 generic-error = "Une erreur est survenue lors de la création de l'île."
 only-owner = "Seul le propriétaire de l'île peut exécuter cette commande."
 
+[island.home]
+success = "Vous avez été téléporté sur votre île."
+
 [island.player]
 no-island = "Vous n'avez pas d'île !"
 already-has-island = "Vous avez déjà une île."
