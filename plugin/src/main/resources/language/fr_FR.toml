@@ -18,6 +18,9 @@ success = "Vous avez été téléporté sur votre île."
 [island.home.set]
 success = "Votre position sur l'île a été définie."
 
+[island.delete]
+args-missing = "Vous devez ajouter 'confirm' à la fin de votre commande."
+
 [island.player]
 no-island = "Vous n'avez pas d'île !"
 already-has-island = "Vous avez déjà une île."
