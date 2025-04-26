@@ -15,6 +15,9 @@ only-owner = "Seul le propriétaire de l'île peut exécuter cette commande."
 [island.home]
 success = "Vous avez été téléporté sur votre île."
 
+[island.home.set]
+success = "Votre position sur l'île a été définie."
+
 [island.player]
 no-island = "Vous n'avez pas d'île !"
 already-has-island = "Vous avez déjà une île."

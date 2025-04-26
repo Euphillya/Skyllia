@@ -66,6 +66,12 @@ public class SkylliaCommand implements SkylliaCommandInterface {
             }
             Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
                     subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs));
+        } else {
+            // If no subcommand is provided, we can default to the "create" command
+            Bukkit.getAsyncScheduler().runNow(this.plugin, scheduledTask -> {
+                Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                        registry.getSubCommandByName("create").onCommand(this.plugin, sender.getSender(), args));
+            });
         }
     }
 
