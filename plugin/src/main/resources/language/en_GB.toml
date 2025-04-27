@@ -107,6 +107,7 @@ no-island = "The player does not have an island"
 island-private = "The island is closed."
 banned = "You are banned from the island."
 success = "You have been teleported to the island of %player%."
+no-island-location = "No island was found at this location."
 
 [island.generic]
 unexpected-error = "An error occurred. Please contact an administrator."

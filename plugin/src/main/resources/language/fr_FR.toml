@@ -107,6 +107,7 @@ no-island = "Le joueur n'a pas d'île."
 island-private = "L'île est fermée."
 banned = "Vous êtes banni de l'île."
 success = "Vous avez été téléporté sur l'île de %player%."
+no-island-location = "Aucune île n'a été trouvée à cet endroit."
 
 [island.generic]
 unexpected-error = "Une erreur est survenue. Veuillez contacter un administrateur."

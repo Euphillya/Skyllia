@@ -5,9 +5,11 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
+import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -48,23 +50,28 @@ public class TeleportEvent implements Listener {
     public void onPlayerHasAccessIsland(final PlayerTeleportEvent event) {
         if (event.isCancelled()) return;
         if (PermissionImp.hasPermission(event.getPlayer(), "skyllia.island.command.visit.bypass")) return;
+        final Player player = event.getPlayer();
         Location to = event.getTo();
-        Runnable task = () -> {
-            World world = to.getWorld();
-            if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
+        World world = to.getWorld();
+        if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
 
-            Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
-            if (island == null) {
+        Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
+        if (island == null) {
+            event.setCancelled(true);
+            ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.no-island-location");
+            return;
+        }
+        if (IslandClosedCache.isIslandClosed(island.getId())) {
+            var players = PlayersInIslandCache.getPlayersCached(island.getId());
+            boolean isAllowed = players.stream()
+                    .anyMatch(p -> p.getMojangId().equals(player.getUniqueId())
+                            && p.getRoleType().getValue() >= RoleType.MEMBER.getValue());
+
+            if (!isAllowed) {
                 event.setCancelled(true);
-                ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.island-private");
-                return;
+                ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.island-closed");
             }
-            if (IslandClosedCache.isIslandClosed(island.getId())) {
-                event.setCancelled(true);
-                ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.island-private");
-            }
-        };
-        Bukkit.getRegionScheduler().execute(api.getPlugin(), to, task);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
