@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.Vector;
 
 public class MoveEvent implements Listener {
 
@@ -44,12 +45,17 @@ public class MoveEvent implements Listener {
             if (homeWarp != null && homeWarp.location() != null && homeWarp.location().getWorld() != null) {
                 Location homeLocation = homeWarp.location().clone();
                 homeLocation.setY(homeLocation.getY() + 0.5);
-                player.teleportAsync(homeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                player.teleportAsync(homeLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                    player.setVelocity(new Vector(0, 0, 0));
+                    player.setFallDistance(0);
+                });
             } else {
                 Location centerLocation = RegionHelper.getCenterRegion(world, position.x(), position.z());
-                player.teleportAsync(centerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                player.teleportAsync(centerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                    player.setVelocity(new Vector(0, 0, 0));
+                    player.setFallDistance(0);
+                });
             }
         }
-
     }
 }
