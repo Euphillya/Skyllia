@@ -80,6 +80,7 @@ public class ConfigLoader {
         try {
             for (ConfigManager manager : configManagers) {
                 if (manager instanceof DatabaseConfigManager) continue;
+                manager.reloadFromDisk();
                 manager.loadConfig();
             }
             logger.log(Level.INFO, "[Config] Reload complete.");

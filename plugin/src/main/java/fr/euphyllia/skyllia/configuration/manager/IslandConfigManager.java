@@ -48,6 +48,11 @@ public class IslandConfigManager implements ConfigManager {
     }
 
     @Override
+    public void reloadFromDisk() {
+        config.load();
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass) {
         Object value = config.get(path);

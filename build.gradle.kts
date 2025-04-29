@@ -49,19 +49,19 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("org.apache.maven.resolver:maven-resolver-api:2.0.7")
+        compileOnly("org.apache.maven.resolver:maven-resolver-api:2.0.8")
         compileOnly("org.apache.logging.log4j:log4j-api:2.24.3")
         compileOnly("org.apache.logging.log4j:log4j-core:2.24.3")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.2")
-        compileOnly("com.zaxxer:HikariCP:6.2.1")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.3")
+        compileOnly("com.zaxxer:HikariCP:6.3.0")
         compileOnly("org.xerial:sqlite-jdbc:3.49.1.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
-        compileOnly("com.electronwill.night-config:toml:3.8.1")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.6")
+        compileOnly("net.kyori:adventure-text-minimessage:4.20.0")
+        compileOnly("com.electronwill.night-config:toml:3.8.2")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
-        compileOnly("org.mongodb:mongodb-driver-sync:5.4.0-alpha0")
-        compileOnly("org.mongodb:bson:5.4.0-alpha0")
+        compileOnly("org.mongodb:mongodb-driver-sync:5.4.0")
+        compileOnly("org.mongodb:bson:5.4.0")
     }
 
     tasks {

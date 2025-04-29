@@ -82,6 +82,11 @@ public class PlayerConfigManager implements ConfigManager {
         throw new IllegalStateException("Cannot convert value at path '" + path + "' from " + value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
+    @Override
+    public void reloadFromDisk() {
+        config.load();
+    }
+
     public boolean isClearInventoryWhenLeave() {
         return clearInventoryWhenLeave;
     }

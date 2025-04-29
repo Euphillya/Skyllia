@@ -17,18 +17,17 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addRepository(new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build());
 
         // Maven Repo
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.zaxxer:HikariCP:6.2.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.zaxxer:HikariCP:6.3.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.xerial:sqlite-jdbc:3.49.1.0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.mariadb.jdbc:mariadb-java-client:3.5.2"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-core:2.24.2"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-api:2.24.2"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.1.6"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.19.0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.8.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.mariadb.jdbc:mariadb-java-client:3.5.3"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-core:2.24.3"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-api:2.24.3"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.20.0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.8.2"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.2.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ExcaliaSI:exp4j:e50bdd65e4"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:5.4.0-alpha0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:bson:5.4.0-alpha0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:5.4.0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.mongodb:bson:5.4.0"), null));
 
         // Mojang Repo
         resolver.addDependency(new Dependency(new DefaultArtifact("com.mojang:brigadier:1.0.18"), null));

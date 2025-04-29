@@ -65,6 +65,11 @@ public class SchematicConfigManager implements ConfigManager {
         }
     }
 
+    @Override
+    public void reloadFromDisk() {
+        config.load();
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getOrSetDefault(CommentedConfig node, String path, T defaultValue, Class<T> expectedClass) {
         Object value = node.get(path);

@@ -59,6 +59,16 @@ public class LanguageConfigManager implements ConfigManager {
     }
 
     @Override
+    public void reloadFromDisk() {
+        try {
+            loadConfig();
+        } catch (DatabaseException e) {
+            log.error("Failed to reload language files", e);
+        }
+    }
+
+
+    @Override
     public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expected) {
         throw new UnsupportedOperationException("Currently not supported as languages are dynamic");
     }

@@ -19,4 +19,7 @@ public interface ConfigManager {
      * @return The value from the configuration file or the default value.
      */
     <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass);
+
+    default void reloadFromDisk() {
+    }
 }
