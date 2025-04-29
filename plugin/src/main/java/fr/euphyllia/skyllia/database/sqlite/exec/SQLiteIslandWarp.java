@@ -2,7 +2,6 @@ package fr.euphyllia.skyllia.database.sqlite.exec;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.IslandWarpQuery;
-import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;

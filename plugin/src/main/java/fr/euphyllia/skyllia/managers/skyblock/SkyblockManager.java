@@ -168,7 +168,7 @@ public class SkyblockManager {
      * Deletes a warp from an island.
      *
      * @param islandId The UUID of the island.
-     * @param name   The warp name.
+     * @param name     The warp name.
      * @return A {@link CompletableFuture} with {@code true} if deleted, {@code false} otherwise.
      */
     public CompletableFuture<Boolean> delWarpsIsland(UUID islandId, String name) {
@@ -179,7 +179,7 @@ public class SkyblockManager {
      * Retrieves a warp by its name from an island.
      *
      * @param islandId The UUID of the island.
-     * @param name   The warp name.
+     * @param name     The warp name.
      * @return A {@link CompletableFuture} with the {@link WarpIsland}, or {@code null} if not found.
      */
     public CompletableFuture<@Nullable WarpIsland> getWarpIslandByName(UUID islandId, String name) {

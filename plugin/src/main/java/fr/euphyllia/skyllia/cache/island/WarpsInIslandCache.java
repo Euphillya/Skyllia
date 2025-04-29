@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.cache.island;
 
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;

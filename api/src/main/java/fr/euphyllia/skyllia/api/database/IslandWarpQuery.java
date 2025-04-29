@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.api.database;
 
-import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +50,7 @@ public abstract class IslandWarpQuery {
      * Deletes a named warp for the specified island.
      *
      * @param islandId the UUID of the island whose warp is to be deleted
-     * @param name   the name of the warp point to delete
+     * @param name     the name of the warp point to delete
      * @return a {@link CompletableFuture} that completes with {@code true} if the deletion succeeds,
      * or {@code false} otherwise
      */
