@@ -16,6 +16,7 @@ public class DatabaseConfigManager implements ConfigManager {
     private int configVersion;
     private MariaDBConfig mariaDBConfig;
     private SQLiteConfig sqLiteConfig;
+    private boolean changed = false;
 
     public DatabaseConfigManager(CommentedFileConfig config) {
         this.config = config;
@@ -28,40 +29,72 @@ public class DatabaseConfigManager implements ConfigManager {
 
     @Override
     public void loadConfig() throws DatabaseException {
-        configVersion = config.getOrElse("config-version", 3);
+        changed = false;
+        configVersion = getOrSetDefault("config-version", 3, Integer.class);
         // MariaDB
-        boolean enabledMariaDB = config.getOrElse("mariadb.enabled", true);
+        boolean enabledMariaDB = getOrSetDefault("mariadb.enabled", true, Boolean.class);
         if (enabledMariaDB) {
-            String hostname = config.getOrElse("mariadb.hostname", "127.0.0.1");
-            int port = config.getOrElse("mariadb.port", 3306);
-            String database = config.getOrElse("mariadb.database", "skyblock");
-            String username = config.getOrElse("mariadb.username", "user");
-            String password = config.getOrElse("mariadb.password", "password");
-            boolean useSSL = config.getOrElse("mariadb.useSSL", false);
-            int minPool = config.getOrElse("mariadb.minPool", 1);
-            int maxPool = config.getOrElse("mariadb.maxPool", 10);
-            long keepAliveTime = config.getOrElse("mariadb.keepAliveTime", 0);
-            long maxLifeTime = config.getOrElse("mariadb.maxLifeTime", 1800000);
-            int timeOut = config.getOrElse("mariadb.timeOut", 5000);
+            String hostname = getOrSetDefault("mariadb.hostname", "127.0.0.1", String.class);
+            int port = getOrSetDefault("mariadb.port", 3306, Integer.class);
+            String database = getOrSetDefault("mariadb.database", "skyblock", String.class);
+            String username = getOrSetDefault("mariadb.username", "user", String.class);
+            String password = getOrSetDefault("mariadb.password", "password", String.class);
+            boolean useSSL = getOrSetDefault("mariadb.useSSL", false, Boolean.class);
+            int minPool = getOrSetDefault("mariadb.minPool", 1, Integer.class);
+            int maxPool = getOrSetDefault("mariadb.maxPool", 10, Integer.class);
+            long keepAliveTime = getOrSetDefault("mariadb.keepAliveTime", 0L, Long.class);
+            long maxLifeTime = getOrSetDefault("mariadb.maxLifeTime", 1800000L, Long.class);
+            int timeOut = getOrSetDefault("mariadb.timeOut", 5000, Integer.class);
             this.mariaDBConfig = new MariaDBConfig(hostname, String.valueOf(port), username, password, useSSL, minPool, maxPool, maxLifeTime, keepAliveTime, timeOut, database);
+
+            if (changed) config.save();
             return;
         }
 
         // SQlite
-        boolean enabledSQlite = config.getOrElse("sqlite.enabled", false);
+        boolean enabledSQlite = getOrSetDefault("sqlite.enabled", false, Boolean.class);
         if (enabledSQlite) {
-            String file = config.getOrElse("sqlite.file", "plugins/Skyllia/skyllia.db");
-            int minPool = config.getOrElse("sqlite.minPool", 1);
-            int maxPool = config.getOrElse("sqlite.maxPool", 10);
-            long keepAliveTime = config.getOrElse("sqlite.keepAliveTime", 0);
-            long maxLifeTime = config.getOrElse("sqlite.maxLifeTime", 1800000);
-            int timeOut = config.getOrElse("sqlite.timeOut", 30000);
+            String file = getOrSetDefault("sqlite.file", "plugins/Skyllia/skyllia.db", String.class);
+            int minPool = getOrSetDefault("sqlite.minPool", 1, Integer.class);
+            int maxPool = getOrSetDefault("sqlite.maxPool", 10, Integer.class);
+            long keepAliveTime = getOrSetDefault("sqlite.keepAliveTime", 0L, Long.class);
+            long maxLifeTime = getOrSetDefault("sqlite.maxLifeTime", 1800000L, Long.class);
+            int timeOut = getOrSetDefault("sqlite.timeOut", 30000, Integer.class);
             this.sqLiteConfig = new SQLiteConfig(file, minPool, maxPool, keepAliveTime, maxLifeTime, timeOut);
+
+            if (changed) config.save();
             return;
         }
 
         throw new DatabaseException("No Database configured!");
         // Todo ? Autre database
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass) {
+        Object value = config.get(path);
+        if (value == null) {
+            config.set(path, defaultValue);
+            changed = true;
+            return defaultValue;
+        }
+
+        if (expectedClass.isInstance(value)) {
+            return (T) value; // Bonne instance directement
+        }
+
+        // Cas spécial : Integer → Long
+        if (expectedClass == Long.class && value instanceof Integer) {
+            return (T) Long.valueOf((Integer) value);
+        }
+
+        // Cas spécial : Double → Float
+        if (expectedClass == Float.class && value instanceof Double) {
+            return (T) Float.valueOf(((Double) value).floatValue());
+        }
+
+        throw new IllegalStateException("Cannot convert value at path '" + path + "' from " + value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
     public @Nullable MariaDBConfig getMariaDBConfig() {

@@ -58,6 +58,11 @@ public class LanguageConfigManager implements ConfigManager {
 
     }
 
+    @Override
+    public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expected) {
+        throw new UnsupportedOperationException("Currently not supported as languages are dynamic");
+    }
+
     private Locale parseLocale(String filename) {
         String baseName = filename.replace(".toml", "");
         String[] parts = baseName.split("_");

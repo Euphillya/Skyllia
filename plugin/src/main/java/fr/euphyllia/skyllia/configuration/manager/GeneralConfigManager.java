@@ -32,6 +32,7 @@ public class GeneralConfigManager implements ConfigManager {
     private float spawnPitch;
     // Debug settings
     private boolean debugPermission;
+    private boolean changed = false;
 
     public GeneralConfigManager(CommentedFileConfig config) {
         this.config = config;
@@ -40,29 +41,61 @@ public class GeneralConfigManager implements ConfigManager {
 
     @Override
     public void loadConfig() {
-        this.configVersion = config.getOrElse("config-version", 4);
-        this.verbose = config.getOrElse("verbose", false);
+        changed = false;
+        this.configVersion = getOrSetDefault("config-version", 4, Integer.class);
+        this.verbose = getOrSetDefault("verbose", false, Boolean.class);
 
-        this.updateCacheTimer = config.getOrElse("settings.global.cache.update-timer-seconds", 30);
+        this.updateCacheTimer = getOrSetDefault("settings.global.cache.update-timer-seconds", 30, Integer.class);
 
-        this.regionDistance = config.getOrElse("settings.island.region-distance", -1);
-        this.maxIslands = config.getOrElse("settings.island.max-islands", 500_000);
-        this.teleportOutsideIsland = config.getOrElse("settings.island.teleport-outside-island", false);
+        this.regionDistance = getOrSetDefault("settings.island.region-distance", -1, Integer.class);
+        this.maxIslands = getOrSetDefault("settings.island.max-islands", 500_000, Integer.class);
+        this.teleportOutsideIsland = getOrSetDefault("settings.island.teleport-outside-island", false, Boolean.class);
 
-        this.preventDeletionIfHasMembers = config.getOrElse("settings.island.delete.prevent-deletion-if-has-members", true);
-        this.deleteChunkPerimeterIsland = config.getOrElse("settings.island.delete.chunk-perimeter-island", false);
+        this.preventDeletionIfHasMembers = getOrSetDefault("settings.island.delete.prevent-deletion-if-has-members", true, Boolean.class);
+        this.deleteChunkPerimeterIsland = getOrSetDefault("settings.island.delete.chunk-perimeter-island", false, Boolean.class);
 
-        this.teleportWhenAcceptingInvitation = config.getOrElse("settings.island.invitation.teleport-when-accepting-invitation", true);
+        this.teleportWhenAcceptingInvitation = getOrSetDefault("settings.island.invitation.teleport-when-accepting-invitation", true, Boolean.class);
 
-        this.spawnEnabled = config.getOrElse("settings.spawn.enable", true);
-        this.spawnWorld = config.getOrElse("settings.spawn.world-name", "world");
-        this.spawnX = config.getOrElse("settings.spawn.block-x", 0.0);
-        this.spawnY = config.getOrElse("settings.spawn.block-y", 64.0);
-        this.spawnZ = config.getOrElse("settings.spawn.block-z", 0.0);
-        this.spawnYaw = (float) (double) config.getOrElse("settings.spawn.yaw", 0.0);
-        this.spawnPitch = (float) (double) config.getOrElse("settings.spawn.pitch", 0.0);
+        this.spawnEnabled = getOrSetDefault("settings.spawn.enable", true, Boolean.class);
+        this.spawnWorld = getOrSetDefault("settings.spawn.world-name", "world", String.class);
+        this.spawnX = getOrSetDefault("settings.spawn.block-x", 0.0, Double.class);
+        this.spawnY = getOrSetDefault("settings.spawn.block-y", 64.0, Double.class);
+        this.spawnZ = getOrSetDefault("settings.spawn.block-z", 0.0, Double.class);
+        this.spawnYaw = getOrSetDefault("settings.spawn.yaw", 0.0f, Float.class);
+        this.spawnPitch = getOrSetDefault("settings.spawn.pitch", 0.0f, Float.class);
 
-        this.debugPermission = config.getOrElse("debug.permission", false);
+        this.debugPermission = getOrSetDefault("debug.permission", false, Boolean.class);
+
+        if (changed) {
+            config.save();
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass) {
+        Object value = config.get(path);
+        if (value == null) {
+            config.set(path, defaultValue);
+            changed = true;
+            return defaultValue;
+        }
+
+        if (expectedClass.isInstance(value)) {
+            return (T) value; // Bonne instance directement
+        }
+
+        // Cas spécial : Integer → Long
+        if (expectedClass == Long.class && value instanceof Integer) {
+            return (T) Long.valueOf((Integer) value);
+        }
+
+        // Cas spécial : Double → Float
+        if (expectedClass == Float.class && value instanceof Double) {
+            return (T) Float.valueOf(((Double) value).floatValue());
+        }
+
+        throw new IllegalStateException("Cannot convert value at path '" + path + "' from " + value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
     public int getConfigVersion() {

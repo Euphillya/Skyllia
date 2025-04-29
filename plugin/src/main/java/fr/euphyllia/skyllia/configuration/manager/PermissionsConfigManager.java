@@ -21,6 +21,7 @@ public class PermissionsConfigManager implements ConfigManager {
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionsCommandIsland = new ConcurrentHashMap<>();
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionInventory = new ConcurrentHashMap<>();
     public ConcurrentMap<RoleType, Long> flagsRoleDefaultPermissionsIsland = new ConcurrentHashMap<>();
+    private boolean changed = false;
 
     public PermissionsConfigManager(CommentedFileConfig config) {
         this.config = config;
@@ -29,6 +30,7 @@ public class PermissionsConfigManager implements ConfigManager {
 
     @Override
     public void loadConfig() {
+        changed = false;
 
         flagsRoleDefaultPermissionsCommandIsland.clear();
         flagsRoleDefaultPermissionInventory.clear();
@@ -49,7 +51,8 @@ public class PermissionsConfigManager implements ConfigManager {
             if (islandNode != null) {
                 PermissionManager manager = new PermissionManager(0L);
                 for (PermissionsIsland perm : PermissionsIsland.values()) {
-                    boolean value = islandNode.getOrElse(perm.name(), false);
+                    String path = "islands." + roleType.name() + "." + perm.name();
+                    boolean value = getOrSetDefault(path, false, Boolean.class);
                     manager.definePermission(perm.getPermissionValue(), value);
                 }
                 flagsRoleDefaultPermissionsIsland.put(roleType, manager.getPermissions());
@@ -60,7 +63,8 @@ public class PermissionsConfigManager implements ConfigManager {
             if (inventoryNode != null) {
                 PermissionManager manager = new PermissionManager(0L);
                 for (PermissionsInventory perm : PermissionsInventory.values()) {
-                    boolean value = inventoryNode.getOrElse(perm.name(), false);
+                    String path = "inventory." + roleType.name() + "." + perm.name();
+                    boolean value = getOrSetDefault(path, false, Boolean.class);
                     manager.definePermission(perm.getPermissionValue(), value);
                 }
                 flagsRoleDefaultPermissionInventory.put(roleType, manager.getPermissions());
@@ -71,13 +75,46 @@ public class PermissionsConfigManager implements ConfigManager {
             if (commandNode != null) {
                 PermissionManager manager = new PermissionManager(0L);
                 for (PermissionsCommandIsland perm : PermissionsCommandIsland.values()) {
-                    boolean value = commandNode.getOrElse(perm.name(), false);
+                    String path = "commands." + roleType.name() + "." + perm.name();
+                    boolean value = getOrSetDefault(path, false, Boolean.class);
                     manager.definePermission(perm.getPermissionValue(), value);
                 }
                 flagsRoleDefaultPermissionsCommandIsland.put(roleType, manager.getPermissions());
             }
         }
+
+        if (changed) {
+            config.save();
+        }
+
         log.info("[Skyllia] Loaded permissions for {} roles.", RoleType.values().length);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass) {
+        Object value = config.get(path);
+        if (value == null) {
+            config.set(path, defaultValue);
+            changed = true;
+            return defaultValue;
+        }
+
+        if (expectedClass.isInstance(value)) {
+            return (T) value; // Bonne instance directement
+        }
+
+        // Cas spécial : Integer → Long
+        if (expectedClass == Long.class && value instanceof Integer) {
+            return (T) Long.valueOf((Integer) value);
+        }
+
+        // Cas spécial : Double → Float
+        if (expectedClass == Float.class && value instanceof Double) {
+            return (T) Float.valueOf(((Double) value).floatValue());
+        }
+
+        throw new IllegalStateException("Cannot convert value at path '" + path + "' from " + value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
     public ConcurrentMap<RoleType, Long> getPermissionInventory() {

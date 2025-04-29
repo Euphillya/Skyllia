@@ -21,6 +21,7 @@ public class SchematicConfigManager implements ConfigManager {
     private final Map<String, Map<String, SchematicSetting>> schematicMap = new HashMap<>();
 
     private final CommentedFileConfig config;
+    private boolean changed = false;
 
     public SchematicConfigManager(CommentedFileConfig config) {
         this.config = config;
@@ -29,10 +30,12 @@ public class SchematicConfigManager implements ConfigManager {
 
     @Override
     public void loadConfig() {
+        changed = false;
         schematicMap.clear();
+
         for (String key : config.valueMap().keySet()) {
             Object value = config.valueMap().get(key);
-            if (!(value instanceof CommentedConfig node)) {
+            if (!(value instanceof CommentedConfig)) {
                 log.warn("[Skyllia] Key '{}' is not a CommentedConfig (type: {})", key, value == null ? "null" : value.getClass().getName());
                 continue;
             }
@@ -43,18 +46,52 @@ public class SchematicConfigManager implements ConfigManager {
             String islandType = key.substring(0, index);
             String worldName = key.substring(index + 1);
 
-            String schematicFile = node.getOrElse("schematic", "default.schem");
-            double height = node.getOrElse("height", 64.0);
-            boolean ignoreAirBlocks = node.getOrElse("ignore-air-blocks", true);
-            boolean copyEntities = node.getOrElse("copy-entities", true);
+            String pathPrefix = key + ".";
+
+            String schematicFile = getOrSetDefault(pathPrefix + "schematic", "default.schem", String.class);
+            double height = getOrSetDefault(pathPrefix + "height", 64.0, Double.class);
+            boolean ignoreAirBlocks = getOrSetDefault(pathPrefix + "ignore-air-blocks", true, Boolean.class);
+            boolean copyEntities = getOrSetDefault(pathPrefix + "copy-entities", true, Boolean.class);
 
             schematicMap
                     .computeIfAbsent(islandType, k -> new HashMap<>())
                     .put(worldName, new SchematicSetting(height, schematicFile, ignoreAirBlocks, copyEntities));
         }
+
         if (schematicMap.isEmpty()) {
             log.warn("[Skyllia] No schematics loaded from schematics.toml!");
         }
+
+        if (changed) {
+            config.save();
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass) {
+        Object value = config.get(path);
+        if (value == null) {
+            config.set(path, defaultValue);
+            changed = true;
+            return defaultValue;
+        }
+
+        if (expectedClass.isInstance(value)) {
+            return (T) value; // Bonne instance directement
+        }
+
+        // Cas spécial : Integer → Long
+        if (expectedClass == Long.class && value instanceof Integer) {
+            return (T) Long.valueOf((Integer) value);
+        }
+
+        // Cas spécial : Double → Float
+        if (expectedClass == Float.class && value instanceof Double) {
+            return (T) Float.valueOf(((Double) value).floatValue());
+        }
+
+        throw new IllegalStateException("Cannot convert value at path '" + path + "' from " + value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
     public SchematicSetting getSchematicSetting(String islandType, String worldName) {
