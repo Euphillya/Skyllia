@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class GameRuleSubCommand implements SubCommandInterface {
@@ -74,9 +75,13 @@ public class GameRuleSubCommand implements SubCommandInterface {
             boolean updateGameRuleIsland = island.updateGamerule(permissionManager.getPermissions());
 
             if (updateGameRuleIsland) {
-                ConfigLoader.language.sendMessage(player, "island.gamerule.success");
+                ConfigLoader.language.sendMessage(player, "island.gamerule.success",
+                        Map.of("%gamerule%", gameRuleIsland.name(),
+                                "%value%", enabledOrNot ? "true" : "false"));
             } else {
-                ConfigLoader.language.sendMessage(player, "island.gamerule.failed");
+                ConfigLoader.language.sendMessage(player, "island.gamerule.failed",
+                        Map.of("%gamerule%", gameRuleIsland.name(),
+                                "%value%", enabledOrNot ? "true" : "false"));
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
