@@ -20,7 +20,7 @@ success = "Your island home has been set."
 
 [island.expel]
 not-enough-args = ""
-player-not-in-island ""
+player-not-in-island = ""
 
 [island.delete]
 args-missing = "You must add 'confirm' to the end of your command."

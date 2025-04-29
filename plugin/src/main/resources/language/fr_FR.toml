@@ -20,7 +20,7 @@ success = "Votre position sur l'île a été définie."
 
 [island.expel]
 not-enough-args = ""
-player-not-in-island ""
+player-not-in-island = ""
 
 [island.delete]
 args-missing = "Vous devez ajouter 'confirm' à la fin de votre commande."
