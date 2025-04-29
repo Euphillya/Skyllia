@@ -24,6 +24,7 @@ public class LanguageConfigManager implements ConfigManager {
     private final Map<Locale, Map<String, String>> translations = new HashMap<>();
     private final Locale defaultLocale = Locale.of("en", "GB");
     private final Skyllia plugin = Skyllia.getPlugin(Skyllia.class);
+    private final Map<Locale, CommentedFileConfig> localeFiles = new HashMap<>();
 
     @Override
     public void loadConfig() throws DatabaseException {
@@ -40,6 +41,7 @@ public class LanguageConfigManager implements ConfigManager {
             Locale locale = parseLocale(file.getName());
             CommentedFileConfig tomlConfig = CommentedFileConfig.builder(file).sync().autosave().build();
             tomlConfig.load();
+            localeFiles.put(locale, tomlConfig);
 
             Map<String, String> messages = new HashMap<>();
             parseConfig("", tomlConfig, messages);
@@ -102,7 +104,19 @@ public class LanguageConfigManager implements ConfigManager {
                 throw new IllegalStateException("No translations found for locale: " + locale + " or default locale.");
             }
         }
-        String message = langMessages.getOrDefault(key, "<red>Missing translation: " + key);
+        String message;
+        if (langMessages.containsKey(key)) {
+            message = langMessages.get(key);
+        } else {
+            message = "<red>Missing translation: " + key;
+            if (localeFiles.containsKey(locale)) {
+                CommentedFileConfig fileConfig = localeFiles.get(locale);
+                fileConfig.set(key, "<red>Missing translation : " + key);
+                fileConfig.save();
+                langMessages.put(key, "<red>Missing translation: " + key);
+                log.warn("Added missing translation key '{}' in language file '{}'", key, locale.toLanguageTag());
+            }
+        }
 
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
             message = message.replace(entry.getKey(), entry.getValue());
