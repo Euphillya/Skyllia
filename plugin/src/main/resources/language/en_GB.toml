@@ -18,12 +18,38 @@ success = "You have been teleported to your island."
 [island.home.set]
 success = "Your island home has been set."
 
+[island.expel]
+not-enough-args = ""
+player-not-in-island ""
+
 [island.delete]
 args-missing = "You must add 'confirm' to the end of your command."
+
+[island.leave]
+confirm = "You must add 'confirm' to the end of your command."
+success = "You've just left the %owner%'s island."
 
 [island.access]
 open = "Your island is now accessible to visitors."
 close = "Your island is no longer accessible to visitors."
+
+[island.gamerule]
+args-missing = ""
+invalid = ""
+success = ""
+
+[island.permission]
+args-missing = ""
+role-invalid = ""
+permission-invalid = ""
+permission-type-invalid = ""
+fail-high-equals-status = ""
+
+[island.permission.update]
+success = ""
+
+[island.debug]
+args-missing = ""
 
 [island.player]
 no-island = "You don't have an island!"
@@ -71,8 +97,8 @@ join-success = "You are now a member of the island!"
 member-limit-reached = "The member limit of the island has been reached. You cannot join the island."
 decline-success = "You have declined the invitation from %player_invite%."
 invite-not-found = "You have not received an invitation from the player."
-invite-accepted-notify = "Player %player_accept% has accepted your island invitation."
-invite-declined-notify = "Player %player_decline% has declined your island invitation."
+accept-notify-owner = "Player %player_accept% has accepted your island invitation."
+declined-notify-owner = "Player %player_decline% has declined your island invitation."
 
 [island.kick]
 success = "The player has been kicked from your island."
