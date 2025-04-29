@@ -92,8 +92,9 @@ public class LanguageConfigManager implements ConfigManager {
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
             message = message.replace(entry.getKey(), entry.getValue());
         }
+        String prefix = langMessages.getOrDefault("prefix", "<light_purple>[Skyllia]</light_purple> :");
 
-        return miniMessage.deserialize(message);
+        return miniMessage.deserialize(prefix + message);
     }
 
     public Component translate(String key, Map<String, String> placeholders) {

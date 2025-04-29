@@ -1,5 +1,6 @@
 config-version = 2
 verbose = false
+prefix = "<light_purple>[Skyllia]</light_purple>: "
 
 [island]
 create-in-progress = "The island is being created"
