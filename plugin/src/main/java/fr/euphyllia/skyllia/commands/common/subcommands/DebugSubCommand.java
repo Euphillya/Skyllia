@@ -16,10 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DebugSubCommand implements SubCommandInterface {
@@ -60,19 +57,27 @@ public class DebugSubCommand implements SubCommandInterface {
             case "gamerule": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.GAME_RULE);
                 enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.GAME_RULE);
+                break;
             }
             case "island": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.ISLAND_PERMISSION);
                 enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.ISLAND_PERMISSION);
+                break;
             }
             case "commands": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.COMMANDS_PERMISSION);
                 enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.COMMANDS_PERMISSION);
+                break;
             }
             case "inventory": {
                 PermissionsManagers.toggleDebug(player.getUniqueId(), PermissionsManagers.DebugType.INVENTORY_PERMISSION);
                 enabledDebug = PermissionsManagers.isDebugEnabled(player.getUniqueId(), PermissionsManagers.DebugType.INVENTORY_PERMISSION);
+                break;
             }
+            default:
+                ConfigLoader.language.sendMessage(player, "island.debug.unknown-debug", Map.of(
+                        "%s", args[0]));
+                return true;
         }
 
         ConfigLoader.language.sendMessage(player, "Debug " + args[0] + " " + (enabledDebug ? "enabled" : "disabled"));

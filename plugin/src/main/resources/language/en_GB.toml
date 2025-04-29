@@ -55,6 +55,7 @@ failed = "The permission could not be updated. Please check the syntax of your c
 
 [island.debug]
 args-missing = "The command is incomplete: /skyllia debug <gamerule/commands/inventory/island"
+unknown-debug = "The specified debug %s does not exist."
 
 [island.player]
 no-island = "You don't have an island!"

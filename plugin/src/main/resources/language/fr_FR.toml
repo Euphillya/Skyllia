@@ -55,6 +55,7 @@ failed = "La permission n'a pas pu être mise à jour. Veuillez vérifier la syn
 
 [island.debug]
 args-missing = "La commande est incomplète : /skyllia debug <gamerule/commands/inventory/island>"
+unknown-debug = "Le type de débogage %s spécifié n'existe pas."
 
 [island.player]
 no-island = "Vous n'avez pas d'île !"
