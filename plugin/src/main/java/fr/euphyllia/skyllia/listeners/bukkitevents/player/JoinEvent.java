@@ -89,6 +89,7 @@ public class JoinEvent implements Listener {
                 if (ConfigLoader.playerManager.isClearInventoryWhenKicked()) player.getInventory().clear();
                 if (ConfigLoader.playerManager.isClearEnderChestWhenKicked()) player.getEnderChest().clear();
                 if (ConfigLoader.playerManager.isResetExperienceWhenKicked()) {
+                    player.setLevel(0);
                     player.setTotalExperience(0);
                     player.sendExperienceChange(0, 0);
                 }
@@ -97,6 +98,7 @@ public class JoinEvent implements Listener {
                 if (ConfigLoader.playerManager.isClearInventoryWhenDelete()) player.getInventory().clear();
                 if (ConfigLoader.playerManager.isClearEnderChestWhenDelete()) player.getEnderChest().clear();
                 if (ConfigLoader.playerManager.isResetExperienceWhenDelete()) {
+                    player.setLevel(0);
                     player.setTotalExperience(0);
                     player.sendExperienceChange(0, 0);
                 }
@@ -105,6 +107,7 @@ public class JoinEvent implements Listener {
                 if (ConfigLoader.playerManager.isClearInventoryWhenLeave()) player.getInventory().clear();
                 if (ConfigLoader.playerManager.isClearEnderChestWhenLeave()) player.getEnderChest().clear();
                 if (ConfigLoader.playerManager.isResetExperienceWhenLeave()) {
+                    player.setLevel(0);
                     player.setTotalExperience(0);
                     player.sendExperienceChange(0, 0);
                 }

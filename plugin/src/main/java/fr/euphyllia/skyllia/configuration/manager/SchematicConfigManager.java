@@ -35,7 +35,7 @@ public class SchematicConfigManager implements ConfigManager {
 
         for (String key : config.valueMap().keySet()) {
             Object value = config.valueMap().get(key);
-            if (!(value instanceof CommentedConfig)) {
+            if (!(value instanceof CommentedConfig node)) {
                 log.warn("[Skyllia] Key '{}' is not a CommentedConfig (type: {})", key, value == null ? "null" : value.getClass().getName());
                 continue;
             }
@@ -46,12 +46,10 @@ public class SchematicConfigManager implements ConfigManager {
             String islandType = key.substring(0, index);
             String worldName = key.substring(index + 1);
 
-            String pathPrefix = key + ".";
-
-            String schematicFile = getOrSetDefault(pathPrefix + "schematic", "default.schem", String.class);
-            double height = getOrSetDefault(pathPrefix + "height", 64.0, Double.class);
-            boolean ignoreAirBlocks = getOrSetDefault(pathPrefix + "ignore-air-blocks", true, Boolean.class);
-            boolean copyEntities = getOrSetDefault(pathPrefix + "copy-entities", true, Boolean.class);
+            String schematicFile = getOrSetDefault(node, "schematic", "default.schem", String.class);
+            double height = getOrSetDefault(node, "height", 64.0, Double.class);
+            boolean ignoreAirBlocks = getOrSetDefault(node, "ignore-air-blocks", true, Boolean.class);
+            boolean copyEntities = getOrSetDefault(node, "copy-entities", true, Boolean.class);
 
             schematicMap
                     .computeIfAbsent(islandType, k -> new HashMap<>())
@@ -67,6 +65,31 @@ public class SchematicConfigManager implements ConfigManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T getOrSetDefault(CommentedConfig node, String path, T defaultValue, Class<T> expectedClass) {
+        Object value = node.get(path);
+        if (value == null) {
+            node.set(path, defaultValue);
+            changed = true;
+            return defaultValue;
+        }
+
+        if (expectedClass.isInstance(value)) {
+            return (T) value;
+        }
+
+        if (expectedClass == Long.class && value instanceof Integer) {
+            return (T) Long.valueOf((Integer) value);
+        }
+
+        if (expectedClass == Float.class && value instanceof Double) {
+            return (T) Float.valueOf(((Double) value).floatValue());
+        }
+
+        throw new IllegalStateException("Cannot convert path '" + path + "': found " + value.getClass().getSimpleName() + ", expected " + expectedClass.getSimpleName());
+    }
+
+
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass) {
@@ -78,7 +101,7 @@ public class SchematicConfigManager implements ConfigManager {
         }
 
         if (expectedClass.isInstance(value)) {
-            return (T) value; // Bonne instance directement
+            return (T) value;
         }
 
         // Cas spécial : Integer → Long

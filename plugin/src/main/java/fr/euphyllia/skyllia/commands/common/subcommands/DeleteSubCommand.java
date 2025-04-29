@@ -45,6 +45,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                         }
                         if (ConfigLoader.playerManager.isResetExperienceWhenKicked()) {
                             bPlayer.setTotalExperience(0);
+                            bPlayer.setLevel(0);
                             bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
                         }
                     }
@@ -57,6 +58,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                         }
                         if (ConfigLoader.playerManager.isResetExperienceWhenDelete()) {
                             bPlayer.setTotalExperience(0);
+                            bPlayer.setLevel(0);
                             bPlayer.sendExperienceChange(0, 0); // Mise à jour du packet
                         }
                     }
@@ -69,6 +71,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                         }
                         if (ConfigLoader.playerManager.isResetExperienceWhenLeave()) {
                             bPlayer.setTotalExperience(0);
+                            bPlayer.setLevel(0);
                             bPlayer.sendExperienceChange(0, 0);
                         }
                     }
