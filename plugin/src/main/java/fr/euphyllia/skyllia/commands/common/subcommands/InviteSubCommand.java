@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.commands.InviteCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -18,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -189,6 +191,15 @@ public class InviteSubCommand implements SubCommandInterface {
                 if (ownerPlayer != null && ownerPlayer.isOnline()) {
                     ConfigLoader.language.sendMessage(ownerPlayer, "island.invite.accept-notify-owner", Map.of("%player_accept%", playerWantJoin.getName()));
                 }
+
+                if (ConfigLoader.general.isTeleportWhenAcceptingInvitation()) {
+                    WarpIsland homeIsland = islandOwner.getWarpByName("home");
+                    if (homeIsland == null) {
+                        ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.home-not-found");
+                        return;
+                    }
+                    playerWantJoin.teleportAsync(homeIsland.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                }
             } else {
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.member-limit-reached");
             }
@@ -200,12 +211,7 @@ public class InviteSubCommand implements SubCommandInterface {
 
     private void declinePlayer(Skyllia plugin, Player playerWantDecline, String ownerIsland) {
         try {
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(playerWantDecline.getUniqueId());
 
-            if (island == null) {
-                ConfigLoader.language.sendMessage(playerWantDecline, "island.player.no-island");
-                return;
-            }
             UUID ownerIslandId = Bukkit.getPlayerUniqueId(ownerIsland);
             if (ownerIslandId == null) {
                 ConfigLoader.language.sendMessage(playerWantDecline, "island.player.not-found");

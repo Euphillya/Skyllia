@@ -13,6 +13,9 @@ teleport-outside-island = false
 prevent-deletion-if-has-members = true
 chunk-perimeter-island = false
 
+[settings.island.invitation]
+teleport-when-accepting = false
+
 [settings.spawn]
 enable = true
 world-name = "world"

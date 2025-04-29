@@ -20,6 +20,8 @@ public class GeneralConfigManager implements ConfigManager {
     // Island deletion settings
     private boolean preventDeletionIfHasMembers;
     private boolean deleteChunkPerimeterIsland;
+    // Island invitation settings
+    private boolean teleportWhenAcceptingInvitation;
     // Spawn settings
     private boolean spawnEnabled;
     private String spawnWorld;
@@ -49,6 +51,8 @@ public class GeneralConfigManager implements ConfigManager {
 
         this.preventDeletionIfHasMembers = config.getOrElse("settings.island.delete.prevent-deletion-if-has-members", true);
         this.deleteChunkPerimeterIsland = config.getOrElse("settings.island.delete.chunk-perimeter-island", false);
+
+        this.teleportWhenAcceptingInvitation = config.getOrElse("settings.island.invitation.teleport-when-accepting-invitation", true);
 
         this.spawnEnabled = config.getOrElse("settings.spawn.enable", true);
         this.spawnWorld = config.getOrElse("settings.spawn.world-name", "world");
@@ -127,5 +131,9 @@ public class GeneralConfigManager implements ConfigManager {
 
     public boolean isTeleportOutsideIsland() {
         return teleportOutsideIsland;
+    }
+
+    public boolean isTeleportWhenAcceptingInvitation() {
+        return teleportWhenAcceptingInvitation;
     }
 }

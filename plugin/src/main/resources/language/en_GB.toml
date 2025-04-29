@@ -104,6 +104,7 @@ decline-success = "You have declined the invitation from %player_invite%."
 invite-not-found = "You have not received an invitation from the player."
 accept-notify-owner = "Player %player_accept% has accepted your island invitation."
 decline-notify-owner = "Player %player_decline% has declined your island invitation."
+home-not-found = "The island home was not found."
 
 [island.kick]
 success = "The player has been kicked from your island."
