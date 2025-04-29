@@ -97,8 +97,8 @@ public class WorldEditUtils {
         });
     }
 
-    public static CompletableFuture<Boolean> changeBiomeChunk(org.bukkit.Chunk chunk, Biome biome) {
-        return changeBiomeChunk(chunk.getWorld(), chunk.getX(), chunk.getZ(), biome);
+    public static CompletableFuture<Boolean> changeBiomeChunk(Location location, Biome biome) {
+        return changeBiomeChunk(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, biome);
     }
 
     public static CompletableFuture<Boolean> changeBiomeChunk(org.bukkit.World world, int chunkX, int chunkZ, Biome biome) {

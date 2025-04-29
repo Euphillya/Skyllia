@@ -54,10 +54,8 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
         InterneAPI api = Skyllia.getPlugin(Skyllia.class).getInterneAPI();
         BiomesImpl biomesImpl = api.getBiomesImpl();
-
-        try {
-            biome = api.getBiomesImpl().getBiome(selectBiome);
-        } catch (IllegalArgumentException e) {
+        biome = api.getBiomesImpl().getBiome(selectBiome);
+        if (biome == null) {
             ConfigLoader.language.sendMessage(player, "island.biome.not-exist", Map.of(
                     "%s", selectBiome));
             return true;
@@ -72,7 +70,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         Location playerLocation = player.getLocation();
         World world = playerLocation.getWorld();
 
-        if (world == null || !Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
+        if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) {
             ConfigLoader.language.sendMessage(player, "island.biome.only-on-island");
             return true;
         }
@@ -124,7 +122,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 messageToSend = "island.biome.island-success";
 
             } else {
-                changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getChunk(), biome);
+                changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getLocation(), biome);
                 messageToSend = "island.biome.chunk-success";
             }
 
@@ -144,6 +142,8 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         } catch (Exception e) {
             logger.log(Level.ERROR, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+        } finally {
+            CommandCacheExecution.removeCommandExec(player.getUniqueId(), "biome");
         }
 
         return true;
