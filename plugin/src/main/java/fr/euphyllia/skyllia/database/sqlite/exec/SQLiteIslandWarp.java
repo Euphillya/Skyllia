@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -66,13 +67,13 @@ public class SQLiteIslandWarp extends IslandWarpQuery {
     }
 
     @Override
-    public CompletableFuture<Boolean> updateWarp(Island island, String warpName, Location location) {
+    public CompletableFuture<Boolean> updateWarp(UUID islandId, String warpName, Location location) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         try {
             databaseLoader.executeUpdate(
                     UPSERT_WARPS,
                     List.of(
-                            island.getId().toString(),
+                            islandId.toString(),
                             warpName,
                             location.getWorld().getName(),
                             location.getBlockX(),
@@ -92,12 +93,12 @@ public class SQLiteIslandWarp extends IslandWarpQuery {
     }
 
     @Override
-    public CompletableFuture<@Nullable WarpIsland> getWarpByName(Island island, String warpName) {
+    public CompletableFuture<@Nullable WarpIsland> getWarpByName(UUID islandId, String warpName) {
         CompletableFuture<WarpIsland> future = new CompletableFuture<>();
         try {
             databaseLoader.executeQuery(
                     SELECT_WARP_NAME,
-                    List.of(island.getId().toString(), warpName),
+                    List.of(islandId.toString(), warpName),
                     rs -> {
                         try {
                             if (rs.next()) {
@@ -114,7 +115,7 @@ public class SQLiteIslandWarp extends IslandWarpQuery {
                                     return;
                                 }
                                 WarpIsland warpIsland = new WarpIsland(
-                                        island.getId(),
+                                        islandId,
                                         warpName,
                                         new Location(world, locX, locY, locZ, locYaw, locPitch)
                                 );
@@ -136,12 +137,12 @@ public class SQLiteIslandWarp extends IslandWarpQuery {
     }
 
     @Override
-    public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getListWarp(Island island) {
+    public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getListWarp(UUID islandId) {
         CompletableFuture<CopyOnWriteArrayList<WarpIsland>> future = new CompletableFuture<>();
         try {
             databaseLoader.executeQuery(
                     SELECT_LIST_WARP,
-                    List.of(island.getId().toString()),
+                    List.of(islandId.toString()),
                     rs -> {
                         CopyOnWriteArrayList<WarpIsland> warpIslands = new CopyOnWriteArrayList<>();
                         try {
@@ -160,7 +161,7 @@ public class SQLiteIslandWarp extends IslandWarpQuery {
                                     continue;
                                 }
                                 WarpIsland w = new WarpIsland(
-                                        island.getId(),
+                                        islandId,
                                         warpName,
                                         new Location(world, locX, locY, locZ, locYaw, locPitch)
                                 );
@@ -185,12 +186,12 @@ public class SQLiteIslandWarp extends IslandWarpQuery {
     }
 
     @Override
-    public CompletableFuture<Boolean> deleteWarp(Island island, String name) {
+    public CompletableFuture<Boolean> deleteWarp(UUID islandId, String name) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         try {
             databaseLoader.executeUpdate(
                     DELETE_WARP,
-                    List.of(island.getId().toString(), name),
+                    List.of(islandId.toString(), name),
                     affected -> future.complete(affected > 0),
                     null
             );

@@ -8,13 +8,13 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
+import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WarpSubCommand implements SubCommandInterface {
 
@@ -54,20 +56,27 @@ public class WarpSubCommand implements SubCommandInterface {
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
-
             if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.TELEPORT_WARP, false)) {
                 return true;
             }
 
-            WarpIsland warp = island.getWarpByName(warpName);
-            if (warp == null) {
+            UUID islandId = island.getId();
+            CopyOnWriteArrayList<WarpIsland> warps = WarpsInIslandCache.getWarpsCached(islandId);
+
+            WarpIsland targetWarp = null;
+            for (WarpIsland warp : warps) {
+                if (warp.warpName().equalsIgnoreCase(warpName)) {
+                    targetWarp = warp;
+                    break;
+                }
+            }
+
+            if (targetWarp == null) {
                 ConfigLoader.language.sendMessage(player, "island.warp.warp-not-exist");
                 return true;
             }
 
-            Location warpLocation = warp.location();
-            warpLocation.setY(warpLocation.getY() + 0.5);
-            player.teleportAsync(warpLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            player.teleportAsync(targetWarp.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

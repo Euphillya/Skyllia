@@ -8,13 +8,19 @@ import org.bukkit.Location;
 public class GeneralConfigManager implements ConfigManager {
 
     private final CommentedFileConfig config;
+    // Configuration basic
     private int configVersion;
     private boolean verbose;
+    // Settings
     private int updateCacheTimer;
-    private boolean preventDeletionIfHasMembers;
+    // Island settings
     private int regionDistance;
     private int maxIslands;
+    private boolean teleportOutsideIsland;
+    // Island deletion settings
+    private boolean preventDeletionIfHasMembers;
     private boolean deleteChunkPerimeterIsland;
+    // Spawn settings
     private boolean spawnEnabled;
     private String spawnWorld;
     private double spawnX;
@@ -22,6 +28,7 @@ public class GeneralConfigManager implements ConfigManager {
     private double spawnZ;
     private float spawnYaw;
     private float spawnPitch;
+    // Debug settings
     private boolean debugPermission;
 
     public GeneralConfigManager(CommentedFileConfig config) {
@@ -33,9 +40,12 @@ public class GeneralConfigManager implements ConfigManager {
     public void loadConfig() {
         this.configVersion = config.getOrElse("config-version", 4);
         this.verbose = config.getOrElse("verbose", false);
+
         this.updateCacheTimer = config.getOrElse("settings.global.cache.update-timer-seconds", 30);
+
         this.regionDistance = config.getOrElse("settings.island.region-distance", -1);
         this.maxIslands = config.getOrElse("settings.island.max-islands", 500_000);
+        this.teleportOutsideIsland = config.getOrElse("settings.island.teleport-outside-island", false);
 
         this.preventDeletionIfHasMembers = config.getOrElse("settings.island.delete.prevent-deletion-if-has-members", true);
         this.deleteChunkPerimeterIsland = config.getOrElse("settings.island.delete.chunk-perimeter-island", false);
@@ -113,5 +123,9 @@ public class GeneralConfigManager implements ConfigManager {
 
     public boolean isDeleteChunkPerimeterIsland() {
         return deleteChunkPerimeterIsland;
+    }
+
+    public boolean isTeleportOutsideIsland() {
+        return teleportOutsideIsland;
     }
 }

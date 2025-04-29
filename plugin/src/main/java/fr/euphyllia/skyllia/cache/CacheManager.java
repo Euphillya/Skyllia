@@ -7,10 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.commands.InviteCacheExecution;
-import fr.euphyllia.skyllia.cache.island.IslandCache;
-import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
-import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
-import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
+import fr.euphyllia.skyllia.cache.island.*;
 import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -119,5 +116,6 @@ public class CacheManager {
         // Rules
         PermissionGameRuleInIslandCache.invalidateAll();
         PermissionRoleInIslandCache.invalidateAll();
+        WarpsInIslandCache.invalidateAll();
     }
 }

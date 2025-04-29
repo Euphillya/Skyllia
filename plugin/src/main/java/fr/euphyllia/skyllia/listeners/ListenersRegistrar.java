@@ -55,6 +55,7 @@ public class ListenersRegistrar {
         registerEvent(pluginManager, new InteractEvent(interneAPI));
         registerEvent(pluginManager, new TeleportEvent(interneAPI));
         registerEvent(pluginManager, new PistonEvent(interneAPI));
+        registerEvent(pluginManager, new MoveEvent(interneAPI));
 
         // Folia/Paper specifics
         if (VersionUtils.IS_FOLIA) {

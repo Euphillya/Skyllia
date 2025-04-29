@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -28,7 +29,7 @@ import java.util.Map;
 
 public class SetWarpSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(SetWarpSubCommand.class);
+    private static final Logger logger = LogManager.getLogger(SetWarpSubCommand.class);
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
@@ -46,7 +47,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
         }
 
         Location playerLocation = player.getLocation();
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
+        if (!WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName())) {
             ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
             return true;
         }
@@ -67,29 +68,26 @@ public class SetWarpSubCommand implements SubCommandInterface {
         }
 
         Position islandPosition = island.getPosition();
+        int chunkX = playerLocation.getBlockX() >> 4;
+        int chunkZ = playerLocation.getBlockZ() >> 4;
+        Position playerRegionPosition = RegionHelper.getRegionFromChunk(
+                chunkX,
+                chunkZ
+        );
 
+        if (!islandPosition.equals(playerRegionPosition)) {
+            ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");
+            return true;
+        }
 
         try {
-            player.getScheduler().run(plugin, aScheduled -> {
-                int regionLocX = playerLocation.getChunk().getX();
-                int regionLocZ = playerLocation.getChunk().getZ();
-                Position playerRegionPosition = RegionHelper.getRegionFromChunk(regionLocX, regionLocZ);
-
-                if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
-                    ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");
-                    return;
-                }
-
-                Bukkit.getAsyncScheduler().runNow(plugin, aScheduler -> {
-                    boolean updateOrCreateWarps = island.addWarps(warpName, playerLocation, false);
-                    if (updateOrCreateWarps) {
-                        ConfigLoader.language.sendMessage(player, "island.warp.create-success", Map.of(
-                                "%s", warpName));
-                    } else {
-                        ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
-                    }
-                });
-            }, null);
+            boolean success = island.addWarps(warpName, playerLocation, false);
+            if (success) {
+                WarpsInIslandCache.invalidate(island.getId());
+                ConfigLoader.language.sendMessage(player, "island.warp.create-success", Map.of("%s", warpName));
+            } else {
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
@@ -100,6 +98,6 @@ public class SetWarpSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        return Collections.emptyList();
+        return List.of("home", "visit", "...");
     }
 }

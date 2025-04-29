@@ -155,45 +155,45 @@ public class SkyblockManager {
     /**
      * Adds a warp to an island.
      *
-     * @param island         The {@link Island}.
+     * @param islandId       The UUID of the island.
      * @param name           The name of the warp.
      * @param playerLocation The warp location.
      * @return A {@link CompletableFuture} with {@code true} if successfully added, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> addWarpsIsland(Island island, String name, Location playerLocation) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().updateWarp(island, name, playerLocation);
+    public CompletableFuture<Boolean> addWarpsIsland(UUID islandId, String name, Location playerLocation) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().updateWarp(islandId, name, playerLocation);
     }
 
     /**
      * Deletes a warp from an island.
      *
-     * @param island The {@link Island}.
+     * @param islandId The UUID of the island.
      * @param name   The warp name.
      * @return A {@link CompletableFuture} with {@code true} if deleted, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> delWarpsIsland(Island island, String name) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().deleteWarp(island, name);
+    public CompletableFuture<Boolean> delWarpsIsland(UUID islandId, String name) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().deleteWarp(islandId, name);
     }
 
     /**
      * Retrieves a warp by its name from an island.
      *
-     * @param island The {@link Island}.
+     * @param islandId The UUID of the island.
      * @param name   The warp name.
      * @return A {@link CompletableFuture} with the {@link WarpIsland}, or {@code null} if not found.
      */
-    public CompletableFuture<@Nullable WarpIsland> getWarpIslandByName(Island island, String name) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getWarpByName(island, name);
+    public CompletableFuture<@Nullable WarpIsland> getWarpIslandByName(UUID islandId, String name) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getWarpByName(islandId, name);
     }
 
     /**
      * Retrieves all warps for an island.
      *
-     * @param island The {@link Island}.
+     * @param islandId The UUID of the island.
      * @return A {@link CompletableFuture} containing a list of {@link WarpIsland} objects.
      */
-    public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getWarpsIsland(Island island) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getListWarp(island);
+    public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getWarpsIsland(UUID islandId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getListWarp(islandId);
     }
 
     /**

@@ -76,7 +76,9 @@ public class VisitSubCommand implements SubCommandInterface {
                 }
             }
 
-            WarpIsland warpIsland = island.getWarpByName("home");
+            WarpIsland warpIsland = Optional.ofNullable(island.getWarpByName("visit"))
+                    .orElse(island.getWarpByName("home"));
+
             player.getScheduler().execute(plugin, () -> {
                 Location loc;
                 if (warpIsland == null) {

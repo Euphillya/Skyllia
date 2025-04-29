@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
 import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
+import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -120,7 +121,7 @@ public class IslandHook extends Island {
      */
     @Override
     public @Nullable CopyOnWriteArrayList<WarpIsland> getWarps() {
-        return this.plugin.getInterneAPI().getSkyblockManager().getWarpsIsland(this).join();
+        return WarpsInIslandCache.getWarpsCached(this.islandId);
     }
 
     /**
@@ -128,7 +129,7 @@ public class IslandHook extends Island {
      */
     @Override
     public @Nullable WarpIsland getWarpByName(String name) {
-        return this.plugin.getInterneAPI().getSkyblockManager().getWarpIslandByName(this, name).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().getWarpIslandByName(this.islandId, name).join();
     }
 
     /**
@@ -143,9 +144,12 @@ public class IslandHook extends Island {
                 return false;
             }
         }
-        // Persist the warp
-        return this.plugin.getInterneAPI().getSkyblockManager()
-                .addWarpsIsland(this, event.getWarpName(), event.getWarpLocation()).join();
+        boolean success = this.plugin.getInterneAPI().getSkyblockManager()
+                .addWarpsIsland(this.islandId, event.getWarpName(), event.getWarpLocation()).join();
+        if (success) {
+            WarpsInIslandCache.invalidate(this.islandId);
+        }
+        return success;
     }
 
     /**
@@ -158,8 +162,12 @@ public class IslandHook extends Island {
         if (event.isCancelled()) {
             return false;
         }
-        return this.plugin.getInterneAPI().getSkyblockManager()
-                .delWarpsIsland(this, event.getWarpName()).join();
+        boolean success = this.plugin.getInterneAPI().getSkyblockManager()
+                .delWarpsIsland(this.islandId, event.getWarpName()).join();
+        if (success) {
+            WarpsInIslandCache.invalidate(this.islandId);
+        }
+        return success;
     }
 
     /**
