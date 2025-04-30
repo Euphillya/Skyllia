@@ -72,7 +72,7 @@ public class GeneralConfigManager implements ConfigManager {
         if (changed) {
             TomlWriter tomlWriter = new TomlWriter();
             tomlWriter.setIndent(IndentStyle.NONE);
-            tomlWriter.write(config, config.getFile(), WritingMode.REPLACE_ATOMIC);
+            tomlWriter.write(config, config.getFile(), WritingMode.REPLACE);
         }
     }
 

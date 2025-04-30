@@ -117,7 +117,7 @@ public class LanguageConfigManager implements ConfigManager {
                 fileConfig.set(key, "<red>Missing translation : " + key);
                 TomlWriter tomlWriter = new TomlWriter();
                 tomlWriter.setIndent(IndentStyle.NONE);
-                tomlWriter.write(fileConfig, fileConfig.getFile(), WritingMode.REPLACE_ATOMIC);
+                tomlWriter.write(fileConfig, fileConfig.getFile(), WritingMode.REPLACE);
                 langMessages.put(key, "<red>Missing translation: " + key);
                 log.warn("Added missing translation key '{}' in language file '{}'", key, locale.toLanguageTag());
             }
