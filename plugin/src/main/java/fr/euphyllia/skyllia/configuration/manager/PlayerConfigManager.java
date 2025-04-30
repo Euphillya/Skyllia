@@ -1,6 +1,9 @@
 package fr.euphyllia.skyllia.configuration.manager;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.IndentStyle;
+import com.electronwill.nightconfig.core.io.WritingMode;
+import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.managers.ConfigManager;
 
 public class PlayerConfigManager implements ConfigManager {
@@ -51,7 +54,9 @@ public class PlayerConfigManager implements ConfigManager {
         this.preserveInventoryOnLogout = getOrSetDefault("player.inventory.preserve-inventory-on-logout", true, Boolean.class);
 
         if (changed) {
-            config.save();
+            TomlWriter tomlWriter = new TomlWriter();
+            tomlWriter.setIndent(IndentStyle.NONE);
+            tomlWriter.write(config, config.getFile(), WritingMode.REPLACE_ATOMIC);
         }
     }
 

@@ -2,6 +2,9 @@ package fr.euphyllia.skyllia.configuration.manager;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.IndentStyle;
+import com.electronwill.nightconfig.core.io.WritingMode;
+import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.managers.ConfigManager;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
@@ -112,7 +115,9 @@ public class LanguageConfigManager implements ConfigManager {
             if (localeFiles.containsKey(locale)) {
                 CommentedFileConfig fileConfig = localeFiles.get(locale);
                 fileConfig.set(key, "<red>Missing translation : " + key);
-                fileConfig.save();
+                TomlWriter tomlWriter = new TomlWriter();
+                tomlWriter.setIndent(IndentStyle.NONE);
+                tomlWriter.write(fileConfig, fileConfig.getFile(), WritingMode.REPLACE_ATOMIC);
                 langMessages.put(key, "<red>Missing translation: " + key);
                 log.warn("Added missing translation key '{}' in language file '{}'", key, locale.toLanguageTag());
             }

@@ -1,6 +1,9 @@
 package fr.euphyllia.skyllia.configuration.manager;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.IndentStyle;
+import com.electronwill.nightconfig.core.io.WritingMode;
+import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.managers.ConfigManager;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.configuration.MariaDBConfig;
@@ -8,6 +11,8 @@ import fr.euphyllia.skyllia.sgbd.sqlite.configuration.SQLiteConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 public class DatabaseConfigManager implements ConfigManager {
 
@@ -62,7 +67,11 @@ public class DatabaseConfigManager implements ConfigManager {
             int timeOut = getOrSetDefault("sqlite.timeOut", 30000, Integer.class);
             this.sqLiteConfig = new SQLiteConfig(file, minPool, maxPool, keepAliveTime, maxLifeTime, timeOut);
 
-            if (changed) config.save();
+            if (changed) {
+                TomlWriter tomlWriter = new TomlWriter();
+                tomlWriter.setIndent(IndentStyle.NONE);
+                tomlWriter.write(config, config.getFile(), WritingMode.REPLACE_ATOMIC);
+            }
             return;
         }
 

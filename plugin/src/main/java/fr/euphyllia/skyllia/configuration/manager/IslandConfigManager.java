@@ -2,6 +2,9 @@ package fr.euphyllia.skyllia.configuration.manager;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.IndentStyle;
+import com.electronwill.nightconfig.core.io.WritingMode;
+import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.managers.ConfigManager;
 
@@ -44,7 +47,11 @@ public class IslandConfigManager implements ConfigManager {
                 islandSettingsMap.put(islandType, islandSettings);
             }
         }
-        if (changed) config.save();
+        if (changed) {
+            TomlWriter tomlWriter = new TomlWriter();
+            tomlWriter.setIndent(IndentStyle.NONE);
+            tomlWriter.write(config, config.getFile(), WritingMode.REPLACE_ATOMIC);
+        }
     }
 
     @Override
