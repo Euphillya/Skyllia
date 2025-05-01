@@ -14,7 +14,6 @@ import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia_papi.hook.BankPlaceHolder;
 import fr.euphyllia.skyllia_papi.hook.OrePlaceHolder;
-import fr.euphyllia.skyllia_papi.hook.ValuePlaceHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -158,8 +157,6 @@ public class PlaceholderProcessor {
             return processGamerulePlaceholder(islandOpt.get(), placeholder);
         } else if (placeholder.startsWith("ore") && SKYLLIA_ORE_ADDON) {
             return OrePlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
-        } else if (placeholder.startsWith("value") && SKYLLIA_VALUE_ADDON) {
-            return ValuePlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
         } else if (placeholder.startsWith("bank") && SKYLLIA_BANK_ADDON) {
             return BankPlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
         }

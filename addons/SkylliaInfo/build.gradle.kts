@@ -18,7 +18,6 @@ dependencies {
     // Addons
     compileOnly(project(":addons:SkylliaOre"))
     compileOnly(project(":addons:SkylliaBank"))
-    compileOnly(project(":addons:SkylliaValueAPI"))
 }
 
 java {

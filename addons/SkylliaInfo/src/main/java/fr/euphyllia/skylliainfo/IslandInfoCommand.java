@@ -10,7 +10,6 @@ import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliainfo.hook.SkylliaBankHook;
 import fr.euphyllia.skylliainfo.hook.SkylliaOreHook;
-import fr.euphyllia.skylliainfo.hook.SkylliaValueHook;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,12 +30,10 @@ public class IslandInfoCommand implements SubCommandInterface {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final boolean skylliaBank;
-    private final boolean skylliaValue;
     private final boolean skylliaOre;
 
     public IslandInfoCommand(SkylliaInfo main) {
         this.skylliaBank = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
-        this.skylliaValue = Bukkit.getPluginManager().getPlugin("SkylliaValue") != null;
         this.skylliaOre = Bukkit.getPluginManager().getPlugin("SkylliaOre") != null;
     }
 
@@ -79,12 +76,6 @@ public class IslandInfoCommand implements SubCommandInterface {
                     "<yellow>Island ID: </yellow><white>" + islandName + "</white>"));
             if (this.skylliaBank) {
                 SkylliaBankHook.sendMessage(miniMessage, player, islandId);
-            }
-            if (this.skylliaValue) {
-                // This plugin is not made public, because it belongs to www.excalia.fr
-                // If you want to have the plugin, you will have to see with
-                // their Excalia administrator (https://discord.gg/excalia)
-                SkylliaValueHook.sendMessage(miniMessage, player, islandId);
             }
             player.sendMessage(miniMessage.deserialize(
                     "<yellow>Owner: </yellow><white>" + Bukkit.getOfflinePlayer(leader.getMojangId()).getName() + "</white>"));
