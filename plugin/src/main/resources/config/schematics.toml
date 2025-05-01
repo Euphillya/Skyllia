@@ -18,7 +18,7 @@ copy-entities = true
 
 
 [my_first_island.sky-end]
-schematic = "./schematics/default.schem"
+schematic = "./schematics/default-end.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
@@ -39,7 +39,7 @@ copy-entities = true
 
 
 [my_second_islands.sky-end]
-schematic = "./schematics/default.schem"
+schematic = "./schematics/default-end.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
@@ -60,7 +60,7 @@ copy-entities = true
 
 
 [my_third_island.sky-end]
-schematic = "./schematics/default.schem"
+schematic = "./schematics/default-end.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
