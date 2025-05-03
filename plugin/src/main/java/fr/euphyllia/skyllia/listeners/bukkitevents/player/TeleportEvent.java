@@ -55,7 +55,10 @@ public class TeleportEvent implements Listener {
         World world = to.getWorld();
         if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
 
-        Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
+        int chunkX = to.getBlockX() >> 4;
+        int chunkZ = to.getBlockZ() >> 4;
+
+        Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) {
             event.setCancelled(true);
             ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.no-island-location");
@@ -76,26 +79,30 @@ public class TeleportEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerTeleportEvent(final PlayerTeleportEvent event) {
-        Location to = event.getTo();
-        Runnable task = () -> {
-            World world = to.getWorld();
+        final Player player = event.getPlayer();
+        final Location location = player.getLocation();
+        final World world = location.getWorld();
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
+            if (PermissionImp.hasPermission(player, "skyllia.island.worldborder.bypass")) return;
             if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
+            int chunkX = location.getBlockX() >> 4;
+            int chunkZ = location.getBlockZ() >> 4;
 
-            Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
+            Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
             if (island == null) return;
 
             Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
-            api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), event.getPlayer(), centerIsland, island.getSize(), 0, 0);
-        };
-        Bukkit.getRegionScheduler().execute(api.getPlugin(), to, task);
+            api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+        });
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onAddWorldBorder(final EntityAddToWorldEvent event) {
         if (event.getEntity() instanceof Player player) {
+            final Location location = player.getLocation();
+            final World world = location.getWorld();
             Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
-                Location location = player.getLocation();
-                World world = location.getWorld();
+                if (PermissionImp.hasPermission(player, "skyllia.island.worldborder.bypass")) return;
                 if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
                 int chunkX = location.getBlockX() >> 4;
                 int chunkZ = location.getBlockZ() >> 4;
