@@ -66,6 +66,8 @@ public interface SkylliaImplementation {
      */
     public @Nullable Island getIslandByChunk(Chunk chunk);
 
+    public @Nullable Island getIslandByChunk(int chunkX, int chunkZ);
+
     /**
      * Checks if a world with the given name is a Skyblock world.
      *

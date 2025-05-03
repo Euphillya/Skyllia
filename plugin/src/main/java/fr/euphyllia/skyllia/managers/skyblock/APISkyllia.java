@@ -80,6 +80,12 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
+    public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
+        Position position = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
+        return PositionIslandCache.getIsland(position);
+    }
+
+    @Override
     public @NotNull Boolean isWorldSkyblock(String name) {
         return WorldUtils.isWorldSkyblock(name);
     }

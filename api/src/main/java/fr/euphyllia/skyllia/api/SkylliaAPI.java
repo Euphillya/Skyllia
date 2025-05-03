@@ -78,6 +78,17 @@ public final class SkylliaAPI {
     }
 
     /**
+     * Retrieves the island associated with a specific chunk.
+     *
+     * @param chunkX The X coordinate of the chunk.
+     * @param chunkZ The Z coordinate of the chunk.
+     * @return The island associated with the specified chunk, or null if none is found.
+     */
+    public static @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
+        return implementation.getIslandByChunk(chunkX, chunkZ);
+    }
+
+    /**
      * Checks if the server is running on Folia.
      *
      * @return True if the server is running on Folia, false otherwise.

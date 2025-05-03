@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
@@ -46,9 +47,8 @@ public class TeleportEvent implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerHasAccessIsland(final PlayerTeleportEvent event) {
-        if (event.isCancelled()) return;
         if (PermissionImp.hasPermission(event.getPlayer(), "skyllia.island.command.visit.bypass")) return;
         final Player player = event.getPlayer();
         Location to = event.getTo();
@@ -74,9 +74,8 @@ public class TeleportEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerTeleportEvent(final PlayerTeleportEvent event) {
-        if (event.isCancelled()) return;
         Location to = event.getTo();
         Runnable task = () -> {
             World world = to.getWorld();
@@ -89,6 +88,25 @@ public class TeleportEvent implements Listener {
             api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), event.getPlayer(), centerIsland, island.getSize(), 0, 0);
         };
         Bukkit.getRegionScheduler().execute(api.getPlugin(), to, task);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onAddWorldBorder(final EntityAddToWorldEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
+                Location location = player.getLocation();
+                World world = location.getWorld();
+                if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) return;
+                int chunkX = location.getBlockX() >> 4;
+                int chunkZ = location.getBlockZ() >> 4;
+
+                Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+                if (island == null) return;
+
+                Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+                api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+            });
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
