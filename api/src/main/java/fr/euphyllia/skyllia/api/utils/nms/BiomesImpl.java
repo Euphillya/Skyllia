@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.api.utils.nms;
 
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,4 +14,5 @@ public abstract class BiomesImpl {
 
     public abstract String getNameBiome(Biome biome);
 
+    public abstract boolean setBiome(World world, int chunkX, int chunkZ, Biome biome);
 }

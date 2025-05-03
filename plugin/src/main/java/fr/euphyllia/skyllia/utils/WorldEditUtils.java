@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -101,28 +102,12 @@ public class WorldEditUtils {
         return changeBiomeChunk(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, biome);
     }
 
-    public static CompletableFuture<Boolean> changeBiomeChunk(org.bukkit.World world, int chunkX, int chunkZ, Biome biome) {
+    public static CompletableFuture<Boolean> changeBiomeChunk(@NotNull org.bukkit.World world, int chunkX, int chunkZ, Biome biome) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
-        int minHeight = world.getMinHeight();
-        int maxHeight = world.getMaxHeight();
-        int baseX = chunkX << 4;
-        int baseZ = chunkZ << 4;
-
-        String biomeKey = biome.getKey().getKey().toLowerCase();
         Bukkit.getRegionScheduler().execute(Skyllia.getPlugin(Skyllia.class), world, chunkX, chunkZ, () -> {
-
             com.sk89q.worldedit.world.World weWorld = new BukkitWorld(world);
-            BiomeType biomeType = BiomeType.REGISTRY.get(biomeKey);
-
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int y = minHeight; y < maxHeight; y++) {
-                        weWorld.setBiome(BlockVector3.at(baseX + x, y, baseZ + z), biomeType);
-                    }
-                }
-            }
-            future.complete(true);
+            future.complete(Skyllia.getPlugin(Skyllia.class).getInterneAPI().getBiomesImpl().setBiome(world, chunkX, chunkZ, biome));
             weWorld.sendBiomeUpdates(List.of(BlockVector2.at(chunkX, chunkZ)));
         });
 
@@ -131,6 +116,7 @@ public class WorldEditUtils {
 
     public static CompletableFuture<Boolean> changeBiomeIsland(org.bukkit.World world, Biome biome, Island island) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
+
         if (world == null) {
             future.completeExceptionally(new RuntimeException("World is not loaded or doesn't exist"));
             return future;
@@ -143,32 +129,41 @@ public class WorldEditUtils {
         }
 
         int radiusInBlocks = (int) Math.ceil(island.getSize()) + 16;
-
         List<BlockVector2> affectedChunks = new ArrayList<>();
 
-        RegionUtils.spiralStartCenter(island.getPosition(), ConfigLoader.general.getRegionDistance(), radiusInBlocks, chunkPos -> {
-            affectedChunks.add(BlockVector2.at(chunkPos.x(), chunkPos.z()));
-        });
+        RegionUtils.spiralStartCenter(island.getPosition(), ConfigLoader.general.getRegionDistance(), radiusInBlocks, chunkPos ->
+                affectedChunks.add(BlockVector2.at(chunkPos.x(), chunkPos.z()))
+        );
 
-        AtomicInteger reSkylliaing = new AtomicInteger(affectedChunks.size());
+        final int total = affectedChunks.size();
 
-        for (BlockVector2 chunkVec : affectedChunks) {
-            int chunkX = chunkVec.x();
-            int chunkZ = chunkVec.z();
-            try {
-                if (changeBiomeChunk(world, chunkX, chunkZ, biome).join()) {
-                    int left = reSkylliaing.decrementAndGet();
-                    new IslandBiomeChangeProgressEvent(island, left, affectedChunks.size()).callEvent();
-                    if (left == 0) {
-                        future.complete(true);
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                future.completeExceptionally(e);
-            }
-        }
+        processChunksSequentially(world, biome, island, affectedChunks, 0, total, future);
         return future;
+    }
+
+    private static void processChunksSequentially(org.bukkit.World world, Biome biome, Island island,
+                                                  List<BlockVector2> chunks, int index, int total,
+                                                  CompletableFuture<Boolean> future) {
+        if (index >= chunks.size()) {
+            future.complete(true);
+            return;
+        }
+
+        BlockVector2 chunk = chunks.get(index);
+        int chunkX = chunk.x();
+        int chunkZ = chunk.z();
+
+        changeBiomeChunk(world, chunkX, chunkZ, biome).whenComplete((success, throwable) -> {
+            if (throwable != null || !success) {
+                future.completeExceptionally(throwable != null ? throwable : new RuntimeException("Biome change failed at chunk " + chunkX + "," + chunkZ));
+                return;
+            }
+
+            int left = total - index - 1;
+            new IslandBiomeChangeProgressEvent(island, left, total).callEvent();
+
+            processChunksSequentially(world, biome, island, chunks, index + 1, total, future);
+        });
     }
 
     public enum Type {
