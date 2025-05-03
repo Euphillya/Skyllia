@@ -108,10 +108,10 @@ public class RegionHelper {
      *
      * <p>Note that this method checks coordinates within a "square" region (bounding box)</p>
      *
-     * @param center   The center {@link Location}.
-     * @param blockX   The block's X coordinate.
-     * @param blockZ   The block's Z coordinate.
-     * @param size     The size of the square region (in blocks).
+     * @param center The center {@link Location}.
+     * @param blockX The block's X coordinate.
+     * @param blockZ The block's Z coordinate.
+     * @param size   The size of the square region (in blocks).
      * @return {@code true} if the block is within the square bounds; {@code false} otherwise.
      */
     public static boolean isBlockWithinSquare(Location center, int blockX, int blockZ, double size) {
