@@ -39,7 +39,7 @@ public class PistonEvent implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         if (event.isCancelled()) return;
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(event.getBlock().getWorld().getName()))) {
+        if (!WorldUtils.isWorldSkyblock(event.getBlock().getWorld().getName())) {
             return;
         }
         int[] offset = offsets.get(event.getDirection());

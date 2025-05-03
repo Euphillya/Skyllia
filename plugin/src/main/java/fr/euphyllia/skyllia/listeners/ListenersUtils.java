@@ -118,10 +118,10 @@ public class ListenersUtils {
      */
     public static boolean isBlockOutsideIsland(Island island, Location location, Cancellable cancellable) {
         Position origin = island.getPosition();
-        double halfSize = island.getSize() / 2.0;
         boolean outsideIsland = !RegionHelper.isBlockWithinSquare(
                 RegionHelper.getCenterRegion(location.getWorld(), origin.x(), origin.z()),
-                location.getBlockX(), location.getBlockZ(), halfSize);
+                location.getBlockX(), location.getBlockZ(), island.getSize()
+        );
         if (outsideIsland) {
             cancellable.setCancelled(true);
         }

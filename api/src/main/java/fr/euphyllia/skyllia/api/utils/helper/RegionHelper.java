@@ -111,14 +111,19 @@ public class RegionHelper {
      * @param center   The center {@link Location}.
      * @param blockX   The block's X coordinate.
      * @param blockZ   The block's Z coordinate.
-     * @param halfSize Half the side length of the bounding box.
+     * @param size     The size of the square region (in blocks).
      * @return {@code true} if the block is within the square bounds; {@code false} otherwise.
      */
-    public static boolean isBlockWithinSquare(Location center, int blockX, int blockZ, double halfSize) {
-        int centerX = center.getBlockX();
-        int centerZ = center.getBlockZ();
+    public static boolean isBlockWithinSquare(Location center, int blockX, int blockZ, double size) {
+        double half = size / 2.0;
 
-        return Math.abs(centerX - blockX) <= halfSize && Math.abs(centerZ - blockZ) <= halfSize;
+        double minX = center.getX() - half;
+        double maxX = center.getX() + half;
+        double minZ = center.getZ() - half;
+        double maxZ = center.getZ() + half;
+
+        return blockX + 0.5 >= minX && blockX + 0.5 < maxX &&
+                blockZ + 0.5 >= minZ && blockZ + 0.5 < maxZ;
     }
 
     /**
