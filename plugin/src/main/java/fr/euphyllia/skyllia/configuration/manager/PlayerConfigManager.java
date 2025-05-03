@@ -20,9 +20,6 @@ public class PlayerConfigManager implements ConfigManager {
     private boolean resetExperienceWhenDelete;
     private boolean teleportOwnIslandOnJoin;
     private boolean teleportSpawnIfNoIsland;
-    private boolean grantPermissions;
-    private boolean allowTeleportation;
-    private boolean preserveInventoryOnLogout;
     private boolean changed = false;
 
     public PlayerConfigManager(CommentedFileConfig config) {
@@ -48,10 +45,6 @@ public class PlayerConfigManager implements ConfigManager {
 
         this.teleportOwnIslandOnJoin = getOrSetDefault("player.join.teleport.own-island", true, Boolean.class);
         this.teleportSpawnIfNoIsland = getOrSetDefault("player.join.teleport.spawn-not-island", false, Boolean.class);
-
-        this.grantPermissions = getOrSetDefault("player.permissions.grant-permissions", true, Boolean.class);
-        this.allowTeleportation = getOrSetDefault("player.permissions.allow-teleportation", true, Boolean.class);
-        this.preserveInventoryOnLogout = getOrSetDefault("player.inventory.preserve-inventory-on-logout", true, Boolean.class);
 
         if (changed) {
             TomlWriter tomlWriter = new TomlWriter();
@@ -136,15 +129,4 @@ public class PlayerConfigManager implements ConfigManager {
         return teleportSpawnIfNoIsland;
     }
 
-    public boolean isGrantPermissions() {
-        return grantPermissions;
-    }
-
-    public boolean isAllowTeleportation() {
-        return allowTeleportation;
-    }
-
-    public boolean isPreserveInventoryOnLogout() {
-        return preserveInventoryOnLogout;
-    }
 }

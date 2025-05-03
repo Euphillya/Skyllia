@@ -1,21 +1,26 @@
 # [island-settings].[world_name]
-# schematic = file schematics
-# height = height of the island where the island will be placed
-# ignore-air-blocks = Should we also install the air blocks? For more complex schematics.
-# copy-entities = If there is a cow in my schematic, do you want it there too?
+# schematic = path to the .schem file used for island generation
+# height = Y-level where the island will be placed
+# ignore-air-blocks = Should air blocks be ignored? Useful for preserving existing terrain.
+# copy-entities = If there's a cow in the schematic, should it be copied too?
 
+# ───────────────────────────────
+# island: my_first_island | world: sky-overworld
 ["my_first_island.sky-overworld"]
+# Path to the .schem file used to generate the island.
+schematic = "./schematics/default.schem"
+# Y height where the schematic will be placed.
+height = 64.0
+# If true, air blocks in the schematic will not be placed (preserves existing blocks).
+ignore-air-blocks = true
+# If true, entities in the schematic (e.g., animals) will also be copied.
+copy-entities = true
+
+[my_first_island.sky-nether]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
-
-["my_first_island.sky-nether"]
-schematic = "./schematics/default.schem"
-height = 64.0
-ignore-air-blocks = true
-copy-entities = true
-
 
 [my_first_island.sky-end]
 schematic = "./schematics/default.schem"
@@ -23,13 +28,13 @@ height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-
+# ───────────────────────────────
+# island: my_second_islands | world: sky-overworld
 [my_second_islands.sky-overworld]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
-
 
 [my_second_islands.sky-nether]
 schematic = "./schematics/default.schem"
@@ -37,20 +42,19 @@ height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-
 [my_second_islands.sky-end]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-
+# ───────────────────────────────
+# island: my_third_island | world: sky-overworld
 [my_third_island.sky-overworld]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
-
 
 [my_third_island.sky-nether]
 schematic = "./schematics/default.schem"
@@ -58,10 +62,8 @@ height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-
 [my_third_island.sky-end]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
-

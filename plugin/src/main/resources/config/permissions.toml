@@ -1,19 +1,35 @@
 [islands.OWNER]
+# Allows picking up items on the ground.
 PICKUP_ITEMS = true
+# Allows interaction with redstone.
 REDSTONE = true
+# Interact with entities (e.g., ride a horse, click an NPC...).
 INTERACT_ENTITIES = true
+# Break blocks on the island.
 BLOCK_BREAK = true
+# Kill unknown (uncategorized) entities.
 KILL_UNKNOWN_ENTITY = true
+# Kill monsters.
 KILL_MONSTER = true
+# Kill NPCs (Villagers, Citizens...).
 KILL_NPC = true
+# Enable PvP on the island.
 PVP = true
+# Use End portals.
 USE_END_PORTAL = true
+# Use buckets (place or collect liquids).
 BUCKETS = true
+# Use Nether portals.
 USE_NETHER_PORTAL = true
+# Click/interact with blocks (doors, levers...).
 INTERACT = true
+# Drop items on the ground.
 DROP_ITEMS = true
+# Kill passive animals.
 KILL_ANIMAL = true
+# Teleport (by command or other means) to the island.
 TELEPORT = true
+# Place blocks.
 BLOCK_PLACE = true
 
 [islands.VISITOR]
@@ -107,28 +123,49 @@ TELEPORT = false
 BLOCK_PLACE = false
 
 [inventory.OWNER]
+# Open a crafting table.
 OPEN_WORKBENCH = true
+# Open a netherite smithing table.
 OPEN_SMITHING = true
+# Open a furnace.
 OPEN_FURNACE = true
+# Open a barrel.
 OPEN_BARREL = true
+# Open a stonecutter.
 OPEN_STONECUTTER = true
-OPEN_DROPPER = true
-OPEN_LECTERN = true
-OPEN_ANVIL = true
-OPEN_SMOKER = true
+# Open a dispenser.
 OPEN_DISPENSER = true
+# Open a lectern.
+OPEN_LECTERN = true
+# Open an anvil.
+OPEN_ANVIL = true
+# Open a smoker.
+OPEN_SMOKER = true
+# Open a loom.
 OPEN_LOOM = true
+# Open a shulker box.
 OPEN_SHULKER_BOX = true
+# Open a hopper.
 OPEN_HOPPER = true
+# Open a brewing stand.
 OPEN_BREWING = true
+# Open a beacon.
 OPEN_BEACON = true
+# Open an enchanting table.
 OPEN_ENCHANTING = true
+# Open a villager or NPC trading interface.
 OPEN_MERCHANT = true
+# Open a blast furnace.
 OPEN_BLAST_FURNACE = true
+# Open an auto-crafter.
 OPEN_CRAFTER = true
+# Open a grindstone.
 OPEN_GRINDSTONE = true
+# Open a cartography table.
 OPEN_CARTOGRAPHY = true
+# Open the new smithing table (1.21+).
 OPEN_SMITHING_NEW = true
+# Open a chest.
 OPEN_CHEST = true
 
 [inventory.VISITOR]
@@ -257,22 +294,39 @@ OPEN_SMITHING_NEW = false
 OPEN_CHEST = false
 
 [commands.OWNER]
+# Unban a banned player.
 UNBAN = true
+# Kick a member.
 KICK = true
+# Invite a player.
 INVITE = true
+# Create a warp.
 SET_WARP = true
+# Delete a warp.
 DEL_WARP = true
+# Access debug commands (for admin only).
 DEBUG = true
+# Demote a member.
 DEMOTE = true
+# Change the island's biome.
 SET_BIOME = true
+# Ban a player.
 BAN = true
+# Temporarily expel a visitor.
 EXPEL = true
+# Teleport to an island warp.
 TELEPORT_WARP = true
+# Manage trusted members.
 MANAGE_TRUST = true
+# Manage role permissions.
 MANAGE_PERMISSION = true
+# Manage island gamerules.
 MANAGE_GAMERULE = true
+# Promote a member.
 PROMOTE = true
+# Access the island (even if mistakenly banned).
 ACCESS = true
+# Set the island home location.
 SET_HOME = true
 
 [commands.VISITOR]

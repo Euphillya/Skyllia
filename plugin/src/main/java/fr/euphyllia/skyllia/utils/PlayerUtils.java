@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class PlayerUtils {
 
     public static void teleportPlayerSpawn(Player player) {
+        if (!ConfigLoader.general.isSpawnEnabled()) return;
         player.getScheduler().execute(SkylliaAPI.getPlugin(), () -> {
             Location location = ConfigLoader.general.getSpawnLocation();
             if (location == null) location = Bukkit.getWorlds().getFirst().getSpawnLocation();

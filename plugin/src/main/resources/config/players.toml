@@ -1,42 +1,36 @@
-# Paramètres des joueurs
+# Player settings
 
 [player.island.leave]
-# Détermine si l'inventaire du joueur est vidé lorsqu'il quitte son île
+# Determines if the player's inventory is cleared when they leave their island
 clear-inventory = true
-# Détermine si l'ender chest du joueur est vidé lorsqu'il quitte son île
+# Determines if the player's ender chest is cleared when they leave their island
 clear-enderchest = true
-# Détermine si l'expérience du joueur est réinitialisée lorsqu'il quitte son île
+# Determines if the player's experience is reset when they leave their island
 clear-experience = true
 
 [player.island.kicked]
-# Détermine si l'inventaire du joueur est vidé lorsqu'il est expulsé de l'île
+# Determines if the player's inventory is cleared when they are kicked from the island
 clear-inventory = false
-# Détermine si l'ender chest du joueur est vidé lorsqu'il est expulsé de l'île
+# Determines if the player's ender chest is cleared when they are kicked from the island
 clear-enderchest = false
-# Détermine si l'expérience du joueur est réinitialisée lorsqu'il est expulsé de l'île
+# Determines if the player's experience is reset when they are kicked from the island
 clear-experience = false
 
 [player.island.delete]
-# Détermine si l'inventaire du joueur est vidé lorsqu'il supprime son île
+# Determines if the player's inventory is cleared when they delete their island
 clear-inventory = true
-# Détermine si l'ender chest du joueur est vidé lorsqu'il supprime son île
+# Determines if the player's ender chest is cleared when they delete their island
 clear-enderchest = true
-# Détermine si l'expérience du joueur est réinitialisée lorsqu'il supprime son île
+# Determines if the player's experience is reset when they delete their island
 clear-experience = true
 
 [player.join.teleport]
-# Permet de téléporter le joueur directement sur son île lorsqu'il rejoint le serveur
+# Allows teleporting the player directly to their island when they join the server
 own-island = true
-# Permet de téléporter le joueur à un spawn général s'il n'a pas d'île
+# Teleports the player to a global spawn if they don't have an island
 spawn-not-island = false
 
-# Paramètres supplémentaires pour la gestion des permissions et des actions
+# Additional settings for permissions and actions
 [player.permissions]
-# Définit si le joueur peut obtenir des permissions spécifiques
-grant-permissions = true
-# Définit si les joueurs peuvent utiliser certaines commandes de téléportation
+# Defines whether players can use certain teleportation commands
 allow-teleportation = true
-
-[player.inventory]
-# Détermine si les joueurs peuvent garder leurs objets lorsqu'ils quittent un serveur ou un monde
-preserve-inventory-on-logout = true

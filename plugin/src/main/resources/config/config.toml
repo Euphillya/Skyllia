@@ -1,24 +1,40 @@
+# Version of the configuration file. Do not edit manually.
 config-version = 4
+# Enables detailed logging in the console (for debugging purposes).
 verbose = false
 
 [settings.global.cache]
+# Cache update frequency (in seconds).
 update-timer-seconds = 30
 
 [settings.island]
+# Distance between islands (in regions, 1 region = 512x512 blocks).
 region-distance = 10
+# Maximum number of islands that can be created on the server.
 max-islands = 500_000
+# If a player finds himself outside his island (e.g. by falling into the void),
+# he will be automatically teleported to his island only if his Y position
+# is above the minimum layer of the world.
 teleport-outside-island = false
 
 [settings.island.delete]
+# Prevents deletion of an island if it contains other members.
 prevent-deletion-if-has-members = true
+# Determines the method of deleting an island:
+# — False: Deletes the entire island region, safer, but very costly in performance.
+# — True: only delete chunks around the island according to its actual size (faster but potentially less clean).
 chunk-perimeter-island = false
 
 [settings.island.invitation]
-teleport-when-accepting = false
+# Automatically teleports the player to the island when accepting an invitation.
+teleport-when-accepting = true
 
 [settings.spawn]
+# Enables the global spawn point (access via /spawn).
 enable = true
+# World name for spawn.
 world-name = "world"
+# Spawn point coordinates (X, Y, Z) and orientation (Yaw, Pitch).
 block-x = 0.0
 block-y = 0.0
 block-z = 0.0
@@ -26,4 +42,6 @@ yaw = 0.0
 pitch = 0.0
 
 [debug]
+# Enables permissions debug mode: displays missing permissions in the console
+# when a player attempts an action without permission (useful for administrators).
 permission = false

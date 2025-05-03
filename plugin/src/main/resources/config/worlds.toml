@@ -1,10 +1,21 @@
+# Suppresses the console warning if the Nether or End are enabled in the server files,
+# but portals are disabled via the plugin configuration.
+# Since Minecraft 1.20.3, a gamerule manages teleport delay, making this option less relevant,
+# but the warning remains enabled by default as a precaution on Folia.
 suppress-warning-nether-end = false
 
-# [worlds.[nom du monde]]
+# ───────────────────────────────
+# Configuration of the worlds used by Skyblock.
+# Each world can define its environment, linked portals, and the generator used.
+# Format: [worlds.<world_name>]
 [worlds.sky-overworld]
+# Minecraft world type (NORMAL = Overworld).
 environment = "NORMAL"
+# Target world when using a Nether portal from this world.
 portal-nether = "sky-nether"
+# Target world when using an End portal from this world.
 portal-end = "sky-end"
+# Terrain generator used (default: "default", can be a plugin or a custom generator).
 generator = "default"
 
 [worlds.sky-nether]

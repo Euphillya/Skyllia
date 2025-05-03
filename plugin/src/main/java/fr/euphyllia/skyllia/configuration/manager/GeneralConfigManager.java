@@ -128,30 +128,6 @@ public class GeneralConfigManager implements ConfigManager {
         return spawnEnabled;
     }
 
-    public String getSpawnWorld() {
-        return spawnWorld;
-    }
-
-    public double getSpawnX() {
-        return spawnX;
-    }
-
-    public double getSpawnY() {
-        return spawnY;
-    }
-
-    public double getSpawnZ() {
-        return spawnZ;
-    }
-
-    public float getSpawnYaw() {
-        return spawnYaw;
-    }
-
-    public float getSpawnPitch() {
-        return spawnPitch;
-    }
-
     public boolean isDebugPermission() {
         return debugPermission;
     }

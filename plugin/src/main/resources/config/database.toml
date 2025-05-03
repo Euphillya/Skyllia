@@ -1,22 +1,46 @@
+# Configuration file version. Do not modify manually.
 config-version = 3
 
 [mariadb]
+# Enables or disables the use of MariaDB (if false, SQLite will be used if enabled).
 enabled = false
+
+# IP address or hostname of the MariaDB server.
 hostname = "127.0.0.1"
+
+# Port used by MariaDB (default is 3306).
 port = 3306
+
+# Name of the database used for Skyblock.
 database = "skyblock"
+
+# Credentials for connecting to the database.
 username = "my_super_name"
 password = "my_password_is_verry_strong"
+
+# Enables or disables secure SSL connection (set to true if the server requires it).
 useSSL = false
+
+# Connection pool settings for HikariCP (better performance & connection management).
+# Minimum number of connections kept in the pool.
 minPool = 1
+# Maximum number of simultaneous connections.
 maxPool = 10
+# Time (in ms) before an idle connection is tested to stay alive (0 = disabled).
 keepAliveTime = 0
+# Maximum lifetime of a connection (in ms). After this time, the connection will be recreated.
 maxLifeTime = 1_800_000
+# Maximum wait time to obtain a connection (in ms).
 timeOut = 5_000
 
 [sqlite]
+# Enables or disables the use of SQLite (used by default if MariaDB is disabled).
 enabled = true
+
+# Path to the SQLite file used.
 file = "plugins/Skyllia/skyllia.db"
+
+# Pool settings identical to those of MariaDB (also via HikariCP).
 minPool = 1
 maxPool = 10
 keepAliveTime = 0

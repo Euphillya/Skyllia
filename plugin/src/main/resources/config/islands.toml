@@ -1,20 +1,27 @@
+# Configuration file version. Do not modify manually.
 config-version = 1
 
-# Ici on choisit le type d'île qui sera décidé par defaut si la personne fait juste /is create
+# Definition of the default island used when a player runs /is create without specifying a type.
 [default-island]
+# Key (ID) of the default island, must match one of the blocks [island.<id>].
 default-schem-key = "my_first_island"
 
-# c'est /is create my_first_island/my_second_island/my_third_island
+# Definition of an island type available for creation: /is create my_first_island
 [island.my_first_island]
+# Unique ID of the island (must match the name of the schematic or an external config).
 id = "my_first_island"
+# Size of the allowed area around the center of the island (in blocks).
 size = 50.0
+# Maximum number of members who can join this island.
 max-members = 6
 
+# Another island type available for creation: /is create my_second_island
 [island.my_second_island]
 id = "my_second_island"
 size = 50.0
 max-members = 6
 
+# Third island type available: /is create my_third_island
 [island.my_third_island]
 id = "my_third_island"
 size = 50.0
