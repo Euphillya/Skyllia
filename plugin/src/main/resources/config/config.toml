@@ -16,6 +16,9 @@ max-islands = 500_000
 # he will be automatically teleported to his island only if his Y position
 # is above the minimum layer of the world.
 teleport-outside-island = false
+# Prevents players from walking outside their island boundaries.
+# If enabled, players trying to move beyond their island will be gently teleported back.
+restrict-player-movement = false
 
 [settings.island.delete]
 # Prevents deletion of an island if it contains other members.

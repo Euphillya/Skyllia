@@ -67,6 +67,7 @@ permission-denied = "You do not have permission to do this."
 not-connected = "The player is not connected"
 player-only-command = "This command can only be executed by a player."
 command-in-progress = "The command is already being executed, please wait a moment."
+outside-island = "You can't leave the confines of your island!"
 
 [island.transfer]
 success = "You have successfully transferred ownership to %new_owner%"

@@ -96,6 +96,23 @@ public class ListenersUtils {
     }
 
     /**
+     * Retrieves the {@link Island} from a given chunk coordinates, cancelling the event if no island is found.
+     *
+     * @param chunkX      The X coordinate of the chunk.
+     * @param chunkZ      The Z coordinate of the chunk.
+     * @param cancellable The event that can be cancelled.
+     * @return The {@link Island} if found, or {@code null} otherwise.
+     */
+    public static @Nullable Island checkChunkIsIsland(int chunkX, int chunkZ, Cancellable cancellable) {
+        Position position = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
+        Island island = PositionIslandCache.getIsland(position);
+        if (island == null) {
+            cancellable.setCancelled(true); // Sécurité !
+        }
+        return island;
+    }
+
+    /**
      * Triggers a {@link PlayerPrepareChangeWorldSkyblockEvent} if the specified world is a Skyblock world.
      *
      * @param player      The {@link Player} transitioning to another world.

@@ -20,6 +20,7 @@ public class GeneralConfigManager implements ConfigManager {
     private int regionDistance;
     private int maxIslands;
     private boolean teleportOutsideIsland;
+    private boolean restrictPlayerMovement;
     // Island deletion settings
     private boolean preventDeletionIfHasMembers;
     private boolean deleteChunkPerimeterIsland;
@@ -53,6 +54,7 @@ public class GeneralConfigManager implements ConfigManager {
         this.regionDistance = getOrSetDefault("settings.island.region-distance", -1, Integer.class);
         this.maxIslands = getOrSetDefault("settings.island.max-islands", 500_000, Integer.class);
         this.teleportOutsideIsland = getOrSetDefault("settings.island.teleport-outside-island", false, Boolean.class);
+        this.restrictPlayerMovement = getOrSetDefault("settings.island.restrict-player-movement", false, Boolean.class);
 
         this.preventDeletionIfHasMembers = getOrSetDefault("settings.island.delete.prevent-deletion-if-has-members", true, Boolean.class);
         this.deleteChunkPerimeterIsland = getOrSetDefault("settings.island.delete.chunk-perimeter-island", false, Boolean.class);
@@ -154,5 +156,9 @@ public class GeneralConfigManager implements ConfigManager {
 
     public boolean isTeleportWhenAcceptingInvitation() {
         return teleportWhenAcceptingInvitation;
+    }
+
+    public boolean isRestrictPlayerMovement() {
+        return restrictPlayerMovement;
     }
 }

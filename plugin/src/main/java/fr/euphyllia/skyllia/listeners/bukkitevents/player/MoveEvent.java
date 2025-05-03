@@ -1,6 +1,8 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
+import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
@@ -8,15 +10,21 @@ import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
 import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
+
+import java.util.Map;
 
 public class MoveEvent implements Listener {
 
@@ -27,6 +35,8 @@ public class MoveEvent implements Listener {
     public void onPlayerTeleportOutside(final PlayerMoveEvent event) {
         if (!ConfigLoader.general.isTeleportOutsideIsland()) return;
         final Player player = event.getPlayer();
+        if (PermissionImp.hasPermission(player, "skyllia.island.outside.bypass")) return;
+
         Location location = player.getLocation();
         World world = location.getWorld();
         if (!WorldUtils.isWorldSkyblock(world.getName())) return;
@@ -55,6 +65,31 @@ public class MoveEvent implements Listener {
                     player.setVelocity(new Vector(0, 0, 0));
                     player.setFallDistance(0);
                 });
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onDontLeaveIsland(final PlayerMoveEvent event) {
+        final Location to = event.getTo();
+        final Player player = event.getPlayer();
+        if (!ConfigLoader.general.isRestrictPlayerMovement()) return;
+
+        if (!WorldUtils.isWorldSkyblock(to.getWorld().getName())) return;
+
+        if (PermissionImp.hasPermission(player, "skyllia.island.outside.bypass")) return;
+        if (event.getFrom().getBlockX() == to.getBlockX() && event.getFrom().getBlockZ() == to.getBlockZ()) return;
+        int chunkX = to.getBlockX() >> 4;
+        int chunkZ = to.getBlockZ() >> 4;
+        Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
+        if (island == null) return;
+
+        Location center = RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z());
+        if (!RegionHelper.isBlockWithinSquare(center, to.getBlockX(), to.getBlockZ(), island.getSize())) {
+            player.teleportAsync(event.getFrom());
+            Component component = ConfigLoader.language.translate(player, "island.player.outside-island", Map.of());
+            if (component != null) {
+                player.sendActionBar(component);
             }
         }
     }
