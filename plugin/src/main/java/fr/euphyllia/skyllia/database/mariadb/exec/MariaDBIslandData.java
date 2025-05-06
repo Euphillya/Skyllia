@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MariaDBIslandData extends IslandDataQuery {
 
@@ -145,6 +146,41 @@ public class MariaDBIslandData extends IslandDataQuery {
         return completableFuture;
 
     }
+
+    @Override
+    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+        CompletableFuture<CopyOnWriteArrayList<Island>> future = new CompletableFuture<>();
+        String query = """
+        SELECT `island_id`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`, `max_members`
+        FROM `%s`.`islands`
+        WHERE `disable` = 0;
+        """.formatted(this.databaseName);
+
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), query, null, resultSet -> {
+                CopyOnWriteArrayList<Island> list = new CopyOnWriteArrayList<>();
+
+                try {
+                    while (resultSet.next()) {
+                        Island island = this.constructIslandQuery(resultSet);
+                        if (island != null) {
+                            list.add(island);
+                        }
+                    }
+                    future.complete(list);
+                } catch (SQLException e) {
+                    logger.log(Level.ERROR, e.getMessage(), e);
+                    future.complete(new CopyOnWriteArrayList<>());
+                }
+            }, null);
+        } catch (DatabaseException e) {
+            logger.log(Level.FATAL, e.getMessage(), e);
+            future.complete(new CopyOnWriteArrayList<>());
+        }
+
+        return future;
+    }
+
 
     private @Nullable Island constructIslandQuery(ResultSet resultSet) throws SQLException {
         String islandId = resultSet.getString("island_id");

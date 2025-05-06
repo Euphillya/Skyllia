@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SQLiteIslandData extends IslandDataQuery {
 
@@ -191,6 +192,40 @@ public class SQLiteIslandData extends IslandDataQuery {
         }
         return future;
     }
+
+    @Override
+    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+        CompletableFuture<CopyOnWriteArrayList<Island>> future = new CompletableFuture<>();
+        String query = """
+        SELECT island_id, disable, region_x, region_z, private, size, create_time, max_members
+        FROM islands
+        WHERE disable = 0;
+        """;
+
+        try {
+            databaseLoader.executeQuery(query, null, resultSet -> {
+                CopyOnWriteArrayList<Island> islands = new CopyOnWriteArrayList<>();
+                try {
+                    while (resultSet.next()) {
+                        Island island = constructIslandQuery(resultSet);
+                        if (island != null) {
+                            islands.add(island);
+                        }
+                    }
+                    future.complete(islands);
+                } catch (Exception e) {
+                    logger.log(Level.ERROR, "getAllIslandsValid failed", e);
+                    future.complete(new CopyOnWriteArrayList<>());
+                }
+            }, null);
+        } catch (DatabaseException e) {
+            logger.log(Level.ERROR, "Database exception in getAllIslandsValid", e);
+            future.complete(new CopyOnWriteArrayList<>());
+        }
+
+        return future;
+    }
+
 
     private Island constructIslandQuery(ResultSet rs) throws SQLException, MaxIslandSizeExceedException {
         String islandId = rs.getString("island_id");

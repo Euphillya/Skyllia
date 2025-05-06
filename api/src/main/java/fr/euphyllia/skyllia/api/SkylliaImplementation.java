@@ -9,8 +9,10 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The SkylliaImplementation interface defines the methods that must be implemented
@@ -66,7 +68,21 @@ public interface SkylliaImplementation {
      */
     public @Nullable Island getIslandByChunk(Chunk chunk);
 
+    /**
+     * Retrieves the island associated with a specific chunk coordinates.
+     *
+     * @param chunkX The X coordinate of the chunk.
+     * @param chunkZ The Z coordinate of the chunk.
+     * @return The island associated with the specified chunk coordinates, or null if none is found.
+     */
     public @Nullable Island getIslandByChunk(int chunkX, int chunkZ);
+
+    /**
+     * Retrieves all valid (non-disabled) Skyllia islands from the database.
+     *
+     * @return A CompletableFuture containing a thread-safe list of active islands.
+     */
+    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid();
 
     /**
      * Checks if a world with the given name is a Skyblock world.

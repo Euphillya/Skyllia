@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The SkylliaAPI class provides various methods to interact with Skyblock islands and check the server environment.
@@ -159,6 +160,15 @@ public final class SkylliaAPI {
      */
     public static double @Nullable [] getTPS(Chunk chunk) {
         return implementation.getTPS(chunk);
+    }
+
+    /**
+     * Retrieves all valid (non-disabled) Skyllia islands from the database.
+     *
+     * @return A CompletableFuture containing a thread-safe list of active islands.
+     */
+    public static  CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+        return implementation.getAllIslandsValid();
     }
 
     /**

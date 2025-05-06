@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The {@code IslandDataQuery} class defines an abstract set of methods
@@ -50,6 +51,8 @@ public abstract class IslandDataQuery {
      * or {@code null} if no island with the specified UUID is found
      */
     public abstract CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId);
+
+    public abstract CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid();
 
     /**
      * Retrieves the maximum number of members allowed in the specified {@link Island}.

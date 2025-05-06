@@ -20,8 +20,10 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class APISkyllia implements SkylliaImplementation {
 
@@ -83,6 +85,16 @@ public final class APISkyllia implements SkylliaImplementation {
     public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
         Position position = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
         return PositionIslandCache.getIsland(position);
+    }
+
+    /**
+     * Retrieves all valid (non-disabled) Skyllia islands from the database.
+     *
+     * @return A CompletableFuture containing a thread-safe list of active islands.
+     */
+    @Override
+    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+        return this.interneAPI.getSkyblockManager().getAllIslandsValid();
     }
 
     @Override

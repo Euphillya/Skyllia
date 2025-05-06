@@ -90,6 +90,10 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByIslandId(islandId);
     }
 
+    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getAllIslandsValid();
+    }
+
     /**
      * Disables or enables an island.
      *
