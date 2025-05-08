@@ -13,6 +13,11 @@ schematic-not-exist = "The schematic to create the island does not exist."
 generic-error = "An error occurred during island creation"
 only-owner = "Only the island owner can execute this command."
 
+[island.create]
+already-in-queue = "⏳ You are already in the island creation queue. Current position: #%position%"
+queued = "⌛ You have been added to the island creation queue. Position: #%position%"
+position-update = "📣 Your new position in the queue is: #%position%"
+
 [island.home]
 success = "You have been teleported to your island."
 

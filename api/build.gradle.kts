@@ -39,5 +39,14 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN") ?: ""
             }
         }
+        maven {
+            name = "excalia-repo"
+            url = uri("http://172.29.17.1:8081/repository/maven-releases/")
+            isAllowInsecureProtocol = true
+            credentials {
+                username = System.getenv("NEXUS_USERNAME") ?: ""
+                password = System.getenv("NEXUS_PASSWORD") ?: ""
+            }
+        }
     }
 }

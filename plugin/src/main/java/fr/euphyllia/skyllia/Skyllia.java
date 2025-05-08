@@ -27,10 +27,11 @@ public class Skyllia extends JavaPlugin {
     private InterneAPI interneAPI;
     private SubCommandRegistry commandRegistry;
     private SubCommandRegistry adminCommandRegistry;
+    private static Skyllia instance;
 
     @Override
     public void onEnable() {
-
+        instance = this;
         printStartupBanner();
         File oldConfig = new File(getDataFolder(), "config.toml");
         if (oldConfig.exists()) {
@@ -177,5 +178,9 @@ public class Skyllia extends JavaPlugin {
         int textLength = ChatColor.stripColor(text).length();
         int padding = (lineWidth - textLength) / 2;
         return " ".repeat(Math.max(0, padding)) + text;
+    }
+
+    public static Skyllia getInstance() {
+        return instance;
     }
 }

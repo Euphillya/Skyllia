@@ -13,6 +13,11 @@ schematic-not-exist = "Le schéma pour créer l'île n'existe pas."
 generic-error = "Une erreur est survenue lors de la création de l'île."
 only-owner = "Seul le propriétaire de l'île peut exécuter cette commande."
 
+[island.create]
+already-in-queue = "⏳ Vous êtes déjà dans la file d'attente pour créer une île. Position actuelle : #%position%"
+queued = "⌛ Ajouté à la file d'attente. Position : #%position%"
+position-update = "📣 Votre nouvelle position dans la file est : #%position%"
+
 [island.home]
 success = "Vous avez été téléporté sur votre île."
 

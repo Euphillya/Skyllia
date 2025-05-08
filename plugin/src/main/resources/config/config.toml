@@ -32,6 +32,11 @@ chunk-perimeter-island = false
 # Automatically teleports the player to the island when accepting an invitation.
 teleport-when-accepting = true
 
+[settings.island.queue]
+# Allows players with the permission "skyllia.island.bypass.queue" to bypass the island creation queue.
+# If set to false, everyone must wait in the queue regardless of permissions.
+allow-bypass = true
+
 [settings.spawn]
 # Enables the global spawn point (access via /spawn).
 enable = true
