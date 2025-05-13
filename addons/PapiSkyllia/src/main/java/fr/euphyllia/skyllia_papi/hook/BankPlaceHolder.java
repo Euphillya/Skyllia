@@ -5,7 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliabank.SkylliaBank;
-import fr.euphyllia.skylliabank.model.BankAccount;
+import fr.euphyllia.skylliabank.api.BankAccount;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;

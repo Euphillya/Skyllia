@@ -151,10 +151,10 @@ public class MariaDBIslandData extends IslandDataQuery {
     public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
         CompletableFuture<CopyOnWriteArrayList<Island>> future = new CompletableFuture<>();
         String query = """
-        SELECT `island_id`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`, `max_members`
-        FROM `%s`.`islands`
-        WHERE `disable` = 0;
-        """.formatted(this.databaseName);
+                SELECT `island_id`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`, `max_members`
+                FROM `%s`.`islands`
+                WHERE `disable` = 0;
+                """.formatted(this.databaseName);
 
         try {
             MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), query, null, resultSet -> {

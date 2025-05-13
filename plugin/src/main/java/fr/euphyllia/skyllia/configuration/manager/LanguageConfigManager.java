@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.managers.ConfigManager;
@@ -16,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -111,15 +113,34 @@ public class LanguageConfigManager implements ConfigManager {
         if (langMessages.containsKey(key)) {
             message = langMessages.get(key);
         } else {
-            message = "<red>Missing translation: " + key;
-            if (localeFiles.containsKey(locale)) {
-                CommentedFileConfig fileConfig = localeFiles.get(locale);
-                fileConfig.set(key, "<red>Missing translation : " + key);
-                TomlWriter tomlWriter = new TomlWriter();
-                tomlWriter.setIndent(IndentStyle.NONE);
-                tomlWriter.write(fileConfig, fileConfig.getFile(), WritingMode.REPLACE);
-                langMessages.put(key, "<red>Missing translation: " + key);
-                log.warn("Added missing translation key '{}' in language file '{}'", key, locale.toLanguageTag());
+            String localeFileName = locale.toLanguageTag().replace("-", "_") + ".toml";
+            String fallbackMessage = findFallbackTranslationFromResource(localeFileName, key);
+
+            if (fallbackMessage != null) {
+                // Ajout automatique dans le fichier local
+                if (localeFiles.containsKey(locale)) {
+                    CommentedFileConfig fileConfig = localeFiles.get(locale);
+                    fileConfig.set(key, fallbackMessage);
+                    TomlWriter tomlWriter = new TomlWriter();
+                    tomlWriter.setIndent(IndentStyle.NONE);
+                    tomlWriter.write(fileConfig, fileConfig.getFile(), WritingMode.REPLACE);
+                    langMessages.put(key, fallbackMessage);
+                    log.info("Loaded fallback key '{}' from internal resource into '{}'", key, localeFileName);
+                    message = fallbackMessage;
+                } else {
+                    message = fallbackMessage;
+                }
+            } else {
+                message = "<red>Missing translation: " + key;
+                if (localeFiles.containsKey(locale)) {
+                    CommentedFileConfig fileConfig = localeFiles.get(locale);
+                    fileConfig.set(key, message);
+                    TomlWriter tomlWriter = new TomlWriter();
+                    tomlWriter.setIndent(IndentStyle.NONE);
+                    tomlWriter.write(fileConfig, fileConfig.getFile(), WritingMode.REPLACE);
+                    langMessages.put(key, message);
+                    log.warn("Added missing translation key '{}' in language file '{}'", key, localeFileName);
+                }
             }
         }
 
@@ -130,6 +151,29 @@ public class LanguageConfigManager implements ConfigManager {
 
         return miniMessage.deserialize(prefix + message);
     }
+
+    /*
+     * Fallback translation from the internal resource
+     */
+    private String findFallbackTranslationFromResource(String localeFileName, String key) {
+        try (InputStream stream = plugin.getResource("language/" + localeFileName)) {
+            if (stream == null) {
+                return null;
+            }
+
+            TomlParser parser = new TomlParser();
+            CommentedConfig parsedConfig = parser.parse(stream);
+
+            Map<String, String> messages = new HashMap<>();
+            parseConfig("", parsedConfig, messages);
+
+            return messages.get(key);
+        } catch (Exception e) {
+            log.error("Failed to read fallback translation from resource '{}'", localeFileName, e);
+            return null;
+        }
+    }
+
 
     public Component translate(String key, Map<String, String> placeholders) {
         return translate(defaultLocale, key, placeholders);

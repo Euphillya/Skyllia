@@ -1,17 +1,16 @@
 package fr.euphyllia.skylliabank;
 
-import fr.euphyllia.skylliabank.database.MariaDBBankGenerator;
-import fr.euphyllia.skylliabank.database.MariaDBBankInit;
-import fr.euphyllia.skylliabank.model.BankAccount;
+import fr.euphyllia.skylliabank.api.BankAccount;
+import fr.euphyllia.skylliabank.api.BankGenerator;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class BankManager {
-    private final MariaDBBankGenerator dbGenerator;
+    private final BankGenerator dbGenerator;
 
-    public BankManager() {
-        this.dbGenerator = MariaDBBankInit.getMariaDbBankGenerator();
+    public BankManager(BankGenerator dbGenerator) {
+        this.dbGenerator = dbGenerator;
     }
 
     public CompletableFuture<BankAccount> getBankAccount(UUID islandId) {

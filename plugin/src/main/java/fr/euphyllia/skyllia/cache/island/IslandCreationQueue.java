@@ -14,8 +14,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class IslandCreationQueue {
 
-    private record IslandCreationRequest(UUID uuid, String[] args) {}
-
     private static final Queue<IslandCreationRequest> creationQueue = new ConcurrentLinkedQueue<>();
     private static boolean isProcessing = false;
 
@@ -37,7 +35,6 @@ public class IslandCreationQueue {
 
         processNext();
     }
-
 
     private static synchronized void processNext() {
         if (isProcessing || creationQueue.isEmpty()) return;
@@ -86,5 +83,8 @@ public class IslandCreationQueue {
 
     public static synchronized boolean isQueued(UUID uuid) {
         return creationQueue.stream().anyMatch(req -> req.uuid().equals(uuid));
+    }
+
+    private record IslandCreationRequest(UUID uuid, String[] args) {
     }
 }

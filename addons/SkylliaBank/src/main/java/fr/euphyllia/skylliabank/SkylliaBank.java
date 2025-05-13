@@ -1,30 +1,26 @@
 package fr.euphyllia.skylliabank;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skylliabank.api.BankGenerator;
 import fr.euphyllia.skylliabank.commands.BankAdminCommand;
 import fr.euphyllia.skylliabank.commands.BankCommand;
-import fr.euphyllia.skylliabank.database.MariaDBBankInit;
-import org.bukkit.configuration.file.FileConfiguration;
+import fr.euphyllia.skylliabank.database.mariadb.MariaDBBankInit;
+import fr.euphyllia.skylliabank.database.sqlite.SQLiteBankInit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SkylliaBank extends JavaPlugin {
 
     private static BankManager bankManager;
-    private static FileConfiguration config;
 
     public static BankManager getBankManager() {
         return bankManager;
     }
 
-    public static FileConfiguration getConfiguration() {
-        return config;
-    }
 
     @Override
     public void onEnable() {
-        this.saveDefaultConfig();
-        config = getConfig();
 
         // Initialiser l'intégration avec Vault
         if (!EconomyManager.setupEconomy(this)) {
@@ -39,21 +35,36 @@ public final class SkylliaBank extends JavaPlugin {
             return;
         }
 
-        // Initialiser et charger la base de données
-        MariaDBBankInit dbInit = new MariaDBBankInit();
+        BankGenerator generator;
         try {
-            if (!dbInit.init()) {
-                getLogger().severe("Unable to initialize the bank database! The plugin will stop.");
+            if (ConfigLoader.database.getMariaDBConfig() != null) {
+                MariaDBBankInit dbInit = new MariaDBBankInit();
+                if (!dbInit.init()) {
+                    getLogger().severe("Unable to initialize the MariaDB bank database! The plugin will stop.");
+                    getServer().getPluginManager().disablePlugin(this);
+                    return;
+                }
+                generator = MariaDBBankInit.getMariaDbBankGenerator();
+            } else if (ConfigLoader.database.getSqLiteConfig() != null) {
+                SQLiteBankInit dbInit = new SQLiteBankInit();
+                if (!dbInit.init()) {
+                    getLogger().severe("Unable to initialize the SQLite bank database! The plugin will stop.");
+                    getServer().getPluginManager().disablePlugin(this);
+                    return;
+                }
+                generator = SQLiteBankInit.getGenerator();
+            } else {
+                getLogger().severe("No database configuration found! The plugin will stop.");
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
-        } catch (DatabaseException e) {
-            getLogger().severe("Unable to initialize the bank database! The plugin will stop.");
+        } catch (DatabaseException exception) {
+            getLogger().severe("Unable to initialize the MariaDB bank database! The plugin will stop.");
             getServer().getPluginManager().disablePlugin(this);
-            throw new RuntimeException(e);
+            throw new RuntimeException(exception);
         }
 
-        bankManager = new BankManager();
+        bankManager = new BankManager(generator);
 
         SkylliaAPI.registerCommands(new BankCommand(this), "bank", "money", "bal", "balance");
         SkylliaAPI.registerAdminCommands(new BankAdminCommand(this), "bank");

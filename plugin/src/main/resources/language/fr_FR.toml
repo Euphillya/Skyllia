@@ -1,6 +1,6 @@
 config-version = 2
 verbose = false
-prefix = "<light_purple>[Skyllia]</light_purple>: "
+prefix = "<light_purple>[Skyllia]</light_purple> : "
 
 [island]
 create-in-progress = "L'île est en cours de création"
@@ -50,7 +50,7 @@ failed = "La gamerule %gamerule% n'a pas pu être définie sur %value%."
 [island.permission]
 args-missing = "La commande est incomplète : /skyllia permission <island/commands/inventory> <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN> <PERMISSION_NAME> <true/false>"
 role-invalid = "Le rôle est invalide, valeurs possibles : <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN>"
-permission-invalid = "Cette permission n'existe pas."
+permissions-invalid = "Cette permission n'existe pas."
 permission-type-invalid = "La type est invalide, valeurs possibles : <island/commands/inventory>"
 fail-high-equals-status = "Vous ne pouvez pas modifier vos propres permissions ou celles de rôles supérieurs à vous."
 
@@ -153,12 +153,21 @@ unexpected-error = "Une erreur est survenue. Veuillez contacter un administrateu
 location-unsafe = "La position n'est pas sécurisée ! Téléportation impossible."
 
 [island.warp]
-create-success = "Votre warp : %s a été créé."
-args-missing = "Spécifiez le warp : /skyllia <set/del>warp <nom>"
-delete-home-forbidden = "Vous ne pouvez pas supprimer le warp principal."
-delete-success = "Le warp a été supprimé."
-warp-not-exist = "Le warp demandé n'existe pas."
-teleport-success = "Vous avez été téléporté au warp demandé."
+create-success = "Le warp %s a été créé avec succès."
+args-missing = "Vous devez spécifier le nom du warp à enregistrer : /skyllia warp <create/delete/teleport> <nom>"
+delete-home-forbidden = "Vous ne pouvez pas supprimer le warp 'home' de votre île."
+delete-success = "Le warp a été supprimé avec succès."
+warp-not-exist = "Le warp n'existe pas."
+teleport-success = "Vous avez été téléporté au warp."
+
+[island.trust]
+success = "Le joueur a été ajouté à votre liste de confiance jusqu'au prochain redémarrage ou jusqu'à ce que vous le supprimiez. Notez qu'une personne de confiance dispose d'autant d'autorisations qu'un membre de votre île."
+args-missing = "La commande est incomplète : /skyllia trust <player>"
+
+[island.untrust]
+success = "Le membre n'est plus dans votre liste de confiance."
+failed = "Une erreur s'est produite lors du retrait de la personne de votre liste de confiance."
+args-missing = "La commande est incomplète : /skyllia untrust <player>"
 
 [admin]
 delete-args-missing = "Le nom du joueur est manquant."
@@ -177,4 +186,68 @@ transfer-success = "La propriété a été transférée de %previous_owner% à %
 reload = "Les configurations ont été rechargés.."
 
 [misc]
-unknown-command = "Cette commande n'existe pas."
+unknown-command = "<red>Commande inconnue."
+
+[addons.bank]
+no-permissions = "<red>Vous n'avez pas l'autorisation d'utiliser cette commande."
+error = "Une erreur s'est produite lors de l'exécution de la commande. Veuillez contacter un administrateur."
+
+[addons.bank.player]
+player-only = "<red>Cette commande ne peut être utilisée que par un joueur."
+no-island = "<red>Vous n’avez pas d’île."
+unknown-command = "<yellow>Commande inconnue. Utiliser /is bank [deposit|withdraw|balance]"
+
+# Deposit
+no-permission-deposit = "<red>Vous n'avez pas la permission de déposer de l'argent."
+usage-deposit = "<yellow>Usage : /is bank deposit <amount>"
+invalid-amount = "<red>Montant invalide."
+invalid-amount-positive = "<red>Le montant doit être positif."
+not-enough-money-player = "<red>Vous n'avez pas assez d'argent."
+success-deposit = "<green>A déposé %amount% sur la banque de votre île."
+error-deposit-refunded = "<red>Une erreur s'est produite. Votre argent a été remboursé."
+critical-error-deposit = "<red>Erreur critique : dépôt échoué, remboursement également échoué. Contactez un administrateur."
+error-withdraw-player = "<red>Erreur de retrait : %errorMessage%"
+
+# Withdraw
+no-permission-withdraw = "<red>Vous n'avez pas l'autorisation de retirer de l'argent."
+usage-withdraw = "<yellow>Usage : /is bank withdraw <amount>"
+not-enough-money-island = "<red>Votre île n'a pas assez d'argent."
+success-withdraw = "<green>Retiré %amount% de la banque de votre île."
+error-deposit-player-refund-island = "<red>Erreur lors du dépôt sur votre portefeuille. La banque de l'île a été remboursée."
+critical-error-withdraw = "<red>Erreur critique : le retrait vers votre portefeuille et le remboursement sur l'île ont échoué. Contactez un administrateur."
+error-withdraw-island = "<red>Une erreur s'est produite lors du retrait de votre banque d'ile."
+error-generic-withdraw = "<red>Une erreur s'est produite lors du retrait. Veuillez réessayer ultérieurement."
+
+# Balance
+no-permission-balance = "<red>Vous n'avez pas l'autorisation de consulter le solde."
+balance = "<green>Solde bancaire de votre île : %amount%"
+error-get-balance = "<red>Impossible de récupérer le solde de votre île."
+
+
+[addons.bank.admin]
+usage-root = "<yellow>Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"
+unknown-command = "<yellow>Commande inconnue. Utilisez /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"
+
+usage-balance = "<yellow>Usage: /skylliadmin bank balance <player>"
+usage-deposit = "<yellow>Usage: /skylliadmin bank deposit <player> <amount>"
+usage-withdraw = "<yellow>Usage: /skylliadmin bank withdraw <player> <amount>"
+usage-set-balance = "<yellow>Usage: /skylliadmin bank setbalance <player> <amount>"
+
+player-not-found = "<red>Le joueur n'a pas été trouvé."
+player-not-island = "<red>Le joueur n'a pas d'île."
+
+invalid-amount = "<red>Montant invalide."
+invalid-amount-positive = "<red>Le montant doit être positif."
+invalid-amount-negative = "<red>Le montant doit être négatif."
+
+island-balance = "<green>Solde de l'île de {player_name} : %amount%"
+island-error-balance = "<red>Impossible de récupérer le solde de l'île de {player_name}."
+
+deposit-success = "<green>Déposé %amount% sur le solde de l'ile de {player_name}"
+deposit-error = "<red>Une erreur s'est produite lors du dépôt sur le solde de l'ile de {player_name}."
+
+success-withdraw = "<green>Retiré %amount% du solde de l'ile de {player_name}"
+error-withdraw = "<red>Une erreur s'est produite lors du retrait du solde de l'ile de {player_name}."
+
+set-balance-success = "<green>Le solde de l'île de {player_name} a été défini sur %amount%"
+set-balance-error = "<red>Une erreur s'est produite lors de la définition du solde de l'île de {player_name}."

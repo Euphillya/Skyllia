@@ -36,14 +36,14 @@ public class MariaDBExecute {
     /**
      * Executes a SQL query with optional parameters, an optional callback, and optional custom work.
      *
-     * @param pool     The connection pool to use.
-     * @param query    The SQL query to execute.
-     * @param param    The list of parameters for the query.
-     * @param callback The callback to execute with the query result.
-     * @param work     The work to execute with the connection.
-     *                 <p>
-     *                 <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
-     *                 </p>
+     * @param databaseLoader The connection pool to use.
+     * @param query          The SQL query to execute.
+     * @param param          The list of parameters for the query.
+     * @param callback       The callback to execute with the query result.
+     * @param work           The work to execute with the connection.
+     *                       <p>
+     *                       <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
+     *                       </p>
      * @throws DatabaseException If an error occurs during query execution.
      * @implSpec <ul>
      * <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>
@@ -86,14 +86,14 @@ public class MariaDBExecute {
     /**
      * Executes a DML SQL query (UPDATE, INSERT, DELETE) with optional parameters, an optional callback, and optional custom work.
      *
-     * @param pool     The connection pool to use.
-     * @param query    The DML SQL query to execute.
-     * @param param    The list of parameters for the query.
-     * @param callback The callback to execute with the query result (number of affected rows).
-     * @param work     The work to execute with the connection.
-     *                 <p>
-     *                 <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
-     *                 </p>
+     * @param databaseLoader The connection pool to use.
+     * @param query          The DML SQL query to execute.
+     * @param param          The list of parameters for the query.
+     * @param callback       The callback to execute with the query result (number of affected rows).
+     * @param work           The work to execute with the connection.
+     *                       <p>
+     *                       <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
+     *                       </p>
      * @throws DatabaseException If an error occurs during query execution.
      * @implSpec <ul>
      * <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>

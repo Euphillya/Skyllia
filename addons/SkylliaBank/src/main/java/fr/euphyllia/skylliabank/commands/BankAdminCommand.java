@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliabank.EconomyManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -37,143 +39,84 @@ public class BankAdminCommand implements SubCommandInterface {
     }
 
     private void handleBalance(CommandSender sender, String[] args) {
-        // usageBalance
         if (args.length < 2) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                            "admin.usageBalance",
-                            "<yellow>Usage: /skylliadmin bank balance <player>"
-                    ))
-            );
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.usage-balance");
             return;
         }
 
         String playerName = args[1];
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
 
-        // playerNotFound
-        if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotFound",
-                                    "<red>The player does not exist or was not found."
-                            )
-                    ));
+        if (offlinePlayer.getName() == null) {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-found");
             return;
         }
 
         CompletableFuture<@Nullable Island> islandFuture =
                 SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
-        // error
+
         if (islandFuture == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "error",
-                                    "<red>An error has occurred."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
             return;
         }
 
         Island island = islandFuture.join();
-        // playerNotIsland
+
         if (island == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotIsland",
-                                    "<red>The player has no island."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
             return;
         }
 
         UUID islandId = island.getId();
 
-        // Récupération du solde
-        Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-            SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
-                if (bankAccount != null) {
-                    // islandBalance
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.islandBalance",
-                            "<green>{player_name}'s Island Balance: <yellow>{amount}."
-                    );
-                    String msg = msgTemplate
-                            .replace("{player_name}", offlinePlayer.getName())
-                            .replace("{amount}", economy.format(bankAccount.balance()));
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                } else {
-                    // islandErrorBalance
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.islandErrorBalance",
-                            "<red>Unable to recover {player_name}'s Island balance."
-                    );
-                    String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                }
-            }).exceptionally(ex -> {
-                String msgTemplate = SkylliaBank.getConfiguration().getString(
-                        "admin.islandErrorBalance",
-                        "<red>Unable to recover {player_name}'s Island balance."
-                );
-                String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                sender.sendMessage(miniMessage.deserialize(msg));
-                log.error("An error occurred while getting island balance of {}: {}", offlinePlayer.getName(), ex.getMessage());
-                return null;
-            });
+        SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
+            if (bankAccount != null) {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.island-balance", Map.of(
+                        "{player_name}", offlinePlayer.getName(),
+                        "{amount}", economy.format(bankAccount.balance())
+                ));
+            } else {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.island-error-balance", Map.of(
+                        "{player_name}", offlinePlayer.getName()
+                ));
+            }
+        }).exceptionally(ex -> {
+            log.error("Error retrieving balance for {}: {}", offlinePlayer.getName(), ex.getMessage());
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.island-error-balance", Map.of(
+                    "{player_name}", offlinePlayer.getName()
+            ));
+            return null;
         });
     }
 
     private void handleDeposit(CommandSender sender, String[] args) {
-        // usageDeposit
         if (args.length < 3) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.usageDeposit",
-                                    "<yellow>Usage: /skylliadmin bank deposit <player> <amount>"
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.usage-deposit");
             return;
         }
 
         String playerName = args[1];
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
 
-        // playerNotFound
-        if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotFound",
-                                    "<red>The player does not exist or was not found."
-                            )
-                    ));
+        if (offlinePlayer.getName() == null) {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-found");
             return;
         }
 
         CompletableFuture<@Nullable Island> islandFuture =
                 SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
-        // error
+
         if (islandFuture == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "error",
-                                    "<red>An error has occurred."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
             return;
         }
 
         Island island = islandFuture.join();
-        // playerNotIsland
+
         if (island == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotIsland",
-                                    "<red>The player has no island."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
             return;
         }
 
@@ -181,110 +124,59 @@ public class BankAdminCommand implements SubCommandInterface {
         try {
             amount = Double.parseDouble(args[2]);
             if (amount <= 0) {
-                // invalidAmountPositive
-                sender.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "admin.invalidAmountPositive",
-                                        "<red>Invalid amount. Must be positive."
-                                )
-                        ));
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.invalid-amount-positive");
                 return;
             }
         } catch (NumberFormatException e) {
-            // invalidAmount
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.invalidAmount",
-                                    "<red>Invalid amount."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.invalid-amount");
             return;
         }
 
         UUID islandId = island.getId();
-        Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-            SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(success -> {
-                if (success) {
-                    // depositSuccess
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.depositSuccess",
-                            "<green>Deposited %amount% into {player_name}'s island bank."
-                    );
-                    String msg = msgTemplate
-                            .replace("%amount%", economy.format(amount))
-                            .replace("{player_name}", offlinePlayer.getName());
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                } else {
-                    // depositError
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.depositError",
-                            "<red>An error occurred while depositing to {player_name}'s island bank."
-                    );
-                    String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                }
-            }).exceptionally(ex -> {
-                log.error("Error depositing to island bank for {}: {}", offlinePlayer.getName(), ex.getMessage());
-                sender.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "error",
-                                        "<red>An error has occurred."
-                                )
-                        ));
-                return null;
-            });
+        SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(success -> {
+            if (success) {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.deposit-success", Map.of(
+                        "%amount%", economy.format(amount),
+                        "{player_name}", offlinePlayer.getName()
+                ));
+            } else {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.deposit-error", Map.of(
+                        "{player_name}", offlinePlayer.getName()
+                ));
+            }
+        }).exceptionally(ex -> {
+            log.error("Error depositing for {}: {}", offlinePlayer.getName(), ex.getMessage());
+            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
+            return null;
         });
     }
 
     private void handleWithdraw(CommandSender sender, String[] args) {
-        // usageWithdraw
         if (args.length < 3) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.usageWithdraw",
-                                    "<yellow>Usage: /skylliadmin bank withdraw <player> <amount>"
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.usage-withdraw");
             return;
         }
 
         String playerName = args[1];
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
 
-        // playerNotFound
         if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotFound",
-                                    "<red>The player does not exist or was not found."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-found");
             return;
         }
 
         CompletableFuture<@Nullable Island> islandFuture =
                 SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
-        // error
         if (islandFuture == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "error",
-                                    "<red>An error has occurred."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
             return;
         }
 
         Island island = islandFuture.join();
-        // playerNotIsland
+
         if (island == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotIsland",
-                                    "<red>The player has no island."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
             return;
         }
 
@@ -292,110 +184,58 @@ public class BankAdminCommand implements SubCommandInterface {
         try {
             amount = Double.parseDouble(args[2]);
             if (amount <= 0) {
-                // invalidAmountPositive
-                sender.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "admin.invalidAmountPositive",
-                                        "<red>Invalid amount. Must be positive."
-                                )
-                        ));
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.invalid-amount-positive");
                 return;
             }
         } catch (NumberFormatException e) {
-            // invalidAmount
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.invalidAmount",
-                                    "<red>Invalid amount."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.invalid-amount");
             return;
         }
 
         UUID islandId = island.getId();
-        Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-            SkylliaBank.getBankManager().withdraw(islandId, amount).thenAcceptAsync(success -> {
-                if (success) {
-                    // successWithdraw
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.successWithdraw",
-                            "<green>Withdrawn %amount% from {player_name}'s island bank."
-                    );
-                    String msg = msgTemplate
-                            .replace("%amount%", economy.format(amount))
-                            .replace("{player_name}", offlinePlayer.getName());
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                } else {
-                    // errorWithdraw
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.errorWithdraw",
-                            "<red>An error occurred while withdrawing from {player_name}'s island bank."
-                    );
-                    String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                }
-            }).exceptionally(ex -> {
-                log.error("Error withdrawing from island bank for {}: {}", offlinePlayer.getName(), ex.getMessage());
-                sender.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "error",
-                                        "<red>An error has occurred."
-                                )
-                        ));
-                return null;
-            });
+        SkylliaBank.getBankManager().withdraw(islandId, amount).thenAcceptAsync(success -> {
+            if (success) {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.success-withdraw", Map.of(
+                        "%amount%", economy.format(amount),
+                        "{player_name}", offlinePlayer.getName()
+                ));
+            } else {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.error-withdraw", Map.of(
+                        "{player_name}", offlinePlayer.getName()
+                ));
+            }
+        }).exceptionally(ex -> {
+            log.error("Error withdrawing for {}: {}", offlinePlayer.getName(), ex.getMessage());
+            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
+            return null;
         });
     }
 
     private void handleSetBalance(CommandSender sender, String[] args) {
-        // usageSetBalance
         if (args.length < 3) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.usageSetBalance",
-                                    "<yellow>Usage: /skylliadmin bank setbalance <player> <amount>"
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.usage-set-balance");
             return;
         }
 
         String playerName = args[1];
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
 
-        // playerNotFound
-        if (offlinePlayer == null || offlinePlayer.getName() == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotFound",
-                                    "<red>The player does not exist or was not found."
-                            )
-                    ));
+        if (offlinePlayer.getName() == null) {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-found");
             return;
         }
 
         CompletableFuture<@Nullable Island> islandFuture =
                 SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
-        // error
         if (islandFuture == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "error",
-                                    "<red>An error has occurred."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
             return;
         }
 
         Island island = islandFuture.join();
-        // playerNotIsland
         if (island == null) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.playerNotIsland",
-                                    "<red>The player has no island."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
             return;
         }
 
@@ -403,87 +243,51 @@ public class BankAdminCommand implements SubCommandInterface {
         try {
             amount = Double.parseDouble(args[2]);
             if (amount < 0) {
-                sender.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "admin.invalidAmountNegative",
-                                        "<red>Amount cannot be negative."
-                                )
-                        ));
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.invalid-amount-negative");
                 return;
             }
         } catch (NumberFormatException e) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "admin.invalidAmount",
-                                    "<red>Invalid amount."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.invalid-amount");
             return;
         }
 
         UUID islandId = island.getId();
-        Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-            SkylliaBank.getBankManager().setBalance(islandId, amount).thenAcceptAsync(success -> {
-                if (success) {
-                    // setBalanceSuccess
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.setBalanceSuccess",
-                            "<green>Set {player_name}'s island bank balance to %amount%."
-                    );
-                    String msg = msgTemplate
-                            .replace("{player_name}", offlinePlayer.getName())
-                            .replace("%amount%", economy.format(amount));
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                } else {
-                    // setBalanceError
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "admin.setBalanceError",
-                            "<red>An error occurred while setting {player_name}'s island balance."
-                    );
-                    String msg = msgTemplate.replace("{player_name}", offlinePlayer.getName());
-                    sender.sendMessage(miniMessage.deserialize(msg));
-                }
-            }).exceptionally(ex -> {
-                log.error("Error setting island balance for player {}: {}", offlinePlayer.getName(), ex.getMessage());
-                sender.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "error",
-                                        "<red>An error has occurred."
-                                )
-                        ));
-                return null;
-            });
+        SkylliaBank.getBankManager().setBalance(islandId, amount).thenAcceptAsync(success -> {
+            if (success) {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.set-balance-success", Map.of(
+                        "{player_name}", offlinePlayer.getName(),
+                        "%amount%", economy.format(amount)
+                ));
+            } else {
+                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.set-balance-error", Map.of(
+                        "{player_name}", offlinePlayer.getName()
+                ));
+            }
+        }).exceptionally(ex -> {
+            log.error("Error setting balance for {}: {}", offlinePlayer.getName(), ex.getMessage());
+            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
+            return null;
         });
     }
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        // noPermission
         if (!PermissionImp.hasPermission(sender, "skyllia.bank.admin")) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "noPermission",
-                                    "<red>You do not have permission to perform this action."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.no-permissions");
             return true;
         }
 
-        // /skylliadmin bank ...
         if (args.length == 0) {
-            // commande inconnue → petit rappel
-            sender.sendMessage(miniMessage.deserialize("<yellow>Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.usage-root");
             return true;
         }
 
-        String subCommand = args[0].toLowerCase();
-        switch (subCommand) {
+        switch (args[0].toLowerCase()) {
             case "balance" -> handleBalance(sender, args);
             case "deposit" -> handleDeposit(sender, args);
             case "withdraw" -> handleWithdraw(sender, args);
             case "setbalance" -> handleSetBalance(sender, args);
-            default ->
-                    sender.sendMessage(miniMessage.deserialize("<yellow>Unknown command. Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"));
+            default -> ConfigLoader.language.sendMessage(sender, "addons.bank.admin.unknown-command");
         }
         return true;
     }

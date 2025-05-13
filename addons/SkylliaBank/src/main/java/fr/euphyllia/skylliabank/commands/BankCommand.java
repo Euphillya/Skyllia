@@ -4,12 +4,12 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliabank.EconomyManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -36,48 +37,32 @@ public class BankCommand implements SubCommandInterface {
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         // Vérifier si c'est un joueur
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.playerOnly",
-                                    "<red>This command can only be used by a player."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(sender, "addons.bank.player.player-only");
             return true;
         }
 
         // Récupérer l'île du joueur
         @Nullable Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
         if (island == null) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.noIsland",
-                                    "<red>You do not have an island."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.no-island");
             return true;
         }
 
         UUID islandId = island.getId();
 
-        // Exécuter en tâche asynchrone
-        Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-            if (args.length == 0) {
-                // Commande sans argument => afficher le solde
-                handleBalance(player, islandId);
-                return;
-            }
+        if (args.length == 0) {
+            // Commande sans argument => afficher le solde
+            handleBalance(player, islandId);
+            return true;
+        }
 
-            String subCommand = args[0].toLowerCase();
-            switch (subCommand) {
-                case "deposit" -> handleDeposit(player, islandId, args);
-                case "withdraw" -> handleWithdraw(player, islandId, args);
-                case "balance" -> handleBalance(player, islandId);
-                default -> player.sendMessage(miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                        "bank.unknownCommand",
-                        "<yellow>Unknown command. Use /is bank [deposit|withdraw|balance]"
-                )));
-            }
-        });
+        String subCommand = args[0].toLowerCase();
+        switch (subCommand) {
+            case "deposit" -> handleDeposit(player, islandId, args);
+            case "withdraw" -> handleWithdraw(player, islandId, args);
+            case "balance" -> handleBalance(player, islandId);
+            default -> ConfigLoader.language.sendMessage(player, "addons.bank.player.unknown-command");
+        }
 
         return true;
     }
@@ -86,25 +71,13 @@ public class BankCommand implements SubCommandInterface {
      * /is bank deposit <amount>
      */
     private void handleDeposit(Player player, UUID islandId, String[] args) {
-        // Permission pour deposit
         if (!PermissionImp.hasPermission(player, "skyllia.bank.deposit")) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.noPermissionDeposit",
-                                    "<red>You do not have permission to deposit money."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-deposit");
             return;
         }
 
-        // Usage /is bank deposit <amount>
         if (args.length < 2) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.usageDeposit",
-                                    "<yellow>Usage: /is bank deposit <amount>"
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.usage-deposit");
             return;
         }
 
@@ -112,98 +85,39 @@ public class BankCommand implements SubCommandInterface {
         try {
             amount = Double.parseDouble(args[1]);
             if (amount <= 0) {
-                player.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "bank.invalidAmountPositive",
-                                        "<red>The amount must be positive."
-                                )
-                        ));
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.invalid-amount-positive");
                 return;
             }
         } catch (NumberFormatException e) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.invalidAmount",
-                                    "<red>Invalid amount."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.invalid-amount");
             return;
         }
 
-        // Vérifier argent du joueur
         if (economy.getBalance(player) < amount) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.notEnoughMoneyPlayer",
-                                    "<red>You do not have enough money."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.not-enough-money-player");
             return;
         }
 
-        // Retirer l'argent du joueur
         EconomyResponse withdrawResponse = economy.withdrawPlayer(player, amount);
         if (withdrawResponse.transactionSuccess()) {
-            // Dépôt dans la banque de l'île
             SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(success -> {
                 if (success) {
-                    // successDeposit
-                    String msgTemplate = SkylliaBank.getConfiguration().getString(
-                            "bank.successDeposit",
-                            "<green>Deposited %amount% into your island's bank."
-                    );
-                    String msg = msgTemplate.replace("%amount%", economy.format(amount));
-                    player.sendMessage(miniMessage.deserialize(msg));
+                    ConfigLoader.language.sendMessage(player, "addons.bank.player.success-deposit", Map.of("%amount%", economy.format(amount)));
                 } else {
-                    // dépôt échoue → rembourser
                     EconomyResponse refundResponse = economy.depositPlayer(player, amount);
                     if (refundResponse.transactionSuccess()) {
-                        player.sendMessage(
-                                miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                                "bank.errorDepositRefunded",
-                                                "<red>An error occurred. Your money has been refunded."
-                                        )
-                                ));
+                        ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-refunded");
                     } else {
-                        plugin.getLogger().severe("Deposit and refund both failed for player " + player.getName());
-                        player.sendMessage(
-                                miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                                "bank.criticalErrorDeposit",
-                                                "<red>Critical error: deposit failed, refund also failed. Contact an administrator."
-                                        )
-                                ));
+                        ConfigLoader.language.sendMessage(player, "addons.bank.player.critical-error-deposit");
                     }
-                    plugin.getLogger().severe("Error depositing to island " + islandId);
                 }
             }).exceptionally(ex -> {
-                // Exception => rembourser
-                EconomyResponse refundResponse = economy.depositPlayer(player, amount);
-                if (refundResponse.transactionSuccess()) {
-                    player.sendMessage(
-                            miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                            "bank.errorDepositRefunded",
-                                            "<red>An error occurred. Your money has been refunded."
-                                    )
-                            ));
-                } else {
-                    plugin.getLogger().severe("Deposit and refund both failed for player " + player.getName() + " : " + ex.getMessage());
-                    player.sendMessage(
-                            miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                            "bank.criticalErrorDeposit",
-                                            "<red>Critical error: deposit failed, refund also failed. Contact an administrator."
-                                    )
-                            ));
-                }
-                plugin.getLogger().severe("Exception depositing to island " + islandId + " : " + ex.getMessage());
+                economy.depositPlayer(player, amount);
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-refunded");
                 return null;
             });
         } else {
-            // Retrait échoue
-            String errorMsg = SkylliaBank.getConfiguration().getString(
-                    "bank.errorWithdrawPlayer",
-                    "<red>Withdrawal error: %errorMessage%"
-            );
-            player.sendMessage(miniMessage.deserialize(errorMsg.replace("%errorMessage%", withdrawResponse.errorMessage)));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.error-withdraw-player", Map.of("%errorMessage%", withdrawResponse.errorMessage));
         }
     }
 
@@ -211,25 +125,14 @@ public class BankCommand implements SubCommandInterface {
      * /is bank withdraw <amount>
      */
     private void handleWithdraw(Player player, UUID islandId, String[] args) {
-        // Permission pour withdraw
         if (!PermissionImp.hasPermission(player, "skyllia.bank.withdraw")) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.noPermissionWithdraw",
-                                    "<red>You do not have permission to withdraw money."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-withdraw");
             return;
         }
 
-        // Usage /is bank withdraw <amount>
+
         if (args.length < 2) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.usageWithdraw",
-                                    "<yellow>Usage: /is bank withdraw <amount>"
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.usage-withdraw");
             return;
         }
 
@@ -237,103 +140,41 @@ public class BankCommand implements SubCommandInterface {
         try {
             amount = Double.parseDouble(args[1]);
             if (amount <= 0) {
-                player.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "bank.invalidAmountPositive",
-                                        "<red>The amount must be positive."
-                                )
-                        ));
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.invalid-amount-positive");
                 return;
             }
         } catch (NumberFormatException e) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.invalidAmount",
-                                    "<red>Invalid amount."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.invalid-amount");
             return;
         }
 
         // Vérifier le solde de l'île
         SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
             if (bankAccount.balance() < amount) {
-                player.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "bank.notEnoughMoneyIsland",
-                                        "<red>Your island bank does not have enough money."
-                                )
-                        ));
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.not-enough-money-island");
                 return;
             }
 
-            // Retirer de l'île
             SkylliaBank.getBankManager().withdraw(islandId, amount).thenAcceptAsync(success -> {
                 if (success) {
-                    // Déposer au joueur
                     EconomyResponse depositResponse = economy.depositPlayer(player, amount);
                     if (depositResponse.transactionSuccess()) {
-                        String msgTemplate = SkylliaBank.getConfiguration().getString(
-                                "bank.successWithdraw",
-                                "<green>Withdrew %amount% from your island's bank."
-                        );
-                        player.sendMessage(miniMessage.deserialize(msgTemplate.replace("%amount%", economy.format(amount))));
+                        ConfigLoader.language.sendMessage(player, "addons.bank.player.success-withdraw", Map.of("%amount%", economy.format(amount)));
                     } else {
-                        // Échec => rembourser la banque
-                        SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(refundSuccess -> {
-                            if (refundSuccess) {
-                                player.sendMessage(
-                                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                                        "bank.errorDepositPlayerRefundIsland",
-                                                        "<red>Error depositing to your wallet. The island bank has been refunded."
-                                                )
-                                        ));
+                        SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(refund -> {
+                            if (refund) {
+                                ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-player-refund-island");
                             } else {
-                                plugin.getLogger().severe("Failed deposit to player & refund for island " + islandId);
-                                player.sendMessage(
-                                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                                        "bank.criticalErrorWithdraw",
-                                                        "<red>Critical error: deposit to your wallet and island refund both failed. Contact an administrator."
-                                                )
-                                        ));
+                                ConfigLoader.language.sendMessage(player, "addons.bank.player.critical-error-withdraw");
                             }
-                        }).exceptionally(refundEx -> {
-                            plugin.getLogger().severe("Exception refunding the island bank " + islandId + " : " + refundEx.getMessage());
-                            player.sendMessage(
-                                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                                    "bank.criticalErrorWithdraw",
-                                                    "<red>Critical error: deposit to your wallet failed, and island bank refund also failed. Contact an administrator."
-                                            )
-                                    ));
-                            return null;
                         });
                     }
                 } else {
-                    player.sendMessage(
-                            miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                            "bank.errorWithdrawIsland",
-                                            "<red>An error occurred while withdrawing from your island bank."
-                                    )
-                            ));
+                    ConfigLoader.language.sendMessage(player, "addons.bank.player.error-withdraw-island");
                 }
-            }).exceptionally(ex -> {
-                plugin.getLogger().severe("Error withdrawing from island " + islandId + " : " + ex.getMessage());
-                player.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "bank.errorGenericWithdraw",
-                                        "<red>An error occurred during the withdrawal. Please try again later."
-                                )
-                        ));
-                return null;
             });
         }).exceptionally(ex -> {
-            plugin.getLogger().severe("Error checking island balance " + islandId + " : " + ex.getMessage());
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "error",
-                                    "<red>An error has occurred."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.error-generic-withdraw");
             return null;
         });
     }
@@ -342,40 +183,19 @@ public class BankCommand implements SubCommandInterface {
      * /is bank balance
      */
     private void handleBalance(Player player, UUID islandId) {
-        // Permission pour voir le solde
         if (!PermissionImp.hasPermission(player, "skyllia.bank.balance")) {
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "bank.noPermissionBalance",
-                                    "<red>You do not have permission to view the balance."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-balance");
             return;
         }
 
         SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
             if (bankAccount != null) {
-                String msgTemplate = SkylliaBank.getConfiguration().getString(
-                        "bank.balance",
-                        "<green>Your island's bank balance: %amount%"
-                );
-                player.sendMessage(miniMessage.deserialize(msgTemplate.replace("%amount%", economy.format(bankAccount.balance()))));
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.balance", Map.of("%amount%", economy.format(bankAccount.balance())));
             } else {
-                player.sendMessage(
-                        miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                        "bank.errorGetBalance",
-                                        "<red>Unable to retrieve your island's balance."
-                                )
-                        ));
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.error-get-balance");
             }
         }).exceptionally(ex -> {
-            plugin.getLogger().severe("Error retrieving island " + islandId + " balance: " + ex.getMessage());
-            player.sendMessage(
-                    miniMessage.deserialize(SkylliaBank.getConfiguration().getString(
-                                    "error",
-                                    "<red>An error has occurred."
-                            )
-                    ));
+            ConfigLoader.language.sendMessage(player, "addons.bank.error");
             return null;
         });
     }

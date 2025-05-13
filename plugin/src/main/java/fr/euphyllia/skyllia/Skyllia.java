@@ -23,11 +23,15 @@ import java.io.File;
 @SuppressWarnings("UnstableApiUsage")
 public class Skyllia extends JavaPlugin {
 
+    private static Skyllia instance;
     private final Logger logger = LogManager.getLogger(this);
     private InterneAPI interneAPI;
     private SubCommandRegistry commandRegistry;
     private SubCommandRegistry adminCommandRegistry;
-    private static Skyllia instance;
+
+    public static Skyllia getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -134,7 +138,6 @@ public class Skyllia extends JavaPlugin {
         }
     }
 
-
     private void checkDisabledConfig() {
         /* Since 1.20.3, there is a gamerule that allows you to increase the number of ticks between entering a portal and teleporting.
           This makes the configuration possibly useless.
@@ -178,9 +181,5 @@ public class Skyllia extends JavaPlugin {
         int textLength = ChatColor.stripColor(text).length();
         int padding = (lineWidth - textLength) / 2;
         return " ".repeat(Math.max(0, padding)) + text;
-    }
-
-    public static Skyllia getInstance() {
-        return instance;
     }
 }

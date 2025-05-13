@@ -197,10 +197,10 @@ public class SQLiteIslandData extends IslandDataQuery {
     public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
         CompletableFuture<CopyOnWriteArrayList<Island>> future = new CompletableFuture<>();
         String query = """
-        SELECT island_id, disable, region_x, region_z, private, size, create_time, max_members
-        FROM islands
-        WHERE disable = 0;
-        """;
+                SELECT island_id, disable, region_x, region_z, private, size, create_time, max_members
+                FROM islands
+                WHERE disable = 0;
+                """;
 
         try {
             databaseLoader.executeQuery(query, null, resultSet -> {

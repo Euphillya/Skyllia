@@ -167,7 +167,7 @@ public final class SkylliaAPI {
      *
      * @return A CompletableFuture containing a thread-safe list of active islands.
      */
-    public static  CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+    public static CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
         return implementation.getAllIslandsValid();
     }
 

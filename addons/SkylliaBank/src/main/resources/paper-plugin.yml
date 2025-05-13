@@ -10,3 +10,7 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
+    Vault:
+      load: BEFORE
+      required: true
+      join-classpath: true

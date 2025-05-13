@@ -1,4 +1,4 @@
-package fr.euphyllia.skylliabank.database;
+package fr.euphyllia.skylliabank.database.mariadb;
 
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;

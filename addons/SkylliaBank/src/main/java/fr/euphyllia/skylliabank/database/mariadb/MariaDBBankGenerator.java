@@ -1,9 +1,10 @@
-package fr.euphyllia.skylliabank.database;
+package fr.euphyllia.skylliabank.database.mariadb;
 
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
-import fr.euphyllia.skylliabank.model.BankAccount;
+import fr.euphyllia.skylliabank.api.BankAccount;
+import fr.euphyllia.skylliabank.api.BankGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class MariaDBBankGenerator {
+public class MariaDBBankGenerator implements BankGenerator {
 
     private static final Logger log = LogManager.getLogger(MariaDBBankGenerator.class);
     private static final String SELECT_BANK_BALANCE = """
