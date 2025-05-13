@@ -51,6 +51,6 @@ public class VoidWorldGen extends ChunkGenerator {
 
     @Override
     public Location getFixedSpawnLocation(@NotNull World world, @NotNull Random random) {
-        return new Location(world, 0.5, 64, 0.5); // Tu peux mettre Y=0 si tu veux une plateforme à la bedrock
+        return new Location(world, 0.5, 64, 0.5);
     }
 }
