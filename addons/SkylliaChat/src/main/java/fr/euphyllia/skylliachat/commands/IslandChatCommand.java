@@ -4,7 +4,6 @@ import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachat.SkylliaChat;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -16,7 +15,6 @@ import java.util.List;
 public class IslandChatCommand implements SubCommandInterface {
 
     private final SkylliaChat plugin;
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public IslandChatCommand(SkylliaChat main) {
         plugin = main;
@@ -29,7 +27,7 @@ public class IslandChatCommand implements SubCommandInterface {
             return true;
         }
         if (!PermissionImp.hasPermission(sender, "skylliachat.use")) {
-            sender.sendMessage(miniMessage.deserialize("<red>You are not a permission to execute this commands."));
+            ConfigLoader.language.sendMessage(player, "addons.chat.no-permission");
             return true;
         }
 
@@ -37,13 +35,11 @@ public class IslandChatCommand implements SubCommandInterface {
         boolean isEnabled = this.plugin.getIslandChatEnabled().getOrDefault(player, false);
         this.plugin.getIslandChatEnabled().put(player, !isEnabled);
 
-        String msg;
         if (isEnabled) {
-            msg = this.plugin.getConfig().getString("message.chat.disabled", "<red>Island messaging Disabled.");
+            ConfigLoader.language.sendMessage(player, "addons.chat.disabled");
         } else {
-            msg = this.plugin.getConfig().getString("message.chat.enabled", "<green>Island Messaging Enabled.");
+            ConfigLoader.language.sendMessage(player, "addons.chat.enabled");
         }
-        sender.sendMessage(miniMessage.deserialize(msg));
         return true;
     }
 

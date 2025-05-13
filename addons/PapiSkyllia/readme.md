@@ -39,10 +39,6 @@ Before installing Skyllia Placeholder, ensure that the following prerequisites a
 - **Minecraft Server**: [Folia](https://papermc.io/software/folia) or [Paper](https://papermc.io/software/paper) server.
 - **Skyllia Plugin**: Ensure that the Skyllia Plugin is installed and properly configured on your server.
 - **PlaceholderAPI**: Install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) on your server.
-- **Addons (Optional)**: Depending on the placeholders you intend to use, install the following addons:
-    - [SkylliaOre](#skylliaore)
-    - [SkylliaValue](#skylliavalue)
-    - [SkylliaBank](#skylliabank)
 
 ## Installation
 
@@ -98,30 +94,6 @@ Display the status of specific game rules applied to an island.
 |---------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | `%skyllia_gamerule_<gamerule>%`                         | Returns the status (`true` or `false`) of a specific game rule. Replace `<gamerule>` with the desired game rule name. |
 | **Example**: `%skyllia_gamerule_disable_spawn_hostile%` | Returns whether hostile mob spawning is disabled on the island.                                                       |
-
-### Addon Placeholders
-
-Extend functionality with placeholders from optional addons.
-
-#### SkylliaOre Addon
-
-| **Placeholder** | **Description**                                      |
-|-----------------|------------------------------------------------------|
-| `%skyllia_ore%` | Returns the name of the ore generator on the island. |
-
-#### SkylliaValue Addon
-
-| **Placeholder**              | **Description**                                  |
-|------------------------------|--------------------------------------------------|
-| `%skyllia_value_experience%` | Displays the player's experience on the island.  |
-| `%skyllia_value_level%`      | Displays the player's level based on experience. |
-
-#### SkylliaBank Addon
-
-| **Placeholder**         | **Description**                                        |
-|-------------------------|--------------------------------------------------------|
-| `%skyllia_bank_live%`   | Shows the live balance in the player's bank account.   |
-| `%skyllia_bank_cached%` | Shows the cached balance for performance optimization. |
 
 ## Game Rules and Permissions
 
@@ -242,34 +214,6 @@ Controls access to various inventory-related blocks and features on the island.
         - "Rank: %skyllia_island_rank%"
         - "TPS: %skyllia_island_tps%"
       ```
-
-## Addons
-
-Skyllia Placeholder supports several addons to extend its functionality. Ensure that these addons are installed in your
-`plugins` directory to utilize their respective placeholders.
-
-### SkylliaOre
-
-Enhances ore management on your Skyblock islands by providing placeholders related to ore generation and management.
-
-- **Placeholders**:
-    - `%skyllia_ore%` - Returns the name of the ore generator on the island.
-
-### SkylliaValue
-
-Tracks and manages experience and level values for players on their islands.
-
-- **Placeholders**:
-    - `%skyllia_value_experience%` - Displays the player's experience.
-    - `%skyllia_value_level%` - Displays the player's level based on experience.
-
-### SkylliaBank
-
-Introduces a banking system for players to manage their in-game currency.
-
-- **Placeholders**:
-    - `%skyllia_bank_live%` - Shows the live balance in the player's bank account.
-    - `%skyllia_bank_cached%` - Shows the cached balance for performance optimization.
 
 ## Contributing
 

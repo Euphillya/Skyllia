@@ -1,4 +1,4 @@
-package fr.euphyllia.skylliaore.database;
+package fr.euphyllia.skylliaore.database.mariadb;
 
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
 import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skylliaore.api.OreGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class MariaDBInit extends DatabaseInitializeQuery {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
     private static DatabaseLoader database;
-    private static MariaDBGenerator mariaDbGenerator;
+    private static OreGenerator mariaDbGenerator;
 
     public MariaDBInit() {
         initializeDatabase();
@@ -32,7 +33,7 @@ public class MariaDBInit extends DatabaseInitializeQuery {
         return database;
     }
 
-    public static MariaDBGenerator getMariaDbGenerator() {
+    public static OreGenerator getMariaDbGenerator() {
         return mariaDbGenerator;
     }
 

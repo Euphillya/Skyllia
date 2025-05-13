@@ -1,9 +1,0 @@
-chat:
-  format: "<red>[Messaging Island] %player_name%: <gray>%message%"
-
-message:
-  config:
-    reloaded: "<green>Configuration successfully reloaded!"
-  chat:
-    enabled: "<green>Island Messaging Enabled."
-    disabled: "<red>Island messaging Disabled."

@@ -113,6 +113,22 @@ accept-notify-owner = "%player_accept% a accepté votre invitation."
 decline-notify-owner = "%player_decline% a refusé votre invitation."
 home-not-found = "Le home n'a pas été trouvée."
 
+[island.info]
+no-owner = "Il n'y a pas de propriétaire pour cette île."
+no-permission = "Vous n'avez pas la permission d'utiliser cette commande."
+
+[island.info.display]
+title = "<gold>=== Information de l'ile ===</gold>"
+id = "<yellow>ID de l'ile : </yellow><white>%id%</white>"
+owner = "<yellow>Propriétaire : </yellow><white>%owner%</white>"
+size = "<yellow>Taille : </yellow><white>%size% blocks</white>"
+max-members = "<yellow>Max de Membres: </yellow><white>%max%</white>"
+created = "<yellow>Date de création: </yellow><white>%created%</white>"
+online-members = "<yellow>Membres en lignes: </yellow><white>%online%/%total%</white>"
+location = "<yellow>Location: </yellow><white>X: %x% Z: %z%</white>"
+members-title = "<gold>=== Membres ===</gold>"
+member-line = "%color%- [%role%] %name%"
+
 [island.kick]
 success = "Le joueur a été expulsé de votre île."
 failed = "Le joueur n'a pas pu être expulsé. Si le problème persiste, contactez un administrateur."
@@ -192,6 +208,10 @@ unknown-command = "<red>Commande inconnue."
 no-permissions = "<red>Vous n'avez pas l'autorisation d'utiliser cette commande."
 error = "Une erreur s'est produite lors de l'exécution de la commande. Veuillez contacter un administrateur."
 
+[addons.bank.display]
+title = "<gold>=== Banque de l'île ===</gold>"
+balance = "<yellow>Solde de l'île : </yellow><white>%amount%</white>"
+
 [addons.bank.player]
 player-only = "<red>Cette commande ne peut être utilisée que par un joueur."
 no-island = "<red>Vous n’avez pas d’île."
@@ -251,3 +271,7 @@ error-withdraw = "<red>Une erreur s'est produite lors du retrait du solde de l'i
 
 set-balance-success = "<green>Le solde de l'île de {player_name} a été défini sur %amount%"
 set-balance-error = "<red>Une erreur s'est produite lors de la définition du solde de l'île de {player_name}."
+
+[addons.ore.display]
+title = "<gold>=== Générateur ===</gold>"
+generator = "<yellow>Générateur : </yellow><white>%ore%</white>"

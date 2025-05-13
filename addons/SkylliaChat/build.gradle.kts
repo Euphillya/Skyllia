@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.2";
+version = "2.0";
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")

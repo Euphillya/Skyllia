@@ -8,20 +8,26 @@ import fr.euphyllia.skylliabank.commands.BankAdminCommand;
 import fr.euphyllia.skylliabank.commands.BankCommand;
 import fr.euphyllia.skylliabank.database.mariadb.MariaDBBankInit;
 import fr.euphyllia.skylliabank.database.sqlite.SQLiteBankInit;
+import fr.euphyllia.skylliabank.listeners.InfoListener;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SkylliaBank extends JavaPlugin {
 
     private static BankManager bankManager;
+    private static SkylliaBank instance;
 
     public static BankManager getBankManager() {
         return bankManager;
     }
 
+    public static SkylliaBank getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
-
+        instance = this;
         // Initialiser l'intégration avec Vault
         if (!EconomyManager.setupEconomy(this)) {
             getLogger().severe("No economy plugin found. The plugin will stop.");
@@ -68,6 +74,12 @@ public final class SkylliaBank extends JavaPlugin {
 
         SkylliaAPI.registerCommands(new BankCommand(this), "bank", "money", "bal", "balance");
         SkylliaAPI.registerAdminCommands(new BankAdminCommand(this), "bank");
+
+        getServer().getPluginManager().registerEvents(new InfoListener(), this);
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new fr.euphyllia.skylliabank.papi.SkylliaBankExpansion().register();
+        }
 
         getLogger().info("SkylliaBank has been successfully activated!");
     }

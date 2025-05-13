@@ -7,7 +7,6 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
-import fr.euphyllia.skylliaore.database.MariaDBInit;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -41,26 +40,39 @@ public class OreCommands implements SubCommandInterface {
             return false;
         }
 
-        Bukkit.getAsyncScheduler().runNow(plugin, task -> {
-            OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(args[0]);
-            CompletableFuture<@Nullable Island> future = SkylliaAPI.getIslandByPlayerId(offPlayer.getUniqueId());
-            if (future == null) {
-                sender.sendMessage(Component.text("No island found.").color(NamedTextColor.RED));
-                return;
-            }
-            Island island = future.join();
+        OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(args[0]);
+        CompletableFuture<@Nullable Island> future = SkylliaAPI.getIslandByPlayerId(offPlayer.getUniqueId());
+        if (future == null) {
+            sender.sendMessage(Component.text("No island found.").color(NamedTextColor.RED));
+            return true;
+        }
+
+        final String nameGenerator = args[1];
+        Generator generator = SkylliaOre.getDefaultConfig().getGenerators().get(nameGenerator);
+
+        if (generator == null) {
+            sender.sendMessage(Component.text("The generator '" + nameGenerator + "' does not exist.").color(NamedTextColor.RED));
+            return true;
+        }
+
+
+        future.thenAcceptAsync(island -> {
             if (island == null) {
                 sender.sendMessage(Component.text("No island found.").color(NamedTextColor.RED));
                 return;
             }
 
-            String nameGenerator = args[1];
-            CompletableFuture<Boolean> updateFuture = MariaDBInit.getMariaDbGenerator().updateGenIsland(island.getId(), nameGenerator);
-            if (updateFuture.join()) {
-                sender.sendMessage(Component.text("Generator changed successfully.").color(NamedTextColor.GREEN));
-            } else {
-                sender.sendMessage(Component.text("An error occurred while changing the generator.").color(NamedTextColor.RED));
-            }
+            SkylliaOre.getGeneratorManager().updateGenerator(island.getId(), generator.name()).thenAccept(success -> {
+                if (success) {
+                    sender.sendMessage(Component.text("Generator changed to '" + generator.name() + "'.").color(NamedTextColor.GREEN));
+                } else {
+                    sender.sendMessage(Component.text("An error occurred while changing the generator.").color(NamedTextColor.RED));
+                }
+            });
+
+        }).exceptionally(throwable -> {
+            sender.sendMessage(Component.text("An error occurred while retrieving the island.").color(NamedTextColor.RED));
+            return null;
         });
 
         return true;

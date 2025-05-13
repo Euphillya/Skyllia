@@ -1,10 +1,11 @@
-package fr.euphyllia.skylliaore.database;
+package fr.euphyllia.skylliaore.database.mariadb;
 
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
+import fr.euphyllia.skylliaore.api.OreGenerator;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class MariaDBGenerator {
+public class MariaDBGenerator implements OreGenerator {
 
     private static final Logger log = LogManager.getLogger(MariaDBGenerator.class);
 

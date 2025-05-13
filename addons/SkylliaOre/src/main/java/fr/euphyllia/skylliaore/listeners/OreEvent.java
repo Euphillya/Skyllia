@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -35,7 +36,6 @@ public class OreEvent implements Listener {
         if (event.isCancelled()) return;
 
         World world = event.getBlock().getWorld();
-
         if (!SkylliaAPI.isWorldSkyblock(world)) return;
 
         Island island = SkylliaAPI.getIslandByChunk(event.getBlock().getChunk());
@@ -48,10 +48,10 @@ public class OreEvent implements Listener {
         String worldName = world.getName().toLowerCase();
         Material blockType = event.getNewState().getType();
 
-        Generator generator = SkylliaOre.getCache().getGeneratorIsland(island.getId());
+        Generator generator = getGeneratorSync(island.getId());
         if (generator == null) return;
 
-        // Utiliser un cache pour OptimizedGenerator
+
         OptimizedGenerator optimizedGenerator = optimizedGeneratorCache.computeIfAbsent(generator.name(),
                 name -> new OptimizedGenerator(generator));
 
@@ -64,11 +64,14 @@ public class OreEvent implements Listener {
         }
     }
 
+    private Generator getGeneratorSync(UUID islandId) {
+        return SkylliaOre.getInstance().getOreGenerator().getGenIsland(islandId).getNow(SkylliaOre.getDefaultConfig().getDefaultGenerator());
+    }
+
     private BlockData getBlockByChance(OptimizedGenerator optimizedGenerator) {
         double randomChance = ThreadLocalRandom.current().nextDouble() * optimizedGenerator.getTotalChance();
         List<OptimizedGenerator.BlockProbability> cumulativeProbabilities = optimizedGenerator.getCumulativeProbabilities();
 
-        // Recherche binaire
         int index = Collections.binarySearch(cumulativeProbabilities, new OptimizedGenerator.BlockProbability("", randomChance),
                 Comparator.comparingDouble(OptimizedGenerator.BlockProbability::cumulativeChance));
 
@@ -80,7 +83,7 @@ public class OreEvent implements Listener {
             return getCachedBlockData(cumulativeProbabilities.get(index).blockKey());
         }
 
-        return Material.COBBLESTONE.createBlockData(); // Bloc par défaut
+        return Material.COBBLESTONE.createBlockData();
     }
 
     private BlockData getCachedBlockData(String key) {
@@ -90,7 +93,7 @@ public class OreEvent implements Listener {
                     String oraxenBlock = k.substring("oraxen:".length());
                     BlockData data = OraxenHook.getBlockData(oraxenBlock);
                     if (data != null) return data;
-                } else if (k.startsWith("nexo") && isNexoLoaded) {
+                } else if (k.startsWith("nexo:") && isNexoLoaded) {
                     String nexoBlock = k.substring("nexo:".length());
                     BlockData data = NexoHook.getBlockData(nexoBlock);
                     if (data != null) return data;

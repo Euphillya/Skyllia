@@ -1,11 +1,16 @@
 name: SkylliaBank
 main: fr.euphyllia.skylliabank.SkylliaBank
+loader: fr.euphyllia.skylliabank.BankLoader
 version: '1.1'
 api-version: 1.20.1
 folia-supported: true
 
 dependencies:
   server:
+    PlaceholderAPI:
+      join-classpath: true
+      load: BEFORE
+      required: false
     Skyllia:
       load: BEFORE
       required: true

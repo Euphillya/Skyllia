@@ -12,8 +12,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
 import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
 import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
-import fr.euphyllia.skyllia_papi.hook.BankPlaceHolder;
-import fr.euphyllia.skyllia_papi.hook.OrePlaceHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -155,10 +153,6 @@ public class PlaceholderProcessor {
             return processPermissionsPlaceholder(islandOpt.get(), playerId, placeholder);
         } else if (placeholder.startsWith("gamerule")) {
             return processGamerulePlaceholder(islandOpt.get(), placeholder);
-        } else if (placeholder.startsWith("ore") && SKYLLIA_ORE_ADDON) {
-            return OrePlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
-        } else if (placeholder.startsWith("bank") && SKYLLIA_BANK_ADDON) {
-            return BankPlaceHolder.processPlaceholder(islandOpt.get(), playerId, placeholder);
         }
 
         return "Not Supported";

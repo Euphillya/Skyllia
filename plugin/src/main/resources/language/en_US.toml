@@ -113,6 +113,22 @@ accept-notify-owner = "Player %player_accept% has accepted your island invitatio
 decline-notify-owner = "Player %player_decline% has declined your island invitation."
 home-not-found = "The island home was not found."
 
+[island.info]
+no-owner = "The island has no owner."
+no-permission = "You do not have permission to view this island's information."
+
+[island.info.display]
+title = "<gold>=== Island Information ===</gold>"
+id = "<yellow>Island ID: </yellow><white>%id%</white>"
+owner = "<yellow>Owner: </yellow><white>%owner%</white>"
+size = "<yellow>Size: </yellow><white>%size% blocks</white>"
+max-members = "<yellow>Max Members: </yellow><white>%max%</white>"
+created = "<yellow>Creation Date: </yellow><white>%created%</white>"
+online-members = "<yellow>Online Members: </yellow><white>%online%/%total%</white>"
+location = "<yellow>Location: </yellow><white>X: %x% Z: %z%</white>"
+members-title = "<gold>=== Members ===</gold>"
+member-line = "%color%- [%role%] %name%"
+
 [island.kick]
 success = "The player has been kicked from your island."
 failed = "The player could not be kicked. If the problem persists, contact an administrator"
@@ -192,6 +208,10 @@ unknown-command = "This subcommand does not exist."
 no-permissions = "<red>You do not have permission to use this command."
 error = "An error occurred while executing the command. Please contact an administrator."
 
+[addons.bank.display]
+title = "<gold>=== Island Bank ===</gold>"
+balance = "<yellow>Island Bank Balance: </yellow><white>%amount%</white>"
+
 [addons.bank.player]
 player-only = "<red>This command can only be used by a player."
 no-island = "<red>You do not have an island."
@@ -251,3 +271,7 @@ error-withdraw = "<red>An error occurred while withdrawing from {player_name}'s 
 
 set-balance-success = "<green>Set {player_name}'s island bank balance to %amount%."
 set-balance-error = "<red>An error occurred while setting {player_name}'s island balance."
+
+[addons.ore.display]
+title = "<gold>=== Island Ore ===</gold>"
+generator = "<yellow>Ore: </yellow><white>%ore%</white>"

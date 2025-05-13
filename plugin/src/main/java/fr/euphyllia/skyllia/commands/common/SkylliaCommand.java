@@ -37,6 +37,7 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new ExpelSubCommand(), "expel");
         registry.registerSubCommand(new GameRuleSubCommand(), "gamerule");
         registry.registerSubCommand(new HomeSubCommand(), "home", "go", "tp");
+        registry.registerSubCommand(new InfoSubCommand(), "info");
         registry.registerSubCommand(new InviteSubCommand(), "invite", "add");
         registry.registerSubCommand(new KickSubCommand(), "kick");
         registry.registerSubCommand(new LeaveSubCommand(), "leave");

@@ -3,11 +3,12 @@ plugins {
 }
 
 group = "fr.euphyllia.skyllia";
-version = "1.2";
+version = "2.0";
 
 repositories {
     maven("https://repo.oraxen.com/releases")
     maven("https://repo.nexomc.com/releases")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 dependencies {
@@ -16,6 +17,7 @@ dependencies {
     compileOnly("io.th0rgal:oraxen:1.180.0")
     compileOnly("com.nexomc:nexo:1.1.0")
     compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
+    compileOnly("me.clip:placeholderapi:2.11.6")
 
     compileOnly(project(":database"))
     compileOnly(project(":api"))

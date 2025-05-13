@@ -179,6 +179,10 @@ public class LanguageConfigManager implements ConfigManager {
         return translate(defaultLocale, key, placeholders);
     }
 
+    public Component translate(Player player, String key) {
+        return translate(player.locale(), key, Map.of());
+    }
+
     public Component translate(Player player, String key, Map<String, String> placeholders) {
         return translate(player.locale(), key, placeholders);
     }
