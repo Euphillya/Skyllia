@@ -1,32 +1,56 @@
 package fr.euphyllia.skyllia.utils.generators;
 
-import org.bukkit.Material;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Random;
 
 public class VoidWorldGen extends ChunkGenerator {
 
-    public byte[][] blockSections;
-
     @Override
     public void generateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull ChunkData chunkData) {
-        int xMin = 0;
-        int xMax = 16;
-        int zMin = 0;
-        int zMax = 16;
-        fillChunk(chunkData, xMin, xMax, zMin, zMax, Material.AIR);
+        // No noise generation in void world
     }
 
-    private void fillChunk(ChunkData chunkData, int minX, int maxX, int minZ, int maxZ, Material material) {
-        for (int y = chunkData.getMinHeight(); y < chunkData.getMaxHeight(); y++) {
-            for (int x = minX; x < maxX; x++) {
-                for (int z = minZ; z < maxZ; z++) {
-                    chunkData.setBlock(x, y, z, material);
-                }
-            }
-        }
+    @Override
+    public boolean shouldGenerateNoise() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldGenerateSurface() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldGenerateBedrock() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldGenerateCaves() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldGenerateDecorations() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldGenerateMobs() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldGenerateStructures() {
+        return false;
+    }
+
+    @Override
+    public Location getFixedSpawnLocation(@NotNull World world, @NotNull Random random) {
+        return new Location(world, 0.5, 64, 0.5); // Tu peux mettre Y=0 si tu veux une plateforme à la bedrock
     }
 }
