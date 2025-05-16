@@ -18,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -56,8 +57,11 @@ public class HomeSubCommand implements SubCommandInterface {
                 } else {
                     loc = warpIsland.location();
                 }
-                loc.setY(loc.getY() + 0.5);
-                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                loc.add(0, 0.5, 0);
+                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                    player.setVelocity(new Vector(0, 0, 0));
+                    player.setFallDistance(0);
+                });
                 Skyllia.getPlugin(Skyllia.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getPlugin(Skyllia.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
                 ConfigLoader.language.sendMessage(player, "island.home.success");
             }, null, 1L);
