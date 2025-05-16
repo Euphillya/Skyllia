@@ -34,19 +34,17 @@ public class CacheManager {
     }
 
     public void updateCache(Player bPlayer) {
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
-            Island island = skyblockManager.getIslandByPlayerId(bPlayer.getUniqueId()).join();
-            if (island == null) {
-                PlayersInIslandCache.removeIslandForPlayer(bPlayer.getUniqueId());
-                return;
-            }
+        Island island = skyblockManager.getIslandByPlayerId(bPlayer.getUniqueId()).join();
+        if (island == null) {
+            PlayersInIslandCache.removeIslandForPlayer(bPlayer.getUniqueId());
+            return;
+        }
 
-            PlayersInIslandCache.setIslandIdByPlayer(bPlayer.getUniqueId(), island.getId());
+        PlayersInIslandCache.setIslandIdByPlayer(bPlayer.getUniqueId(), island.getId());
 
-            IslandCache.getIsland(island.getId());
+        IslandCache.getIsland(island.getId());
 
-            PlayersInIslandCache.getPlayersCached(island.getId());
-        });
+        PlayersInIslandCache.getPlayersCached(island.getId());
     }
 
     public void updateCacheIsland(Island island) {
