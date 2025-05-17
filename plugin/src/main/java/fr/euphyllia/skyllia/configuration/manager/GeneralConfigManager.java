@@ -21,6 +21,7 @@ public class GeneralConfigManager implements ConfigManager {
     private int maxIslands;
     private boolean teleportOutsideIsland;
     private boolean restrictPlayerMovement;
+    private boolean enableObsidianToLavaConversion;
     private boolean allowBypassIslandQueue;
     // Island deletion settings
     private boolean preventDeletionIfHasMembers;
@@ -56,6 +57,7 @@ public class GeneralConfigManager implements ConfigManager {
         this.maxIslands = getOrSetDefault("settings.island.max-islands", 500_000, Integer.class);
         this.teleportOutsideIsland = getOrSetDefault("settings.island.teleport-outside-island", false, Boolean.class);
         this.restrictPlayerMovement = getOrSetDefault("settings.island.restrict-player-movement", false, Boolean.class);
+        this.enableObsidianToLavaConversion = getOrSetDefault("settings.island.enable-obsidian-to-lava-conversion", true, Boolean.class);
 
         this.preventDeletionIfHasMembers = getOrSetDefault("settings.island.delete.prevent-deletion-if-has-members", true, Boolean.class);
         this.deleteChunkPerimeterIsland = getOrSetDefault("settings.island.delete.chunk-perimeter-island", false, Boolean.class);
@@ -167,6 +169,10 @@ public class GeneralConfigManager implements ConfigManager {
 
     public boolean isAllowBypassIslandQueue() {
         return allowBypassIslandQueue;
+    }
+
+    public boolean isEnableObsidianToLavaConversion() {
+        return enableObsidianToLavaConversion;
     }
 
 }

@@ -19,6 +19,10 @@ teleport-outside-island = false
 # Prevents players from walking outside their island boundaries.
 # If enabled, players trying to move beyond their island will be gently teleported back.
 restrict-player-movement = false
+# Allows players to right-click obsidian with a bucket to get a lava bucket.
+# When enabled, the obsidian block is consumed and replaced with a lava bucket.
+# This mechanic is useful in Skyblock for renewable lava generation.
+enable-obsidian-to-lava-conversion = true
 
 [settings.island.delete]
 # Prevents deletion of an island if it contains other members.
