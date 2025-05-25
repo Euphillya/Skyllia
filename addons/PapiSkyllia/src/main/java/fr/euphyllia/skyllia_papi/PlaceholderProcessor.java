@@ -109,6 +109,7 @@ public class PlaceholderProcessor {
                     }, executor);
                 }
             });
+
     /**
      * Entry point for retrieving a placeholder value.
      *
