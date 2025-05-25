@@ -48,55 +48,50 @@ public class CacheManager {
     }
 
     public void updateCacheIsland(Island island) {
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
-            UUID islandId = island.getId();
-            // Invalide l'île dans le IslandCache
-            IslandCache.invalidateIsland(islandId);
+        UUID islandId = island.getId();
+        // Invalide l'île dans le IslandCache
+        IslandCache.invalidateIsland(islandId);
 
-            PlayersInIslandCache.delete(islandId);
+        PlayersInIslandCache.delete(islandId);
 
-            PermissionRoleInIslandCache.invalidateIsland(islandId);
+        PermissionRoleInIslandCache.invalidateIsland(islandId);
 
-            PermissionGameRuleInIslandCache.invalidateGameRule(islandId);
+        PermissionGameRuleInIslandCache.invalidateGameRule(islandId);
 
-            PositionIslandCache.updateIslandPositions(island);
+        PositionIslandCache.updateIslandPositions(island);
 
-            Island reloadedIsland = IslandCache.getIsland(islandId);
-            if (reloadedIsland != null) {
-                PlayersInIslandCache.getPlayersCached(islandId);
+        Island reloadedIsland = IslandCache.getIsland(islandId);
+        if (reloadedIsland != null) {
+            PlayersInIslandCache.getPlayersCached(islandId);
 
-                for (RoleType roleType : RoleType.values()) {
-                    for (PermissionsType permissionsType : PermissionsType.values()) {
-                        PermissionRoleInIslandCache.getPermissionRoleIsland(islandId, roleType, permissionsType);
-                    }
+            for (RoleType roleType : RoleType.values()) {
+                for (PermissionsType permissionsType : PermissionsType.values()) {
+                    PermissionRoleInIslandCache.getPermissionRoleIsland(islandId, roleType, permissionsType);
                 }
-
-                PermissionGameRuleInIslandCache.getGameRule(islandId);
-
-                PositionIslandCache.updateIslandPositions(reloadedIsland);
             }
 
-        });
+            PermissionGameRuleInIslandCache.getGameRule(islandId);
+
+            PositionIslandCache.updateIslandPositions(reloadedIsland);
+        }
     }
 
     public void deleteCacheIsland(Island island) {
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task -> {
-            UUID islandId = island.getId();
+        UUID islandId = island.getId();
 
-            IslandCache.invalidateIsland(islandId);
+        IslandCache.invalidateIsland(islandId);
 
-            PlayersInIslandCache.delete(islandId);
+        PlayersInIslandCache.delete(islandId);
 
-            for (var member : island.getMembers()) {
-                PlayersInIslandCache.removeIslandForPlayer(member.getMojangId());
-            }
+        for (var member : island.getMembers()) {
+            PlayersInIslandCache.removeIslandForPlayer(member.getMojangId());
+        }
 
-            PermissionRoleInIslandCache.invalidateIsland(islandId);
+        PermissionRoleInIslandCache.invalidateIsland(islandId);
 
-            PermissionGameRuleInIslandCache.invalidateGameRule(islandId);
+        PermissionGameRuleInIslandCache.invalidateGameRule(islandId);
 
-            logger.debug("All caches invalidated for deleted island {}", islandId);
-        });
+        logger.debug("All caches invalidated for deleted island {}", islandId);
     }
 
     public void invalidateAll() {
