@@ -103,6 +103,12 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     private static final String CREATE_SPIRAL_INDEX = """
             CREATE INDEX IF NOT EXISTS `region_xz` ON `%s`.`spiral` (`region_x`, `region_z`);
             """;
+    private static final String CREATE_MEMBERS_BY_PLAYER_INDEX = """
+            CREATE INDEX IF NOT EXISTS `idx_member_by_player` ON `%s`.`members_in_islands` (`uuid_player`, `role`, `island_id`);
+            """;
+    private static final String CREATE_MEMBER_BY_ISLAND_ROLE_INDEX = """
+            CREATE INDEX IF NOT EXISTS `idx_member_by_island_role` ON `%s`.`members_in_islands` (`island_id`, `role`, `uuid_player`);
+            """;
 
     private final Logger logger = LogManager.getLogger(MariaDBDatabaseInitialize.class);
     private final String database;
@@ -143,6 +149,8 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         executeQuery(CREATE_ISLANDS_GAMERULE_TABLE.formatted(database));
         executeQuery(CREATE_ISLANDS_INDEX.formatted(database));
         executeQuery(CREATE_SPIRAL_INDEX.formatted(database));
+        executeQuery(CREATE_MEMBERS_BY_PLAYER_INDEX.formatted(database));
+        executeQuery(CREATE_MEMBER_BY_ISLAND_ROLE_INDEX.formatted(database));
     }
 
     private void applyMigrations() throws DatabaseException {
