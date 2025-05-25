@@ -36,6 +36,8 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.validation.ContentValidationException;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.generator.CraftWorldInfo;
@@ -45,6 +47,8 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataHolder;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -249,6 +253,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
     @Override
     public void resetChunk(World craftWorld, Position position) {
+        boolean hasAnyPlayerInChunk = false;
         final ServerLevel serverLevel = ((CraftWorld) craftWorld).getHandle();
         io.papermc.paper.util.TickThread.ensureTickThread(serverLevel, position.x(), position.z(), "Cannot regenerate chunk asynchronously");
         final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
@@ -256,14 +261,24 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);
         final Iterable<BlockPos> blockPosIterable = BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinBuildHeight(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxBuildHeight() - 1, chunkPos.getMaxBlockZ());
         for (Entity entity : serverLevel.getChunkEntities(position.x(), position.z())) {
-            if (entity instanceof Player) continue;
+            if (entity instanceof Player) {
+                hasAnyPlayerInChunk = true;
+                continue;
+            }
             entity.remove();
         }
         for (final BlockPos blockPos : blockPosIterable) {
             levelChunk.removeBlockEntity(blockPos);
             serverLevel.setBlock(blockPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 16);
+            Block block = craftWorld.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            BlockState state = block.getState();
+            if (state instanceof PersistentDataHolder) {
+                PersistentDataContainer container = ((PersistentDataHolder) state).getPersistentDataContainer();
+                for (NamespacedKey key : container.getKeys()) container.remove(key);
+            }
         }
-        for (final BlockPos blockPos : blockPosIterable) { // Fix memory issue client
+        if (!hasAnyPlayerInChunk) return;
+        for (final BlockPos blockPos : blockPosIterable) {
             serverChunkCache.blockChanged(blockPos);
         }
     }

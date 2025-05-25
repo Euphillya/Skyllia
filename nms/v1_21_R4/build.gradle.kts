@@ -3,12 +3,19 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
+repositories {
+    maven {
+        name = "folia-inquistors-repo"
+        url = uri("https://folia-inquisitors.github.io/FoliaDevBundle/")
+    }
+}
+
 paperweight {
     paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.5-R0.1-SNAPSHOT")
+    paperweight.foliaDevBundle("1.21.5-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
     compileOnly(project(":nms:v1_21_R3"))
 }

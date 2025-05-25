@@ -37,7 +37,7 @@ public class ExpansionSkyllia extends PlaceholderExpansion {
      */
     @Override
     public @NotNull String getAuthor() {
-        return "Euphyllia";
+        return Skyllia.getInstance().getPluginMeta().getAuthors().getFirst();
     }
 
     /**

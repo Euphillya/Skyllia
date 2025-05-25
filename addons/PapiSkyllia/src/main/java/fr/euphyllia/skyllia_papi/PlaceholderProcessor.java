@@ -41,22 +41,6 @@ public class PlaceholderProcessor {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
     /**
-     * Indicates if the SkylliaOre addon is enabled.
-     */
-    private static final boolean SKYLLIA_ORE_ADDON;
-
-    /**
-     * Indicates if the SkylliaValue addon is enabled.
-     * The plugin is owned by Excalia,
-     * if you want it on your server you have to ask the admins on their <a href="https://discord.gg/excalia">Discord</a>
-     */
-    private static final boolean SKYLLIA_VALUE_ADDON;
-
-    /**
-     * Indicates if the SkylliaBank addon is enabled.
-     */
-    private static final boolean SKYLLIA_BANK_ADDON;
-    /**
      * Cache that maps a player's UUID to their island.
      * <p>
      * - {@code expireAfterWrite(5, SECONDS)}: removes from the cache 5 seconds after writing.
@@ -125,13 +109,6 @@ public class PlaceholderProcessor {
                     }, executor);
                 }
             });
-
-    static {
-        SKYLLIA_ORE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaOre") != null;
-        SKYLLIA_VALUE_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaValue") != null;
-        SKYLLIA_BANK_ADDON = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
-    }
-
     /**
      * Entry point for retrieving a placeholder value.
      *

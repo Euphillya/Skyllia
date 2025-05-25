@@ -5,7 +5,7 @@ plugins {
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.16" apply false
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17" apply false
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
