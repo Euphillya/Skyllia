@@ -33,11 +33,11 @@ functionality, and it's not my intention at all that there should be external fe
 
 ## Prerequisites
 
-- A MariaDB database (recommended)
-- Paper 1.20.1+ or Folia 1.20+
+- A MariaDB database (recommended) or SQLite for local storage (not recommended for production use).
+- Folia or Paper server running Minecraft version 1.20.1 or higher, but Paper is not recommended for production use.
 - Java 21
-- WorldEdit or FAWE ([Folia](https://github.com/Euphillya/WorldEdit-Folia/actions)
-  or [Original](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
+- [WorldEdit-Folia](https://github.com/Euphillya/WorldEdit-Folia/actions) or [FAWE](https://ci.athion.net/job/FastAsyncWorldEdit/)
+  or [WorldEdit](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
 
 ## Installation
 

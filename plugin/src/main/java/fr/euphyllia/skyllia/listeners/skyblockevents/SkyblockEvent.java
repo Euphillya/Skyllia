@@ -76,7 +76,7 @@ public class SkyblockEvent implements Listener {
         List<Players> players = event.getIsland().getMembers();
         for (Players player : players) {
             Player bPlayer = Bukkit.getPlayer(player.getMojangId());
-            if (bPlayer != null && bPlayer.isOnline() && (Boolean.TRUE.equals(WorldUtils.isWorldSkyblock(bPlayer.getWorld().getName())))) {
+            if (bPlayer != null && bPlayer.isOnline() && (WorldUtils.isWorldSkyblock(bPlayer.getWorld().getName()))) {
                 Location centerIsland = RegionHelper.getCenterRegion(bPlayer.getWorld(), event.getIsland().getPosition().x(), event.getIsland().getPosition().z());
                 this.api.getPlayerNMS().setOwnWorldBorder(this.api.getPlugin(), bPlayer, centerIsland, event.getSizeIsland(), 0, 0);
             }
@@ -102,7 +102,7 @@ public class SkyblockEvent implements Listener {
             return;
         }
 
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(portalRedirectWorldName))) {
+        if (!WorldUtils.isWorldSkyblock(portalRedirectWorldName)) {
             logger.log(Level.ERROR, "The %s world is not a skyblock world!".formatted(portalRedirectWorldName));
             return;
         }
