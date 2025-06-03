@@ -36,9 +36,8 @@ public class PistonEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        if (event.isCancelled()) return;
         if (!WorldUtils.isWorldSkyblock(event.getBlock().getWorld().getName())) {
             return;
         }
@@ -56,10 +55,9 @@ public class PistonEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        if (event.isCancelled()) return;
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(event.getBlock().getWorld().getName()))) {
+        if (!WorldUtils.isWorldSkyblock(event.getBlock().getWorld().getName())) {
             return;
         }
         for (Block block : event.getBlocks()) {

@@ -47,15 +47,13 @@ public class SkyblockEvent implements Listener {
         this.api.getCacheManager().updateCacheIsland(event.getIsland());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSkyblockDelete(final SkyblockDeleteEvent event) {
-        if (event.isCancelled()) return;
         this.api.getCacheManager().deleteCacheIsland(event.getIsland());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerPrepareChangeWorldSkyblock(final PlayerPrepareChangeWorldSkyblockEvent event) {
-        if (event.isCancelled()) return;
         Player player = event.getPlayer();
         if (event.getPortalType() == PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER) {
             teleportOtherWorld(player, event, PermissionsIsland.USE_NETHER_PORTAL);

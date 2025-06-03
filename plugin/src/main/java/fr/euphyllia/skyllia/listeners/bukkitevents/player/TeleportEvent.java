@@ -47,7 +47,7 @@ public class TeleportEvent implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerHasAccessIsland(final PlayerTeleportEvent event) {
         if (PermissionImp.hasPermission(event.getPlayer(), "skyllia.island.command.visit.bypass")) return;
         final Player player = event.getPlayer();
@@ -96,7 +96,7 @@ public class TeleportEvent implements Listener {
         });
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onAddWorldBorder(final EntityAddToWorldEvent event) {
         if (event.getEntity() instanceof Player player) {
             final Location location = player.getLocation();
@@ -116,10 +116,8 @@ public class TeleportEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerUsePortal(final PlayerPortalEvent event) {
-        if (event.isCancelled()) return;
-
         event.setCanCreatePortal(false);
         PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();
         if (teleportCause == PlayerTeleportEvent.TeleportCause.END_PORTAL ||

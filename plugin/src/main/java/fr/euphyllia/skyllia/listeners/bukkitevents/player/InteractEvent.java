@@ -51,7 +51,7 @@ public class InteractEvent implements Listener {
         if (itemStack == null || itemStack.getType() != Material.BUCKET) return;
 
         ListenersUtils.checkPermission(block.getLocation(), player, PermissionsIsland.INTERACT, event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) return; // Check if the permission check cancelled the event
 
         block.setType(Material.AIR);
 

@@ -25,9 +25,8 @@ public class InventoryEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInventoryOpen(final InventoryOpenEvent event) {
-        if (event.isCancelled()) return;
         Player player = (Player) event.getPlayer();
         if (PermissionImp.hasPermission(player, "skyllia.interact.bypass")) return;
         InventoryType inventoryType = event.getInventory().getType();
@@ -38,7 +37,7 @@ public class InventoryEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteractEvent(final PlayerInteractEvent event) {
         if (event.useInteractedBlock() == Event.Result.DENY) return;
         Player player = event.getPlayer();

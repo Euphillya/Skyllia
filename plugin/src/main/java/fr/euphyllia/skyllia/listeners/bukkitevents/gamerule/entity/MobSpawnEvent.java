@@ -29,9 +29,8 @@ public class MobSpawnEvent implements Listener {
         this.spawnReasonIgnore.add(CreatureSpawnEvent.SpawnReason.CUSTOM);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPreCreatureSpawn(final PreCreatureSpawnEvent event) {
-        if (event.isCancelled()) return;
         if (this.spawnReasonIgnore.contains(event.getReason())) return;
         EntityType entityType = event.getType();
         Location location = event.getSpawnLocation();
@@ -44,9 +43,8 @@ public class MobSpawnEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
-        if (event.isCancelled()) return;
         if (this.spawnReasonIgnore.contains(event.getSpawnReason())) return;
         Entity entity = event.getEntity();
         Location location = event.getLocation();

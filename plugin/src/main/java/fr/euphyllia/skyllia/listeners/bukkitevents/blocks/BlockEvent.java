@@ -26,25 +26,22 @@ public class BlockEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreakOnIsland(final BlockBreakEvent event) {
-        if (event.isCancelled()) return;
         Player player = event.getPlayer();
         if (PermissionImp.hasPermission(player, "skyllia.player.break.bypass")) return;
         ListenersUtils.checkPermission(event.getBlock().getLocation(), player, PermissionsIsland.BLOCK_BREAK, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlaceOnIsland(final BlockPlaceEvent event) {
-        if (event.isCancelled()) return;
         Player player = event.getPlayer();
         if (PermissionImp.hasPermission(player, "skyllia.player.place.bypass")) return;
         ListenersUtils.checkPermission(event.getBlock().getLocation(), player, PermissionsIsland.BLOCK_PLACE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event) {
-        if (event.isCancelled()) return;
         if (event.getEntity() instanceof ItemFrame || event.getEntity() instanceof Painting) {
             Player player;
             if (event.getRemover() instanceof Projectile projectile && projectile.getShooter() instanceof Player) {

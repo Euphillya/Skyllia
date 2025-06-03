@@ -21,9 +21,8 @@ public class GriefingEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onGriefingBlock(final EntityChangeBlockEvent event) {
-        if (event.isCancelled()) return;
         Entity entity = event.getEntity();
         Location location = event.getBlock().getLocation();
         if (entity instanceof Enderman) {

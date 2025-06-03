@@ -20,9 +20,8 @@ public class PickupEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPickupItem(final EntityPickupItemEvent event) {
-        if (event.isCancelled()) return;
         if (event.getEntity() instanceof Mob) {
             ListenersUtils.checkGameRuleIsland(event.getEntity().getLocation(), GameRuleIsland.DISABLE_MOB_PICKUP_ITEMS, event);
         }

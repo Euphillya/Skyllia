@@ -42,9 +42,8 @@ public class ExplosionEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
-        if (event.isCancelled()) return;
         EntityType causeExplosion = event.getEntityType();
         Location location = event.getLocation();
         if (explosionByHumanEntity.contains(causeExplosion)) {

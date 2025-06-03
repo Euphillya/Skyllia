@@ -19,16 +19,13 @@ public class PortalAlternativeFoliaEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPortalCreate(final PortalCreateEvent event) {
         // Todo : Jamais on ne crée de portail pour le monde Nether et End tant que Folia n'a pas implémenter les portails.
         //  De toute façon, le code va rester, car je ne pense pas qu'ils mettront les anciennes versions à jour.
-        if (event.isCancelled()) return;
         World world = event.getWorld();
-        if (world.getEnvironment().equals(World.Environment.NORMAL)) return;
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(world.getName()))) {
-            return;
+        if (!world.getEnvironment().equals(World.Environment.NORMAL) && WorldUtils.isWorldSkyblock(world.getName())) {
+            event.setCancelled(true);
         }
-        event.setCancelled(true);
     }
 }

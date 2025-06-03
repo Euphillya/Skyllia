@@ -24,9 +24,8 @@ public class PortalAlternativePaperEvent implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInsidePortal(final EntityInsideBlockEvent event) {
-        if (event.isCancelled()) return;
         if (event.getEntity() instanceof Player player) {
             Block block = event.getBlock();
             World world = block.getWorld();
