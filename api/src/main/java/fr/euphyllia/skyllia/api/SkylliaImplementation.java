@@ -1,11 +1,10 @@
 package fr.euphyllia.skyllia.api;
 
-import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.commands.SkylliaCommand;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.SkylliaChunk;
 import fr.euphyllia.skyllia.api.world.SkylliaLocation;
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,7 +121,7 @@ public interface SkylliaImplementation {
      * @param commands         The commands to register.
      * @return True if the commands were successfully registered, false otherwise.
      */
-    public boolean registerCommands(SubCommandInterface commandInterface, String... commands);
+    public boolean registerCommands(SkylliaCommand commandInterface, String... commands);
 
     /**
      * Registers admin commands with the provided command interface.
@@ -131,5 +130,5 @@ public interface SkylliaImplementation {
      * @param commands         The admin commands to register.
      * @return True if the admin commands were successfully registered, false otherwise.
      */
-    public boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands);
+    public boolean registerAdminCommands(SkylliaCommand commandInterface, String... commands);
 }
