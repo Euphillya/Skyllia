@@ -62,6 +62,7 @@ import org.jetbrains.annotations.NotNull;
  * @see Island
  * @see WorldConfig
  */
+// Todo change to EventBus
 public class PlayerPrepareChangeWorldSkyblockEvent extends Event implements Cancellable {
 
     /**

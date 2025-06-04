@@ -4,10 +4,9 @@ plugins {
 }
 
 group = "fr.euphyllia.skyllia"
-version = "2.0.2"
+version = "3.0.0-SNAPSHOT"
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
     compileOnly(project(":database"))
 }
 

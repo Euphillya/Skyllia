@@ -5,7 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import org.bukkit.Location;
+import fr.euphyllia.skyllia.api.world.SkylliaLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
@@ -66,11 +66,11 @@ public abstract class Island {
      * Adds a warp to the island.
      *
      * @param name        The name of the warp.
-     * @param loc         The {@link Location} of the warp.
+     * @param loc         The {@link SkylliaLocation} of the warp.
      * @param ignoreEvent If {@code true}, the warp creation event is not called.
      * @return {@code true} if successfully added, {@code false} otherwise.
      */
-    public abstract boolean addWarps(String name, Location loc, boolean ignoreEvent);
+     public abstract boolean addWarps(String name, SkylliaLocation loc, boolean ignoreEvent);
 
     /**
      * Deletes a warp from the island.

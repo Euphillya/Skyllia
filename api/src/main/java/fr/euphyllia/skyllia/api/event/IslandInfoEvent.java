@@ -19,6 +19,7 @@ import java.util.UUID;
  * <p>
  * The event is asynchronous.
  */
+// Todo change to EventBus
 public class IslandInfoEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
