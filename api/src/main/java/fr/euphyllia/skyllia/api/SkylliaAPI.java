@@ -3,6 +3,8 @@ package fr.euphyllia.skyllia.api;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.world.SkylliaChunk;
+import fr.euphyllia.skyllia.api.world.SkylliaLocation;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -74,7 +76,7 @@ public final class SkylliaAPI {
      * @param chunk The chunk to check.
      * @return The island associated with the specified chunk, or null if none is found.
      */
-    public static @Nullable Island getIslandByChunk(Chunk chunk) {
+    public static @Nullable Island getIslandByChunk(SkylliaChunk chunk) {
         return implementation.getIslandByChunk(chunk);
     }
 
@@ -148,7 +150,7 @@ public final class SkylliaAPI {
      * @param location the location for which to get the TPS
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
      */
-    public static double @Nullable [] getTPS(Location location) {
+    public static double @Nullable [] getTPS(SkylliaLocation location) {
         return implementation.getTPS(location);
     }
 
@@ -158,7 +160,7 @@ public final class SkylliaAPI {
      * @param chunk the chunk for which to get the TPS
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
      */
-    public static double @Nullable [] getTPS(Chunk chunk) {
+    public static double @Nullable [] getTPS(SkylliaChunk chunk) {
         return implementation.getTPS(chunk);
     }
 
