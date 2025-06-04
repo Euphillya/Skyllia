@@ -5,4 +5,8 @@ public interface SkylliaPlugin {
     String getName();
 
     String getVersion();
+
+    String getDescription();
+
+    boolean isOnlineMode();
 }

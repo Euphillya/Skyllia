@@ -4,14 +4,9 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.models.CallBackPosition;
 import fr.euphyllia.skyllia.api.utils.models.CallbackEntity;
+import fr.euphyllia.skyllia.api.world.SkylliaChunk;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -97,7 +92,7 @@ public class RegionUtils {
                                            CallbackEntity callbackEntity) {
 
         // 1. Collect loaded chunks via spiral traversal
-        List<Chunk> loadedChunks = new ArrayList<>();
+        List<SkylliaChunk> loadedChunks = new ArrayList<>();
         spiralTraverseAroundRegion(regionDistance, islandRegion, islandSize, chunkPos -> {
             int chunkX = chunkPos.x();
             int chunkZ = chunkPos.z();
@@ -117,7 +112,7 @@ public class RegionUtils {
 
         for (int startIndex = 0; startIndex < loadedChunks.size(); startIndex += batchSize) {
             int endIndex = Math.min(startIndex + batchSize, loadedChunks.size());
-            List<Chunk> batch = loadedChunks.subList(startIndex, endIndex);
+            List<SkylliaChunk> batch = loadedChunks.subList(startIndex, endIndex);
 
             if (batch.isEmpty()) {
                 continue;
@@ -127,14 +122,14 @@ public class RegionUtils {
             long delay = (long) ((startIndex / (double) batchSize) * delayIncrement);
 
             // Use the first chunk in the batch as a "representative" for region scheduling
-            Chunk representativeChunk = batch.getFirst();
-            int repChunkX = representativeChunk.getX();
-            int repChunkZ = representativeChunk.getZ();
+            SkylliaChunk representativeChunk = batch.getFirst();
+            int repChunkX = representativeChunk.x();
+            int repChunkZ = representativeChunk.z();
 
             // Schedule processing of this batch on the region scheduler
             Bukkit.getRegionScheduler().runDelayed(plugin, world, repChunkX, repChunkZ, (scheduledTask) -> {
                 try {
-                    for (Chunk chunk : batch) {
+                    for (SkylliaChunk chunk : batch) {
                         for (Entity entity : chunk.getEntities()) {
                             // If entityType is null, accept all; otherwise match entity type
                             if (entityType == null || entity.getType() == entityType) {

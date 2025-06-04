@@ -1,8 +1,7 @@
 package fr.euphyllia.skyllia.api.utils.helper;
 
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import org.bukkit.Location;
-import org.bukkit.World;
+import fr.euphyllia.skyllia.api.world.SkylliaLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +18,19 @@ public class RegionHelper {
     private static final double REGION_HALF_SIZE = 256.0D;
 
     /**
-     * Gets the center {@link Location} of a region in the specified world.
+     * Gets the center {@link SkylliaLocation} of a region in the specified world.
      * <p>A region is 512 blocks wide, so shifting {@code regionX} and {@code regionZ} by 9 bits ({@literal <<} 9)
      * multiplies them by 512. Adding {@code REGION_HALF_SIZE} (256) positions us in the center.</p>
      *
-     * @param world   The target {@link World}.
+     * @param world   The name world of the region.
      * @param regionX The region's X coordinate.
      * @param regionZ The region's Z coordinate.
      * @return The center location of the region (with Y=0).
      */
-    public static Location getCenterRegion(World world, int regionX, int regionZ) {
+    public static SkylliaLocation getCenterRegion(String world, int regionX, int regionZ) {
         double centerBlockX = (regionX << 9) + REGION_HALF_SIZE; // regionX * 512 + 256
         double centerBlockZ = (regionZ << 9) + REGION_HALF_SIZE; // regionZ * 512 + 256
-        return new Location(world, centerBlockX, 0.0D, centerBlockZ);
+        return new SkylliaLocation(world, centerBlockX, 0.0D, centerBlockZ, 0.0F, 0.0F);
     }
 
     /**
@@ -66,16 +65,16 @@ public class RegionHelper {
     }
 
     /**
-     * Gets the region position (regionX, regionZ) from a {@link Location}.
+     * Gets the region position (regionX, regionZ) from a {@link SkylliaLocation}.
      * <p>This method converts the location to chunk coordinates, then determines
      * the region by dividing by 32 (using bit shifting: {@code >> 5}).</p>
      *
-     * @param location The Bukkit {@link Location} (block coordinates).
+     * @param location The Bukkit {@link SkylliaLocation} (block coordinates).
      * @return A {@link Position} representing the region (regionX, regionZ).
      */
-    public static Position getRegionFromLocation(Location location) {
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
+    public static Position getRegionFromLocation(SkylliaLocation location) {
+        int chunkX = (int) location.x() >> 4;
+        int chunkZ = (int) location.z() >> 4;
         return getRegionFromChunk(chunkX, chunkZ);
     }
 
@@ -108,19 +107,19 @@ public class RegionHelper {
      *
      * <p>Note that this method checks coordinates within a "square" region (bounding box)</p>
      *
-     * @param center The center {@link Location}.
+     * @param center The center {@link SkylliaLocation}.
      * @param blockX The block's X coordinate.
      * @param blockZ The block's Z coordinate.
      * @param size   The size of the square region (in blocks).
      * @return {@code true} if the block is within the square bounds; {@code false} otherwise.
      */
-    public static boolean isBlockWithinSquare(Location center, int blockX, int blockZ, double size) {
+    public static boolean isBlockWithinSquare(SkylliaLocation center, int blockX, int blockZ, double size) {
         double half = size / 2.0;
 
-        double minX = center.getX() - half;
-        double maxX = center.getX() + half;
-        double minZ = center.getZ() - half;
-        double maxZ = center.getZ() + half;
+        double minX = center.x() - half;
+        double maxX = center.x() + half;
+        double minZ = center.z() - half;
+        double maxZ = center.z() + half;
 
         return blockX + 0.5 >= minX && blockX + 0.5 < maxX &&
                 blockZ + 0.5 >= minZ && blockZ + 0.5 < maxZ;
