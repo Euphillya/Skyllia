@@ -64,7 +64,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         return;
                     }
-                    String schemKey = schematicsKeys.iterator().next();
+                    String schemKey = (args.length > 0 && schematicsKeys.contains(args[0])) ? args[0] : schematicsKeys.iterator().next();
                     Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
                     if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                         ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
