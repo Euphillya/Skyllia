@@ -61,7 +61,10 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biomesImpl.getNameBiome(biome)))) {
+        String biomeName = biomesImpl.getNameBiome(biome);
+        String biomeRaw = biomeName.split(":")[1];
+
+        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biomeRaw))) {
             ConfigLoader.language.sendMessage(player, "island.biome.permission-denied", Map.of(
                     "%s", selectBiome));
             return true;
