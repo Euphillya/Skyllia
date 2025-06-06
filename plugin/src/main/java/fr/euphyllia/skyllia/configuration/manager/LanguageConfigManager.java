@@ -102,6 +102,10 @@ public class LanguageConfigManager implements ConfigManager {
     }
 
     public Component translate(Locale locale, String key, Map<String, String> placeholders) {
+        return translate(locale, key, placeholders, true);
+    }
+
+    public Component translate(Locale locale, String key, Map<String, String> placeholders, boolean usePrefix) {
         Map<String, String> langMessages = translations.get(locale);
         if (langMessages == null) {
             langMessages = translations.get(defaultLocale);
@@ -149,7 +153,10 @@ public class LanguageConfigManager implements ConfigManager {
         }
         String prefix = langMessages.getOrDefault("prefix", "<light_purple>[Skyllia]</light_purple> :");
 
-        return miniMessage.deserialize(prefix + message);
+        if (usePrefix) {
+            message = prefix + " " + message;
+        }
+        return miniMessage.deserialize(message);
     }
 
     /*
