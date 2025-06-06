@@ -23,10 +23,6 @@ public class IslandUtils {
     }
 
     public static Map<String, SchematicSetting> getSchematic(@NotNull String name) {
-        try {
-            return ConfigLoader.schematicManager.getSchematics().get(name);
-        } catch (Exception e) {
-            return null;
-        }
+        return ConfigLoader.schematicManager.getSchematics().getOrDefault(name, null);
     }
 }

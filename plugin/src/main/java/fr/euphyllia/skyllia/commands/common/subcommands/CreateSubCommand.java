@@ -58,13 +58,13 @@ public class CreateSubCommand implements SubCommandInterface {
                 SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                 AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByPlayerId(playerId).join());
                 if (islandAtomic.get() == null) {
-                    Set<String> schematicsKeys = ConfigLoader.schematicManager.getSchematics().keySet();
+                    List<String> schematicsKeys = ConfigLoader.schematicManager.getIslandTypes();
                     if (schematicsKeys.isEmpty()) {
                         ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         return;
                     }
-                    String schemKey = (args.length > 0 && schematicsKeys.contains(args[0])) ? args[0] : schematicsKeys.iterator().next();
+                    String schemKey = (args.length > 0 && schematicsKeys.contains(args[0])) ? args[0] : schematicsKeys.getFirst();
                     Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
                     if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                         ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
@@ -168,15 +168,15 @@ public class CreateSubCommand implements SubCommandInterface {
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
-            List<String> nameSchem = new ArrayList<>();
-            ConfigLoader.schematicManager.getSchematics().forEach((islandType, islandSchems) -> {
-                if (Boolean.TRUE.equals(CacheCommands.createTabCompleteCache.getIfPresent(new CacheCommands.CreateCacheCommandsTabs(sender, islandType)))
-                        && islandType.toLowerCase().startsWith(partial)) {
-                    nameSchem.add(islandType);
-                }
-            });
+            List<String> nameSchem = ConfigLoader.schematicManager.getIslandTypes();
+            if (nameSchem.isEmpty()) {
+                return Collections.emptyList();
+            }
 
-            return nameSchem;
+            return nameSchem.stream()
+                    .filter(schem -> PermissionImp.hasPermission(sender, "skyllia.island.command.create.%s".formatted(schem)))
+                    .filter(schem -> schem.toLowerCase().startsWith(partial))
+                    .toList();
         }
 
         return Collections.emptyList();

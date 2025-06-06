@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SchematicConfigManager implements ConfigManager {
@@ -135,5 +136,9 @@ public class SchematicConfigManager implements ConfigManager {
 
     public Map<String, Map<String, SchematicSetting>> getSchematics() {
         return schematicMap;
+    }
+
+    public List<String> getIslandTypes() {
+        return List.copyOf(schematicMap.keySet());
     }
 }
