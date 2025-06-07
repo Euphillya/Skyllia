@@ -1,12 +1,10 @@
 package fr.euphyllia.skyllia.api;
 
-import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.commands.SkylliaCommand;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
+import fr.euphyllia.skyllia.api.world.SkylliaChunk;
+import fr.euphyllia.skyllia.api.world.SkylliaLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class SkylliaAPI {
 
     private static final boolean IS_FOLIA;
-    private static Plugin PLUGIN;
+    private static SkylliaPlugin PLUGIN;
     private static SkylliaImplementation implementation;
 
     static {
@@ -33,7 +31,7 @@ public final class SkylliaAPI {
      * @param plugin                The plugin instance.
      * @param skylliaImplementation The implementation of the SkylliaAPI.
      */
-    public static void setImplementation(Plugin plugin, SkylliaImplementation skylliaImplementation) {
+    public static void setImplementation(SkylliaPlugin plugin, SkylliaImplementation skylliaImplementation) {
         PLUGIN = plugin;
         implementation = skylliaImplementation;
     }
@@ -74,7 +72,7 @@ public final class SkylliaAPI {
      * @param chunk The chunk to check.
      * @return The island associated with the specified chunk, or null if none is found.
      */
-    public static @Nullable Island getIslandByChunk(Chunk chunk) {
+    public static @Nullable Island getIslandByChunk(SkylliaChunk chunk) {
         return implementation.getIslandByChunk(chunk);
     }
 
@@ -123,7 +121,7 @@ public final class SkylliaAPI {
      *
      * @return The plugin instance.
      */
-    public static Plugin getPlugin() {
+    public static SkylliaPlugin getPlugin() {
         return PLUGIN;
     }
 
@@ -148,7 +146,7 @@ public final class SkylliaAPI {
      * @param location the location for which to get the TPS
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
      */
-    public static double @Nullable [] getTPS(Location location) {
+    public static double @Nullable [] getTPS(SkylliaLocation location) {
         return implementation.getTPS(location);
     }
 
@@ -158,7 +156,7 @@ public final class SkylliaAPI {
      * @param chunk the chunk for which to get the TPS
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
      */
-    public static double @Nullable [] getTPS(Chunk chunk) {
+    public static double @Nullable [] getTPS(SkylliaChunk chunk) {
         return implementation.getTPS(chunk);
     }
 
@@ -198,7 +196,7 @@ public final class SkylliaAPI {
      * @param commands         The commands to register.
      * @return True if the commands were successfully registered, false otherwise.
      */
-    public static boolean registerCommands(SubCommandInterface commandInterface, String... commands) {
+    public static boolean registerCommands(SkylliaCommand commandInterface, String... commands) {
         return implementation.registerCommands(commandInterface, commands);
     }
 
@@ -209,7 +207,7 @@ public final class SkylliaAPI {
      * @param commands         The admin commands to register.
      * @return True if the admin commands were successfully registered, false otherwise.
      */
-    public static boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands) {
+    public static boolean registerAdminCommands(SkylliaCommand commandInterface, String... commands) {
         return implementation.registerAdminCommands(commandInterface, commands);
     }
 }

@@ -14,9 +14,7 @@
  */
 package fr.euphyllia.skyllia.api.utils;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
+import fr.euphyllia.skyllia.api.SkylliaPlugin;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -36,7 +34,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Metrics {
 
-    private final Plugin plugin;
+    private final SkylliaPlugin plugin;
 
     private final MetricsBase metricsBase;
 
@@ -47,7 +45,7 @@ public class Metrics {
      * @param serviceId The id of the service. It can be found at <a
      *                  href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
-    public Metrics(Plugin plugin, int serviceId) {
+    public Metrics(SkylliaPlugin plugin, int serviceId) {
         this.plugin = plugin;
         // Get the config file
         File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
@@ -117,9 +115,9 @@ public class Metrics {
 
     private void appendPlatformData(JsonObjectBuilder builder) {
         builder.appendField("playerAmount", getPlayerAmount());
-        builder.appendField("onlineMode", Bukkit.getOnlineMode() ? 1 : 0);
-        builder.appendField("bukkitVersion", Bukkit.getVersion());
-        builder.appendField("bukkitName", Bukkit.getName());
+        builder.appendField("onlineMode", plugin.isOnlineMode() ? 1 : 0);
+        builder.appendField("bukkitVersion", plugin.getVersion());
+        builder.appendField("bukkitName", plugin.getName());
         builder.appendField("javaVersion", System.getProperty("java.version"));
         builder.appendField("osName", System.getProperty("os.name"));
         builder.appendField("osArch", System.getProperty("os.arch"));
@@ -128,7 +126,7 @@ public class Metrics {
     }
 
     private void appendServiceData(JsonObjectBuilder builder) {
-        builder.appendField("pluginVersion", plugin.getDescription().getVersion());
+        builder.appendField("pluginVersion", plugin.getVersion());
     }
 
     private int getPlayerAmount() {
