@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class InfoSubCommand implements SubCommandInterface {
     /**
@@ -125,6 +126,14 @@ public class InfoSubCommand implements SubCommandInterface {
      */
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase();
+            return new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
+                    .map(CommandSender::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
         return Collections.emptyList();
     }
 
