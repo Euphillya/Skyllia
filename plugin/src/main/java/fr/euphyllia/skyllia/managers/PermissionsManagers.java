@@ -30,6 +30,8 @@ public class PermissionsManagers {
      * A thread-safe map that holds debug permissions for each player and debug type.
      */
     private static final ConcurrentHashMap<UUID, EnumMap<DebugType, Boolean>> debugPermissions = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, Long> permissionDeniedCooldown = new ConcurrentHashMap<>();
+    private static final long MESSAGE_COOLDOWN_MS = 1000;
 
     /**
      * Sets the debug state for a specific type for a given player.
@@ -114,7 +116,9 @@ public class PermissionsManagers {
         }
 
         // Envoi du message de refus de permission
-        ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
+        if (canSendPermissionDeniedMessage(player)) {
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
+        }
         return false;
     }
 
@@ -189,5 +193,15 @@ public class PermissionsManagers {
         COMMANDS_PERMISSION,
         ISLAND_PERMISSION,
         INVENTORY_PERMISSION
+    }
+
+    private static boolean canSendPermissionDeniedMessage(Player player) {
+        long now = System.currentTimeMillis();
+        Long last = permissionDeniedCooldown.get(player.getUniqueId());
+        if (last == null || now - last > MESSAGE_COOLDOWN_MS) {
+            permissionDeniedCooldown.put(player.getUniqueId(), now);
+            return true;
+        }
+        return false;
     }
 }
