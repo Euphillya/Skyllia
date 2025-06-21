@@ -1,6 +1,6 @@
 package fr.euphyllia.skyllia.api.event.players;
 
-import org.bukkit.Location;
+import fr.euphyllia.skyllia.api.world.SkylliaLocation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -62,7 +62,7 @@ import org.jetbrains.annotations.NotNull;
  * }</pre>
  *
  * @see Player
- * @see Location
+ * @see SkylliaLocation
  */
 public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
 
@@ -79,7 +79,7 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
     /**
      * The final location where the player will be teleported.
      */
-    private Location finalLocation;
+    private SkylliaLocation finalLocation;
 
     /**
      * Indicates whether this event has been cancelled.
@@ -92,7 +92,7 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
      * @param player   The player who is teleporting to the spawn.
      * @param location The final location where the player will be teleported.
      */
-    public PlayerTeleportSpawnEvent(Player player, Location location) {
+    public PlayerTeleportSpawnEvent(Player player, SkylliaLocation location) {
         super(false);
         this.bPlayer = player;
         this.finalLocation = location;
@@ -129,18 +129,18 @@ public class PlayerTeleportSpawnEvent extends Event implements Cancellable {
     /**
      * Retrieves the final location where the player will be teleported.
      *
-     * @return The final {@link Location} of the teleportation.
+     * @return The final {@link SkylliaLocation} of the teleportation.
      */
-    public Location getFinalLocation() {
+    public SkylliaLocation getFinalLocation() {
         return this.finalLocation;
     }
 
     /**
      * Sets a new final location for the player to be teleported.
      *
-     * @param finalLocation The new {@link Location} where the player will be teleported.
+     * @param finalLocation The new {@link SkylliaLocation} where the player will be teleported.
      */
-    public void setFinalLocation(Location finalLocation) {
+    public void setFinalLocation(SkylliaLocation finalLocation) {
         this.finalLocation = finalLocation;
     }
 

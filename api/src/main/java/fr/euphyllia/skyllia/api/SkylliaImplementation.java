@@ -1,11 +1,10 @@
 package fr.euphyllia.skyllia.api;
 
-import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.commands.SkylliaCommand;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
+import fr.euphyllia.skyllia.api.world.SkylliaChunk;
+import fr.euphyllia.skyllia.api.world.SkylliaLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +64,7 @@ public interface SkylliaImplementation {
      * @param chunk The chunk to check.
      * @return The island associated with the specified chunk, or null if none is found.
      */
-    public @Nullable Island getIslandByChunk(Chunk chunk);
+    public @Nullable Island getIslandByChunk(SkylliaChunk chunk);
 
     /**
      * Retrieves the island associated with a specific chunk coordinates.
@@ -105,7 +104,7 @@ public interface SkylliaImplementation {
      * @param location the location for which to get the TPS
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
      */
-    public double @Nullable [] getTPS(Location location);
+    public double @Nullable [] getTPS(SkylliaLocation location);
 
     /**
      * Gets the current chunk TPS.
@@ -113,7 +112,7 @@ public interface SkylliaImplementation {
      * @param chunk the chunk for which to get the TPS
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft TPS (1m, 5m, 15m in Paper-Server)
      */
-    public double @Nullable [] getTPS(Chunk chunk);
+    public double @Nullable [] getTPS(SkylliaChunk chunk);
 
     /**
      * Registers commands with the provided command interface.
@@ -122,7 +121,7 @@ public interface SkylliaImplementation {
      * @param commands         The commands to register.
      * @return True if the commands were successfully registered, false otherwise.
      */
-    public boolean registerCommands(SubCommandInterface commandInterface, String... commands);
+    public boolean registerCommands(SkylliaCommand commandInterface, String... commands);
 
     /**
      * Registers admin commands with the provided command interface.
@@ -131,5 +130,5 @@ public interface SkylliaImplementation {
      * @param commands         The admin commands to register.
      * @return True if the admin commands were successfully registered, false otherwise.
      */
-    public boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands);
+    public boolean registerAdminCommands(SkylliaCommand commandInterface, String... commands);
 }

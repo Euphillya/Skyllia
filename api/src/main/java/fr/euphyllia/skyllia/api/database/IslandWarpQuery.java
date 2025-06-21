@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.api.database;
 
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import org.bukkit.Location;
+import fr.euphyllia.skyllia.api.world.SkylliaLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -17,15 +17,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class IslandWarpQuery {
 
     /**
-     * Updates (or creates) a named warp for the specified island at the given {@link Location}.
+     * Updates (or creates) a named warp for the specified island at the given {@link SkylliaLocation}.
      *
      * @param islandId the UUID of the island whose warp is to be updated
      * @param warpName the name of the warp point
-     * @param location the {@link Location} to set for this warp
+     * @param location the {@link SkylliaLocation} to set for this warp
      * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
      * or {@code false} otherwise
      */
-    public abstract CompletableFuture<Boolean> updateWarp(UUID islandId, String warpName, Location location);
+    public abstract CompletableFuture<Boolean> updateWarp(UUID islandId, String warpName, SkylliaLocation location);
 
     /**
      * Retrieves a warp by name for the specified island.

@@ -35,6 +35,7 @@ import org.bukkit.event.HandlerList;
  *
  * @see fr.euphyllia.skyllia.api.skyblock.Island
  */
+// Todo change to EventBus
 public class IslandBiomeChangeProgressEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
