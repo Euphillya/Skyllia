@@ -86,7 +86,11 @@ public enum PermissionsIsland implements Permissions {
     /**
      * Permission to teleport on the island.
      */
-    TELEPORT(1 << 15);
+    TELEPORT(1 << 15),
+    /**
+     * Permission to use ender pearls.
+     */
+    USE_ENDER_PEARL(1 << 16);
 
     private final long permissionValue;
 

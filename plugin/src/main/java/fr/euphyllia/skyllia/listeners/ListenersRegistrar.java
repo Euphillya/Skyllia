@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.BlockEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.entity.DamageEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.entity.ProjectileEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.folia.PortalAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.BlockGameRuleEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.gamerule.entity.ExplosionEvent;
@@ -51,6 +52,7 @@ public class ListenersRegistrar {
         registerEvent(pluginManager, new BlockEvent(interneAPI));
         registerEvent(pluginManager, new InventoryEvent(interneAPI));
         registerEvent(pluginManager, new PlayerEvent(interneAPI));
+        registerEvent(pluginManager, new ProjectileEvent(interneAPI));
         registerEvent(pluginManager, new DamageEvent(interneAPI));
         registerEvent(pluginManager, new InteractEvent(interneAPI));
         registerEvent(pluginManager, new TeleportEvent(interneAPI));

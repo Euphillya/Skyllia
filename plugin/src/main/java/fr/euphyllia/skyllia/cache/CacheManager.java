@@ -13,7 +13,6 @@ import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

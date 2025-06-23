@@ -184,6 +184,15 @@ public class PermissionsManagers {
         return null;
     }
 
+    private static boolean canSendPermissionDeniedMessage(Player player) {
+        long now = System.currentTimeMillis();
+        Long last = permissionDeniedCooldown.get(player.getUniqueId());
+        if (last == null || now - last > MESSAGE_COOLDOWN_MS) {
+            permissionDeniedCooldown.put(player.getUniqueId(), now);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Represents the various types of debugging that can be managed.
@@ -193,15 +202,5 @@ public class PermissionsManagers {
         COMMANDS_PERMISSION,
         ISLAND_PERMISSION,
         INVENTORY_PERMISSION
-    }
-
-    private static boolean canSendPermissionDeniedMessage(Player player) {
-        long now = System.currentTimeMillis();
-        Long last = permissionDeniedCooldown.get(player.getUniqueId());
-        if (last == null || now - last > MESSAGE_COOLDOWN_MS) {
-            permissionDeniedCooldown.put(player.getUniqueId(), now);
-            return true;
-        }
-        return false;
     }
 }

@@ -16,114 +16,114 @@ public enum PermissionsInventory implements Permissions {
     /**
      * Permission to open anvils.
      */
-    OPEN_ANVIL(2),
+    OPEN_ANVIL(1 << 1),
 
     /**
      * Permission to open workbenches.
      */
-    OPEN_WORKBENCH(4),
+    OPEN_WORKBENCH(1 << 2),
 
     /**
      * Permission to open enchanting tables.
      */
-    OPEN_ENCHANTING(8),
+    OPEN_ENCHANTING(1 << 3),
 
     /**
      * Permission to open brewing stands.
      */
-    OPEN_BREWING(16),
+    OPEN_BREWING(1 << 4),
 
     /**
      * Permission to open smithing tables.
      */
-    OPEN_SMITHING(32),
+    OPEN_SMITHING(1 << 5),
 
     /**
      * Permission to open beacons.
      */
-    OPEN_BEACON(64),
+    OPEN_BEACON(1 << 6),
 
     /**
      * Permission to open shulker boxes.
      */
-    OPEN_SHULKER_BOX(128),
+    OPEN_SHULKER_BOX(1 << 7),
 
     /**
      * Permission to open furnaces.
      */
-    OPEN_FURNACE(256),
+    OPEN_FURNACE(1 << 8),
 
     /**
      * Permission to open lecterns.
      */
-    OPEN_LECTERN(512),
+    OPEN_LECTERN(1 << 9),
 
     /**
      * Permission to open crafting tables.
      */
-    OPEN_CRAFTER(1_024), // 1.20.4
+    OPEN_CRAFTER(1 << 10),
 
     /**
      * Permission to open looms.
      */
-    OPEN_LOOM(2_048),
+    OPEN_LOOM(1 << 11),
 
     /**
      * Permission to open grindstones.
      */
-    OPEN_GRINDSTONE(4_096),
+    OPEN_GRINDSTONE(1 << 12),
 
     /**
      * Permission to open stonecutters.
      */
-    OPEN_STONECUTTER(8_192),
+    OPEN_STONECUTTER(1 << 13),
 
     /**
      * Permission to open cartography tables.
      */
-    OPEN_CARTOGRAPHY(16_384),
+    OPEN_CARTOGRAPHY(1 << 14),
 
     /**
      * Permission to open merchants.
      */
-    OPEN_MERCHANT(32_768),
+    OPEN_MERCHANT(1 << 15),
 
     /**
      * Permission to open hoppers.
      */
-    OPEN_HOPPER(65_536),
+    OPEN_HOPPER(1 << 16),
 
     /**
      * Permission to open barrels.
      */
-    OPEN_BARREL(131_072),
+    OPEN_BARREL(1 << 17),
 
     /**
      * Permission to open blast furnaces.
      */
-    OPEN_BLAST_FURNACE(262_144),
+    OPEN_BLAST_FURNACE(1 << 18),
 
     /**
      * Permission to open smokers.
      */
-    OPEN_SMOKER(524_288),
+    OPEN_SMOKER(1 << 19),
 
     /**
      * @deprecated Permission to open the new smithing tables (old permission).
      * This permission is deprecated and should not be used.
      */
     @Deprecated
-    OPEN_SMITHING_NEW(1_048_576), // It's an old permission
+    OPEN_SMITHING_NEW(1 << 20), // It's an old permission
 
     /**
      * Permission to open dispensers.
      */
-    OPEN_DISPENSER(2_097_152),
+    OPEN_DISPENSER(1 << 21),
 
     /**
      * Permission to open droppers.
      */
-    OPEN_DROPPER(4_194_304);
+    OPEN_DROPPER(1 << 22);
 
     private final long permissionValue;
 
@@ -144,7 +144,7 @@ public enum PermissionsInventory implements Permissions {
      */
     public static long permissionValue(String names) {
         try {
-            return PermissionsIsland.valueOf(names).getPermissionValue();
+            return PermissionsInventory.valueOf(names).getPermissionValue();
         } catch (IllegalArgumentException e) {
             return 0;
         }
@@ -156,7 +156,7 @@ public enum PermissionsInventory implements Permissions {
      * @return The maximum permissions value.
      */
     public static long maxPermissionsValue() {
-        return Arrays.stream(PermissionsIsland.values()).mapToLong(PermissionsIsland::getPermissionValue).sum();
+        return Arrays.stream(PermissionsInventory.values()).mapToLong(PermissionsInventory::getPermissionValue).sum();
     }
 
     /**
@@ -166,9 +166,8 @@ public enum PermissionsInventory implements Permissions {
      */
     public static List<String> getListPermissions() {
         List<String> list = new ArrayList<>();
-        for (PermissionsIsland permissionsIsland : PermissionsIsland.values()) {
-            String name = permissionsIsland.name();
-            list.add(name);
+        for (PermissionsInventory permissionsInventory : PermissionsInventory.values()) {
+            list.add(permissionsInventory.name());
         }
         return list;
     }

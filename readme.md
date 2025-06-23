@@ -8,25 +8,6 @@ functionality, and it's not my intention at all that there should be external fe
 
 [![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
 
-## Table of Contents
-
-1. [Wiki](#wiki)
-2. [Contact](#contact)
-3. [Plugin Features](#plugin-features)
-4. [Prerequisites](#prerequisites)
-5. [Installation](#installation)
-6. [Download Plugin](#download-plugin)
-7. [Configuration](#configuration)
-8. [API](#api)
-    - [Gradle Groovy](#gradle-groovy)
-    - [Example Usage](#example-usage)
-9. [Commands & Permissions](#commands--permissions)
-10. [Compatible Software](#compatible-software)
-11. [Island Generation](#island-generation)
-12. [Addons](#addons)
-13. [Contribution](#contribution)
-14. [License](#license)
-
 ## Contact
 
 [![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
@@ -36,7 +17,8 @@ functionality, and it's not my intention at all that there should be external fe
 - A MariaDB database (recommended) or SQLite for local storage (not recommended for production use).
 - Folia or Paper server running Minecraft version 1.20.1 or higher, but Paper is not recommended for production use.
 - Java 21
-- [WorldEdit-Folia](https://github.com/Euphillya/WorldEdit-Folia/actions) or [FAWE](https://ci.athion.net/job/FastAsyncWorldEdit/)
+- [WorldEdit-Folia](https://github.com/Euphillya/WorldEdit-Folia/actions)
+  or [FAWE](https://ci.athion.net/job/FastAsyncWorldEdit/)
   or [WorldEdit](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
 
 ## Installation
@@ -53,7 +35,7 @@ functionality, and it's not my intention at all that there should be external fe
 - [Development Builds](https://github.com/Euphillya/Skyllia/actions)
 - [Release Versions](https://modrinth.com/plugin/skyllia)
 
-## Configuration
+## Configuration (Need update)
 
 Configuration files are located in the `plugins/Skyllia` directory. Customize settings to fit your server's needs.
 Detailed configuration instructions can be found in the [Wiki](https://github.com/Euphillya/Skyllia/wiki/Configuration).
@@ -104,9 +86,9 @@ the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-
 
 |                   Software                    |    Version    |
 |:---------------------------------------------:|:-------------:|
-| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.5 |
-|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.5 |
-|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.5  |
+| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.6 |
+|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.6 |
+|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.6  |
 
 ## Island Generation
 
@@ -137,3 +119,9 @@ This project is licensed under the MIT License. See the [LICENCE](LICENSE) file 
 For more information and detailed documentation, please refer to the [Wiki](https://github.com/Euphillya/Skyllia/wiki).
 
 Feel free to contribute, open issues, or join us on Discord for support and discussions!
+
+## Diagram
+
+<div align="center">
+    <img src="diagram_skyllia.png" alt="Skyllia Diagram">
+</div>
