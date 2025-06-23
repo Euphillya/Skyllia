@@ -11,7 +11,6 @@ import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
@@ -157,7 +156,8 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                                 do {
                                     UUID playerId = UUID.fromString(resultSet.getString("uuid_player"));
                                     RoleType roleType = RoleType.valueOf(resultSet.getString("role"));
-                                    Players players = new Players(playerId, Bukkit.getOfflinePlayer(playerId).getName(), island.getId(), roleType);
+                                    String playerName = resultSet.getString("player_name");
+                                    Players players = new Players(playerId, playerName, island.getId(), roleType);
                                     playersList.add(players);
                                 } while (resultSet.next());
                                 completableFuture.complete(playersList);
