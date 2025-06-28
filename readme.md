@@ -86,9 +86,9 @@ the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-
 
 |                   Software                    |    Version    |
 |:---------------------------------------------:|:-------------:|
-| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.6 |
-|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.6 |
-|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.6  |
+| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.7 |
+|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.7 |
+|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.7  |
 
 ## Island Generation
 
