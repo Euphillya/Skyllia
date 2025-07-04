@@ -24,19 +24,16 @@ public class DamageEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerDamageEntity(final EntityDamageByEntityEvent event) {
-        Player damagerPlayer = null;
+        Player damagerPlayer;
 
         if (event.getDamager() instanceof Player directPlayer) {
             damagerPlayer = directPlayer;
-        } else if (event.getDamager() instanceof Arrow arrow) {
-            if (arrow.getShooter() instanceof Player shooterPlayer) {
-                damagerPlayer = shooterPlayer;
-            }
-        }
-
-        if (damagerPlayer == null) {
+        } else if (event.getDamager() instanceof AbstractArrow arrow && arrow.getShooter() instanceof Player shooterPlayer) {
+            damagerPlayer = shooterPlayer;
+        } else {
             return;
         }
+
 
         if (PermissionImp.hasPermission(damagerPlayer, "skyllia.damage.entity.bypass")) {
             return;
