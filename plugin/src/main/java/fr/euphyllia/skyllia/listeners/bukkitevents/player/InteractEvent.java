@@ -30,7 +30,7 @@ public class InteractEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerConvertObsidianToLava(final PlayerInteractEvent event) {
         if (!ConfigLoader.general.isEnableObsidianToLavaConversion()) return;
         if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY) return;
@@ -66,7 +66,7 @@ public class InteractEvent implements Listener {
         }, null, 1L);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteractEvent(final PlayerInteractEvent event) {
         if (event.useInteractedBlock().equals(Event.Result.DENY)) return;
         if (event.useItemInHand().equals(Event.Result.DENY)) return;
@@ -98,7 +98,7 @@ public class InteractEvent implements Listener {
         ListenersUtils.checkPermission(player.getLocation(), player, PermissionsIsland.INTERACT, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteractEntitiesEvent(final PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (PermissionImp.hasPermission(player, "skyllia.interact_entity.bypass")) {
@@ -107,7 +107,7 @@ public class InteractEvent implements Listener {
         ListenersUtils.checkPermission(event.getRightClicked().getLocation(), player, PermissionsIsland.INTERACT_ENTITIES, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteractEntitiesEvent(final PlayerInteractAtEntityEvent event) {
         Player player = event.getPlayer();
         if (PermissionImp.hasPermission(player, "skyllia.interact_entity.bypass")) {

@@ -25,12 +25,12 @@ public class PlayerEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBucketEmptyEvent(PlayerBucketEmptyEvent event) {
         onPlayerUseBucket(event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBucketFillEvent(PlayerBucketFillEvent event) {
         onPlayerUseBucket(event);
     }
@@ -42,14 +42,14 @@ public class PlayerEvent implements Listener {
         ListenersUtils.checkPermission(event.getBlock().getLocation(), event.getPlayer(), PermissionsIsland.BUCKETS, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDropItem(final PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         if (PermissionImp.hasPermission(player, "skyllia.player.drop.bypass")) return;
         ListenersUtils.checkPermission(event.getItemDrop().getLocation(), event.getPlayer(), PermissionsIsland.DROP_ITEMS, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPickUpItemDropped(final EntityPickupItemEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (PermissionImp.hasPermission(player, "skyllia.player.pickup.bypass")) return;

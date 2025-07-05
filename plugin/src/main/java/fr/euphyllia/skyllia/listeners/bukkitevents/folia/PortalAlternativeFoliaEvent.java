@@ -19,7 +19,7 @@ public class PortalAlternativeFoliaEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPortalCreate(final PortalCreateEvent event) {
         // Todo : Jamais on ne crée de portail pour le monde Nether et End tant que Folia n'a pas implémenter les portails.
         //  De toute façon, le code va rester, car je ne pense pas qu'ils mettront les anciennes versions à jour.

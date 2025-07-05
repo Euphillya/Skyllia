@@ -15,7 +15,7 @@ public class ProjectileEvent implements Listener {
     public ProjectileEvent(InterneAPI interneAPI) {
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onUseEnderPearl(final PlayerLaunchProjectileEvent event) {
         if (event.getProjectile() instanceof EnderPearl pearl) {
             if (pearl.getShooter() instanceof Player player) {

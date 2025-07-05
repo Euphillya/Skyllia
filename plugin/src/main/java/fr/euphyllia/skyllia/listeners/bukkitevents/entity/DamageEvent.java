@@ -22,7 +22,7 @@ public class DamageEvent implements Listener {
     }
 
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDamageEntity(final EntityDamageByEntityEvent event) {
         Player damagerPlayer;
 

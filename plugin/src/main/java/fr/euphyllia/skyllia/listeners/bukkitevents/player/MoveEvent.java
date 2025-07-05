@@ -29,7 +29,7 @@ public class MoveEvent implements Listener {
     public MoveEvent(InterneAPI interneAPI) {
     }
 
-    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerTeleportOutside(final PlayerMoveEvent event) {
         if (!ConfigLoader.general.isTeleportOutsideIsland()) return;
         final Player player = event.getPlayer();

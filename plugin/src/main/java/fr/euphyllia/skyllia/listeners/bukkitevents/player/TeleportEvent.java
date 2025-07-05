@@ -77,7 +77,7 @@ public class TeleportEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerTeleportEvent(final PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
         final Location location = player.getLocation();
@@ -116,7 +116,7 @@ public class TeleportEvent implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerUsePortal(final PlayerPortalEvent event) {
         event.setCanCreatePortal(false);
         PlayerTeleportEvent.TeleportCause teleportCause = event.getCause();

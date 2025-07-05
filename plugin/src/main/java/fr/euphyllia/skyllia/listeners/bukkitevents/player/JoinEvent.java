@@ -15,6 +15,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -28,7 +29,7 @@ public class JoinEvent implements Listener {
         this.api = interneAPI;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onLoadIslandInJoinEvent(PlayerJoinEvent playerJoinEvent) {
         Player player = playerJoinEvent.getPlayer();
 
@@ -56,7 +57,7 @@ public class JoinEvent implements Listener {
         executeAsync(task);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
         Player player = playerLoginEvent.getPlayer();
 
