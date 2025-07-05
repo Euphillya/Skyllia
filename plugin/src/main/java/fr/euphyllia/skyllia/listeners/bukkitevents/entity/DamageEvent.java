@@ -28,7 +28,7 @@ public class DamageEvent implements Listener {
 
         if (event.getDamager() instanceof Player directPlayer) {
             damagerPlayer = directPlayer;
-        } else if (event.getDamager() instanceof AbstractArrow arrow && arrow.getShooter() instanceof Player shooterPlayer) {
+        } else if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooterPlayer) {
             damagerPlayer = shooterPlayer;
         } else {
             return;
