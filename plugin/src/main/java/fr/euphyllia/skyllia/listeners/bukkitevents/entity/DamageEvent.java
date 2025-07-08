@@ -50,6 +50,8 @@ public class DamageEvent implements Listener {
             ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.KILL_NPC, event);
         } else if (target instanceof ItemFrame || target instanceof Painting) {
             ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.BLOCK_BREAK, event);
+        } else if (target instanceof Interaction) {
+            ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.KILL_INTERACTION, event);
         } else {
             ListenersUtils.checkPermission(target.getLocation(), damagerPlayer, PermissionsIsland.KILL_UNKNOWN_ENTITY, event);
         }

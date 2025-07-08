@@ -90,7 +90,13 @@ public enum PermissionsIsland implements Permissions {
     /**
      * Permission to use ender pearls.
      */
-    USE_ENDER_PEARL(1 << 16);
+    USE_ENDER_PEARL(1 << 16),
+
+    /**
+     * Permission to kill interactions entities.
+     */
+    KILL_INTERACTION(1 << 17),;
+
 
     private final long permissionValue;
 
