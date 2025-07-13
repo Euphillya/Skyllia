@@ -65,7 +65,7 @@ public class OreEvent implements Listener {
     }
 
     private Generator getGeneratorSync(UUID islandId) {
-        return SkylliaOre.getInstance().getOreGenerator().getGenIsland(islandId).getNow(SkylliaOre.getDefaultConfig().getDefaultGenerator());
+        return SkylliaOre.getCachedGenerator(islandId);
     }
 
     private BlockData getBlockByChance(OptimizedGenerator optimizedGenerator) {

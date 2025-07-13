@@ -15,8 +15,7 @@ public class InfoListener implements Listener {
     @EventHandler
     public void onIslandInfoEvent(final IslandInfoEvent event) {
         Island island = event.getIsland();
-        var gen = SkylliaOre.getInstance().getOreGenerator().getGenIsland(island.getId())
-                .getNow(SkylliaOre.getDefaultConfig().getDefaultGenerator());
+        var gen = SkylliaOre.getCachedGenerator(island.getId());
         if (gen == null) return;
 
         Component component = Component.text("")

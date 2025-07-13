@@ -64,6 +64,7 @@ public class OreCommands implements SubCommandInterface {
 
             SkylliaOre.getGeneratorManager().updateGenerator(island.getId(), generator.name()).thenAccept(success -> {
                 if (success) {
+                    SkylliaOre.updateGeneratorCache(island.getId(), generator);
                     sender.sendMessage(Component.text("Generator changed to '" + generator.name() + "'.").color(NamedTextColor.GREEN));
                 } else {
                     sender.sendMessage(Component.text("An error occurred while changing the generator.").color(NamedTextColor.RED));
