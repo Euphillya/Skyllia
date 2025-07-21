@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -20,6 +21,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import java.util.UUID;
+
 public class JoinEvent implements Listener {
 
     private final InterneAPI api;
@@ -30,15 +33,29 @@ public class JoinEvent implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onLoadIslandInJoinEvent(PlayerJoinEvent playerJoinEvent) {
-        Player player = playerJoinEvent.getPlayer();
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
+        final UUID playerId = player.getUniqueId();
+        final String worldName = player.getWorld().getName();
 
         Runnable task = () -> {
             SkyblockManager skyblockManager = api.getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+
+            Island island = skyblockManager.getIslandByPlayerId(playerId).join();
+
+            if (island != null) {
+                Players member = skyblockManager.getMemberInIsland(island, playerId).join();
+                if (member != null) {
+                    String currentName = player.getName();
+                    if (!member.getLastKnowName().equals(currentName)) {
+                        member.setLastKnowName(currentName);
+                        skyblockManager.updateMember(island, member).join();
+                    }
+                }
+            }
 
             boolean shouldTeleportSpawn = island == null ||
-                    (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && !WorldUtils.isWorldSkyblock(player.getWorld().getName()));
+                    (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && !WorldUtils.isWorldSkyblock(worldName));
 
             if (shouldTeleportSpawn) {
                 if (ConfigLoader.playerManager.isTeleportSpawnIfNoIsland()) {
@@ -46,7 +63,7 @@ public class JoinEvent implements Listener {
                 }
             } else {
                 api.updateCache(player);
-                if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(player.getWorld().getName())) {
+                if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(worldName)) {
                     Location centerIsland = RegionHelper.getCenterRegion(
                             player.getWorld(), island.getPosition().x(), island.getPosition().z());
                     api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
@@ -56,6 +73,7 @@ public class JoinEvent implements Listener {
 
         executeAsync(task);
     }
+
 
     @EventHandler(priority = EventPriority.LOW)
     public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
