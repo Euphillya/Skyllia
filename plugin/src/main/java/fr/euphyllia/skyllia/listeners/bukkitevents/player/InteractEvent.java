@@ -22,6 +22,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+
 public class InteractEvent implements Listener {
     private final InterneAPI api;
     private final Logger logger = LogManager.getLogger(InteractEvent.class);
@@ -36,31 +38,33 @@ public class InteractEvent implements Listener {
         if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY) return;
 
         final Player player = event.getPlayer();
-        if (PermissionImp.hasPermission(player, "skyllia.interact.bypass")) return;
+        if (PermissionImp.hasPermission(player, "skyllia.interact.obsidian_convert_bypass")) return; // Le Bypass standard empêche de convertir l'obsidienne en lave.
 
         final Block block = event.getClickedBlock();
         final EquipmentSlot hand = event.getHand();
         if (block == null || hand == null || block.getType() != Material.OBSIDIAN) return;
         if (!event.getAction().isRightClick()) return;
 
-        final ItemStack itemStack = switch (hand) {
-            case HAND -> player.getInventory().getItemInMainHand();
-            case OFF_HAND -> player.getInventory().getItemInOffHand();
-            default -> null;
-        };
-        if (itemStack == null || itemStack.getType() != Material.BUCKET) return;
-
         ListenersUtils.checkPermission(block.getLocation(), player, PermissionsIsland.INTERACT, event);
         if (event.isCancelled()) return; // Check if the permission check cancelled the event
 
-        block.setType(Material.AIR);
-
         player.getScheduler().runDelayed(Skyllia.getInstance(), scheduledTask -> {
-            ItemStack lavaBucket = new ItemStack(Material.LAVA_BUCKET);
-            switch (hand) {
-                case HAND -> player.getInventory().setItemInMainHand(lavaBucket);
-                case OFF_HAND -> player.getInventory().setItemInOffHand(lavaBucket);
-            }
+            ItemStack handItem = switch (hand) {
+                case HAND -> player.getInventory().getItemInMainHand();
+                case OFF_HAND -> player.getInventory().getItemInOffHand();
+                default -> null;
+            };
+            if (handItem == null || handItem.getType() != Material.BUCKET) return;
+
+            block.setType(Material.AIR);
+
+            handItem.setAmount(Math.max(0, handItem.getAmount() - 1));
+
+            HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+            leftovers.values().forEach(leftover ->
+                    player.getWorld().dropItemNaturally(player.getLocation(), leftover)
+            );
+
             player.swingHand(hand);
             player.playSound(block.getLocation(), org.bukkit.Sound.ITEM_BUCKET_FILL_LAVA, 1.0f, 1.0f);
         }, null, 1L);
