@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
+import fr.euphyllia.skyllia.api.utils.nms.ExplosionEntityImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.CacheManager;
@@ -44,6 +45,7 @@ public class InterneAPI {
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
     private BiomesImpl biomesImpl;
+    private ExplosionEntityImpl explosionEntityImpl;
 
     private @Nullable DatabaseLoader database;
     private Managers managers;
@@ -68,46 +70,55 @@ public class InterneAPI {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.ExplosionEntityImpl();
             }
             case "1.20.2" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.ExplosionEntityImpl();
             }
             case "1.20.3", "1.20.4" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.ExplosionEntityImpl();
             }
             case "1.20.5", "1.20.6" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.ExplosionEntityImpl();
             }
             case "1.21", "1.21.1" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R1.ExplosionEntityImpl();
             }
             case "1.21.2", "1.21.3" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R2.ExplosionEntityImpl();
             }
             case "1.21.4" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R3.ExplosionEntityImpl();
             }
             case "1.21.5" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R4.ExplosionEntityImpl();
             }
             case "1.21.6", "1.21.7", "1.21.8" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R5.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R5.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R5.ExplosionEntityImpl();
             }
             default -> {
                 throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
@@ -251,5 +262,9 @@ public class InterneAPI {
 
     public BiomesImpl getBiomesImpl() {
         return this.biomesImpl;
+    }
+
+    public ExplosionEntityImpl getExplosionEntityImpl() {
+        return this.explosionEntityImpl;
     }
 }

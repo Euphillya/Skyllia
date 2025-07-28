@@ -12,34 +12,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.List;
 
 public class ExplosionEvent implements Listener {
 
     private final InterneAPI api;
     private final Logger logger = LogManager.getLogger(ExplosionEvent.class);
-    CopyOnWriteArrayList<EntityType> explosionByHumanEntity;
-    CopyOnWriteArrayList<EntityType> explosionByMobEntity;
+    List<EntityType> explosionByHumanEntity;
+    List<EntityType> explosionByMobEntity;
 
     public ExplosionEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
-        explosionByHumanEntity = new CopyOnWriteArrayList<>();
-        //explosionByHumanEntity.add(getEntityType("TNT", EntityType.valueOf("PRIMED_TNT"))); Todo ? 1.21.4 not supported...
-        //explosionByHumanEntity.add(getEntityType("TNT_MINECART", EntityType.valueOf("MINECART_TNT")));
-
-        explosionByMobEntity = new CopyOnWriteArrayList<>();
-        explosionByMobEntity.add(EntityType.CREEPER);
-        explosionByMobEntity.add(EntityType.GHAST);
-        explosionByMobEntity.add(EntityType.WITHER);
-        explosionByMobEntity.add(EntityType.WITHER_SKULL);
-    }
-
-    private static EntityType getEntityType(String name, EntityType defaultType) {
-        try {
-            return EntityType.valueOf(name);
-        } catch (IllegalArgumentException ignored) {
-            return defaultType;
-        }
+        explosionByHumanEntity = this.api.getExplosionEntityImpl().causeHumanEntity();
+        explosionByMobEntity = this.api.getExplosionEntityImpl().causeMobEntity();
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

@@ -95,7 +95,8 @@ public enum PermissionsIsland implements Permissions {
     /**
      * Permission to kill interactions entities.
      */
-    KILL_INTERACTION(1 << 17),;
+    KILL_INTERACTION(1 << 17),
+    ;
 
 
     private final long permissionValue;

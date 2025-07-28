@@ -34,7 +34,7 @@ public class LeaveSubCommand implements SubCommandInterface {
             return true;
         }
 
-        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
+        SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
         Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
 
         if (island == null) {

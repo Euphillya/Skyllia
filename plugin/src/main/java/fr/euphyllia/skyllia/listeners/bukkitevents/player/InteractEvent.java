@@ -38,7 +38,8 @@ public class InteractEvent implements Listener {
         if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY) return;
 
         final Player player = event.getPlayer();
-        if (PermissionImp.hasPermission(player, "skyllia.interact.obsidian_convert_bypass")) return; // Le Bypass standard empêche de convertir l'obsidienne en lave.
+        if (PermissionImp.hasPermission(player, "skyllia.interact.obsidian_convert_bypass"))
+            return; // Le Bypass standard empêche de convertir l'obsidienne en lave.
 
         final Block block = event.getClickedBlock();
         final EquipmentSlot hand = event.getHand();
