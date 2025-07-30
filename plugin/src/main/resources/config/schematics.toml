@@ -16,7 +16,7 @@ ignore-air-blocks = true
 # If true, entities in the schematic (e.g., animals) will also be copied.
 copy-entities = true
 
-[my_first_island.sky-nether]
+["my_first_island.sky-nether"]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
@@ -30,19 +30,19 @@ copy-entities = true
 
 # ───────────────────────────────
 # island: my_second_islands | world: sky-overworld
-[my_second_islands.sky-overworld]
+["my_second_islands.sky-overworld"]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-[my_second_islands.sky-nether]
+["my_second_islands.sky-nether"]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-[my_second_islands.sky-end]
+["my_second_islands.sky-end"]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
@@ -50,19 +50,19 @@ copy-entities = true
 
 # ───────────────────────────────
 # island: my_third_island | world: sky-overworld
-[my_third_island.sky-overworld]
+["my_third_island.sky-overworld"]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-[my_third_island.sky-nether]
+["my_third_island.sky-nether"]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
 copy-entities = true
 
-[my_third_island.sky-end]
+["my_third_island.sky-end"]
 schematic = "./schematics/default.schem"
 height = 64.0
 ignore-air-blocks = true
