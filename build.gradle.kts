@@ -58,7 +58,7 @@ allprojects {
         compileOnly("org.xerial:sqlite-jdbc:3.49.1.0")
         compileOnly("net.kyori:adventure-text-minimessage:4.20.0")
         compileOnly("com.electronwill.night-config:toml:3.8.2")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
         compileOnly("org.mongodb:mongodb-driver-sync:5.4.0")

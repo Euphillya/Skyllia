@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
@@ -39,6 +40,7 @@ public class JoinEvent implements Listener {
         final String worldName = player.getWorld().getName();
 
         Runnable task = () -> {
+            CacheCommands.refreshFor(playerId);
             SkyblockManager skyblockManager = api.getSkyblockManager();
 
             Island island = skyblockManager.getIslandByPlayerId(playerId).join();
