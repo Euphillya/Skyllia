@@ -26,6 +26,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 region_z  INTEGER NOT NULL,
                 disable   INTEGER DEFAULT 0,
                 private   INTEGER DEFAULT 0,
+                locked    INTEGER DEFAULT 0,
                 size      REAL NOT NULL,
                 create_time TEXT,
                 max_members INTEGER NOT NULL,
@@ -140,7 +141,13 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void applyMigrations() throws DatabaseException {
-
+        try {
+            executeQuery("ALTER TABLE islands ADD COLUMN locked INTEGER DEFAULT 0;");
+        } catch (DatabaseException e) {
+            if (e.getMessage() == null || !e.getMessage().toLowerCase().contains("duplicate column name")) {
+                throw e;
+            }
+        }
     }
 
     private void initializeSpiralTable() {

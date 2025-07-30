@@ -70,4 +70,8 @@ public abstract class IslandUpdateQuery {
      * or {@code false} otherwise
      */
     public abstract CompletableFuture<Boolean> setSizeIsland(Island island, double newValue);
+
+    public abstract CompletableFuture<Boolean> setLockedIsland(Island island, boolean locked);
+
+    public abstract CompletableFuture<Boolean> isLockedIsland(Island island);
 }

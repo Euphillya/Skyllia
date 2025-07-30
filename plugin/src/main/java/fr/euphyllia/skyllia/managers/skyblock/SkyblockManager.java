@@ -381,4 +381,19 @@ public class SkyblockManager {
     public CompletableFuture<Boolean> setSizeIsland(Island island, double newValue) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setSizeIsland(island, newValue);
     }
+
+    /**
+     * Met à jour l'état "locked" de l'île (vaut true pendant un delete).
+     */
+    public CompletableFuture<Boolean> setLockedIsland(Island island, boolean locked) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setLockedIsland(island, locked);
+    }
+
+    /**
+     * Vérifie si l'île est actuellement "locked".
+     */
+    public CompletableFuture<Boolean> isLockedIsland(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isLockedIsland(island);
+    }
+
 }

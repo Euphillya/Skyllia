@@ -46,6 +46,19 @@ public class MariaDBIslandUpdate extends IslandUpdateQuery {
                 SET `private` = ?
                 WHERE `island_id` = ?;
             """;
+
+    private static final String SELECT_LOCKED_ISLAND = """
+                SELECT `locked`
+                FROM `%s`.islands
+                WHERE `island_id` = ?;
+            """;
+    private static final String UPDATE_LOCKED_ISLAND = """
+                UPDATE `%s`.islands
+                SET `locked` = ?
+                WHERE `island_id` = ?;
+            """;
+
+
     private final Logger logger = LogManager.getLogger(MariaDBIslandUpdate.class);
     private final InterneAPI api;
     private final String databaseName;
@@ -129,6 +142,7 @@ public class MariaDBIslandUpdate extends IslandUpdateQuery {
         return completableFuture;
     }
 
+    @Override
     public CompletableFuture<Boolean> setSizeIsland(Island island, double newValue) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
@@ -140,5 +154,43 @@ public class MariaDBIslandUpdate extends IslandUpdateQuery {
         }
         return completableFuture;
     }
+
+    public CompletableFuture<Boolean> setLockedIsland(Island island, boolean locked) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        try {
+            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(),
+                    UPDATE_LOCKED_ISLAND.formatted(this.databaseName),
+                    List.of(locked ? 1 : 0, island.getId()),
+                    i -> future.complete(i != 0), null);
+        } catch (Exception e) {
+            logger.fatal("Error Locked Island", e);
+            future.complete(false);
+        }
+        return future;
+    }
+
+    public CompletableFuture<Boolean> isLockedIsland(Island island) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(),
+                    SELECT_LOCKED_ISLAND.formatted(this.databaseName),
+                    List.of(island.getId()),
+                    resultSet -> {
+                        try {
+                            if (resultSet.next()) {
+                                future.complete(resultSet.getInt("locked") == 1);
+                            } else {
+                                future.complete(null);
+                            }
+                        } catch (Exception e) {
+                            future.complete(null);
+                        }
+                    }, null);
+        } catch (DatabaseException e) {
+            future.complete(null);
+        }
+        return future;
+    }
+
 
 }

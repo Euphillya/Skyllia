@@ -23,7 +23,6 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
-import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +38,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class WorldEditUtils {
 
@@ -80,23 +81,40 @@ public class WorldEditUtils {
         }
     }
 
-    public static void deleteIsland(Skyllia plugin, Island island, org.bukkit.World w) {
+    public static void deleteIsland(Skyllia plugin, Island island, org.bukkit.World w, Consumer<Boolean> onFinish) {
         if (w == null) {
-            throw new RuntimeException("World is not loaded or not exist");
+            if (onFinish != null) onFinish.accept(false);
+            return;
         }
+
         Position position = island.getPosition();
-        AtomicInteger chunkDeleted = new AtomicInteger(0);
-        AtomicInteger numberChunkInIsland = new AtomicInteger(RegionHelper.getTotalChunksInBlockPerimeter((int) island.getSize() + 32)); // add secure distance 2 chunk
+        List<Position> chunks = RegionUtils.computeChunksToDelete(position, ConfigLoader.general.getRegionDistance(), island.getSize());
+
+        if (chunks.isEmpty()) {
+            if (onFinish != null) onFinish.accept(true);
+            return;
+        }
+
+        AtomicInteger toDelete = new AtomicInteger(chunks.size());
+        AtomicBoolean failed = new AtomicBoolean(false);
         AtomicInteger delay = new AtomicInteger(1);
-        boolean deleteChunkPerimeterIsland = ConfigLoader.general.isDeleteChunkPerimeterIsland();
-        RegionUtils.spiralStartCenter(position, ConfigLoader.general.getRegionDistance(), island.getSize(), chunKPosition -> {
-            if (deleteChunkPerimeterIsland && chunkDeleted.getAndAdd(2) >= numberChunkInIsland.get()) {
-                return;
-            }
-            Bukkit.getRegionScheduler().runDelayed(plugin, w, chunKPosition.x(), chunKPosition.z(), task ->
-                    plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunKPosition), Math.max(1, delay.getAndIncrement()));
-        });
+
+        System.out.println("Deleting " + toDelete.get() + " chunks for island at position: " + position);
+
+        for (Position chunkPos : chunks) {
+            Bukkit.getRegionScheduler().runDelayed(plugin, w, chunkPos.x(), chunkPos.z(), task -> {
+                try {
+                    plugin.getInterneAPI().getWorldNMS().resetChunk(w, chunkPos);
+                } catch (Exception e) {
+                    failed.set(true);
+                }
+                if (toDelete.decrementAndGet() == 0 && onFinish != null) {
+                    onFinish.accept(!failed.get());
+                }
+            }, delay.getAndIncrement());
+        }
     }
+
 
     public static CompletableFuture<Boolean> changeBiomeChunk(Location location, Biome biome) {
         return changeBiomeChunk(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, biome);

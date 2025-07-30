@@ -160,6 +160,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
                     ALTER TABLE `%s`.`islands_gamerule` DROP PRIMARY KEY,
                     ADD PRIMARY KEY (`island_id`) USING BTREE;
                     """.formatted(database));
+            executeQuery("ALTER TABLE `%s`.`islands` ADD COLUMN IF NOT EXISTS `locked` TINYINT(1) NOT NULL DEFAULT 0;".formatted(database));
         }
     }
 

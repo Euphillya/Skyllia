@@ -253,4 +253,11 @@ public class RegionUtils {
             z += dz;
         }
     }
+
+    public static List<Position> computeChunksToDelete(Position islandRegion, int regionDistance, double size) {
+        List<Position> chunkPositions = new ArrayList<>();
+        spiralStartCenter(islandRegion, regionDistance, size, chunkPositions::add);
+        return chunkPositions;
+    }
+
 }

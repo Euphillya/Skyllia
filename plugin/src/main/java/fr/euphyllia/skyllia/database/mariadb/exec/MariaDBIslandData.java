@@ -52,7 +52,7 @@ public class MariaDBIslandData extends IslandDataQuery {
                     SELECT ?, 0, S.region_x, S.region_z, ?, ?, CURRENT_TIMESTAMP(), ?
                     FROM `%s`.`spiral` S
                     LEFT JOIN `%s`.`islands` S2
-                        ON S.region_x = S2.region_x AND S.region_z = S2.region_z AND S2.DISABLE = 0
+                        ON S.region_x = S2.region_x AND S.region_z = S2.region_z AND (S2.locked = 1 OR S2.disable = 0)
                     WHERE S2.region_x IS NULL
                     ORDER BY S.id LIMIT 1;
             """;

@@ -70,7 +70,7 @@ public class SQLiteIslandData extends IslandDataQuery {
                 LEFT JOIN islands i
                     ON s.region_x = i.region_x
                    AND s.region_z = i.region_z
-                   AND i.disable = 0
+                   AND (i.locked = 1 OR i.disable = 0)
                 WHERE i.region_x IS NULL
                 ORDER BY s.id
                 LIMIT 1;

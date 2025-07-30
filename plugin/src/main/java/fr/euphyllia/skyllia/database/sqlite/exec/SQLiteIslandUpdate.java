@@ -47,6 +47,18 @@ public class SQLiteIslandUpdate extends IslandUpdateQuery {
             WHERE island_id = ?;
             """;
 
+    private static final String SELECT_LOCKED_ISLAND = """
+                SELECT locked
+                FROM islands
+                WHERE island_id = ?;
+            """;
+    private static final String UPDATE_LOCKED_ISLAND = """
+                UPDATE islands
+                SET locked = ?
+                WHERE island_id = ?;
+            """;
+
+
     private final InterneAPI api;
     private final SQLiteDatabaseLoader databaseLoader;
 
@@ -172,4 +184,46 @@ public class SQLiteIslandUpdate extends IslandUpdateQuery {
         }
         return future;
     }
+
+    public CompletableFuture<Boolean> setLockedIsland(Island island, boolean locked) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        try {
+            databaseLoader.executeUpdate(
+                    UPDATE_LOCKED_ISLAND,
+                    List.of(locked ? 1 : 0, island.getId().toString()),
+                    i -> future.complete(i > 0),
+                    null
+            );
+        } catch (Exception ex) {
+            logger.fatal("Error locked Island (SQLite)", ex);
+            future.complete(false);
+        }
+        return future;
+    }
+
+    public CompletableFuture<Boolean> isLockedIsland(Island island) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        try {
+            databaseLoader.executeQuery(
+                    SELECT_LOCKED_ISLAND,
+                    List.of(island.getId().toString()),
+                    rs -> {
+                        try {
+                            if (rs.next()) {
+                                future.complete(rs.getInt("locked") == 1);
+                            } else {
+                                future.complete(null);
+                            }
+                        } catch (Exception e) {
+                            future.complete(null);
+                        }
+                    },
+                    null
+            );
+        } catch (DatabaseException e) {
+            future.complete(null);
+        }
+        return future;
+    }
+
 }

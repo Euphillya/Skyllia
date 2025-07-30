@@ -54,7 +54,7 @@ public class LeaveSubCommand implements SubCommandInterface {
             boolean hasLeft = island.removeMember(players);
 
             if (hasLeft) {
-                DeleteSubCommand.checkClearPlayer(Skyllia.getPlugin(Skyllia.class), skyblockManager, players, RemovalCause.LEAVE);
+                DeleteSubCommand.checkClearPlayer(skyblockManager, players, RemovalCause.LEAVE);
                 ConfigLoader.language.sendMessage(player, "island.leave.success");
             } else {
                 ConfigLoader.language.sendMessage(player, "island.leave.failed");
