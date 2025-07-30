@@ -7,11 +7,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class CacheCommands {
+
+    private static final Map<UUID, List<String>> warpTabCache = new ConcurrentHashMap<>();
 
     static {
         Bukkit.getAsyncScheduler().runAtFixedRate(Skyllia.getInstance(), scheduledTask -> {
@@ -20,7 +25,6 @@ public class CacheCommands {
             }
         }, 1, 60, TimeUnit.SECONDS);
     }
-    private static final Map<UUID, List<String>> warpTabCache = new ConcurrentHashMap<>();
 
     public static List<String> getWarps(UUID playerId) {
         return warpTabCache.getOrDefault(playerId, Collections.emptyList());

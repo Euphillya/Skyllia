@@ -95,7 +95,7 @@ public class CacheManager {
 
     public void invalidateAll() {
         // Commands
-        CacheCommands.invalidateAll();
+        //CacheCommands.invalidateAll();
         CommandCacheExecution.invalidateAll();
         InviteCacheExecution.invalidateAll();
 
