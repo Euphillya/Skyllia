@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.utils.TPSFormatter;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,18 +29,19 @@ public class TPSSubCommand implements SubCommandInterface {
             return true;
         }
 
-        Location playerLocation = player.getLocation();
+        final Location playerLocation = player.getLocation();
         if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
             ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
             return true;
         }
-
-        double @Nullable [] tpsIsland = SkylliaAPI.getTPS(playerLocation);
-        if (tpsIsland == null) {
-            ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
-            return true;
-        }
-        player.sendMessage(TPSFormatter.displayTPS(tpsIsland).asComponent());
+        Bukkit.getRegionScheduler().run(plugin, playerLocation, (task) -> {
+            double @Nullable [] tpsIsland = SkylliaAPI.getTPS(playerLocation);
+            if (tpsIsland == null) {
+                ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
+                return;
+            }
+            player.sendMessage(TPSFormatter.displayTPS(tpsIsland).asComponent());
+        });
         return true;
     }
 
