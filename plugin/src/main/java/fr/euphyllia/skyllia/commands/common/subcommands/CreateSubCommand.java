@@ -110,13 +110,13 @@ public class CreateSubCommand implements SubCommandInterface {
                             this.setPermissionsRole(islandAtomic.get());
                             Location loc = centerPaste.clone();
                             loc.add(0, 0.5, 0);
+                            this.addOwnerIslandInMember(islandAtomic.get(), player);
                             player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN)
                                     .thenRun(() -> {
                                         player.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
                                         player.setFallDistance(0);
+                                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                                     });
-                            this.addOwnerIslandInMember(islandAtomic.get(), player);
-                            plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
                             new SkyblockLoadEvent(islandAtomic.get()).callEvent();
                             isFirstIteration = false;
                         }

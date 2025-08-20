@@ -177,12 +177,13 @@ public class SkyblockEvent implements Listener {
 
     private void teleportIfSafe(Player player, Island island, Location to) {
         if (to != null && WorldUtils.isSafeLocation(to)) {
-            player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            this.api.getPlayerNMS().setOwnWorldBorder(
-                    Skyllia.getPlugin(Skyllia.class), player,
-                    RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z()),
-                    island.getSize(), 0, 0
-            );
+            player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                this.api.getPlayerNMS().setOwnWorldBorder(
+                        Skyllia.getInstance(), player,
+                        RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z()),
+                        island.getSize(), 0, 0
+                );
+            });
         } else {
             ConfigLoader.language.sendMessage(player, "island.generic.location-unsafe");
         }

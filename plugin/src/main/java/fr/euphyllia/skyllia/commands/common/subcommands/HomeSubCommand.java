@@ -61,9 +61,9 @@ public class HomeSubCommand implements SubCommandInterface {
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
                     player.setVelocity(new Vector(0, 0, 0));
                     player.setFallDistance(0);
+                    Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
+                    ConfigLoader.language.sendMessage(player, "island.home.success");
                 });
-                Skyllia.getPlugin(Skyllia.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getPlugin(Skyllia.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
-                ConfigLoader.language.sendMessage(player, "island.home.success");
             }, null, 1L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);

@@ -57,7 +57,7 @@ public class VisitSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(visitPlayerId).join();
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.visit.no-island");
@@ -87,10 +87,12 @@ public class VisitSubCommand implements SubCommandInterface {
                     loc = warpIsland.location();
                 }
                 loc.setY(loc.getY() + 0.5);
-                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                Skyllia.getPlugin(Skyllia.class).getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getPlugin(Skyllia.class), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
-                ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
-                        "%player%", visitPlayer));
+                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                    Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player,
+                            RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
+                    ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
+                            "%player%", visitPlayer));
+                });
             }, null, 1L);
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
