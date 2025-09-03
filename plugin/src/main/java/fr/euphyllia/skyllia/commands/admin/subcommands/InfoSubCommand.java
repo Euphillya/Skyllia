@@ -77,6 +77,7 @@ public class InfoSubCommand implements SubCommandInterface {
                     .append(ConfigLoader.language.translate(player, "island.info.display.id", Map.of("%id%", islandId.toString()))).append(Component.newline())
                     .append(ConfigLoader.language.translate(player, "island.info.display.owner", Map.of("%owner%", leader.getLastKnowName()))).append(Component.newline())
                     .append(ConfigLoader.language.translate(player, "island.info.display.size", Map.of("%size%", String.valueOf(size)))).append(Component.newline())
+                    .append(ConfigLoader.language.translate(player, "island.info.display.private", Map.of("%private%", island.isPrivateIsland() ? "Yes" : "No"))).append(Component.newline())
                     .append(ConfigLoader.language.translate(player, "island.info.display.max-members", Map.of("%max%", String.valueOf(maxMembers)))).append(Component.newline())
                     .append(ConfigLoader.language.translate(player, "island.info.display.created", Map.of("%created%", createdAt.toString()))).append(Component.newline())
                     .append(ConfigLoader.language.translate(player, "island.info.display.online-members", Map.of(
