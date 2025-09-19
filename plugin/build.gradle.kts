@@ -6,7 +6,7 @@ group = "fr.euphyllia.skyllia"
 version = "2.3"
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT") { isTransitive = false }
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT") { isTransitive = false }
     compileOnly("net.kyori:adventure-text-minimessage:4.24.0")
     compileOnly(project(":api"))
     compileOnly(project(":database"))
