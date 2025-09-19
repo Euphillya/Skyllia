@@ -18,7 +18,6 @@ import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
 import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
-import fr.euphyllia.skyllia.utils.nms.v1_21_R6.BiomeNMS;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
