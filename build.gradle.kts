@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":nms:v1_21_R3"))
     implementation(project(":nms:v1_21_R4"))
     implementation(project(":nms:v1_21_R5"))
+    implementation(project(":nms:v1_21_R6"))
 }
 
 allprojects {
@@ -50,14 +51,14 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("org.apache.maven.resolver:maven-resolver-api:2.0.8")
-        compileOnly("org.apache.logging.log4j:log4j-api:2.24.3")
-        compileOnly("org.apache.logging.log4j:log4j-core:2.24.3")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.3")
-        compileOnly("com.zaxxer:HikariCP:6.3.0")
-        compileOnly("org.xerial:sqlite-jdbc:3.49.1.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.20.0")
-        compileOnly("com.electronwill.night-config:toml:3.8.2")
+        compileOnly("org.apache.maven.resolver:maven-resolver-api:2.0.11")
+        compileOnly("org.apache.logging.log4j:log4j-api:2.25.1")
+        compileOnly("org.apache.logging.log4j:log4j-core:2.25.1")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.6")
+        compileOnly("com.zaxxer:HikariCP:7.0.2")
+        compileOnly("org.xerial:sqlite-jdbc:3.50.3.0")
+        compileOnly("org.jetbrains:annotations:26.0.2-1")
+        compileOnly("com.electronwill.night-config:toml:3.8.3")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")

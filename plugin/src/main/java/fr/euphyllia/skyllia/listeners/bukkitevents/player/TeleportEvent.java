@@ -36,14 +36,14 @@ public class TeleportEvent implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerTeleportCauseEvent(PlayerTeleportEvent event) {
+    public void onPlayerTeleportCauseEvent(final PlayerTeleportEvent event) {
         if (event.getTo() == null) return;
         final Player player = event.getPlayer();
-        switch (event.getCause()) {
-            case ENDER_PEARL, CHORUS_FRUIT -> {
-                if (PermissionImp.hasPermission(player, "skyllia.player.teleport.bypass")) return;
-                ListenersUtils.checkPermission(event.getTo(), event.getPlayer(), PermissionsIsland.TELEPORT, event);
-            }
+        if (event.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL
+                || event.getCause() == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT || // Peut être supprimer prochainement
+                event.getCause() == PlayerTeleportEvent.TeleportCause.CONSUMABLE_EFFECT) {
+            if (PermissionImp.hasPermission(player, "skyllia.player.teleport.bypass")) return;
+            ListenersUtils.checkPermission(event.getTo(), event.getPlayer(), PermissionsIsland.TELEPORT, event);
         }
     }
 
