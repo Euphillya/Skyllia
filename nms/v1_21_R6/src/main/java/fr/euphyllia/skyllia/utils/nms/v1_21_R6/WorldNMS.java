@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.utils.nms.v1_21_R5;
+package fr.euphyllia.skyllia.utils.nms.v1_21_R6;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;

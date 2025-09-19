@@ -18,6 +18,7 @@ import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
 import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
+import fr.euphyllia.skyllia.utils.nms.v1_21_R6.BiomeNMS;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,7 +121,7 @@ public class InterneAPI {
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R5.BiomeNMS();
                 this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R5.ExplosionEntityImpl();
             }
-            case "1.21.9" : {
+            case "1.21.9" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R6.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R6.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R6.BiomeNMS();

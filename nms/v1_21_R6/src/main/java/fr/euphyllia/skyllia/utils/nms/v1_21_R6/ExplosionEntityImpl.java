@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.utils.nms.v1_21_R5;
+package fr.euphyllia.skyllia.utils.nms.v1_21_R6;
 
 import org.bukkit.entity.EntityType;
 
