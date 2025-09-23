@@ -162,6 +162,27 @@ public final class SkylliaAPI {
         return implementation.getTPS(chunk);
     }
 
+
+    /**
+     * Gets the average tick time for a specific location.
+     *
+     * @param location the location for which to get the average tick time
+     * @return average tick time (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft average tick time (1m, 5m, 15m in Paper-Server)
+     */
+    public static double @Nullable [] getAverageTickTime(Location location) {
+        return implementation.getAverageTickTime(location);
+    }
+
+    /**
+     * Gets the average tick time for a specific chunk.
+     *
+     * @param chunk the chunk for which to get the average tick time
+     * @return average tick time (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft average tick time (1m, 5m, 15m in Paper-Server)
+     */
+    public static double @Nullable [] getAverageTickTime(Chunk chunk) {
+        return implementation.getAverageTickTime(chunk);
+    }
+
     /**
      * Retrieves all valid (non-disabled) Skyllia islands from the database.
      *

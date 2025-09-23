@@ -44,4 +44,20 @@ public abstract class WorldNMS {
      * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
      */
     public abstract double @Nullable [] getTPS(Chunk chunk);
+
+    /**
+     * Gets the average tick times for a specific location.
+     *
+     * @param location the location for which to get the average tick times
+     * @return an array of average tick times, or null if the region doesn't exist
+     */
+    public abstract double @Nullable [] getAverageTickTimes(Location location);
+
+    /**
+     * Gets the average tick times for a specific chunk.
+     *
+     * @param chunk the chunk for which to get the average tick times
+     * @return an array of average tick times, or null if the region doesn't exist
+     */
+    public abstract double @Nullable [] getAverageTickTimes(Chunk chunk);
 }

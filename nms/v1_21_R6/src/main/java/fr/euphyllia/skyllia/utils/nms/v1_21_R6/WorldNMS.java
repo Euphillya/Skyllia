@@ -328,7 +328,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
      */
     @Override
     public double @Nullable [] getTPS(Location location) {
-        return Bukkit.getTPS();
+        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.TPS(location);
     }
 
     /**
@@ -339,6 +339,35 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
      */
     @Override
     public double @Nullable [] getTPS(Chunk chunk) {
-        return Bukkit.getTPS();
+        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.TPS(chunk);
     }
+
+    /**
+     * Gets the average tick times for a specific location.
+     *
+     * @param location the location for which to get the average tick times
+     * @return an array of average tick times, or null if the region doesn't exist
+     */
+    @Override
+    public double @Nullable [] getAverageTickTimes(Location location) {
+        final int x = location.blockX() >> 4;
+        final int z = location.blockZ() >> 4;
+        final ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
+        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.getAverageTickTime(world, x, z);
+    }
+
+    /**
+     * Gets the average tick times for a specific chunk.
+     *
+     * @param chunk the chunk for which to get the average tick times
+     * @return an array of average tick times, or null if the region doesn't exist
+     */
+    @Override
+    public double @Nullable [] getAverageTickTimes(Chunk chunk) {
+        final int x = chunk.getX();
+        final int z = chunk.getZ();
+        final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
+        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.getAverageTickTime(world, x, z);
+    }
+
 }

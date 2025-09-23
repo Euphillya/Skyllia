@@ -157,4 +157,51 @@ public final class APISkyllia implements SkylliaImplementation {
             return false;
         }
     }
+
+    /**
+     * Gets the average tick time for a specific location.
+     *
+     * @param location the location for which to get the average tick time
+     * @return average tick time (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft average tick time (1m, 5m, 15m in Paper-Server)
+     */
+    @Override
+    public double @Nullable [] getAverageTickTime(Location location) {
+        if (SkylliaAPI.isFolia()) {
+            return this.interneAPI.getWorldNMS().getAverageTickTimes(location);
+        } else {
+            double[] average = {};
+            long[] times = Bukkit.getTickTimes();
+            for (long time : times) {
+                average = append(average, time / 1_000_000.0);
+            }
+            return average;
+        }
+    }
+
+    /**
+     * Gets the average tick time for a specific chunk.
+     *
+     * @param chunk the chunk for which to get the average tick time
+     * @return average tick time (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft average tick time (1m, 5m, 15m in Paper-Server)
+     */
+    @Override
+    public double @Nullable [] getAverageTickTime(Chunk chunk) {
+        if (SkylliaAPI.isFolia()) {
+            return this.interneAPI.getWorldNMS().getAverageTickTimes(chunk);
+        } else {
+            double[] average = {};
+            long[] times = Bukkit.getTickTimes();
+            for (long time : times) {
+                average = append(average, time / 1_000_000.0);
+            }
+            return average;
+        }
+    }
+
+    private double[] append(double[] arr, double element) {
+        double[] newArr = new double[arr.length + 1];
+        System.arraycopy(arr, 0, newArr, 0, arr.length);
+        newArr[arr.length] = element;
+        return newArr;
+    }
 }

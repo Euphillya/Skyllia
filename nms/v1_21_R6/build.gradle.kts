@@ -14,6 +14,7 @@ dependencies {
         exclude(group = "net.kyori", module = "adventure-text-minimessage")
         exclude(group = "net.kyori", module = "adventure-api")
     }
+    compileOnly(project(":nms:v1_21_R5"))
     compileOnly(project(":api"))
 
 }

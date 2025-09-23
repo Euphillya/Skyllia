@@ -30,7 +30,7 @@ public class TPSSubCommand implements SubCommandInterface {
         }
 
         final Location playerLocation = player.getLocation();
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName()))) {
+        if (!WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName())) {
             ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
             return true;
         }
@@ -40,7 +40,12 @@ public class TPSSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
                 return;
             }
-            player.sendMessage(TPSFormatter.displayTPS(tpsIsland).asComponent());
+            double @Nullable [] msptIsland = SkylliaAPI.getAverageTickTime(playerLocation);
+            if (msptIsland == null) {
+                ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
+                return;
+            }
+            player.sendMessage(TPSFormatter.displayTPS(tpsIsland, msptIsland).asComponent());
         });
         return true;
     }

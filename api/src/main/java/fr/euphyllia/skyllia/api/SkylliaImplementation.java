@@ -132,4 +132,20 @@ public interface SkylliaImplementation {
      * @return True if the admin commands were successfully registered, false otherwise.
      */
     public boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands);
+
+    /**
+     * Gets the average tick time for a specific location.
+     *
+     * @param location the location for which to get the average tick time
+     * @return average tick time (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft average tick time (1m, 5m, 15m in Paper-Server)
+     */
+    double @Nullable [] getAverageTickTime(Location location);
+
+    /**
+     * Gets the average tick time for a specific chunk.
+     *
+     * @param chunk the chunk for which to get the average tick time
+     * @return average tick time (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft average tick time (1m, 5m, 15m in Paper-Server)
+     */
+    double @Nullable [] getAverageTickTime(Chunk chunk);
 }

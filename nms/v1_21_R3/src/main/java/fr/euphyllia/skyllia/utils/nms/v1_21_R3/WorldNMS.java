@@ -87,12 +87,32 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         } else {
             io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
             final long currTime = System.nanoTime();
+            final io.papermc.paper.threadedregions.TickRegionScheduler.RegionScheduleHandle regionScheduleHandle = regionData.getRegionSchedulingHandle();
             return new double[]{
-                    regionData.getRegionSchedulingHandle().getTickReport5s(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport15s(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport1m(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
+                    regionScheduleHandle.getTickReport5s(currTime).tpsData().segmentAll().average(),
+                    regionScheduleHandle.getTickReport15s(currTime).tpsData().segmentAll().average(),
+                    regionScheduleHandle.getTickReport1m(currTime).tpsData().segmentAll().average(),
+                    regionScheduleHandle.getTickReport5m(currTime).tpsData().segmentAll().average(),
+                    regionScheduleHandle.getTickReport15m(currTime).tpsData().segmentAll().average(),
+            };
+        }
+    }
+
+    public static double[] getAverageTickTime(ServerLevel world, int x, int z) {
+        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+                region = world.regioniser.getRegionAtSynchronised(x, z);
+        if (region == null) {
+            return null;
+        } else {
+            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
+            final io.papermc.paper.threadedregions.TickRegionScheduler.RegionScheduleHandle regionScheduleHandle = regionData.getRegionSchedulingHandle();
+            final long currTime = System.nanoTime();
+            return new double[]{
+                    regionScheduleHandle.getTickReport5s(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport15s(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport1m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport5m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport15m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
             };
         }
     }
@@ -323,5 +343,33 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final int z = chunk.getZ();
         final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
         return getTPSFromRegion(world, x, z);
+    }
+
+    /**
+     * Gets the average tick times for a specific location.
+     *
+     * @param location the location for which to get the average tick times
+     * @return an array of average tick times, or null if the region doesn't exist
+     */
+    @Override
+    public double @Nullable [] getAverageTickTimes(Location location) {
+        final int x = location.blockX() >> 4;
+        final int z = location.blockZ() >> 4;
+        final ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
+        return getAverageTickTime(world, x, z);
+    }
+
+    /**
+     * Gets the average tick times for a specific chunk.
+     *
+     * @param chunk the chunk for which to get the average tick times
+     * @return an array of average tick times, or null if the region doesn't exist
+     */
+    @Override
+    public double @Nullable [] getAverageTickTimes(Chunk chunk) {
+        final int x = chunk.getX();
+        final int z = chunk.getZ();
+        final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
+        return getAverageTickTime(world, x, z);
     }
 }
