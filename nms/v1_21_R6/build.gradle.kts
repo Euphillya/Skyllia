@@ -9,7 +9,7 @@ paperweight {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.9-pre2-R0.1-SNAPSHOT") {
+    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT") {
         exclude(group = "io.papermc.adventure", module = "adventure-api")
         exclude(group = "net.kyori", module = "adventure-text-minimessage")
         exclude(group = "net.kyori", module = "adventure-api")
