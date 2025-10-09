@@ -1,9 +1,11 @@
 package fr.euphyllia.skyllia.api.utils.nms;
 
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
+@ApiStatus.Internal
 public abstract class ExplosionEntityImpl {
 
     /**

@@ -10,6 +10,10 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.25.0")
     compileOnly(project(":api"))
     compileOnly(project(":database"))
+    compileOnly(project(":hook:worldedit"))
+    compileOnly(project(":hook:fastasyncworldedit"))
+
+    // NMS Version
     compileOnly(project(":nms:v1_20_R1"))
     compileOnly(project(":nms:v1_20_R2"))
     compileOnly(project(":nms:v1_20_R3"))
@@ -20,9 +24,6 @@ dependencies {
     compileOnly(project(":nms:v1_21_R4"))
     compileOnly(project(":nms:v1_21_R5"))
     compileOnly(project(":nms:v1_21_R6"))
-
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.12-SNAPSHOT") { isTransitive = false }
-    compileOnly("com.sk89q.worldedit:worldedit-core:7.3.12-SNAPSHOT") { isTransitive = false }
 }
 
 java {

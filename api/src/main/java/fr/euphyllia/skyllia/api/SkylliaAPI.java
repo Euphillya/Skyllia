@@ -3,10 +3,13 @@ package fr.euphyllia.skyllia.api;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
+import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -232,5 +235,21 @@ public final class SkylliaAPI {
      */
     public static boolean registerAdminCommands(SubCommandInterface commandInterface, String... commands) {
         return implementation.registerAdminCommands(commandInterface, commands);
+    }
+
+    /**
+     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     */
+    @ApiStatus.Internal
+    public static BiomesImpl getBiomesImpl() {
+        return implementation.getBiomesImpl();
+    }
+
+    /**
+     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     */
+    @ApiStatus.Internal
+    public static WorldNMS getWorldNMS() {
+        return implementation.getWorldNMS();
     }
 }

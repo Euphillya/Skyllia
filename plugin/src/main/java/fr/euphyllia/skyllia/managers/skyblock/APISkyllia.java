@@ -7,6 +7,8 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
+import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.cache.island.IslandCache;
 import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
@@ -196,6 +198,16 @@ public final class APISkyllia implements SkylliaImplementation {
             }
             return average;
         }
+    }
+
+    @Override
+    public BiomesImpl getBiomesImpl() {
+        return this.interneAPI.getBiomesImpl();
+    }
+
+    @Override
+    public WorldNMS getWorldNMS() {
+        return this.interneAPI.getWorldNMS();
     }
 
     private double[] append(double[] arr, double element) {
