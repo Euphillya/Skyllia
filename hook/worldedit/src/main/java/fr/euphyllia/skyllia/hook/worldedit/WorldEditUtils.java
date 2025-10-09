@@ -49,28 +49,30 @@ public record WorldEditUtils(JavaPlugin plugin) implements WorldModifier {
 
     @Override
     public void pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings) {
-        try {
-            File file = new File(plugin.getDataFolder() + File.separator + settings.schematicFile());
-            ClipboardFormat format = cachedIslandSchematic.getOrDefault(file, ClipboardFormats.findByFile(file));
-            cachedIslandSchematic.putIfAbsent(file, format);
-            try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
-                Clipboard clipboard = reader.read();
-                com.sk89q.worldedit.world.World w = BukkitAdapter.adapt(loc.getWorld());
-                try (EditSession editSession = WorldEdit.getInstance().newEditSession(w)) {
-                    editSession.setSideEffectApplier(SideEffectSet.defaults());
-                    editSession.setReorderMode(EditSession.ReorderMode.FAST);
-                    Operation operation = new ClipboardHolder(clipboard)
-                            .createPaste(editSession)
-                            .to(BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()))
-                            .copyEntities(settings.copyEntities()) // Si la schem a des entités
-                            .ignoreAirBlocks(settings.ignoreAirBlocks()) // On ne colle pas les blocks d'air de la schematic, gain de performance accru
-                            .build();
-                    Operations.complete(operation);
+        Bukkit.getRegionScheduler().run(plugin, loc, task -> {
+            try {
+                File file = new File(plugin.getDataFolder() + File.separator + settings.schematicFile());
+                ClipboardFormat format = cachedIslandSchematic.getOrDefault(file, ClipboardFormats.findByFile(file));
+                cachedIslandSchematic.putIfAbsent(file, format);
+                try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+                    Clipboard clipboard = reader.read();
+                    com.sk89q.worldedit.world.World w = BukkitAdapter.adapt(loc.getWorld());
+                    try (EditSession editSession = WorldEdit.getInstance().newEditSession(w)) {
+                        editSession.setSideEffectApplier(SideEffectSet.defaults());
+                        editSession.setReorderMode(EditSession.ReorderMode.FAST);
+                        Operation operation = new ClipboardHolder(clipboard)
+                                .createPaste(editSession)
+                                .to(BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()))
+                                .copyEntities(settings.copyEntities()) // Si la schem a des entités
+                                .ignoreAirBlocks(settings.ignoreAirBlocks()) // On ne colle pas les blocks d'air de la schematic, gain de performance accru
+                                .build();
+                        Operations.complete(operation);
+                    }
                 }
+            } catch (Exception e) {
+                logger.log(Level.FATAL, e.getMessage(), e);
             }
-        } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage(), e);
-        }
+        });
     }
 
     @Override
