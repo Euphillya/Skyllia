@@ -2,7 +2,6 @@ package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;

@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -151,7 +152,15 @@ public interface SkylliaImplementation {
      */
     double @Nullable [] getAverageTickTime(Chunk chunk);
 
+    /**
+     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     */
+    @ApiStatus.Internal
     BiomesImpl getBiomesImpl();
 
+    /**
+     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     */
+    @ApiStatus.Internal
     WorldNMS getWorldNMS();
 }

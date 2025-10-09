@@ -44,13 +44,11 @@ public class InterneAPI {
     private final Skyllia plugin;
     private final SkyblockManager skyblockManager;
     private final CacheManager cacheManager;
-
+    private final WorldModifier worldModifier;
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
     private BiomesImpl biomesImpl;
     private ExplosionEntityImpl explosionEntityImpl;
-    private final WorldModifier worldModifier;
-
     private @Nullable DatabaseLoader database;
     private Managers managers;
 
