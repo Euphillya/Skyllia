@@ -6,9 +6,12 @@ import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.ExplosionEntityImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
+import fr.euphyllia.skyllia.api.world.WorldModifier;
 import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
+import fr.euphyllia.skyllia.hook.fastasyncworldedit.FastAsyncWorldEditUtils;
+import fr.euphyllia.skyllia.hook.worldedit.WorldEditUtils;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -46,6 +49,7 @@ public class InterneAPI {
     private PlayerNMS playerNMS;
     private BiomesImpl biomesImpl;
     private ExplosionEntityImpl explosionEntityImpl;
+    private final WorldModifier worldModifier;
 
     private @Nullable DatabaseLoader database;
     private Managers managers;
@@ -55,6 +59,13 @@ public class InterneAPI {
         this.setVersionNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager, this);
+        if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
+            this.worldModifier = new FastAsyncWorldEditUtils(plugin);
+        } else if (Bukkit.getPluginManager().getPlugin("WorldEdit") != null) {
+            this.worldModifier = new WorldEditUtils(plugin);
+        } else {
+            throw new IllegalArgumentException("FastAsyncWorldEdit or WorldEdit not found!");
+        }
         loadAPI();
     }
 
@@ -272,5 +283,9 @@ public class InterneAPI {
 
     public ExplosionEntityImpl getExplosionEntityImpl() {
         return this.explosionEntityImpl;
+    }
+
+    public @NotNull WorldModifier getWorldModifier() {
+        return this.worldModifier;
     }
 }

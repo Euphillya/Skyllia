@@ -17,7 +17,6 @@ import fr.euphyllia.skyllia.cache.island.IslandCreationQueue;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.IslandUtils;
-import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,10 +28,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -175,25 +171,26 @@ public class CreateSubCommand implements SubCommandInterface {
                 return Collections.emptyList();
             }
 
-            return nameSchem.stream()
-                    .filter(schem -> PermissionImp.hasPermission(sender, "skyllia.island.command.create.%s".formatted(schem)))
-                    .filter(schem -> schem.toLowerCase().startsWith(partial))
-                    .toList();
+            List<String> list = new ArrayList<>();
+            for (String schem : nameSchem) {
+                if (PermissionImp.hasPermission(sender, "skyllia.island.command.create.%s".formatted(schem))) {
+                    if (schem.toLowerCase().startsWith(partial)) {
+                        list.add(schem);
+                    }
+                }
+            }
+            return list;
         }
 
         return Collections.emptyList();
     }
 
     private void pasteSchematic(Skyllia plugin, Island island, Location center, SchematicSetting schematicWorld) {
-        switch (WorldEditUtils.worldEditVersion()) {
-            case WORLD_EDIT ->
-                    Bukkit.getRegionScheduler().execute(plugin, center, () -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld));
-            case FAST_ASYNC_WORLD_EDIT ->
-                    Bukkit.getAsyncScheduler().runNow(plugin, task -> WorldEditUtils.pasteSchematicWE(plugin.getInterneAPI(), center, schematicWorld));
-            case UNDEFINED -> {
-                island.setDisable(true);
-                throw new UnsupportedOperationException();
-            }
+        try {
+            Skyllia.getInstance().getInterneAPI().getWorldModifier().pasteSchematicWE(center, schematicWorld);
+        } catch (Exception e) {
+            logger.error("An error occurred while pasting schematic for island {}: {}", island.getId(), e.getMessage());
+            island.setDisable(true);
         }
     }
 

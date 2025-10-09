@@ -19,6 +19,10 @@ dependencies {
     implementation(project(":database"))
     implementation(project(":api"))
     implementation(project(":plugin"))
+    implementation(project(":hook:worldedit"))
+    implementation(project(":hook:fastasyncworldedit"))
+
+    // NMS Version
     implementation(project(":nms:v1_20_R1"))
     implementation(project(":nms:v1_20_R2"))
     implementation(project(":nms:v1_20_R3"))

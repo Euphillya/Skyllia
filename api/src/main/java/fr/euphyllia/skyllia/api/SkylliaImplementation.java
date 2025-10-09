@@ -3,6 +3,8 @@ package fr.euphyllia.skyllia.api;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
+import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -148,4 +150,8 @@ public interface SkylliaImplementation {
      * @return average tick time (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist, or Minecraft average tick time (1m, 5m, 15m in Paper-Server)
      */
     double @Nullable [] getAverageTickTime(Chunk chunk);
+
+    BiomesImpl getBiomesImpl();
+
+    WorldNMS getWorldNMS();
 }

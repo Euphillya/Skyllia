@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -10,7 +11,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.commands.common.subcommands.DeleteSubCommand;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,7 +90,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                         return;
                     } else {
                         ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
-                            WorldEditUtils.deleteIsland(Skyllia.getInstance(), island, Bukkit.getWorld(name), (success) -> {
+                            Skyllia.getInstance().getInterneAPI().getWorldModifier().deleteIsland(island, Bukkit.getWorld(name), ConfigLoader.general.getRegionDistance(), (success) -> {
                                 if (!success) failed.set(true);
                                 if (worldsLeft.decrementAndGet() == 0) {
                                     skyblockManager.setLockedIsland(island, failed.get()).whenComplete((value, throwable1) -> {

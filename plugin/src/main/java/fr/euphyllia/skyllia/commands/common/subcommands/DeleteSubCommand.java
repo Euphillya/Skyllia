@@ -11,7 +11,6 @@ import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
-import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -158,7 +157,7 @@ public class DeleteSubCommand implements SubCommandInterface {
                     }
 
                     ConfigLoader.worldManager.getWorldConfigs().forEach((s, envs) -> {
-                        WorldEditUtils.deleteIsland(Skyllia.getInstance(), island, Bukkit.getWorld(s), (success) -> {
+                        Skyllia.getInstance().getInterneAPI().getWorldModifier().deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
                             if (!success) failed.set(true);
                             if (worldsLeft.decrementAndGet() == 0) {
                                 skyblockManager.setLockedIsland(island, failed.get()).whenCompleteAsync((value, throwable1) -> {

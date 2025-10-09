@@ -14,7 +14,6 @@ import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import fr.euphyllia.skyllia.utils.WorldEditUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -121,11 +120,11 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             if (args.length >= 2 && args[1].equalsIgnoreCase("island")
                     && PermissionImp.hasPermission(player, "skyllia.island.command.biome_island")) {
 
-                changeBiomeFuture = WorldEditUtils.changeBiomeIsland(world, biome, island);
+                changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier().changeBiomeIsland(world, biome, island, ConfigLoader.general.getRegionDistance());
                 messageToSend = "island.biome.island-success";
 
             } else {
-                changeBiomeFuture = WorldEditUtils.changeBiomeChunk(player.getLocation(), biome);
+                changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier().changeBiomeChunk(player.getLocation(), biome);
                 messageToSend = "island.biome.chunk-success";
             }
 
