@@ -281,7 +281,7 @@ generator = "<yellow>Générateur : </yellow><white>%ore%</white>"
 [addons.challenge.admin]
 no-permission = "<red>Vous n'avez pas la permission d'utiliser cette commande."
 unknown-command = "<red>Commande inconnue. Utilisez /skylliadmin challenge reload"
-reload-success = "<green>Les missions ont été rechargés."
+reload-success = "<green>Les missions ont été rechargées."
 
 [addons.challenge.player]
 player-only = "<red>Cette commande ne peut être utilisée que par un joueur."
