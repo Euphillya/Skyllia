@@ -290,7 +290,7 @@ reload-success = "<green>The challenges have been reloaded."
 player-only = "<red>This command can only be used by a player."
 no-island = "<red>You do not have an island."
 complete = "<green>You have completed the challenge: %challenge_name%!</green>"
-notify-complete = "<green>Congratulations! %player_name% have completed the challenge: %challenge_name%!</green> for their island."
+notify-complete = "<green>Congratulations! %player_name% has completed the challenge: %challenge_name%!</green> for their island."
 
 [addons.challenge.display]
 title = "<gold>=== Island Challenges ===</gold>"
