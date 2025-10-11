@@ -77,7 +77,7 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
                     NamespacedKey key = meta.getItemModel();
                     if (key == null || !key.equals(itemModel)) continue;
                 } catch (NoSuchMethodError e) {
-                    // Version de Bukkit trop ancienne
+                    // Bukkit version too old
                     return false;
                 }
             } else if (customModelData != -1) {
