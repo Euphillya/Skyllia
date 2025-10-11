@@ -1,7 +1,10 @@
 package fr.euphyllia.skylliachallenge.api.requirement;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+
+import java.util.Locale;
 
 /**
  * Represents a single requirement needed to complete a {@code Challenge}.
@@ -65,5 +68,5 @@ public interface ChallengeRequirement {
      *
      * @return a short displayable string
      */
-    String getDisplay();
+    Component getDisplay(Locale locale);
 }

@@ -15,13 +15,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 public class SkylliaChallenge extends JavaPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(SkylliaChallenge.class);
     private static SkylliaChallenge instance;
     private ChallengeManagers challengeManager;
     private GuiSettings guiSettings;
-
 
     public static SkylliaChallenge getInstance() {
         return instance;
@@ -59,6 +60,13 @@ public class SkylliaChallenge extends JavaPlugin {
 
         SkylliaAPI.registerCommands(new ChallengeCommand(this), "challenge");
         SkylliaAPI.registerAdminCommands(new ChallengeAdminCommand(this), "challenge");
+
+        Bukkit.getAsyncScheduler().runAtFixedRate(
+                this,
+                task -> ProgressStoragePartial.flushDirty(),
+                1, 1, TimeUnit.MINUTES
+        );
+
     }
 
     @Override

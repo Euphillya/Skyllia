@@ -13,6 +13,7 @@ import fr.euphyllia.skylliachallenge.requirement.ItemRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -116,17 +117,22 @@ public class ChallengeGui {
                         long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
                         long target = ir.count();
                         boolean met = collected >= target;
-                        String mat = ir.getDisplay();
-                        lore.add(miniMessage.deserialize(
-                                (met ? "<green> • " : "<gray> • ")
-                                        + mat + ": <white>" + NF.format(collected) + "</white>/<white>" + NF.format(target) + "</white>"
-                                        + (met ? " ✓" : "")
-                        ));
+                        Component component = Component.text("")
+                                .append(ir.getDisplay(player.locale()))
+                                .append(Component.text(": "))
+                                .append(Component.text(NF.format(collected)))
+                                .append(Component.text("/"))
+                                .append(Component.text(NF.format(target)));
+
+                        if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
+                        lore.add(component);
                     } else {
                         boolean met = req.isMet(player, island);
-                        lore.add(miniMessage.deserialize(
-                                (met ? "<green> • " : "<gray> • ") + req.getDisplay() + (met ? " ✓" : "")
-                        ));
+                        Component component = Component.text("")
+                                .append(req.getDisplay(player.locale()));
+
+                        if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
+                        lore.add(component);
                     }
                 }
             }

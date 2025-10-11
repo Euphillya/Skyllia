@@ -291,9 +291,24 @@ notify-complete = "<green>Félicitation ! %player_name% a complété son défi: 
 
 [addons.challenge.display]
 title = "<gold>=== Challenges d'île ===</gold>"
-progression = "<gray>Progression : <white>%progression%/%max_times%</white>"
-requirements = "<gray>Objectifs :</gray>"
-can-validate = "<green>Cliquer pour valider</green>"
-cannot-validate = "<red>Vous n'avez pas encore tous les prérequis pour terminer ce défi.</red>"
-previous = "<gray>Précédent</gray>"
-next = "<gray>Suivant</gray>"
+progression = "<!italic><gray>Progression : <white>%progression%/%max_times%</white>"
+requirements = "<!italic><gray>Objectifs :</gray>"
+can-validate = "<!italic><green>Cliquer pour valider</green>"
+cannot-validate = "<!italic><red>Vous n'avez pas encore tous les prérequis pour terminer ce défi.</red>"
+previous = "<!italic><gray>Précédent</gray>"
+next = "<!italic><gray>Suivant</gray>"
+
+[addons.challenge.requirement.potion]
+display = "<!italic><gray>- Avoir l'effet %potion_name% (variante %potion_data%) x %amount%.</gray>"
+
+[addons.challenge.requirement.nearby_entity]
+display = "<!italic><gray>- Avoir %amount% de %entity_type% à proximité ( %radius% m)</gray>"
+
+[addons.challenge.requirement.item]
+display = "<!italic><gray>- Avoir %amount% de %item_name%</gray>"
+
+[addons.challenge.requirement.vault]
+display = "<!italic><gray>- Avoir %amount% dans son compte.</gray>"
+
+[addons.challenge.requirement.bank]
+display = "<!italic><gray>- Avoir %amount% dans le compte de l'île.</gray>"

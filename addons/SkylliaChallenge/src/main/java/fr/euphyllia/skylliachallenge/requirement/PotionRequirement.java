@@ -1,10 +1,15 @@
 package fr.euphyllia.skylliachallenge.requirement;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @param amount combien d’effets actifs du type (souvent 1)
@@ -21,7 +26,11 @@ public record PotionRequirement(PotionType potionType, int data, int amount) imp
     }
 
     @Override
-    public String getDisplay() {
-        return "Avoir l’effet " + potionType.name() + " (variante " + data + ") x" + amount;
+    public Component getDisplay(Locale locale) {
+        return ConfigLoader.language.translate(locale, "addons.challenge.requirement.potion.display", Map.of(
+                "%potion_name%", potionType.name(),
+                "%potion_data%", String.valueOf(data),
+                "%amount%", String.valueOf(amount)
+        ), false);
     }
 }

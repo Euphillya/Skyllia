@@ -1,13 +1,18 @@
 package fr.euphyllia.skylliachallenge.requirement;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @param customModelData Avant 1.21.4, -1 si pas utilisé
@@ -16,6 +21,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Material material, int count,
                               String itemName, int customModelData,
                               NamespacedKey itemModel) implements ChallengeRequirement {
+
+    private static final boolean HAS_ITEM_MODEL_METHOD;
+
+    static {
+        boolean hasMethod;
+        try {
+            ItemMeta.class.getMethod("getItemModel");
+            hasMethod = true;
+        } catch (NoSuchMethodException e) {
+            hasMethod = false;
+        }
+        HAS_ITEM_MODEL_METHOD = hasMethod;
+    }
 
     @Override
     public boolean isMet(Player player, Island island) {
@@ -28,13 +46,9 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
             if (meta == null) continue;
 
             if (itemModel != null) {
-                try {
-                    NamespacedKey key = meta.getItemModel();
-                    if (key == null || !key.equals(itemModel)) continue;
-                } catch (NoSuchMethodError e) {
-                    // Version de Bukkit trop ancienne
-                    return false;
-                }
+                if (!HAS_ITEM_MODEL_METHOD) return false;
+                NamespacedKey key = meta.getItemModel();
+                if (key == null || !key.equals(itemModel)) continue;
             } else if (customModelData != -1) {
                 if (!meta.hasCustomModelData() || meta.getCustomModelData() != customModelData) continue;
             }
@@ -86,7 +100,10 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
     }
 
     @Override
-    public String getDisplay() {
-        return "Avoir " + count + " " + itemName;
+    public Component getDisplay(Locale locale) {
+        return ConfigLoader.language.translate(locale, "addons.challenge.requirement.item.display", Map.of(
+                "%item_name%", itemName,
+                "%amount%", String.valueOf(count)
+        ), false);
     }
 }

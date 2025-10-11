@@ -1,12 +1,17 @@
 package fr.euphyllia.skylliachallenge.requirement;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliabank.BankManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
+import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+
+import java.util.Locale;
+import java.util.Map;
 
 public record BankRequirement(int requirementId, NamespacedKey challengeKey,
                               double amount) implements ChallengeRequirement {
@@ -44,7 +49,9 @@ public record BankRequirement(int requirementId, NamespacedKey challengeKey,
     }
 
     @Override
-    public String getDisplay() {
-        return "Avoir " + amount + " dans la banque d’île";
+    public Component getDisplay(Locale locale) {
+        return ConfigLoader.language.translate(locale, "addons.challenge.requirement.bank.display", Map.of(
+                "%amount%", String.valueOf(amount)
+        ), false);
     }
 }

@@ -294,3 +294,20 @@ progression = "<gray>Progress: <white>%progression%/%max_times%</white>"
 requirements = "<gray>Requirements:</gray>"
 can-validate = "<green>Click to validate</green>"
 cannot-validate = "<red>You do not meet the requirements to validate this challenge.</red>"
+previous = "<!italic><gray>Previous page</gray>"
+next = "<!italic><gray>Next page</gray>"
+
+[addons.challenge.requirement.potion]
+display = "<!italic><gray>- Have the effect %potion_name% (variant %potion_data%) x %amount%.</gray>"
+
+[addons.challenge.requirement.nearby_entity]
+display = "<!italic><gray>- Have %amount% %entity_type% nearby ( %radius% m)</gray>"
+
+[addons.challenge.requirement.item]
+display = "<!italic><gray>- Have %amount% of %item_name%</gray>"
+
+[addons.challenge.requirement.vault]
+display = "<!italic><gray>- Have %amount% in your account.</gray>"
+
+[addons.challenge.requirement.bank]
+display = "<!italic><gray>- Have %amount% in your island account.</gray>"

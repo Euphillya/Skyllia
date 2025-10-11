@@ -1,10 +1,15 @@
 package fr.euphyllia.skylliachallenge.requirement;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
+import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.Locale;
+import java.util.Map;
 
 public record EcoRequirement(double amount) implements ChallengeRequirement {
 
@@ -29,7 +34,9 @@ public record EcoRequirement(double amount) implements ChallengeRequirement {
     }
 
     @Override
-    public String getDisplay() {
-        return "Avoir " + amount + " en poche (player balance)";
+    public Component getDisplay(Locale locale) {
+        return ConfigLoader.language.translate(locale, "addons.challenge.requirement.vault.display", Map.of(
+                "%amount%", String.valueOf(amount)
+        ), false);
     }
 }
