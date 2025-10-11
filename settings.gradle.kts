@@ -20,6 +20,7 @@ include("addons:PapiSkyllia")
 include("addons:InsightsSkyllia")
 include("addons:SkylliaChat")
 include("addons:SkylliaBank")
+include("addons:SkylliaChallenge")
 // Hook
 include("hook:worldedit")
 include("hook:fastasyncworldedit")
