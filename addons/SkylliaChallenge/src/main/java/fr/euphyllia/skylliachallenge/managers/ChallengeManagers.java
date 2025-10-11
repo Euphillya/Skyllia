@@ -49,7 +49,9 @@ public class ChallengeManagers {
         this.skylliaChallenge = challenge;
     }
 
-    /** @return all currently registered challenges */
+    /**
+     * @return all currently registered challenges
+     */
     public Collection<Challenge> getChallenges() {
         return challengeMap.values();
     }
@@ -99,7 +101,7 @@ public class ChallengeManagers {
 
     /**
      * Checks if a player is currently eligible to complete a challenge.
-     *
+     * <p>
      * This verifies:
      * <ul>
      *     <li>Global completion limit ({@link Challenge#getMaxTimes()})</li>
@@ -187,6 +189,6 @@ public class ChallengeManagers {
      * Opens the challenge GUI for a player.
      */
     public void openGui(Player player) {
-        new ChallengeGui(skylliaChallenge, this).open(player);
+        new ChallengeGui(skylliaChallenge, this).open(player, 1);
     }
 }

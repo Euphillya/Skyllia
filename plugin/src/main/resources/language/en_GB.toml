@@ -296,5 +296,5 @@ notify-complete = "<green>Congratulations! %player_name% has completed the chall
 title = "<gold>=== Island Challenges ===</gold>"
 progression = "<gray> Progress: <white>%progression%/%max_times%</white>"
 requirements = "<gray>Requirements:</gray>"
-can_validate = "<green>Click to validate</green>"
-cannot_validate = "<red>You do not meet the requirements to validate this challenge.</red>"
+can-validate = "<green>Click to validate</green>"
+cannot-validate = "<red>You do not meet the requirements to validate this challenge.</red>"

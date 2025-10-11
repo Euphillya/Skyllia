@@ -106,10 +106,10 @@ public class ProgressStorage {
                 try {
                     if (useMaria()) {
                         String q = """
-                        INSERT INTO `%s`.`island_challenge_progress` (island_id, challenge_id, times_completed)
-                        VALUES(?, ?, ?)
-                        ON DUPLICATE KEY UPDATE times_completed = VALUES(times_completed);
-                    """.formatted(InitMariaDB.databaseName());
+                                    INSERT INTO `%s`.`island_challenge_progress` (island_id, challenge_id, times_completed)
+                                    VALUES(?, ?, ?)
+                                    ON DUPLICATE KEY UPDATE times_completed = VALUES(times_completed);
+                                """.formatted(InitMariaDB.databaseName());
                         MariaDBExecute.executeQueryDML(
                                 InitMariaDB.getPool(),
                                 q,
@@ -119,10 +119,10 @@ public class ProgressStorage {
                         );
                     } else {
                         String q = """
-                        INSERT INTO island_challenge_progress (island_id, challenge_id, times_completed)
-                        VALUES(?, ?, ?)
-                        ON CONFLICT(island_id, challenge_id) DO UPDATE SET times_completed = excluded.times_completed;
-                    """;
+                                    INSERT INTO island_challenge_progress (island_id, challenge_id, times_completed)
+                                    VALUES(?, ?, ?)
+                                    ON CONFLICT(island_id, challenge_id) DO UPDATE SET times_completed = excluded.times_completed;
+                                """;
                         InitSQLite.getPool().executeUpdate(
                                 q,
                                 List.of(islandId.toString(), challengeId, value),

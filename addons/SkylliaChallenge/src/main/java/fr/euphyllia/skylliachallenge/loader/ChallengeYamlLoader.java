@@ -57,7 +57,7 @@ public final class ChallengeYamlLoader {
                 .setMaxTimes(yml.getInt("maxTimes", -1))
                 .setBroadcastCompletion(yml.getBoolean("broadcast", false))
                 .setShowInGUI(yml.getBoolean("showInGui", true))
-                .setSlot(yml.getInt("slot", 0))
+                .setPositionGUI(parsePositionGUI(yml))
                 .setGuiItemAmount(yml.getInt("amount", 1))
                 .setGuiLore(itemLore);
 
@@ -163,4 +163,12 @@ public final class ChallengeYamlLoader {
         }
         return list;
     }
+
+    private static Challenge.PositionGUI parsePositionGUI(YamlConfiguration yml) {
+        int page = yml.getInt("gui.page", 1);  // par défaut page 1
+        int row = yml.getInt("gui.row", 1);    // par défaut row 1
+        int column = yml.getInt("gui.column", 1); // par défaut col 1
+        return new Challenge.PositionGUI(page, row, column);
+    }
+
 }

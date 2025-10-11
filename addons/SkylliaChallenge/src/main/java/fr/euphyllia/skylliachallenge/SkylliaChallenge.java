@@ -4,6 +4,7 @@ import dev.triumphteam.gui.TriumphGui;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skylliachallenge.commands.ChallengeAdminCommand;
 import fr.euphyllia.skylliachallenge.commands.ChallengeCommand;
+import fr.euphyllia.skylliachallenge.gui.GuiSettings;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
 import fr.euphyllia.skylliachallenge.storage.InitMariaDB;
 import fr.euphyllia.skylliachallenge.storage.InitSQLite;
@@ -19,6 +20,7 @@ public class SkylliaChallenge extends JavaPlugin {
     private static final Logger log = LoggerFactory.getLogger(SkylliaChallenge.class);
     private static SkylliaChallenge instance;
     private ChallengeManagers challengeManager;
+    private GuiSettings guiSettings;
 
 
     public static SkylliaChallenge getInstance() {
@@ -29,8 +31,13 @@ public class SkylliaChallenge extends JavaPlugin {
         return challengeManager;
     }
 
+    public GuiSettings getGuiSettings() {
+        return guiSettings;
+    }
+
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         TriumphGui.init(this);
 
         instance = this;
@@ -46,6 +53,7 @@ public class SkylliaChallenge extends JavaPlugin {
             return;
         }
 
+        this.guiSettings = GuiSettings.load(getConfig());
         this.challengeManager = new ChallengeManagers(this);
         this.challengeManager.loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
 
