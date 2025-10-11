@@ -20,7 +20,7 @@ public record ChallengeAdminCommand(SkylliaChallenge plugin) implements SubComma
             ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.no-permission");
             return true;
         }
-        if (args.length != 0) {
+        if (args.length == 0 || !args[0].equalsIgnoreCase("reload")) {
             ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.unknown-command");
             return true;
         }
