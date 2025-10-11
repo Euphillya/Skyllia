@@ -19,41 +19,93 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Manages all registered {@link Challenge} objects in the plugin.
+ * <p>
+ * Its responsibilities include:
+ * <ul>
+ *     <li>Loading challenge definitions from YAML files</li>
+ *     <li>Providing runtime access to challenges by ID</li>
+ *     <li>Evaluating completion conditions for a player and island</li>
+ *     <li>Applying rewards and updating persistent progress</li>
+ *     <li>Opening the GUI to display available challenges</li>
+ * </ul>
+ *
+ * <p>
+ * This class acts as the central controller for everything related to challenge
+ * validation and progression.
+ */
 public class ChallengeManagers {
 
     private final SkylliaChallenge skylliaChallenge;
     private final Map<NamespacedKey, Challenge> challengeMap = new ConcurrentHashMap<>();
 
+    /**
+     * Creates a new manager bound to the plugin instance.
+     *
+     * @param challenge the plugin instance
+     */
     public ChallengeManagers(SkylliaChallenge challenge) {
         this.skylliaChallenge = challenge;
     }
 
+    /** @return all currently registered challenges */
     public Collection<Challenge> getChallenges() {
         return challengeMap.values();
     }
 
+    /**
+     * Retrieves a specific challenge by its unique key.
+     *
+     * @param key the challenge ID
+     * @return the corresponding challenge, or {@code null} if none is found
+     */
     @Nullable
     public Challenge getChallenge(NamespacedKey key) {
         return challengeMap.get(key);
     }
 
+    /**
+     * Registers a new challenge in memory.
+     */
     public void registerChallenge(Challenge challenge) {
         challengeMap.put(challenge.getId(), challenge);
     }
 
+    /**
+     * Removes a challenge from memory.
+     */
     public void unregisterChallenge(NamespacedKey key) {
         challengeMap.remove(key);
     }
 
+    /**
+     * Clears all loaded challenges (used before reloads).
+     */
     public void clearChallenges() {
         challengeMap.clear();
     }
 
+    /**
+     * Loads challenge definitions from a filesystem folder
+     * using {@link ChallengeYamlLoader}, overwriting any existing ones.
+     *
+     * @param folder the directory containing challenge YAMLs
+     */
     public void loadChallenges(File folder) {
-        clearChallenges(); // Clear existing challenges before loading new ones
+        clearChallenges();
         ChallengeYamlLoader.loadFolder(skylliaChallenge, folder).forEach(this::registerChallenge);
     }
 
+    /**
+     * Checks if a player is currently eligible to complete a challenge.
+     *
+     * This verifies:
+     * <ul>
+     *     <li>Global completion limit ({@link Challenge#getMaxTimes()})</li>
+     *     <li>All {@link ChallengeRequirement}s return {@code true}</li>
+     * </ul>
+     */
     public boolean canComplete(Island island, Challenge challenge, Player actor) {
         if (challenge.getMaxTimes() >= 0) {
             int times = ProgressStorage.getTimesCompleted(island.getId(), challenge.getId());
@@ -71,6 +123,20 @@ public class ChallengeManagers {
         return true;
     }
 
+    /**
+     * Attempts to complete a challenge for the given island and player.
+     * <p>
+     * The process is:
+     * <ol>
+     *     <li>Check completion limit</li>
+     *     <li>Consume resources via {@link ChallengeRequirement#consume}</li>
+     *     <li>Re-evaluate {@link ChallengeRequirement#isMet} to verify</li>
+     *     <li>Apply rewards and increment {@link ProgressStorage}</li>
+     *     <li>Broadcast if configured</li>
+     * </ol>
+     *
+     * @return {@code true} if completion was successful
+     */
     public boolean complete(Island island, Challenge challenge, Player actor) {
         if (challenge.getMaxTimes() >= 0) {
             int times = ProgressStorage.getTimesCompleted(island.getId(), challenge.getId());
@@ -107,7 +173,6 @@ public class ChallengeManagers {
             }
         }
 
-
         if (challenge.isBroadcastCompletion()) {
             Bukkit.broadcast(ConfigLoader.language.translate(actor, "addons.challenge.player.notify-complete", Map.of(
                     "player_name", actor.getName(),
@@ -118,6 +183,9 @@ public class ChallengeManagers {
         return true;
     }
 
+    /**
+     * Opens the challenge GUI for a player.
+     */
     public void openGui(Player player) {
         new ChallengeGui(skylliaChallenge, this).open(player);
     }
