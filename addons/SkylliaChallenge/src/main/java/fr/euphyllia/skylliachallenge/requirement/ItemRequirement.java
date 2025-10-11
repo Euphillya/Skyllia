@@ -45,9 +45,9 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
     }
 
     @Override
-    public void consume(Player player, Island island) {
+    public boolean consume(Player player, Island island) {
         long already = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
-        if (already >= count) return;
+        if (already >= count) return true;
         long needed = count - already;
         long deposited = 0;
         ItemStack[] contents = player.getInventory().getContents();
@@ -64,7 +64,7 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
                     if (key == null || !key.equals(itemModel)) continue;
                 } catch (NoSuchMethodError e) {
                     // Version de Bukkit trop ancienne
-                    return;
+                    return false;
                 }
             } else if (customModelData != -1) {
                 if (!meta.hasCustomModelData() || meta.getCustomModelData() != customModelData) continue;
@@ -80,7 +80,9 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
         if (deposited > 0) {
             player.getInventory().setContents(contents);
             ProgressStoragePartial.addPartial(island.getId(), challengeKey, requirementId, deposited);
+            return true;
         }
+        return false;
     }
 
     @Override

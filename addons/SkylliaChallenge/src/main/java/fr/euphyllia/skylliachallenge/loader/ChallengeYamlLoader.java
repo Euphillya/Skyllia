@@ -126,7 +126,7 @@ public final class ChallengeYamlLoader {
                 if (Bukkit.getPluginManager().getPlugin("SkylliaBank") != null) {
                     if (head.startsWith("BANK:")) {
                         double amount = Double.parseDouble(head.substring("BANK:".length()));
-                        result.add(new BankRequirement(amount));
+                        result.add(new BankRequirement(idx, challengeKey, amount));
                     }
                 }
                 if (Bukkit.getPluginManager().getPlugin("Vault") != null) {

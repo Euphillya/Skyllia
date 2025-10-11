@@ -22,6 +22,13 @@ public record EcoRequirement(double amount) implements ChallengeRequirement {
     }
 
     @Override
+    public boolean consume(Player player, Island island) {
+        Economy eco = getEco();
+        if (eco == null) return false;
+        return eco.withdrawPlayer(player, amount).transactionSuccess();
+    }
+
+    @Override
     public String getDisplay() {
         return "Avoir " + amount + " en poche (player balance)";
     }

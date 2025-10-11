@@ -79,7 +79,9 @@ public class ChallengeManagers {
 
         if (challenge.getRequirements() != null) {
             for (ChallengeRequirement req : challenge.getRequirements()) {
-                req.consume(actor, island);
+                if (!req.consume(actor, island)) {
+                    return false;
+                }
             }
         }
 
