@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * @param amount combien d’effets actifs du type (souvent 1)
+ * @param amount how many active effects of this type (usually 1)
  */
 public record PotionRequirement(PotionType potionType, int data, int amount) implements ChallengeRequirement {
 
