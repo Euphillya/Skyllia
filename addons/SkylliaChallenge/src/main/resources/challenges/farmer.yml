@@ -1,0 +1,19 @@
+id: "skyllia:farmer_1"
+name: "<yellow>Farmer I"
+lore:
+  - "Harvest 64 Wheat on your island."
+requirements:
+  - "ITEM:WHEAT 64"
+rewards:
+  - "ITEM:DIAMOND 3"
+  - "CMD:broadcast %player% completed &aFarmer I&f !"
+maxTimes: 1
+broadcast: true
+showInGui: true
+gui:
+  row: 2
+  column: 5
+  page: 1
+item: "HAY_BLOCK"
+amount: 1
+itemLore: [ ]

@@ -36,6 +36,7 @@ public final class SkylliaAPI {
      * @param plugin                The plugin instance.
      * @param skylliaImplementation The implementation of the SkylliaAPI.
      */
+    @ApiStatus.Internal
     public static void setImplementation(Plugin plugin, SkylliaImplementation skylliaImplementation) {
         PLUGIN = plugin;
         implementation = skylliaImplementation;

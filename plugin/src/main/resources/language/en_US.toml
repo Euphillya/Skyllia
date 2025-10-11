@@ -276,3 +276,38 @@ set-balance-error = "<red>An error occurred while setting {player_name}'s island
 [addons.ore.display]
 title = "<gold>=== Island Ore ===</gold>"
 generator = "<yellow>Ore: </yellow><white>%ore%</white>"
+
+[addons.challenge.admin]
+no-permission = "<red>You do not have permission to use this command."
+unknown-command = "<red>Unknown command. Use /skylliadmin challenge reload"
+reload-success = "<green>The challenges have been reloaded."
+
+[addons.challenge.player]
+player-only = "<red>This command can only be used by a player."
+no-island = "<red>You do not have an island."
+complete = "<green>You have completed the challenge: %challenge_name%!</green>"
+notify-complete = "<green>Congratulations! %player_name% has completed the challenge: %challenge_name%!</green> for their island."
+
+[addons.challenge.display]
+title = "<gold>=== Island Challenges ===</gold>"
+progression = "<gray>Progress: <white>%progression%/%max_times%</white>"
+requirements = "<gray>Requirements:</gray>"
+can-validate = "<green>Click to validate</green>"
+cannot-validate = "<red>You do not meet the requirements to validate this challenge.</red>"
+previous = "<!italic><gray>Previous page</gray>"
+next = "<!italic><gray>Next page</gray>"
+
+[addons.challenge.requirement.potion]
+display = "<!italic><gray>- Have the effect %potion_name% (variant %potion_data%) x %amount%.</gray>"
+
+[addons.challenge.requirement.nearby_entity]
+display = "<!italic><gray>- Have %amount% %entity_type% nearby ( %radius% m)</gray>"
+
+[addons.challenge.requirement.item]
+display = "<!italic><gray>- Have %amount% of %item_name%</gray>"
+
+[addons.challenge.requirement.vault]
+display = "<!italic><gray>- Have %amount% in your account.</gray>"
+
+[addons.challenge.requirement.bank]
+display = "<!italic><gray>- Have %amount% in your island account.</gray>"

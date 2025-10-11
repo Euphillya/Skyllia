@@ -1,0 +1,15 @@
+gui:
+  rows: 6
+  page-size: 45
+  max-pages: 100
+  navigation:
+    previous:
+      slot: "6,3"
+      material: "ARROW"
+      model_name: ""
+      custom_model_data: 0
+    next:
+      slot: "6,7"
+      material: "ARROW"
+      model_name: ""
+      custom_model_data: 0
