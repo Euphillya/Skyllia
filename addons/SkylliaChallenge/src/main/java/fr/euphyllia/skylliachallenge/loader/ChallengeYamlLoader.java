@@ -21,8 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public final class ChallengeYamlLoader {
 
@@ -70,7 +68,7 @@ public final class ChallengeYamlLoader {
 
         // REQUIREMENTS
         List<String> reqRaw = yml.getStringList("requirements");
-        List<ChallengeRequirement> req = parseRequirements(reqRaw);
+        List<ChallengeRequirement> req = parseRequirements(plugin, id, reqRaw);
         c.setRequirements(req);
 
         // REWARDS
@@ -81,11 +79,13 @@ public final class ChallengeYamlLoader {
         return c;
     }
 
-    private static List<ChallengeRequirement> parseRequirements(List<String> lines) {
+    private static List<ChallengeRequirement> parseRequirements(SkylliaChallenge plugin, NamespacedKey challengeKey, List<String> lines) {
         if (lines == null) return List.of();
-        return lines.stream().map(line -> {
+        List<ChallengeRequirement> result = new ArrayList<>();
+        for (int idx = 0; idx < lines.size(); idx++) {
+            String line = lines.get(idx);
             String[] sp = line.trim().split("\\s+");
-            if (sp.length == 0) return null;
+            if (sp.length == 0) continue;
             String head = sp[0];
             try {
                 if (head.startsWith("ITEM:")) {
@@ -109,37 +109,37 @@ public final class ChallengeYamlLoader {
                             itemModel = NamespacedKey.fromString(sp[3]);
                         }
                     }
-                    return new ItemRequirement(material, count, itemName, customModelData, itemModel);
+                    result.add(new ItemRequirement(idx, challengeKey, material, count, itemName, customModelData, itemModel));
                 }
                 if (head.startsWith("NEAR:")) {
                     EntityType t = EntityType.valueOf(head.substring("NEAR:".length()).toUpperCase(Locale.ROOT));
                     int amount = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
                     double radius = sp.length > 2 ? Double.parseDouble(sp[2]) : 8.0D;
-                    return new NearEntityRequirement(t, amount, radius);
+                    result.add(new NearEntityRequirement(t, amount, radius));
                 }
                 if (head.startsWith("POTION:")) {
                     PotionType p = PotionType.valueOf(sp[1].toUpperCase(Locale.ROOT));
                     int data = Integer.parseInt(sp[2]);
                     int amount = Integer.parseInt(sp[3]);
-                    return new PotionRequirement(p, data, amount);
+                    result.add(new PotionRequirement(p, data, amount));
                 }
                 if (Bukkit.getPluginManager().getPlugin("SkylliaBank") != null) {
                     if (head.startsWith("BANK:")) {
                         double amount = Double.parseDouble(head.substring("BANK:".length()));
-                        return new BankRequirement(amount);
+                        result.add(new BankRequirement(amount));
                     }
                 }
                 if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
                     if (head.startsWith("ECO:")) {
                         double amount = Double.parseDouble(head.substring("ECO:".length()));
-                        return new EcoRequirement(amount);
+                        result.add(new EcoRequirement(amount));
                     }
                 }
             } catch (Exception e) {
                 // ignore: retournera null et filtré
             }
-            return null;
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        }
+        return result;
     }
 
     private static List<ChallengeReward> parseRewards(List<String> lines) {

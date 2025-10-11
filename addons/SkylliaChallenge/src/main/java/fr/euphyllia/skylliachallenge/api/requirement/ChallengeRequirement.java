@@ -7,5 +7,10 @@ public interface ChallengeRequirement {
 
     boolean isMet(Player player, Island island);
 
+    default void consume(Player player, Island island) {
+    }
+
+    ;
+
     String getDisplay();
 }

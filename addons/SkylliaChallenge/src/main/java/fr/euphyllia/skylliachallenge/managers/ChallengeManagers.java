@@ -72,9 +72,31 @@ public class ChallengeManagers {
     }
 
     public boolean complete(Island island, Challenge challenge, Player actor) {
-        if (!canComplete(island, challenge, actor)) {
+        if (challenge.getMaxTimes() >= 0) {
+            int times = ProgressStorage.getTimesCompleted(island.getId(), challenge.getId());
+            if (times >= challenge.getMaxTimes()) return false;
+        }
+
+        if (challenge.getRequirements() != null) {
+            for (ChallengeRequirement req : challenge.getRequirements()) {
+                req.consume(actor, island);
+            }
+        }
+
+        boolean allMet = true;
+        if (challenge.getRequirements() != null) {
+            for (ChallengeRequirement req : challenge.getRequirements()) {
+                if (!req.isMet(actor, island)) {
+                    allMet = false;
+                    break;
+                }
+            }
+        }
+
+        if (!allMet) {
             return false;
         }
+
         ProgressStorage.increment(island.getId(), challenge.getId());
 
         if (challenge.getRewards() != null) {

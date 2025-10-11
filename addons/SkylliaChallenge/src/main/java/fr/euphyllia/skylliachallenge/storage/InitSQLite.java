@@ -25,6 +25,18 @@ public final class InitSQLite {
                   PRIMARY KEY (island_id, challenge_id)
                 );
                 """;
+
+        String createPartial = """
+                CREATE TABLE IF NOT EXISTS island_challenge_partial(
+                  island_id TEXT NOT NULL,
+                  challenge_id TEXT NOT NULL,
+                  requirement_id INTEGER NOT NULL,
+                  collected_amount INTEGER NOT NULL DEFAULT 0,
+                  PRIMARY KEY (island_id, challenge_id, requirement_id)
+                );
+                """;
+        pool.executeUpdate(createPartial, null, null, null);
+
         pool.executeUpdate(create, null, null, null);
         return true;
     }

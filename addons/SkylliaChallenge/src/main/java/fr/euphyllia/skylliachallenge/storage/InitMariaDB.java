@@ -30,6 +30,18 @@ public final class InitMariaDB {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                 """.formatted(dbName);
         MariaDBExecute.executeQuery(pool, create);
+
+        String createPartial = """
+                CREATE TABLE IF NOT EXISTS `%s`.`island_challenge_partial`(
+                  `island_id` CHAR(36) NOT NULL,
+                  `challenge_id` VARCHAR(128) NOT NULL,
+                  `requirement_id` INT NOT NULL,
+                  `collected_amount` BIGINT NOT NULL DEFAULT 0,
+                  PRIMARY KEY (`island_id`,`challenge_id`,`requirement_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                """.formatted(dbName);
+        MariaDBExecute.executeQuery(pool, createPartial);
+
         return true;
     }
 
