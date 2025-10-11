@@ -42,7 +42,9 @@ public class ChallengeGui {
             return;
         }
 
-        Gui gui = Gui.gui().title(MiniMessage.miniMessage().deserialize("<green>Challenges d'île</green>")).rows(6).create();
+        Gui gui = Gui.gui().title(
+                ConfigLoader.language.translate(player.locale(), "addons.challenge.display.title", Map.of(), false)
+        ).rows(6).create();
         gui.disableAllInteractions();
 
         for (Challenge c : manager.getChallenges()) {
@@ -55,14 +57,14 @@ public class ChallengeGui {
             List<Component> lore = new ArrayList<>();
             lore.addAll(c.getLore());
             lore.add(miniMessage.deserialize("<gray>--------------------</gray>"));
-            lore.add(ConfigLoader.language.translate(player, "addons.challenge.display.progression",
+            lore.add(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.progression",
                     Map.of(
-                            "progression", String.valueOf(times),
-                            "goal", c.getMaxTimes() >= 0 ? String.valueOf(c.getMaxTimes()) : "∞"
-                    )));
+                            "%progression%", String.valueOf(times),
+                            "%max_times%", c.getMaxTimes() >= 0 ? String.valueOf(c.getMaxTimes()) : "∞"
+                    ), false));
 
             if (c.getRequirements() != null && !c.getRequirements().isEmpty()) {
-                lore.add(ConfigLoader.language.translate(player, "addons.challenge.display.requirements"));
+                lore.add(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.requirements", Map.of(), false));
                 for (ChallengeRequirement req : c.getRequirements()) {
                     if (req instanceof ItemRequirement ir) {
                         long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
@@ -82,14 +84,15 @@ public class ChallengeGui {
                     }
                 }
             }
-            lore.add(can ? ConfigLoader.language.translate(player, "addons.challenge.display.can_validate") : ConfigLoader.language.translate(player, "addons.challenge.display.cannot_validate"));
+            lore.add(can ? ConfigLoader.language.translate(player.locale(), "addons.challenge.display.can_validate", Map.of(), false) :
+                    ConfigLoader.language.translate(player.locale(), "addons.challenge.display.cannot_validate", Map.of(), false));
             if (c.getGuiLore() != null) lore.addAll(c.getGuiLore());
 
             gui.setItem(c.getSlot(), ItemBuilder.from(base).lore(lore).asGuiItem(e -> {
                 if (manager.complete(island, c, player)) {
-                    ConfigLoader.language.translate(player, "addons.challenge.player.complete", Map.of(
-                            "challenge_name", c.getName()
-                    ));
+                    ConfigLoader.language.translate(player.locale(), "addons.challenge.player.complete", Map.of(
+                            "%challenge_name%", c.getName()
+                    ), false);
                 }
                 Bukkit.getAsyncScheduler().runNow(plugin, task -> open(player));
             }));

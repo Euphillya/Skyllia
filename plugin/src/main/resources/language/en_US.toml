@@ -289,7 +289,8 @@ complete = "<green>You have completed the challenge: %challenge_name%!</green>"
 notify-complete = "<green>Congratulations! %player_name% have completed the challenge: %challenge_name%!</green> for their island."
 
 [addons.challenge.display]
-progression = "<gray> Progress: <white>%progression%/%goal%</white>"
+title = "<gold>=== Island Challenges ===</gold>"
+progression = "<gray>Progress: <white>%progression%/%max_times%</white>"
 requirements = "<gray>Requirements:</gray>"
 can_validate = "<green>Click to validate</green>"
 cannot_validate = "<red>You do not meet the requirements to validate this challenge.</red>"

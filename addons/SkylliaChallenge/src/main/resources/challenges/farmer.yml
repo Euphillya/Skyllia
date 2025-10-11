@@ -1,17 +1,16 @@
 id: "skyllia:farmer_1"
-name: "&aFarmer I"
+name: "<yellow>Farmer I"
 lore:
-  - "&7Récoltez &e64 Blé &7dans votre île."
+  - "Harvest 64 Wheat on your island."
 requirements:
   - "ITEM:WHEAT 64"
 rewards:
   - "ITEM:DIAMOND 3"
-  - "CMD:broadcast %player% a complété &aFarmer I&f !"
+  - "CMD:broadcast %player% completed &aFarmer I&f !"
 maxTimes: 1
 broadcast: true
 showInGui: true
 slot: 10
 item: "HAY_BLOCK"
 amount: 1
-itemLore:
-  - "&7Clique pour tenter de valider."
+itemLore: []
