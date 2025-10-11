@@ -90,7 +90,7 @@ public final class ChallengeYamlLoader {
             try {
                 if (head.startsWith("ITEM:")) {
                     Material material = Material.matchMaterial(head.substring("ITEM:".length()));
-                    if (material == null) return null;
+                    if (material == null) continue;
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
                     String itemName = material.name(); // défault
 
