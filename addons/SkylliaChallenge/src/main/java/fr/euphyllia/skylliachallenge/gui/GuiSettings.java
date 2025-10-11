@@ -73,7 +73,7 @@ public class GuiSettings {
                             meta.setItemModel(key);
                         }
                     } catch (NoSuchMethodError ignored) {
-                        // < 1.21.4 : ignore silencieusement
+                        // < 1.21.4: ignore silently
                     }
                 }
                 // custom_model_data > 0 => set
