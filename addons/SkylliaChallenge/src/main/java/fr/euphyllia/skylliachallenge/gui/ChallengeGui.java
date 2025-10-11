@@ -90,9 +90,9 @@ public class ChallengeGui {
 
             gui.setItem(c.getSlot(), ItemBuilder.from(base).lore(lore).asGuiItem(e -> {
                 if (manager.complete(island, c, player)) {
-                    ConfigLoader.language.translate(player.locale(), "addons.challenge.player.complete", Map.of(
+                    ConfigLoader.language.sendMessage(player, "addons.challenge.player.complete", Map.of(
                             "%challenge_name%", c.getName()
-                    ), false);
+                    ));
                 }
                 Bukkit.getAsyncScheduler().runNow(plugin, task -> open(player));
             }));
