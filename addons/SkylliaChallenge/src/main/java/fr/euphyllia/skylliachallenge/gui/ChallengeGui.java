@@ -4,6 +4,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ChallengeGui {
 
@@ -36,7 +38,7 @@ public class ChallengeGui {
     public void open(Player player) {
         Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
         if (island == null) {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>Vous n'avez pas d'île.</red>"));
+            ConfigLoader.language.sendMessage(player, "addons.challenge.player.no-island");
             return;
         }
 
@@ -53,9 +55,14 @@ public class ChallengeGui {
             List<Component> lore = new ArrayList<>();
             lore.addAll(c.getLore());
             lore.add(miniMessage.deserialize("<gray>--------------------</gray>"));
-            lore.add(miniMessage.deserialize("<gray>Progression: <white>" + times + (c.getMaxTimes() >= 0 ? ("/" + c.getMaxTimes()) : "/∞") + "</white></gray>"));
+            lore.add(ConfigLoader.language.translate(player, "addons.challenge.display.progression",
+                    Map.of(
+                            "progression", String.valueOf(times),
+                            "goal", c.getMaxTimes() >= 0 ? String.valueOf(c.getMaxTimes()) : "∞"
+                    )));
+
             if (c.getRequirements() != null && !c.getRequirements().isEmpty()) {
-                lore.add(miniMessage.deserialize("<gray>Objectifs:</gray>"));
+                lore.add(ConfigLoader.language.translate(player, "addons.challenge.display.requirements"));
                 for (ChallengeRequirement req : c.getRequirements()) {
                     if (req instanceof ItemRequirement ir) {
                         long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
@@ -68,7 +75,6 @@ public class ChallengeGui {
                                         + (met ? " ✓" : "")
                         ));
                     } else {
-                        // Fallback: état OK/KO sans valeur numérique
                         boolean met = req.isMet(player, island);
                         lore.add(miniMessage.deserialize(
                                 (met ? "<green> • " : "<gray> • ") + req.getDisplay() + (met ? " ✓" : "")
@@ -76,13 +82,14 @@ public class ChallengeGui {
                     }
                 }
             }
-            lore.add(miniMessage.deserialize(can ? "<green>Clique pour valider</green>" : "<red>Conditions non remplies</red>"));
+            lore.add(can ? ConfigLoader.language.translate(player, "addons.challenge.display.can_validate") : ConfigLoader.language.translate(player, "addons.challenge.display.cannot_validate"));
             if (c.getGuiLore() != null) lore.addAll(c.getGuiLore());
 
             gui.setItem(c.getSlot(), ItemBuilder.from(base).lore(lore).asGuiItem(e -> {
                 if (manager.complete(island, c, player)) {
-                    player.sendMessage(MiniMessage.miniMessage().deserialize("<green>Défi complété:</green> <yellow>" + c.getName() + "</yellow>"));
-
+                    ConfigLoader.language.translate(player, "addons.challenge.player.complete", Map.of(
+                            "challenge_name", c.getName()
+                    ));
                 }
                 Bukkit.getAsyncScheduler().runNow(plugin, task -> open(player));
             }));

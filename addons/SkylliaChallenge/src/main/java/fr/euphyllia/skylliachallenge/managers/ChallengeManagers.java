@@ -1,6 +1,7 @@
 package fr.euphyllia.skylliachallenge.managers;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.api.reward.ChallengeReward;
@@ -8,7 +9,6 @@ import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.gui.ChallengeGui;
 import fr.euphyllia.skylliachallenge.loader.ChallengeYamlLoader;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -109,8 +109,10 @@ public class ChallengeManagers {
 
 
         if (challenge.isBroadcastCompletion()) {
-            // Todo : Utiliser le langage du joueur
-            Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<green>[SkylliaChallenge] <yellow>" + actor.getName() + " a complété le challenge " + challenge.getName() + " pour son île !"), "skyllia.challenge.notify");
+            Bukkit.broadcast(ConfigLoader.language.translate(actor, "addons.challenge.player.notify-complete", Map.of(
+                    "player_name", actor.getName(),
+                    "challenge_name", challenge.getName()
+            )), "skyllia.challenge.notify");
         }
 
         return true;

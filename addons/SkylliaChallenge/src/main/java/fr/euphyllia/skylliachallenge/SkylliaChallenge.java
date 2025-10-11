@@ -2,6 +2,7 @@ package fr.euphyllia.skylliachallenge;
 
 import dev.triumphteam.gui.TriumphGui;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skylliachallenge.commands.ChallengeAdminCommand;
 import fr.euphyllia.skylliachallenge.commands.ChallengeCommand;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
 import fr.euphyllia.skylliachallenge.storage.InitMariaDB;
@@ -47,7 +48,7 @@ public class SkylliaChallenge extends JavaPlugin {
         this.challengeManager.loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
 
         SkylliaAPI.registerCommands(new ChallengeCommand(this), "challenge");
-        SkylliaAPI.registerAdminCommands(new ChallengeCommand(this), "challenge");
+        SkylliaAPI.registerAdminCommands(new ChallengeAdminCommand(this), "challenge");
     }
 
     @Override

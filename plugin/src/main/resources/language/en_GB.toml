@@ -279,3 +279,21 @@ generator = "<yellow>Ore: </yellow><white>%ore%</white>"
 no-permission = "<red>You do not have permission to use this command."
 enabled = "<green>Island chat enabled."
 disabled = "<red>Island chat disabled."
+
+
+[addons.challenge.admin]
+no-permission = "<red>You do not have permission to use this command."
+unknown-command = "<red>Unknown command. Use /skylliadmin challenge reload"
+reload-success = "<green>The challenges have been reloaded."
+
+[addons.challenge.player]
+player-only = "<red>This command can only be used by a player."
+no-island = "<red>You do not have an island."
+complete = "<green>You have completed the challenge: %challenge_name%!</green>"
+notify-complete = "<green>Congratulations! %player_name% have completed the challenge: %challenge_name%!</green> for their island."
+
+[addons.challenge.display]
+progression = "<gray> Progress: <white>%progression%/%goal%</white>"
+requirements = "<gray>Requirements:</gray>"
+can_validate = "<green>Click to validate</green>"
+cannot_validate = "<red>You do not meet the requirements to validate this challenge.</red>"

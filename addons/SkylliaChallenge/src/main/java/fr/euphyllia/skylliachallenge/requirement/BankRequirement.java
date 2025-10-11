@@ -8,7 +8,8 @@ import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
-public record BankRequirement(int requirementId, NamespacedKey challengeKey, double amount) implements ChallengeRequirement {
+public record BankRequirement(int requirementId, NamespacedKey challengeKey,
+                              double amount) implements ChallengeRequirement {
 
     @Override
     public boolean isMet(Player player, Island island) {

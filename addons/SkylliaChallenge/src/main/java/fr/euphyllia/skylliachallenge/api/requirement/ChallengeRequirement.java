@@ -9,7 +9,9 @@ public interface ChallengeRequirement {
 
     default boolean consume(Player player, Island island) {
         return true;
-    };
+    }
+
+    ;
 
     String getDisplay();
 }
