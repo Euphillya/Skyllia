@@ -2,7 +2,10 @@ package fr.euphyllia.skylliachallenge.api.reward;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+
+import java.util.Locale;
 
 /**
  * Represents a reward granted when a {@code Challenge} is successfully completed.
@@ -45,5 +48,5 @@ public interface ChallengeReward {
      *
      * @return a short displayable string describing this reward
      */
-    String getDisplay();
+    Component getDisplay(Locale locale);
 }
