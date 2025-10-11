@@ -18,7 +18,7 @@ dependencies {
     compileOnly(project(":addons:SkylliaBank"))
 
     compileOnly("dev.triumphteam:triumph-gui:3.1.13")
-    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 }
 
 java {
