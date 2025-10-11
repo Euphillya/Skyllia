@@ -167,7 +167,7 @@ public final class ChallengeYamlLoader {
     private static Challenge.PositionGUI parsePositionGUI(YamlConfiguration yml) {
         int page = yml.getInt("gui.page", 1);  // par défaut page 1
         int row = yml.getInt("gui.row", 1);    // par défaut row 1
-        int column = yml.getInt("gui.column", 1); // par défaut col 1
+        int column = yml.getInt("gui.column", 1); // default column 1
         return new Challenge.PositionGUI(page, row, column);
     }
 
