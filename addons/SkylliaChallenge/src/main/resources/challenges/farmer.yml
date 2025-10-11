@@ -13,4 +13,4 @@ showInGui: true
 slot: 10
 item: "HAY_BLOCK"
 amount: 1
-itemLore: []
+itemLore: [ ]

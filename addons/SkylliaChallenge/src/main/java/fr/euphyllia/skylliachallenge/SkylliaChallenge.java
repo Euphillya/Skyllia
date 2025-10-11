@@ -7,6 +7,8 @@ import fr.euphyllia.skylliachallenge.commands.ChallengeCommand;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
 import fr.euphyllia.skylliachallenge.storage.InitMariaDB;
 import fr.euphyllia.skylliachallenge.storage.InitSQLite;
+import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
+import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
@@ -55,5 +57,7 @@ public class SkylliaChallenge extends JavaPlugin {
     public void onDisable() {
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
+        ProgressStoragePartial.shutdown();
+        ProgressStorage.shutdown();
     }
 }

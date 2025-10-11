@@ -11,7 +11,5 @@ public interface ChallengeRequirement {
         return true;
     }
 
-    ;
-
     String getDisplay();
 }
