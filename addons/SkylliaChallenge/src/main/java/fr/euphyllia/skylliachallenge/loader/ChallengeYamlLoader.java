@@ -92,7 +92,7 @@ public final class ChallengeYamlLoader {
                     Material material = Material.matchMaterial(head.substring("ITEM:".length()));
                     if (material == null) continue;
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
-                    String itemName = material.name(); // défault
+                    String itemName = material.name(); // default
 
                     int customModelData = -1;
                     NamespacedKey itemModel = null;
