@@ -7,6 +7,7 @@ import org.bukkit.NamespacedKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -165,9 +166,9 @@ public class ProgressStoragePartial {
             try {
                 if (useMaria()) {
                     String q = """
-                    DELETE FROM `%s`.`island_challenge_partial`
-                    WHERE island_id = ? AND challenge_id = ?;
-                """.formatted(InitMariaDB.databaseName());
+                                DELETE FROM `%s`.`island_challenge_partial`
+                                WHERE island_id = ? AND challenge_id = ?;
+                            """.formatted(InitMariaDB.databaseName());
                     MariaDBExecute.executeQueryDML(
                             InitMariaDB.getPool(),
                             q,
@@ -177,9 +178,9 @@ public class ProgressStoragePartial {
                     );
                 } else {
                     String q = """
-                    DELETE FROM island_challenge_partial
-                    WHERE island_id = ? AND challenge_id = ?;
-                """;
+                                DELETE FROM island_challenge_partial
+                                WHERE island_id = ? AND challenge_id = ?;
+                            """;
                     SQLiteDatabaseLoader db = InitSQLite.getPool();
                     db.executeUpdate(
                             q,
@@ -192,6 +193,45 @@ public class ProgressStoragePartial {
                 log.error("Error resetting partial progress in DB: {}", e.getMessage(), e);
             }
         });
+    }
+
+    public static void preloadAllPartialProgress() {
+        try {
+            if (useMaria()) {
+                String q = "SELECT island_id, challenge_id, requirement_id, collected_amount FROM `%s`.`island_challenge_partial`;"
+                        .formatted(InitMariaDB.databaseName());
+                MariaDBExecute.executeQuery(InitMariaDB.getPool(), q, null, rs -> {
+                    try {
+                        while (rs != null && rs.next()) {
+                            UUID islandId = UUID.fromString(rs.getString("island_id"));
+                            NamespacedKey challengeId = NamespacedKey.fromString(rs.getString("challenge_id"));
+                            int reqId = rs.getInt("requirement_id");
+                            long value = rs.getLong("collected_amount");
+
+                            CACHE.put(new PartialKey(islandId, challengeId, reqId), value);
+                        }
+                    } catch (SQLException ignored) {
+                    }
+                }, null);
+            } else {
+                String q = "SELECT island_id, challenge_id, requirement_id, collected_amount FROM island_challenge_partial;";
+                InitSQLite.getPool().executeQuery(q, null, rs -> {
+                    try {
+                        while (rs != null && rs.next()) {
+                            UUID islandId = UUID.fromString(rs.getString("island_id"));
+                            NamespacedKey challengeId = NamespacedKey.fromString(rs.getString("challenge_id"));
+                            int reqId = rs.getInt("requirement_id");
+                            long value = rs.getLong("collected_amount");
+
+                            CACHE.put(new PartialKey(islandId, challengeId, reqId), value);
+                        }
+                    } catch (SQLException ignored) {
+                    }
+                }, null);
+            }
+        } catch (DatabaseException e) {
+            log.error("Error preloading partial progress: {}", e.getMessage());
+        }
     }
 
 

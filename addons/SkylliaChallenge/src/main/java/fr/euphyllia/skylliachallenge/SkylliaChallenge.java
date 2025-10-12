@@ -89,6 +89,7 @@ public class SkylliaChallenge extends JavaPlugin {
         SkylliaAPI.registerAdminCommands(new ChallengeAdminCommand(this), "challenge");
 
         ProgressStorage.preloadAllProgress();
+        ProgressStoragePartial.preloadAllPartialProgress();
 
         Bukkit.getAsyncScheduler().runAtFixedRate(
                 this,
