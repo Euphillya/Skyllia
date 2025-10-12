@@ -300,6 +300,7 @@ can-validate = "<green>Click to validate</green>"
 cannot-validate = "<red>You do not meet the requirements to validate this challenge.</red>"
 previous = "<!italic><gray>Previous page</gray>"
 next = "<!italic><gray>Next page</gray>"
+cooldown = "<!italic>⏳ Remaining cooldown: %time_left%."
 
 [addons.challenge.requirement.potion]
 display = "<!italic><gray>- Have the effect %potion_name% (variant %potion_data%) x %amount%.</gray>"

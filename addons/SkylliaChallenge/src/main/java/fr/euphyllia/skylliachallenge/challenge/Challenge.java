@@ -13,16 +13,17 @@ import java.util.List;
  * <p>
  * Each challenge defines:
  * <ul>
- *     <li>a unique identifier ({@link NamespacedKey})</li>
- *     <li>a display name and lore for UI purposes</li>
- *     <li>one or more {@link ChallengeRequirement} to validate</li>
- *     <li>one or more {@link ChallengeReward} to grant upon completion</li>
- *     <li>optionally, how many times it may be completed and whether it should be broadcast</li>
- *     <li>GUI settings for how it is displayed in menus</li>
+ *     <li>A unique identifier ({@link NamespacedKey})</li>
+ *     <li>A display name and lore for UI purposes</li>
+ *     <li>One or more {@link ChallengeRequirement} to validate before completion</li>
+ *     <li>One or more {@link ChallengeReward} to grant upon completion</li>
+ *     <li>An optional cooldown time between completions (island-based)</li>
+ *     <li>An optional global limit on how many times it may be completed per island</li>
+ *     <li>GUI settings determining its visibility and position inside menus</li>
  * </ul>
  * <p>
  * Instances are usually created via configuration loaders such as {@code ChallengeYamlLoader}
- * and then consumed by {@code ChallengeManagers}.
+ * and then consumed by {@code ChallengeManagers} to handle execution and validation.
  */
 public class Challenge {
 
@@ -31,6 +32,7 @@ public class Challenge {
     private List<Component> lore;
     private List<ChallengeRequirement> requirements;
     private List<ChallengeReward> rewards;
+    private long cooldownMillis;
 
     /**
      * Maximum number of times an Island can complete this challenge.
@@ -232,12 +234,44 @@ public class Challenge {
         return this;
     }
 
+    /**
+     * @return the GUI position (page, row, column) where this challenge should appear.
+     * May be {@code null} if not displayed in GUI.
+     */
     public PositionGUI getPositionGUI() {
         return positionGUI;
     }
 
+    /**
+     * Defines where this challenge will be shown inside the GUI.
+     *
+     * @param positionGUI A record containing page, row and column
+     * @return this challenge instance (for chaining)
+     */
     public Challenge setPositionGUI(PositionGUI positionGUI) {
         this.positionGUI = positionGUI;
+        return this;
+    }
+
+    /**
+     * @return the cooldown in milliseconds between two completions of this challenge.
+     * A value of {@code 0} or lower means no cooldown.
+     */
+    public long getCooldownMillis() {
+        return cooldownMillis;
+    }
+
+    /**
+     * Sets the cooldown period between two completions of this challenge.
+     * <p>
+     * This cooldown is tracked per island — meaning if an island completes this challenge,
+     * it must wait this duration before being able to complete it again.
+     *
+     * @param cooldownMillis Cooldown time in milliseconds
+     * @return this challenge instance (for chaining)
+     */
+    public Challenge setCooldownMillis(long cooldownMillis) {
+        this.cooldownMillis = cooldownMillis;
         return this;
     }
 

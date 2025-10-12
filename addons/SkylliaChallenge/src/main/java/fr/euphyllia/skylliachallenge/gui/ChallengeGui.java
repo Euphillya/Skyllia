@@ -140,6 +140,16 @@ public class ChallengeGui {
                     ConfigLoader.language.translate(player.locale(), "addons.challenge.display.cannot-validate", Map.of(), false));
             if (c.getGuiLore() != null) lore.addAll(c.getGuiLore());
 
+            long remaining = manager.getRemainingCooldownMillis(island, c);
+            if (remaining > 0) {
+                Component component = Component.text("")
+                        .append(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.cooldown", Map.of(
+                                "%time_left%", ChallengeManagers.formatDurationShort(remaining)
+                        ), false));
+                lore.add(component);
+            }
+
+
             gui.setItem(pos.row(), pos.column(), ItemBuilder.from(base).lore(lore).asGuiItem(e -> {
                 if (manager.complete(island, c, player)) {
                     ConfigLoader.language.sendMessage(player, "addons.challenge.player.complete", Map.of(

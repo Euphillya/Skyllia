@@ -297,6 +297,7 @@ can-validate = "<!italic><green>Cliquer pour valider</green>"
 cannot-validate = "<!italic><red>Vous n'avez pas encore tous les prérequis pour terminer ce défi.</red>"
 previous = "<!italic><gray>Précédent</gray>"
 next = "<!italic><gray>Suivant</gray>"
+cooldown = "<!italic>⏳ Cooldown restant: %time_left%"
 
 [addons.challenge.requirement.potion]
 display = "<!italic><gray>- Avoir l'effet %potion_name% (variante %potion_data%) x %amount%.</gray>"

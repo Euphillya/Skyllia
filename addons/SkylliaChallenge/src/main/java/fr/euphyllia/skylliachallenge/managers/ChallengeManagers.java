@@ -49,6 +49,22 @@ public class ChallengeManagers {
         this.skylliaChallenge = challenge;
     }
 
+    public static String formatDurationShort(long millis) {
+        if (millis <= 0) return "0s";
+        long totalSec = millis / 1000;
+        long days = totalSec / 86400;
+        long hours = (totalSec % 86400) / 3600;
+        long minutes = (totalSec % 3600) / 60;
+        long seconds = totalSec % 60;
+
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) sb.append(days).append("d ");
+        if (hours > 0 || days > 0) sb.append(hours).append("h ");
+        if (minutes > 0 || hours > 0 || days > 0) sb.append(minutes).append("m ");
+        sb.append(seconds).append("s");
+        return sb.toString().trim();
+    }
+
     /**
      * @return all currently registered challenges
      */
@@ -111,10 +127,12 @@ public class ChallengeManagers {
     public boolean canComplete(Island island, Challenge challenge, Player actor) {
         if (challenge.getMaxTimes() >= 0) {
             int times = ProgressStorage.getTimesCompleted(island.getId(), challenge.getId());
-            if (times >= challenge.getMaxTimes()) {
-                return false;
-            }
+            if (times >= challenge.getMaxTimes()) return false;
         }
+
+        long remaining = getRemainingCooldownMillis(island, challenge);
+        if (remaining > 0) return false;
+
         if (challenge.getRequirements() != null) {
             for (ChallengeRequirement requirement : challenge.getRequirements()) {
                 if (!requirement.isMet(actor, island)) {
@@ -145,11 +163,12 @@ public class ChallengeManagers {
             if (times >= challenge.getMaxTimes()) return false;
         }
 
+        long remaining = getRemainingCooldownMillis(island, challenge);
+        if (remaining > 0) return false;
+
         if (challenge.getRequirements() != null) {
             for (ChallengeRequirement req : challenge.getRequirements()) {
-                if (!req.consume(actor, island)) {
-                    return false;
-                }
+                if (!req.consume(actor, island)) return false;
             }
         }
 
@@ -162,12 +181,9 @@ public class ChallengeManagers {
                 }
             }
         }
+        if (!allMet) return false;
 
-        if (!allMet) {
-            return false;
-        }
-
-        ProgressStorage.increment(island.getId(), challenge.getId());
+        ProgressStorage.updateCompletion(island.getId(), challenge.getId(), System.currentTimeMillis());
 
         if (challenge.getRewards() != null) {
             for (ChallengeReward reward : challenge.getRewards()) {
@@ -183,6 +199,18 @@ public class ChallengeManagers {
         }
 
         return true;
+    }
+
+    public long getRemainingCooldownMillis(Island island, Challenge challenge) {
+        long cd = challenge.getCooldownMillis();
+        if (cd <= 0) return 0L;
+
+        long last = ProgressStorage.getLastCompleted(island.getId(), challenge.getId());
+        if (last <= 0) return 0L;
+
+        long now = System.currentTimeMillis();
+        long remaining = (last + cd) - now;
+        return Math.max(0L, remaining);
     }
 
     /**

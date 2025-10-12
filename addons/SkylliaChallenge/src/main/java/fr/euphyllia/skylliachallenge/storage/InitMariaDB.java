@@ -46,9 +46,21 @@ public final class InitMariaDB {
                       INDEX `idx_collected_amount` (`collected_amount`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                 """.formatted(dbName);
+
+        String alterLastCompleted = """
+                    ALTER TABLE `%s`.`island_challenge_progress`
+                    ADD COLUMN IF NOT EXISTS `last_completed_at` BIGINT NOT NULL DEFAULT 0;
+                """.formatted(dbName);
+
+        String alterIndex = """
+                    CREATE INDEX IF NOT EXISTS `idx_last_completed_at` 
+                    ON `%s`.`island_challenge_progress` (`last_completed_at`);
+                """.formatted(dbName);
+
         MariaDBExecute.executeQuery(pool, create);
         MariaDBExecute.executeQuery(pool, createPartial);
-
+        MariaDBExecute.executeQuery(pool, alterLastCompleted);
+        MariaDBExecute.executeQuery(pool, alterIndex);
 
         return true;
     }

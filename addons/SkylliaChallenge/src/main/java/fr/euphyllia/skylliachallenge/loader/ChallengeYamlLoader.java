@@ -21,10 +21,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class ChallengeYamlLoader {
 
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private static final boolean hasSkylliaBank = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
+    private static final boolean hasVault = Bukkit.getPluginManager().getPlugin("Vault") != null;
 
     private ChallengeYamlLoader() {
     }
@@ -48,10 +52,11 @@ public final class ChallengeYamlLoader {
             return null;
         }
         NamespacedKey id = NamespacedKey.fromString(idStr);
-        List<Component> lore = yml.getStringList("lore").stream().map(s -> miniMessage.deserialize(s)).toList();
-        List<Component> itemLore = yml.getStringList("itemLore").stream().map(s -> miniMessage.deserialize(s)).toList();
+        List<Component> lore = yml.getStringList("lore").stream().map(miniMessage::deserialize).toList();
+        List<Component> itemLore = yml.getStringList("itemLore").stream().map(miniMessage::deserialize).toList();
+        String cooldownStr = yml.getString("cooldown", null);
 
-        Challenge c = new Challenge(id)
+        Challenge challenge = new Challenge(id)
                 .setName(yml.getString("name", idStr))
                 .setLore(lore)
                 .setMaxTimes(yml.getInt("maxTimes", -1))
@@ -61,22 +66,26 @@ public final class ChallengeYamlLoader {
                 .setGuiItemAmount(yml.getInt("amount", 1))
                 .setGuiLore(itemLore);
 
+        if (cooldownStr != null) {
+            challenge.setCooldownMillis(parseDurationToMillis(cooldownStr));
+        }
+
         String guiMat = yml.getString("item", "STONE");
         Material mat = Material.matchMaterial(guiMat);
         if (mat == null) mat = Material.STONE;
-        c.setGuiItem(new ItemStack(mat, Math.max(1, c.getGuiItemAmount())));
+        challenge.setGuiItem(new ItemStack(mat, Math.max(1, challenge.getGuiItemAmount())));
 
         // REQUIREMENTS
         List<String> reqRaw = yml.getStringList("requirements");
         List<ChallengeRequirement> req = parseRequirements(plugin, id, reqRaw);
-        c.setRequirements(req);
+        challenge.setRequirements(req);
 
         // REWARDS
         List<String> rewRaw = yml.getStringList("rewards");
         List<ChallengeReward> rew = parseRewards(rewRaw);
-        c.setRewards(rew);
+        challenge.setRewards(rew);
 
-        return c;
+        return challenge;
     }
 
     private static List<ChallengeRequirement> parseRequirements(SkylliaChallenge plugin, NamespacedKey challengeKey, List<String> lines) {
@@ -123,13 +132,13 @@ public final class ChallengeYamlLoader {
                     int amount = Integer.parseInt(sp[3]);
                     result.add(new PotionRequirement(p, data, amount));
                 }
-                if (Bukkit.getPluginManager().getPlugin("SkylliaBank") != null) {
+                if (hasSkylliaBank) {
                     if (head.startsWith("BANK:")) {
                         double amount = Double.parseDouble(head.substring("BANK:".length()));
                         result.add(new BankRequirement(idx, challengeKey, amount));
                     }
                 }
-                if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+                if (hasVault) {
                     if (head.startsWith("ECO:")) {
                         double amount = Double.parseDouble(head.substring("ECO:".length()));
                         result.add(new EcoRequirement(amount));
@@ -169,6 +178,30 @@ public final class ChallengeYamlLoader {
         int row = yml.getInt("gui.row", 1);    // par défaut row 1
         int column = yml.getInt("gui.column", 1); // default column 1
         return new Challenge.PositionGUI(page, row, column);
+    }
+
+    private static long parseDurationToMillis(String input) {
+        long total = 0L;
+
+        Matcher matcher = Pattern.compile("(\\d+)(ms|s|m|min|h|d|day|w|week|month|y|year)").matcher(input.toLowerCase());
+
+        while (matcher.find()) {
+            long value = Long.parseLong(matcher.group(1));
+            String unit = matcher.group(2);
+
+            switch (unit) {
+                case "ms" -> total += value;
+                case "s" -> total += value * 1000L;
+                case "m", "min" -> total += value * 60_000L;
+                case "h" -> total += value * 3_600_000L;
+                case "d", "day" -> total += value * 86_400_000L;
+                case "w", "week" -> total += value * 7 * 86_400_000L;
+                case "month" -> total += value * 30L * 86_400_000L;
+                case "y", "year" -> total += value * 365L * 86_400_000L;
+            }
+        }
+
+        return total;
     }
 
 }

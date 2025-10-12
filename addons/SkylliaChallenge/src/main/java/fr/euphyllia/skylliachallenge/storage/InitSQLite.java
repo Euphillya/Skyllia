@@ -5,6 +5,9 @@ import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 
+import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public final class InitSQLite {
     private static SQLiteDatabaseLoader pool;
 
@@ -56,6 +59,31 @@ public final class InitSQLite {
         pool.executeUpdate(pindex2, null, null, null);
         pool.executeUpdate(pindex3, null, null, null);
         pool.executeUpdate(pindex4, null, null, null);
+
+        AtomicBoolean hasColumn = new AtomicBoolean(false);
+
+        pool.executeQuery(
+                "PRAGMA table_info(island_challenge_progress);",
+                null,
+                rs -> {
+                    try {
+                        while (rs.next()) {
+                            if ("last_completed_at".equalsIgnoreCase(rs.getString("name"))) {
+                                hasColumn.set(true);
+                                break;
+                            }
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                null
+        );
+
+        if (!hasColumn.get()) {
+            pool.executeUpdate("ALTER TABLE island_challenge_progress ADD COLUMN last_completed_at INTEGER NOT NULL DEFAULT 0;", null, null, null);
+        }
+
 
         return true;
     }
