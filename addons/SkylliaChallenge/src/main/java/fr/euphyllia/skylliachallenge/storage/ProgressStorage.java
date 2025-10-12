@@ -2,7 +2,6 @@ package fr.euphyllia.skylliachallenge.storage;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
-import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 import org.bukkit.NamespacedKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +23,16 @@ public class ProgressStorage {
 
     private static final ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> LAST_COMPLETED_CACHE = new ConcurrentHashMap<>();
 
-    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(2);
+    private static ExecutorService EXECUTOR;
 
     private ProgressStorage() {
+    }
+
+    public static void initExecutor(int threads) {
+        if (threads <= 0) {
+            threads = 2;
+        }
+        EXECUTOR = Executors.newFixedThreadPool(threads);
     }
 
     static boolean useMaria() {
@@ -41,33 +47,7 @@ public class ProgressStorage {
             return m.get(cid);
         }
 
-        AtomicInteger res = new AtomicInteger(0);
-        try {
-            if (useMaria()) {
-                String q = "SELECT times_completed FROM `%s`.`island_challenge_progress` WHERE island_id=? AND challenge_id=?;"
-                        .formatted(InitMariaDB.databaseName());
-                MariaDBExecute.executeQuery(InitMariaDB.getPool(), q, List.of(islandId, cid), rs -> {
-                    try {
-                        if (rs != null && rs.next()) res.set(rs.getInt("times_completed"));
-                    } catch (SQLException ignored) {
-                    }
-                }, null);
-            } else {
-                String q = "SELECT times_completed FROM island_challenge_progress WHERE island_id=? AND challenge_id=?;";
-                SQLiteDatabaseLoader db = InitSQLite.getPool();
-                db.executeQuery(q, List.of(islandId.toString(), cid), rs -> {
-                    try {
-                        if (rs != null && rs.next()) res.set(rs.getInt("times_completed"));
-                    } catch (SQLException ignored) {
-                    }
-                }, null);
-            }
-        } catch (DatabaseException e) {
-            log.error("Error fetching progress: {}", e.getMessage());
-        }
-
-        CACHE.computeIfAbsent(islandId, k -> new ConcurrentHashMap<>()).put(cid, res.get());
-        return res.get();
+        return 0;
     }
 
     public static long getLastCompleted(UUID islandId, NamespacedKey challengeId) {
@@ -78,35 +58,75 @@ public class ProgressStorage {
             return m.get(cid);
         }
 
-        final long[] result = {0L};
+        return 0;
+    }
+
+    public static void preloadAllProgress() {
+        log.info("[SkylliaChallenge] Preloading challenge progress into memory...");
+
+        AtomicInteger count = new AtomicInteger(0);
         try {
             if (useMaria()) {
-                String q = "SELECT last_completed_at FROM `%s`.`island_challenge_progress` WHERE island_id=? AND challenge_id=?;"
+                String q = "SELECT island_id, challenge_id, times_completed, last_completed_at FROM `%s`.`island_challenge_progress`;"
                         .formatted(InitMariaDB.databaseName());
-                MariaDBExecute.executeQuery(InitMariaDB.getPool(), q, List.of(islandId, cid), rs -> {
+                MariaDBExecute.executeQuery(InitMariaDB.getPool(), q, null, rs -> {
                     try {
-                        if (rs != null && rs.next()) result[0] = rs.getLong("last_completed_at");
+                        while (rs != null && rs.next()) {
+                            UUID islandId = UUID.fromString(rs.getString("island_id"));
+                            String challengeId = rs.getString("challenge_id");
+                            int timesCompleted = rs.getInt("times_completed");
+                            long lastCompletedAt = rs.getLong("last_completed_at");
+
+                            CACHE.computeIfAbsent(islandId, k -> new ConcurrentHashMap<>())
+                                    .put(challengeId, timesCompleted);
+                            LAST_COMPLETED_CACHE.computeIfAbsent(islandId, k -> new ConcurrentHashMap<>())
+                                    .put(challengeId, lastCompletedAt);
+                            count.incrementAndGet();
+                            if (count.get() % 10000 == 0) {
+                                log.info("[SkylliaChallenge] Loaded {} challenge rows so far...", count.get());
+                            }
+                        }
                     } catch (SQLException ignored) {
                     }
                 }, null);
             } else {
-                String q = "SELECT last_completed_at FROM island_challenge_progress WHERE island_id=? AND challenge_id=?;";
-                InitSQLite.getPool().executeQuery(q, List.of(islandId.toString(), cid), rs -> {
+                String q = "SELECT island_id, challenge_id, times_completed, last_completed_at FROM island_challenge_progress;";
+                InitSQLite.getPool().executeQuery(q, null, rs -> {
                     try {
-                        if (rs != null && rs.next()) result[0] = rs.getLong("last_completed_at");
+                        while (rs != null && rs.next()) {
+                            UUID islandId = UUID.fromString(rs.getString("island_id"));
+                            String challengeId = rs.getString("challenge_id");
+                            int timesCompleted = rs.getInt("times_completed");
+                            long lastCompletedAt = rs.getLong("last_completed_at");
+
+                            CACHE.computeIfAbsent(islandId, k -> new ConcurrentHashMap<>())
+                                    .put(challengeId, timesCompleted);
+                            LAST_COMPLETED_CACHE.computeIfAbsent(islandId, k -> new ConcurrentHashMap<>())
+                                    .put(challengeId, lastCompletedAt);
+                            count.incrementAndGet();
+                            if (count.get() % 10000 == 0) {
+                                log.info("[SkylliaChallenge] Loaded {} challenge rows so far...", count.get());
+                            }
+                        }
                     } catch (SQLException ignored) {
                     }
                 }, null);
             }
+            log.info("[SkylliaChallenge] Finished preloading {} entries.", count.get());
         } catch (DatabaseException e) {
-            log.error("Error fetching last_completed_at: {}", e.getMessage());
+            log.error("Error preloading progress: {}", e.getMessage());
         }
-
-        LAST_COMPLETED_CACHE.computeIfAbsent(islandId, k -> new ConcurrentHashMap<>()).put(cid, result[0]);
-        return result[0];
     }
 
     public static void shutdown() {
+        EXECUTOR.shutdown();
+        try {
+            if (!EXECUTOR.awaitTermination(5, TimeUnit.SECONDS)) {
+                EXECUTOR.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            EXECUTOR.shutdownNow();
+        }
         for (var islandEntry : CACHE.entrySet()) {
             UUID islandId = islandEntry.getKey();
             var timesMap = islandEntry.getValue();
@@ -152,15 +172,6 @@ public class ProgressStorage {
                     log.error("Error flushing final challenge progress: {}", e.getMessage());
                 }
             }
-        }
-
-        EXECUTOR.shutdown();
-        try {
-            if (!EXECUTOR.awaitTermination(5, TimeUnit.SECONDS)) {
-                EXECUTOR.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            EXECUTOR.shutdownNow();
         }
     }
 

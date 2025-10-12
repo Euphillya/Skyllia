@@ -31,9 +31,14 @@ public class ProgressStoragePartial {
     /**
      * Background thread pool for DB operations
      */
-    private static final ExecutorService DB_EXECUTOR = Executors.newFixedThreadPool(2);
+    private static ExecutorService DB_EXECUTOR;
 
     private ProgressStoragePartial() {
+    }
+
+    public static void initExecutor(int threads) {
+        if (threads <= 0) threads = 2;
+        DB_EXECUTOR = Executors.newFixedThreadPool(threads);
     }
 
     static boolean useMaria() {

@@ -15,6 +15,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SkylliaChallenge extends JavaPlugin {
@@ -43,23 +45,50 @@ public class SkylliaChallenge extends JavaPlugin {
 
         instance = this;
 
+        // ─────────────────────────────────────────────
+        String violet = "§d";
+        String gray = "§7";
+        String white = "§f";
+        String separator = violet + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+        List<String> logs = new ArrayList<>();
+        logs.add(separator);
+        logs.add(violet + " » SkylliaChallenge is starting...");
+
+        // Load Progress Storage Threads
+        int psThreads = getConfig().getInt("progress_storage.threads", 2);
+        ProgressStorage.initExecutor(psThreads);
+        logs.add(gray + " » " + white + "ProgressStorage Threads: " + violet + psThreads);
+
+        int pspThreads = getConfig().getInt("partial_progress_storage.threads", 2);
+        ProgressStoragePartial.initExecutor(pspThreads);
+        logs.add(gray + " » " + white + "PartialProgressStorage Threads: " + violet + pspThreads);
+
+        // ─────────────────────────────────────────────
         getDataFolder().mkdirs();
         getDataFolder().toPath().resolve("challenges").toFile().mkdirs();
 
+        boolean usingMaria = false;
         try {
-            boolean b = InitMariaDB.initIfConfigured() || InitSQLite.initIfConfigured();
+            usingMaria = InitMariaDB.initIfConfigured();
+            if (!usingMaria) InitSQLite.initIfConfigured();
         } catch (Exception exception) {
             log.error("Error during database initialization: {}", exception.getMessage(), exception);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+        logs.add(gray + " » " + white + "Database: " + (usingMaria ? violet + "MariaDB" : violet + "SQLite"));
 
+        // ─────────────────────────────────────────────
         this.guiSettings = GuiSettings.load(getConfig());
         this.challengeManager = new ChallengeManagers(this);
         this.challengeManager.loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
+        logs.add(gray + " » " + white + "Challenges Loaded: " + violet + challengeManager.getChallenges().size());
 
+        // Commands
         SkylliaAPI.registerCommands(new ChallengeCommand(this), "challenge");
         SkylliaAPI.registerAdminCommands(new ChallengeAdminCommand(this), "challenge");
+
+        ProgressStorage.preloadAllProgress();
 
         Bukkit.getAsyncScheduler().runAtFixedRate(
                 this,
@@ -67,7 +96,10 @@ public class SkylliaChallenge extends JavaPlugin {
                 1, 1, TimeUnit.MINUTES
         );
 
+        logs.add(separator);
+        Bukkit.getConsoleSender().sendMessage(logs.toArray(new String[0]));
     }
+
 
     @Override
     public void onDisable() {
@@ -75,5 +107,10 @@ public class SkylliaChallenge extends JavaPlugin {
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
         ProgressStoragePartial.shutdown();
         ProgressStorage.shutdown();
+    }
+
+    private String center(String text, int width) {
+        int padding = (width - text.length()) / 2;
+        return " ".repeat(Math.max(0, padding)) + text;
     }
 }

@@ -1,3 +1,9 @@
+progress_storage:
+  threads: 2
+
+partial_progress_storage:
+  threads: 2
+
 gui:
   rows: 6
   page-size: 45
