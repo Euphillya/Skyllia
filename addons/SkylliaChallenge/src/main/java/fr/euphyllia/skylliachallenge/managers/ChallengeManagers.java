@@ -9,6 +9,7 @@ import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.gui.ChallengeGui;
 import fr.euphyllia.skylliachallenge.loader.ChallengeYamlLoader;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
+import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -183,6 +184,7 @@ public class ChallengeManagers {
         }
         if (!allMet) return false;
 
+        ProgressStoragePartial.resetPartial(island.getId(), challenge.getId());
         ProgressStorage.updateCompletion(island.getId(), challenge.getId(), System.currentTimeMillis());
 
         if (challenge.getRewards() != null) {
@@ -193,8 +195,8 @@ public class ChallengeManagers {
 
         if (challenge.isBroadcastCompletion()) {
             Bukkit.broadcast(ConfigLoader.language.translate(actor, "addons.challenge.player.notify-complete", Map.of(
-                    "player_name", actor.getName(),
-                    "challenge_name", challenge.getName()
+                    "%player_name%", actor.getName(),
+                    "%challenge_name%", challenge.getName()
             )), "skyllia.challenge.notify");
         }
 

@@ -37,6 +37,7 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
 
     @Override
     public boolean isMet(Player player, Island island) {
+        long already = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
         int have = 0;
         for (ItemStack is : player.getInventory().getContents()) {
             if (is == null) continue;
@@ -53,16 +54,16 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
                 if (!meta.hasCustomModelData() || meta.getCustomModelData() != customModelData) continue;
             }
             have += is.getAmount();
-            if (have >= count) return true;
         }
-        return have >= count;
+        return (already + have) >= count;
     }
 
     @Override
     public boolean consume(Player player, Island island) {
         long already = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
-        if (already >= count) return true;
         long needed = count - already;
+        if (needed <= 0) return true;
+
         long deposited = 0;
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
@@ -73,13 +74,9 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
             if (meta == null) continue;
 
             if (itemModel != null) {
-                try {
-                    NamespacedKey key = meta.getItemModel();
-                    if (key == null || !key.equals(itemModel)) continue;
-                } catch (NoSuchMethodError e) {
-                    // Bukkit version too old
-                    return false;
-                }
+                if (!HAS_ITEM_MODEL_METHOD) return false;
+                NamespacedKey key = meta.getItemModel();
+                if (key == null || !key.equals(itemModel)) continue;
             } else if (customModelData != -1) {
                 if (!meta.hasCustomModelData() || meta.getCustomModelData() != customModelData) continue;
             }
@@ -91,12 +88,13 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
             if (is.getAmount() <= 0) contents[i] = null;
             deposited += take;
         }
+
         if (deposited > 0) {
-            player.getInventory().setContents(contents);
             ProgressStoragePartial.addPartial(island.getId(), challengeKey, requirementId, deposited);
-            return true;
+            player.getInventory().setContents(contents);
         }
-        return false;
+
+        return deposited == needed;
     }
 
     @Override

@@ -152,6 +152,49 @@ public class ProgressStoragePartial {
         }
     }
 
+    public static void resetPartial(UUID islandId, NamespacedKey challengeId) {
+        CACHE.keySet().removeIf(key ->
+                key.islandId().equals(islandId) && key.challengeId().equals(challengeId)
+        );
+
+        DIRTY_KEYS.removeIf(key ->
+                key.islandId().equals(islandId) && key.challengeId().equals(challengeId)
+        );
+
+        DB_EXECUTOR.submit(() -> {
+            try {
+                if (useMaria()) {
+                    String q = """
+                    DELETE FROM `%s`.`island_challenge_partial`
+                    WHERE island_id = ? AND challenge_id = ?;
+                """.formatted(InitMariaDB.databaseName());
+                    MariaDBExecute.executeQueryDML(
+                            InitMariaDB.getPool(),
+                            q,
+                            List.of(islandId, challengeId.asString()),
+                            null,
+                            null
+                    );
+                } else {
+                    String q = """
+                    DELETE FROM island_challenge_partial
+                    WHERE island_id = ? AND challenge_id = ?;
+                """;
+                    SQLiteDatabaseLoader db = InitSQLite.getPool();
+                    db.executeUpdate(
+                            q,
+                            List.of(islandId.toString(), challengeId.asString()),
+                            null,
+                            null
+                    );
+                }
+            } catch (DatabaseException e) {
+                log.error("Error resetting partial progress in DB: {}", e.getMessage(), e);
+            }
+        });
+    }
+
+
     public record PartialKey(UUID islandId, NamespacedKey challengeId, int requirementId) {
     }
 }
