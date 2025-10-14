@@ -120,6 +120,28 @@ public final class ChallengeYamlLoader {
                     }
                     result.add(new ItemRequirement(idx, challengeKey, material, count, itemName, customModelData, itemModel));
                 }
+                if (head.startsWith("CRAFT:")) {
+                    Material material = Material.matchMaterial(head.substring("CRAFT:".length()));
+                    if (material == null) continue;
+                    int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                    String itemName = material.name();
+                    int customModelData = -1;
+                    NamespacedKey itemModel = null;
+
+                    if (sp.length >= 4) {
+                        // Si le 3e param est un nombre → CustomModelData
+                        if (sp[3].matches("\\d+")) {
+                            itemName = sp[2];
+                            customModelData = Integer.parseInt(sp[3]);
+                        }
+                        // Si c'est un NamespacedKey → ItemModel
+                        else if (sp[3].contains(":")) {
+                            itemName = sp[3];
+                            itemModel = NamespacedKey.fromString(sp[3]);
+                        }
+                    }
+                    result.add(new CraftRequirement(idx, challengeKey, material, count, itemName, customModelData, itemModel));
+                }
                 if (head.startsWith("NEAR:")) {
                     EntityType t = EntityType.valueOf(head.substring("NEAR:".length()).toUpperCase(Locale.ROOT));
                     int amount = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
@@ -132,6 +154,7 @@ public final class ChallengeYamlLoader {
                     int amount = Integer.parseInt(sp[3]);
                     result.add(new PotionRequirement(p, data, amount));
                 }
+
                 if (hasSkylliaBank) {
                     if (head.startsWith("BANK:")) {
                         double amount = Double.parseDouble(head.substring("BANK:".length()));

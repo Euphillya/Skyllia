@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skylliachallenge.commands.ChallengeAdminCommand;
 import fr.euphyllia.skylliachallenge.commands.ChallengeCommand;
 import fr.euphyllia.skylliachallenge.gui.GuiSettings;
+import fr.euphyllia.skylliachallenge.listener.CraftRequirementListener;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
 import fr.euphyllia.skylliachallenge.storage.InitMariaDB;
 import fr.euphyllia.skylliachallenge.storage.InitSQLite;
@@ -99,6 +100,9 @@ public class SkylliaChallenge extends JavaPlugin {
 
         logs.add(separator);
         Bukkit.getConsoleSender().sendMessage(logs.toArray(new String[0]));
+
+        getServer().getPluginManager().registerEvents(new CraftRequirementListener(), this);
+
     }
 
 

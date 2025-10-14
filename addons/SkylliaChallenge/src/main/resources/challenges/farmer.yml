@@ -6,7 +6,7 @@ requirements:
   - "ITEM:WHEAT 64"
 rewards:
   - "ITEM:DIAMOND 3"
-  - "CMD:broadcast %player% completed &aFarmer I&f !"
+  - "CMD:broadcast %player% completed Farmer I !"
 maxTimes: -1
 cooldown: "24h" # 24h, 1d, 1day, 1w, 1week, 1m, 1month, 1y, 1year
 broadcast: true

@@ -9,11 +9,7 @@ paperweight {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT") {
-        exclude(group = "io.papermc.adventure", module = "adventure-api")
-        exclude(group = "net.kyori", module = "adventure-text-minimessage")
-        exclude(group = "net.kyori", module = "adventure-api")
-    }
+    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT")
     compileOnly(project(":nms:v1_21_R5"))
     compileOnly(project(":api"))
 
@@ -32,4 +28,9 @@ tasks {
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+}
+
+configurations.all {
+    // Temps fix - Could not find net.kyori:adventure-text-serializer-ansi:.
+    exclude(group = "net.kyori", module = "adventure-text-serializer-ansi")
 }

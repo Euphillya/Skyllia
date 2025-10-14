@@ -312,3 +312,6 @@ display = "<!italic><gray>- Have %amount% in your account.</gray>"
 
 [addons.challenge.requirement.bank]
 display = "<!italic><gray>- Have %amount% in your island account.</gray>"
+
+[addons.challenge.requirement.craft]
+display = "<!italic><gray>- Craft %amount% of %item_name%</gray>"

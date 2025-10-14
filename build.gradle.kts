@@ -5,7 +5,7 @@ plugins {
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.18" apply false
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19" apply false
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
@@ -98,18 +98,22 @@ java {
 }
 
 fun getGitCommitHash(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine("git", "rev-parse", "--short", "HEAD") // "--short" retourne les premières lettres du commit
-        standardOutput = stdout
+    return try {
+        val process = ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+            .redirectErrorStream(true)
+            .start()
+        process.inputStream.bufferedReader().readText().trim().ifBlank { "nogit" }
+    } catch (e: Exception) {
+        "nogit"
     }
-    return stdout.toString().trim()
 }
+
+
 
 runPaper.folia.registerTask()
 
 tasks {
     runServer {
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.8")
     }
 }

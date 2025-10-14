@@ -9,6 +9,7 @@ import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
+import fr.euphyllia.skylliachallenge.requirement.CraftRequirement;
 import fr.euphyllia.skylliachallenge.requirement.ItemRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
@@ -115,17 +116,10 @@ public class ChallengeGui {
                 for (ChallengeRequirement req : c.getRequirements()) {
                     if (req instanceof ItemRequirement ir) {
                         long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
-                        long target = ir.count();
-                        boolean met = collected >= target;
-                        Component component = Component.text("")
-                                .append(ir.getDisplay(player.locale()))
-                                .append(Component.text(": "))
-                                .append(Component.text(NF.format(collected)))
-                                .append(Component.text("/"))
-                                .append(Component.text(NF.format(target)));
-
-                        if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
-                        lore.add(component);
+                        countRequirement(lore, collected, ir.count(), ir.getDisplay(player.locale()));
+                    } else if (req instanceof CraftRequirement cr) {
+                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), cr.requirementId());
+                        countRequirement(lore, collected, cr.count(), cr.getDisplay(player.locale()));
                     } else {
                         boolean met = req.isMet(player, island);
                         Component component = Component.text("")
@@ -161,6 +155,18 @@ public class ChallengeGui {
         }
 
         player.getScheduler().run(plugin, task -> gui.open(player), null);
+    }
+
+    private void countRequirement(List<Component> lore, long collected, int count, Component display) {
+        boolean met = collected >= (long) count;
+        Component component = Component.text("")
+                .append(display)
+                .append(Component.text(": "))
+                .append(Component.text(NF.format(collected)))
+                .append(Component.text("/"))
+                .append(Component.text(NF.format(count)));
+        if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
+        lore.add(component);
     }
 
 }
