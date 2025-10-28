@@ -9,28 +9,34 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class IslandCreationQueue {
 
     private static final Queue<IslandCreationRequest> creationQueue = new ConcurrentLinkedQueue<>();
+    private static final Set<UUID> queuedPlayers = ConcurrentHashMap.newKeySet();
     private static boolean isProcessing = false;
 
     public static synchronized void queuePlayer(Player player, String[] args) {
         UUID uuid = player.getUniqueId();
 
-        int index = 1;
-        for (IslandCreationRequest req : creationQueue) {
-            if (req.uuid().equals(player.getUniqueId())) {
-                ConfigLoader.language.sendMessage(player, "island.create.already-in-queue", Map.of("%position%", String.valueOf(index)));
-                return;
+        if (queuedPlayers.contains(uuid)) {
+            int index = 1;
+            for (IslandCreationRequest req : creationQueue) {
+                if (req.uuid().equals(uuid)) {
+                    ConfigLoader.language.sendMessage(player, "island.create.already-in-queue", Map.of("%position%", String.valueOf(index)));
+                    return;
+                }
+                index++;
             }
-            index++;
+            return;
         }
 
-
         creationQueue.add(new IslandCreationRequest(uuid, args));
+        queuedPlayers.add(uuid);
         ConfigLoader.language.sendMessage(player, "island.create.queued", Map.of("%position%", String.valueOf(creationQueue.size())));
 
         processNext();
@@ -41,7 +47,11 @@ public class IslandCreationQueue {
 
         creationQueue.removeIf(req -> {
             OfflinePlayer p = Bukkit.getOfflinePlayer(req.uuid());
-            return !p.isOnline();
+            boolean shouldRemove = !p.isOnline();
+            if (shouldRemove) {
+                queuedPlayers.remove(req.uuid());
+            }
+            return shouldRemove;
         });
 
         if (creationQueue.isEmpty()) {
@@ -51,6 +61,9 @@ public class IslandCreationQueue {
 
         isProcessing = true;
         IslandCreationRequest request = creationQueue.poll();
+        if (request != null) {
+            queuedPlayers.remove(request.uuid());
+        }
         Player player = Bukkit.getPlayer(request.uuid());
 
         int pos = 1;
@@ -82,7 +95,7 @@ public class IslandCreationQueue {
     }
 
     public static synchronized boolean isQueued(UUID uuid) {
-        return creationQueue.stream().anyMatch(req -> req.uuid().equals(uuid));
+        return queuedPlayers.contains(uuid);
     }
 
     private record IslandCreationRequest(UUID uuid, String[] args) {

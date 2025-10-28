@@ -33,6 +33,8 @@ public class PositionIslandCache {
 
     public static void updateIslandPositions(Island island) {
         var positions = RegionHelper.getRegionsWithinBlockRange(island.getPosition(), (int) Math.round(island.getSize()));
-        positions.forEach(pos -> POSITION_CACHE.put(pos, island));
+        var updates = new java.util.HashMap<Position, Island>(positions.size());
+        positions.forEach(pos -> updates.put(pos, island));
+        POSITION_CACHE.putAll(updates);
     }
 }
