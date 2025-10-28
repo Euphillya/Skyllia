@@ -13,6 +13,7 @@ public class InviteCacheExecution {
     private static final Cache<UUID, Set<UUID>> INVITE_CACHE = Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)
             .maximumSize(5000)
+            .recordStats()
             .build();
 
     public static boolean isInvitedCache(UUID islandId, UUID playerId) {

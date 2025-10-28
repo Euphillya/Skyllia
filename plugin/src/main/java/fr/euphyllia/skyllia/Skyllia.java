@@ -76,8 +76,10 @@ public class Skyllia extends JavaPlugin {
         // Register listeners
         new ListenersRegistrar(this, interneAPI).registerListeners();
 
-        // Schedule cache updates
-        new CacheScheduler(this, interneAPI).scheduleCacheUpdate();
+        // Schedule cache updates and statistics logging
+        CacheScheduler cacheScheduler = new CacheScheduler(this, interneAPI);
+        cacheScheduler.scheduleCacheUpdate();
+        cacheScheduler.scheduleCacheStatsLogging();
 
         checkDisabledConfig();
 

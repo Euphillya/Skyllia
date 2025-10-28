@@ -13,6 +13,7 @@ public class PositionIslandCache {
     private static final Cache<Position, Island> POSITION_CACHE = Caffeine.newBuilder()
             .expireAfterAccess(15, TimeUnit.MINUTES)
             .maximumSize(50000)
+            .recordStats()
             .build();
 
     public static Island getIsland(Position pos) {

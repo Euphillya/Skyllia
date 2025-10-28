@@ -21,6 +21,7 @@ public class WarpsInIslandCache {
                     .expireAfterAccess(15, TimeUnit.MINUTES)
                     .refreshAfterWrite(10, TimeUnit.MINUTES)
                     .maximumSize(10000)
+                    .recordStats()
                     .build(WarpsInIslandCache::loadWarpsFromDB);
 
     private static CopyOnWriteArrayList<WarpIsland> loadWarpsFromDB(UUID islandId) {

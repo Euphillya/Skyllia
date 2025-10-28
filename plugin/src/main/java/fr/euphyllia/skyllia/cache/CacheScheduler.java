@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Schedules periodic cache updates.
+ * Schedules periodic cache updates and statistics logging.
  */
 public class CacheScheduler {
 
@@ -42,5 +42,22 @@ public class CacheScheduler {
                 TimeUnit.SECONDS
         );
         logger.info("CacheScheduler started with an interval of {} seconds.", interval);
+    }
+
+    /**
+     * Schedules periodic cache statistics logging.
+     * Logs cache stats every 5 minutes by default.
+     */
+    public void scheduleCacheStatsLogging() {
+        Bukkit.getAsyncScheduler().runAtFixedRate(
+                plugin,
+                task -> {
+                    CacheStats.logStats();
+                },
+                5,
+                5,
+                TimeUnit.MINUTES
+        );
+        logger.info("Cache statistics logging scheduled every 5 minutes.");
     }
 }

@@ -14,6 +14,7 @@ public class PermissionGameRuleInIslandCache {
     private static final LoadingCache<UUID, Long> GAMERULE_CACHE = Caffeine.newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .maximumSize(10000)
+            .recordStats()
             .build(PermissionGameRuleInIslandCache::loadGameRule);
 
     private static SkyblockManager skyblockManager;

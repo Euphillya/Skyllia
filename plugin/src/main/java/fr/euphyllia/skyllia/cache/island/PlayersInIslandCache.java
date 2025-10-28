@@ -26,6 +26,7 @@ public class PlayersInIslandCache {
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
                     .maximumSize(10000)
+                    .recordStats()
                     .build(PlayersInIslandCache::loadPlayersFromIslandCache);
 
     /**
@@ -35,6 +36,7 @@ public class PlayersInIslandCache {
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
                     .maximumSize(50000)
+                    .recordStats()
                     .build();
 
     /**
@@ -44,6 +46,7 @@ public class PlayersInIslandCache {
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
                     .maximumSize(10000)
+                    .recordStats()
                     .build();
 
 

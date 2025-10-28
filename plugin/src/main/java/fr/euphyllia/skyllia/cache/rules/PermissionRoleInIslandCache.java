@@ -18,6 +18,7 @@ public class PermissionRoleInIslandCache {
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
                     .maximumSize(100000)
+                    .recordStats()
                     .build(PermissionRoleInIslandCache::loadPermission);
 
     public static void init(SkyblockManager manager) {

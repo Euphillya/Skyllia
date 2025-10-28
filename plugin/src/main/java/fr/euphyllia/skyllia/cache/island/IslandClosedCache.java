@@ -13,6 +13,7 @@ public class IslandClosedCache {
     private static final LoadingCache<UUID, Boolean> ISLAND_CLOSED_CACHE = Caffeine.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(10000)
+            .recordStats()
             .build(IslandClosedCache::loadIslandClosed);
 
 
