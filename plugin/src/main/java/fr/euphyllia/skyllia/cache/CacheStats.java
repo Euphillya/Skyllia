@@ -1,54 +1,51 @@
 package fr.euphyllia.skyllia.cache;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
-import fr.euphyllia.skyllia.cache.commands.InviteCacheExecution;
-import fr.euphyllia.skyllia.cache.island.*;
-import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
-import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Utility class for monitoring cache statistics across the plugin.
+ * Uses a registry pattern to avoid reflection.
  */
-public class CacheStats {
+public class CacheStatsMonitor {
 
-    private static final Logger logger = LogManager.getLogger(CacheStats.class);
+    private static final Logger logger = LogManager.getLogger(CacheStatsMonitor.class);
+    private static final Map<String, CacheStatsSupplier> CACHE_REGISTRY = new ConcurrentHashMap<>();
 
     /**
-     * Collects statistics from all caches in the plugin.
+     * Registers a cache with the stats monitor.
+     * 
+     * @param name The name of the cache
+     * @param sizeSupplier Supplier for the cache size
+     * @param statsSupplier Supplier for the cache stats
+     */
+    public static void registerCache(String name, Supplier<Long> sizeSupplier, Supplier<CacheStats> statsSupplier) {
+        CACHE_REGISTRY.put(name, new CacheStatsSupplier(sizeSupplier, statsSupplier));
+    }
+
+    /**
+     * Collects statistics from all registered caches.
      * 
      * @return A map of cache names to their statistics
      */
     public static Map<String, CacheStatEntry> collectAllStats() {
         Map<String, CacheStatEntry> stats = new LinkedHashMap<>();
         
-        try {
-            // Island caches
-            addCacheStats(stats, "IslandCache", getFieldValue(IslandCache.class, "ISLAND_CACHE"));
-            addCacheStats(stats, "PlayersInIslandCache.listPlayersInIsland", getFieldValue(PlayersInIslandCache.class, "listPlayersInIsland"));
-            addCacheStats(stats, "PlayersInIslandCache.islandIdByPlayerId", getFieldValue(PlayersInIslandCache.class, "islandIdByPlayerId"));
-            addCacheStats(stats, "PlayersInIslandCache.listTrustedPlayerByIslandId", getFieldValue(PlayersInIslandCache.class, "listTrustedPlayerByIslandId"));
-            addCacheStats(stats, "PositionIslandCache", getFieldValue(PositionIslandCache.class, "POSITION_CACHE"));
-            addCacheStats(stats, "WarpsInIslandCache", getFieldValue(WarpsInIslandCache.class, "WARPS_CACHE"));
-            addCacheStats(stats, "IslandClosedCache", getFieldValue(IslandClosedCache.class, "ISLAND_CLOSED_CACHE"));
-            
-            // Rules caches
-            addCacheStats(stats, "PermissionRoleInIslandCache", getFieldValue(PermissionRoleInIslandCache.class, "PERMISSION_ROLE_CACHE"));
-            addCacheStats(stats, "PermissionGameRuleInIslandCache", getFieldValue(PermissionGameRuleInIslandCache.class, "GAMERULE_CACHE"));
-            
-            // Command caches
-            addCacheStats(stats, "CommandCacheExecution", getFieldValue(CommandCacheExecution.class, "COMMAND_CACHE"));
-            addCacheStats(stats, "InviteCacheExecution", getFieldValue(InviteCacheExecution.class, "INVITE_CACHE"));
-            
-        } catch (Exception e) {
-            logger.error("Failed to collect cache statistics", e);
+        for (Map.Entry<String, CacheStatsSupplier> entry : CACHE_REGISTRY.entrySet()) {
+            try {
+                CacheStatsSupplier supplier = entry.getValue();
+                long size = supplier.sizeSupplier().get();
+                CacheStats cacheStats = supplier.statsSupplier().get();
+                stats.put(entry.getKey(), new CacheStatEntry(size, cacheStats.hitRate(), cacheStats.evictionCount()));
+            } catch (Exception e) {
+                logger.error("Failed to collect stats for cache: {}", entry.getKey(), e);
+            }
         }
         
         return stats;
@@ -71,23 +68,7 @@ public class CacheStats {
         logger.info("========================");
     }
 
-    private static Object getFieldValue(Class<?> clazz, String fieldName) throws Exception {
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return field.get(null);
-    }
-
-    private static void addCacheStats(Map<String, CacheStatEntry> statsMap, String name, Object cache) {
-        if (cache instanceof LoadingCache<?, ?> loadingCache) {
-            long size = loadingCache.estimatedSize();
-            com.github.benmanes.caffeine.cache.stats.CacheStats stats = loadingCache.stats();
-            statsMap.put(name, new CacheStatEntry(size, stats.hitRate(), stats.evictionCount()));
-        } else if (cache instanceof Cache<?, ?> regularCache) {
-            long size = regularCache.estimatedSize();
-            com.github.benmanes.caffeine.cache.stats.CacheStats stats = regularCache.stats();
-            statsMap.put(name, new CacheStatEntry(size, stats.hitRate(), stats.evictionCount()));
-        }
-    }
+    private record CacheStatsSupplier(Supplier<Long> sizeSupplier, Supplier<CacheStats> statsSupplier) {}
 
     public record CacheStatEntry(long size, double hitRate, long evictionCount) {}
 }

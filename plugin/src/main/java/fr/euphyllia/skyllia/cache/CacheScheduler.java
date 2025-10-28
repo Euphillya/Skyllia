@@ -52,7 +52,7 @@ public class CacheScheduler {
         Bukkit.getAsyncScheduler().runAtFixedRate(
                 plugin,
                 task -> {
-                    CacheStats.logStats();
+                    CacheStatsMonitor.logStats();
                 },
                 5,
                 5,

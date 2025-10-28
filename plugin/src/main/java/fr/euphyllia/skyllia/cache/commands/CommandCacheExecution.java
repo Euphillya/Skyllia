@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.cache.commands;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,10 @@ public class CommandCacheExecution {
             .maximumSize(5000)
             .recordStats()
             .build();
+
+    static {
+        CacheStatsMonitor.registerCache("CommandCacheExecution", COMMAND_CACHE::estimatedSize, COMMAND_CACHE::stats);
+    }
 
     public static boolean isAlreadyExecute(UUID uuid, String command) {
         Set<String> commands = COMMAND_CACHE.getIfPresent(uuid);

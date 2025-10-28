@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,10 @@ public class IslandCache {
             .maximumSize(10000)
             .recordStats()
             .build(IslandCache::loadIsland);
+
+    static {
+        CacheStatsMonitor.registerCache("IslandCache", ISLAND_CACHE::estimatedSize, ISLAND_CACHE::stats);
+    }
 
     public static Island getIsland(UUID islandId) {
         return ISLAND_CACHE.get(islandId);

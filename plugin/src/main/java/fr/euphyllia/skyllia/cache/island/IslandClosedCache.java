@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,10 @@ public class IslandClosedCache {
             .maximumSize(10000)
             .recordStats()
             .build(IslandClosedCache::loadIslandClosed);
+
+    static {
+        CacheStatsMonitor.registerCache("IslandClosedCache", ISLAND_CLOSED_CACHE::estimatedSize, ISLAND_CLOSED_CACHE::stats);
+    }
 
 
     public static boolean isIslandClosed(UUID islandId) {

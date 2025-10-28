@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 
 import java.util.UUID;
@@ -20,6 +21,11 @@ public class PermissionRoleInIslandCache {
                     .maximumSize(100000)
                     .recordStats()
                     .build(PermissionRoleInIslandCache::loadPermission);
+
+    static {
+        CacheStatsMonitor.registerCache("PermissionRoleInIslandCache", 
+            PERMISSION_ROLE_CACHE::estimatedSize, PERMISSION_ROLE_CACHE::stats);
+    }
 
     public static void init(SkyblockManager manager) {
         skyblockManager = manager;

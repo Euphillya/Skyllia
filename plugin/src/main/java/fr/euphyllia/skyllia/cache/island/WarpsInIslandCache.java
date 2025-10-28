@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,10 @@ public class WarpsInIslandCache {
                     .maximumSize(10000)
                     .recordStats()
                     .build(WarpsInIslandCache::loadWarpsFromDB);
+
+    static {
+        CacheStatsMonitor.registerCache("WarpsInIslandCache", WARPS_CACHE::estimatedSize, WARPS_CACHE::stats);
+    }
 
     private static CopyOnWriteArrayList<WarpIsland> loadWarpsFromDB(UUID islandId) {
         try {

@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,10 @@ public class PositionIslandCache {
             .maximumSize(50000)
             .recordStats()
             .build();
+
+    static {
+        CacheStatsMonitor.registerCache("PositionIslandCache", POSITION_CACHE::estimatedSize, POSITION_CACHE::stats);
+    }
 
     public static Island getIsland(Position pos) {
         return POSITION_CACHE.getIfPresent(pos);

@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.cache.commands;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,10 @@ public class InviteCacheExecution {
             .maximumSize(5000)
             .recordStats()
             .build();
+
+    static {
+        CacheStatsMonitor.registerCache("InviteCacheExecution", INVITE_CACHE::estimatedSize, INVITE_CACHE::stats);
+    }
 
     public static boolean isInvitedCache(UUID islandId, UUID playerId) {
         Set<UUID> invitedPlayers = INVITE_CACHE.getIfPresent(islandId);

@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 
 import java.util.UUID;
@@ -18,6 +19,11 @@ public class PermissionGameRuleInIslandCache {
             .build(PermissionGameRuleInIslandCache::loadGameRule);
 
     private static SkyblockManager skyblockManager;
+
+    static {
+        CacheStatsMonitor.registerCache("PermissionGameRuleInIslandCache", 
+            GAMERULE_CACHE::estimatedSize, GAMERULE_CACHE::stats);
+    }
 
     public static void init(SkyblockManager manager) {
         skyblockManager = manager;

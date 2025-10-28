@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.cache.CacheStatsMonitor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,6 +49,15 @@ public class PlayersInIslandCache {
                     .maximumSize(10000)
                     .recordStats()
                     .build();
+
+    static {
+        CacheStatsMonitor.registerCache("PlayersInIslandCache.listPlayersInIsland", 
+            listPlayersInIsland::estimatedSize, listPlayersInIsland::stats);
+        CacheStatsMonitor.registerCache("PlayersInIslandCache.islandIdByPlayerId", 
+            islandIdByPlayerId::estimatedSize, islandIdByPlayerId::stats);
+        CacheStatsMonitor.registerCache("PlayersInIslandCache.listTrustedPlayerByIslandId", 
+            listTrustedPlayerByIslandId::estimatedSize, listTrustedPlayerByIslandId::stats);
+    }
 
 
     // =====================================================================
