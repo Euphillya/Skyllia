@@ -12,6 +12,7 @@ public class CommandCacheExecution {
 
     private static final Cache<UUID, Set<String>> COMMAND_CACHE = Caffeine.newBuilder()
             .expireAfterAccess(5, TimeUnit.MINUTES)
+            .maximumSize(5000)
             .build();
 
     public static boolean isAlreadyExecute(UUID uuid, String command) {

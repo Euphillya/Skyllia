@@ -20,6 +20,7 @@ public class WarpsInIslandCache {
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
                     .refreshAfterWrite(10, TimeUnit.MINUTES)
+                    .maximumSize(10000)
                     .build(WarpsInIslandCache::loadWarpsFromDB);
 
     private static CopyOnWriteArrayList<WarpIsland> loadWarpsFromDB(UUID islandId) {

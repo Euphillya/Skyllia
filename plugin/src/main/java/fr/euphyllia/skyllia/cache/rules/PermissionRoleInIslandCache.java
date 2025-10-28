@@ -17,6 +17,7 @@ public class PermissionRoleInIslandCache {
     private static final LoadingCache<IslandRoleKey, PermissionRoleIsland> PERMISSION_ROLE_CACHE =
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
+                    .maximumSize(100000)
                     .build(PermissionRoleInIslandCache::loadPermission);
 
     public static void init(SkyblockManager manager) {
@@ -36,11 +37,13 @@ public class PermissionRoleInIslandCache {
     }
 
     public static void invalidateIsland(UUID islandId) {
+        java.util.List<IslandRoleKey> keysToInvalidate = new java.util.ArrayList<>();
         for (RoleType roleType : RoleType.values()) {
             for (PermissionsType permissionsType : PermissionsType.values()) {
-                invalidatePermission(islandId, roleType, permissionsType);
+                keysToInvalidate.add(new IslandRoleKey(islandId, roleType, permissionsType));
             }
         }
+        PERMISSION_ROLE_CACHE.invalidateAll(keysToInvalidate);
     }
 
     public static void invalidateAll() {
@@ -81,7 +84,10 @@ public class PermissionRoleInIslandCache {
 
         @Override
         public int hashCode() {
-            return islandId.hashCode() ^ roleType.hashCode() ^ permissionsType.hashCode();
+            int result = islandId.hashCode();
+            result = 31 * result + roleType.hashCode();
+            result = 31 * result + permissionsType.hashCode();
+            return result;
         }
     }
 }

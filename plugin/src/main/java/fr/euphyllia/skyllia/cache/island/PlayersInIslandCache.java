@@ -25,6 +25,7 @@ public class PlayersInIslandCache {
     private static final LoadingCache<UUID, CopyOnWriteArrayList<Players>> listPlayersInIsland =
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
+                    .maximumSize(10000)
                     .build(PlayersInIslandCache::loadPlayersFromIslandCache);
 
     /**
@@ -33,6 +34,7 @@ public class PlayersInIslandCache {
     private static final Cache<UUID, UUID> islandIdByPlayerId =
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
+                    .maximumSize(50000)
                     .build();
 
     /**
@@ -41,6 +43,7 @@ public class PlayersInIslandCache {
     private static final Cache<UUID, CopyOnWriteArrayList<UUID>> listTrustedPlayerByIslandId =
             Caffeine.newBuilder()
                     .expireAfterAccess(15, TimeUnit.MINUTES)
+                    .maximumSize(10000)
                     .build();
 
 

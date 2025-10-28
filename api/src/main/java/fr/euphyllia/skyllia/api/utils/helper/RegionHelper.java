@@ -116,14 +116,13 @@ public class RegionHelper {
      */
     public static boolean isBlockWithinSquare(Location center, int blockX, int blockZ, double size) {
         double half = size / 2.0;
+        double centerX = center.getX();
+        double centerZ = center.getZ();
+        double blockXCenter = blockX + 0.5;
+        double blockZCenter = blockZ + 0.5;
 
-        double minX = center.getX() - half;
-        double maxX = center.getX() + half;
-        double minZ = center.getZ() - half;
-        double maxZ = center.getZ() + half;
-
-        return blockX + 0.5 >= minX && blockX + 0.5 < maxX &&
-                blockZ + 0.5 >= minZ && blockZ + 0.5 < maxZ;
+        return blockXCenter >= centerX - half && blockXCenter < centerX + half &&
+                blockZCenter >= centerZ - half && blockZCenter < centerZ + half;
     }
 
     /**

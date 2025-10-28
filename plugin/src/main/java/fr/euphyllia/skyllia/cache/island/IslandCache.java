@@ -12,6 +12,7 @@ public class IslandCache {
 
     private static final LoadingCache<UUID, Island> ISLAND_CACHE = Caffeine.newBuilder()
             .expireAfterAccess(15, TimeUnit.MINUTES)
+            .maximumSize(10000)
             .build(IslandCache::loadIsland);
 
     public static Island getIsland(UUID islandId) {
