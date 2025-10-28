@@ -26,7 +26,7 @@ public final class WorldUtils {
     }
 
     public static Boolean isWorldSkyblock(String name) {
-        return ConfigLoader.worldManager.getWorldConfigs().keySet().stream().anyMatch(worldName -> worldName.equalsIgnoreCase(name));
+        return ConfigLoader.worldManager.getWorldConfig(name) != null;
     }
 
     public static List<WorldConfig> getWorldConfigs() {
