@@ -2,8 +2,9 @@ package fr.euphyllia.skyllia_papi;
 
 import fr.euphyllia.skyllia.Skyllia;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * PlaceholderAPI expansion for the Skyllia plugin.
@@ -50,16 +51,19 @@ public class ExpansionSkyllia extends PlaceholderExpansion {
         return Skyllia.getInstance().getPluginMeta().getVersion();
     }
 
-    /**
-     * Handles placeholder requests.
-     *
-     * @param player      the player requesting the placeholder
-     * @param placeholder the placeholder string
-     * @return the processed placeholder value
-     */
     @Override
-    public String onPlaceholderRequest(Player player, @NotNull String placeholder) {
-        if (player == null) return "";
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
+    public boolean canRegister() {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public String onRequest(final OfflinePlayer player, @NotNull final String placeholder) {
         return PlaceholderProcessor.process(player.getUniqueId(), placeholder);
     }
 }
