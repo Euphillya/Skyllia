@@ -76,7 +76,10 @@ public class MoveEvent implements Listener {
         if (!WorldUtils.isWorldSkyblock(to.getWorld().getName())) return;
 
         if (PermissionImp.hasPermission(player, "skyllia.island.outside.bypass")) return;
-        if (event.getFrom().getBlockX() == to.getBlockX() && event.getFrom().getBlockZ() == to.getBlockZ()) return;
+
+        final Location from = event.getFrom();
+        if (from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ()) return;
+
         int chunkX = to.getBlockX() >> 4;
         int chunkZ = to.getBlockZ() >> 4;
         Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
@@ -84,11 +87,12 @@ public class MoveEvent implements Listener {
 
         Location center = RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z());
         if (!RegionHelper.isBlockWithinSquare(center, to.getBlockX(), to.getBlockZ(), island.getSize())) {
-            player.teleportAsync(event.getFrom());
-            Component component = ConfigLoader.language.translate(player, "island.player.outside-island", Map.of());
-            if (component != null) {
-                player.sendActionBar(component);
-            }
+            player.teleportAsync(from, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                Component component = ConfigLoader.language.translate(player, "island.player.outside-island", Map.of());
+                if (component != null) {
+                    player.sendActionBar(component);
+                }
+            });
         }
     }
 }
