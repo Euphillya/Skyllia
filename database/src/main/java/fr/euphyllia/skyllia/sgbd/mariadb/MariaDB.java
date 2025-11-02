@@ -56,11 +56,11 @@ public class MariaDB implements DBConnect, DBInterface {
         this.pool.setPassword(mariaDBConfig.pass());
 
         // Configure the connection pool
-        this.pool.setMaximumPoolSize(mariaDBConfig.maxPool());
-        this.pool.setMinimumIdle(mariaDBConfig.minPool());
-        this.pool.setMaxLifetime(mariaDBConfig.maxLifeTime());
-        this.pool.setKeepaliveTime(mariaDBConfig.keepAliveTime());
-        this.pool.setConnectionTimeout(mariaDBConfig.timeOut());
+        this.pool.setMaximumPoolSize(mariaDBConfig.maxPool().intValue());
+        this.pool.setMinimumIdle(mariaDBConfig.minPool().intValue());
+        this.pool.setMaxLifetime(mariaDBConfig.maxLifeTime().longValue());
+        this.pool.setKeepaliveTime(mariaDBConfig.keepAliveTime().longValue());
+        this.pool.setConnectionTimeout(mariaDBConfig.timeOut().longValue());
 
         try (Connection connection = pool.getConnection()) {
             if (connection.isValid(2)) {

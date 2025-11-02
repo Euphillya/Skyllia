@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.sgbd.mariadb.execute;
+package fr.euphyllia.skyllia.sgbd.utils.sql.execute;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
@@ -15,12 +15,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Utility class for executing MariaDB queries with optional callbacks and custom work.
+ * Utility class for executing SQL queries with optional callbacks and custom work.
  */
-public class MariaDBExecute {
+public class SQLExecute {
 
     private static final String DATABASE_NOT_FOUND_ERROR = "Cannot get connection to the database";
-    private static final Logger logger = LogManager.getLogger(MariaDBExecute.class);
+    private static final Logger logger = LogManager.getLogger(SQLExecute.class);
 
     /**
      * Executes a SQL query without parameters, without callback, and without custom work.

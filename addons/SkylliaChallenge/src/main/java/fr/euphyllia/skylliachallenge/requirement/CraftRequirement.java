@@ -13,8 +13,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Locale;
 import java.util.Map;
 
-public record CraftRequirement(int requirementId, NamespacedKey challengeKey, Material material, int count, String itemName,
-        int customModelData, NamespacedKey itemModel) implements ChallengeRequirement {
+public record CraftRequirement(int requirementId, NamespacedKey challengeKey, Material material, int count,
+                               String itemName,
+                               int customModelData, NamespacedKey itemModel) implements ChallengeRequirement {
 
     public static final boolean HAS_ITEM_MODEL_METHOD;
 

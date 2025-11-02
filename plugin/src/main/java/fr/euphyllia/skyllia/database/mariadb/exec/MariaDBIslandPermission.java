@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +55,7 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
                     List.of(island.getId(), permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
                         completableFuture.complete(i != 0);
                     }, null);
@@ -69,7 +69,7 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
     public CompletableFuture<PermissionRoleIsland> getIslandPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
         CompletableFuture<PermissionRoleIsland> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         long flags = resultSet.getLong("flags");
@@ -93,7 +93,7 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
     public CompletableFuture<Long> getIslandGameRule(Island island) {
         CompletableFuture<Long> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_GAMERULES_ROLE.formatted(this.databaseName), List.of(
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_GAMERULES_ROLE.formatted(this.databaseName), List.of(
                     island.getId()
             ), resultSet -> {
                 try {
@@ -116,7 +116,7 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
     public CompletableFuture<Boolean> updateIslandGameRule(Island island, long value) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_GAMERULES_ISLANDS.formatted(this.databaseName), List.of(island.getId(), value, value), var1 -> {
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_GAMERULES_ISLANDS.formatted(this.databaseName), List.of(island.getId(), value, value), var1 -> {
                 completableFuture.complete(var1 != 0);
             }, null);
         } catch (DatabaseException e) {

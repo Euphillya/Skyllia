@@ -40,9 +40,8 @@ publishing {
             }
         }
         maven {
-            name = "excalia-repo"
-            url = uri("http://172.29.17.1:8081/repository/maven-releases/")
-            isAllowInsecureProtocol = true
+            name = "euphyllia-repo"
+            url = uri("https://repo.euphyllia.moe/repository/maven-releases/")
             credentials {
                 username = System.getenv("NEXUS_USERNAME") ?: ""
                 password = System.getenv("NEXUS_PASSWORD") ?: ""

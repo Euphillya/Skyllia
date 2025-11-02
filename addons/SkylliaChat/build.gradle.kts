@@ -6,7 +6,7 @@ group = "fr.euphyllia.skyllia";
 version = "2.0";
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
     compileOnly(project(":plugin"))
 }

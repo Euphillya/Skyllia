@@ -1,8 +1,8 @@
 package fr.euphyllia.skylliachallenge.storage;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.bukkit.NamespacedKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +128,7 @@ public class ProgressStoragePartial {
                     VALUES(?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE collected_amount = VALUES(collected_amount);
                     """.formatted(InitMariaDB.databaseName());
-            MariaDBExecute.executeQueryDML(
+            SQLExecute.executeQueryDML(
                     InitMariaDB.getPool(),
                     q,
                     List.of(key.islandId(), key.challengeId().asString(), key.requirementId(), newValue),
@@ -169,7 +169,7 @@ public class ProgressStoragePartial {
                                 DELETE FROM `%s`.`island_challenge_partial`
                                 WHERE island_id = ? AND challenge_id = ?;
                             """.formatted(InitMariaDB.databaseName());
-                    MariaDBExecute.executeQueryDML(
+                    SQLExecute.executeQueryDML(
                             InitMariaDB.getPool(),
                             q,
                             List.of(islandId, challengeId.asString()),
@@ -200,7 +200,7 @@ public class ProgressStoragePartial {
             if (useMaria()) {
                 String q = "SELECT island_id, challenge_id, requirement_id, collected_amount FROM `%s`.`island_challenge_partial`;"
                         .formatted(InitMariaDB.databaseName());
-                MariaDBExecute.executeQuery(InitMariaDB.getPool(), q, null, rs -> {
+                SQLExecute.executeQuery(InitMariaDB.getPool(), q, null, rs -> {
                     try {
                         while (rs != null && rs.next()) {
                             UUID islandId = UUID.fromString(rs.getString("island_id"));

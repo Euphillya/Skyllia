@@ -1,9 +1,9 @@
 package fr.euphyllia.skyllia.sgbd.mariadb;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.stream.AsciiStream;
-import fr.euphyllia.skyllia.sgbd.mariadb.stream.BinaryStream;
 import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.stream.AsciiStream;
+import fr.euphyllia.skyllia.sgbd.utils.stream.BinaryStream;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -16,17 +16,14 @@ import java.util.concurrent.CompletableFuture;
  * The {@code DatabaseLoader} class provides methods to load and close a MariaDB connection pool,
  * execute SQL queries, and handle prepared statements with various parameter types.
  */
-public class MariaDBLoader implements DatabaseLoader {
-
-    private final MariaDB mariaDB;
+public record MariaDBLoader(MariaDB mariaDB) implements DatabaseLoader {
 
     /**
      * Constructs a new {@code DatabaseLoader} with the specified {@link MariaDB} instance.
      *
      * @param mariaDB the {@link MariaDB} instance used to manage connections.
      */
-    public MariaDBLoader(MariaDB mariaDB) {
-        this.mariaDB = mariaDB;
+    public MariaDBLoader {
     }
 
     /**

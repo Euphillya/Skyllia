@@ -8,7 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,7 +73,7 @@ public class MariaDBIslandData extends IslandDataQuery {
     public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_OWNER.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_OWNER.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         Island island = this.constructIslandQuery(resultSet);
@@ -96,7 +96,7 @@ public class MariaDBIslandData extends IslandDataQuery {
     public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_PLAYER_ID.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_PLAYER_ID.formatted(this.databaseName, this.databaseName), List.of(playerId), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         Island island = this.constructIslandQuery(resultSet);
@@ -119,7 +119,7 @@ public class MariaDBIslandData extends IslandDataQuery {
     public CompletableFuture<Boolean> insertIslands(Island futurIsland) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName), List.of(
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_ISLANDS.formatted(this.databaseName, this.databaseName, this.databaseName), List.of(
                     futurIsland.getId(), 1, futurIsland.getSize(), futurIsland.getMaxMembers()
             ), i -> completableFuture.complete(i != 0), null);
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class MariaDBIslandData extends IslandDataQuery {
     public CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
         CompletableFuture<Island> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(islandId), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(islandId), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         completableFuture.complete(this.constructIslandQuery(resultSet));
@@ -161,7 +161,7 @@ public class MariaDBIslandData extends IslandDataQuery {
                 """.formatted(this.databaseName);
 
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), query, null, resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), query, null, resultSet -> {
                 CopyOnWriteArrayList<Island> list = new CopyOnWriteArrayList<>();
 
                 try {
@@ -205,7 +205,7 @@ public class MariaDBIslandData extends IslandDataQuery {
     public CompletableFuture<Integer> getMaxMemberInIsland(Island island) {
         CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_ISLAND_BY_ISLAND_ID.formatted(this.databaseName), List.of(island.getId()), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         int maxMembers = resultSet.getInt("max_members");

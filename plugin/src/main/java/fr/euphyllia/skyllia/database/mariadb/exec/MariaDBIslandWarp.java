@@ -4,7 +4,7 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.IslandWarpQuery;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +57,7 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
     public CompletableFuture<Boolean> updateWarp(UUID islandId, String warpName, Location location) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_WARPS.formatted(this.databaseName), List.of(
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_WARPS.formatted(this.databaseName), List.of(
                     islandId,
                     warpName,
                     location.getWorld().getName(),
@@ -82,7 +82,7 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
     public CompletableFuture<@Nullable WarpIsland> getWarpByName(UUID islandId, String warpName) {
         CompletableFuture<WarpIsland> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_WARP_NAME.formatted(this.databaseName, this.databaseName), List.of(islandId, warpName), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_WARP_NAME.formatted(this.databaseName, this.databaseName), List.of(islandId, warpName), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         String worldName = resultSet.getString("world_name");
@@ -116,7 +116,7 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
     public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getListWarp(UUID islandId) {
         CompletableFuture<CopyOnWriteArrayList<WarpIsland>> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_LIST_WARP.formatted(this.databaseName, this.databaseName), List.of(islandId), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_LIST_WARP.formatted(this.databaseName, this.databaseName), List.of(islandId), resultSet -> {
                 try {
                     CopyOnWriteArrayList<WarpIsland> warpIslands = new CopyOnWriteArrayList<>();
                     if (resultSet.next()) {
@@ -155,7 +155,7 @@ public class MariaDBIslandWarp extends IslandWarpQuery {
     public CompletableFuture<Boolean> deleteWarp(UUID islandId, String name) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_WARP.formatted(this.databaseName),
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_WARP.formatted(this.databaseName),
                     List.of(islandId, name), var1 -> completableFuture.complete(var1 != 0), null);
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

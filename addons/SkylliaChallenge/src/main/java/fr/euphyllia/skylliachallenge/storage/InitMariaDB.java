@@ -4,7 +4,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 
 public final class InitMariaDB {
     private static MariaDBLoader pool;
@@ -57,10 +57,10 @@ public final class InitMariaDB {
                     ON `%s`.`island_challenge_progress` (`last_completed_at`);
                 """.formatted(dbName);
 
-        MariaDBExecute.executeQuery(pool, create);
-        MariaDBExecute.executeQuery(pool, createPartial);
-        MariaDBExecute.executeQuery(pool, alterLastCompleted);
-        MariaDBExecute.executeQuery(pool, alterIndex);
+        SQLExecute.executeQuery(pool, create);
+        SQLExecute.executeQuery(pool, createPartial);
+        SQLExecute.executeQuery(pool, alterLastCompleted);
+        SQLExecute.executeQuery(pool, alterIndex);
 
         return true;
     }
