@@ -51,9 +51,9 @@ public class Postgres implements DBConnect, DBInterface {
 
         this.pool.setMaximumPoolSize(cfg.maxPool().intValue());
         this.pool.setMinimumIdle(cfg.minPool().intValue());
-        this.pool.setMaxLifetime(cfg.maxLifeTime().intValue());
-        this.pool.setKeepaliveTime(cfg.keepAliveTime().intValue());
-        this.pool.setConnectionTimeout(cfg.timeOut().intValue());
+        this.pool.setMaxLifetime(cfg.maxLifeTime().longValue());
+        this.pool.setKeepaliveTime(cfg.keepAliveTime().longValue());
+        this.pool.setConnectionTimeout(cfg.timeOut().longValue());
 
         try (Connection c = pool.getConnection()) {
             if (c.isValid(2)) {
