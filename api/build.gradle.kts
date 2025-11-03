@@ -32,17 +32,8 @@ publishing {
     }
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
-            credentials {
-                username = System.getenv("GITHUB_USERNAME") ?: ""
-                password = System.getenv("GITHUB_TOKEN") ?: ""
-            }
-        }
-        maven {
-            name = "excalia-repo"
-            url = uri("http://172.29.17.1:8081/repository/maven-releases/")
-            isAllowInsecureProtocol = true
+            name = "Euphyllia-Repo"
+            url = uri("https://repo.euphyllia.moe/repository/maven-releases/")
             credentials {
                 username = System.getenv("NEXUS_USERNAME") ?: ""
                 password = System.getenv("NEXUS_PASSWORD") ?: ""

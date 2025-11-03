@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 public class SetBiomeSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(SetBiomeSubCommand.class);
+    private final Stream<String> biomeNameList = Skyllia.getInstance().getInterneAPI().getBiomesImpl().getBiomeNameList().stream();
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
@@ -152,8 +153,6 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
         return true;
     }
-
-    private final Stream<String> biomeNameList = Skyllia.getInstance().getInterneAPI().getBiomesImpl().getBiomeNameList().stream();
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
