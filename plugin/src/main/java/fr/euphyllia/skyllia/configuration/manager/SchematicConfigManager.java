@@ -54,10 +54,11 @@ public class SchematicConfigManager implements ConfigManager {
             double height = getOrSetDefault(node, "height", 64.0, Double.class);
             boolean ignoreAirBlocks = getOrSetDefault(node, "ignore-air-blocks", true, Boolean.class);
             boolean copyEntities = getOrSetDefault(node, "copy-entities", true, Boolean.class);
+            String pluginName = getOrSetDefault(node, "plugin", "WorldEdit", String.class);
 
             schematicMap
                     .computeIfAbsent(islandType, k -> new HashMap<>())
-                    .put(worldName, new SchematicSetting(height, schematicFile, ignoreAirBlocks, copyEntities));
+                    .put(worldName, new SchematicSetting(height, schematicFile, ignoreAirBlocks, copyEntities, pluginName));
         }
 
         if (schematicMap.isEmpty()) {
@@ -131,7 +132,7 @@ public class SchematicConfigManager implements ConfigManager {
     public SchematicSetting getSchematicSetting(String islandType, String worldName) {
         return schematicMap
                 .getOrDefault(islandType, new HashMap<>())
-                .getOrDefault(worldName, new SchematicSetting(64.0, "./schematics/default.schem", true, true));
+                .getOrDefault(worldName, new SchematicSetting(64.0, "./schematics/default.schem", true, true, "Internal"));
     }
 
     public Map<String, Map<String, SchematicSetting>> getSchematics() {

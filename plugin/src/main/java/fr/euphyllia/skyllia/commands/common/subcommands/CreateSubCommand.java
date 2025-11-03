@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -100,7 +101,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         SchematicSetting schematicSetting = entry.getValue();
                         Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), islandAtomic.get().getPosition().x(), islandAtomic.get().getPosition().z());
                         centerPaste.setY(schematicSetting.height());
-                        this.pasteSchematic(plugin, islandAtomic.get(), centerPaste, schematicSetting);
+                        this.pasteSchematic(islandAtomic.get(), centerPaste, schematicSetting);
                         if (isFirstIteration) {
                             this.setFirstHome(islandAtomic.get(), centerPaste);
                             this.setPermissionsRole(islandAtomic.get());
@@ -185,9 +186,9 @@ public class CreateSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private void pasteSchematic(Skyllia plugin, Island island, Location center, SchematicSetting schematicWorld) {
+    private void pasteSchematic(Island island, Location center, SchematicSetting schematicWorld) {
         try {
-            Skyllia.getInstance().getInterneAPI().getWorldModifier().pasteSchematicWE(center, schematicWorld);
+            Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.fromString(schematicWorld.plugin())).pasteSchematicWE(center, schematicWorld);
         } catch (Exception e) {
             logger.error("An error occurred while pasting schematic for island {}: {}", island.getId(), e.getMessage());
             island.setDisable(true);

@@ -186,7 +186,7 @@ success = "Le membre n'est plus dans votre liste de confiance."
 failed = "Une erreur s'est produite lors du retrait de la personne de votre liste de confiance."
 args-missing = "La commande est incomplète : /skyllia untrust <player>"
 
-[admin]
+[island.admin]
 delete-args-missing = "Le nom du joueur est manquant."
 delete-no-confirm = "Ajoutez 'confirm' à la fin de la commande."
 setsize-args-missing = "Commande incomplète : /skylliadmin setsize <joueur/uuid> <nombre> confirm"
@@ -201,6 +201,13 @@ transfer-args-missing = "Commande incomplète : /skylliadmin transfer <ancien> <
 transfer-no-confirm = "Ajoutez 'confirm' à la fin."
 transfer-success = "La propriété a été transférée de %previous_owner% à %new_owner%."
 reload = "Les configurations ont été rechargés.."
+
+[island.admin.schematic]
+pos1-selected = "Position 1 sélectionnée."
+pos2-selected = "Position 2 sélectionnée."
+positions-not-set = "Les positions 1 et 2 doivent être définies avant d'enregistrer un schéma."
+save-success = "Le schéma a été enregistré avec succès sous le nom de %schematic
+save-failed = "Le schéma n'a pas pu être enregistré. Veuillez vérifier la console pour plus de détails."
 
 [misc]
 unknown-command = "<red>Commande inconnue."

@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.ExplosionEntityImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
@@ -10,11 +11,10 @@ import fr.euphyllia.skyllia.api.world.WorldModifier;
 import fr.euphyllia.skyllia.cache.CacheManager;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
-import fr.euphyllia.skyllia.hook.fastasyncworldedit.FastAsyncWorldEditUtils;
-import fr.euphyllia.skyllia.hook.worldedit.WorldEditUtils;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.managers.world.WorldModifierSelector;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
@@ -44,7 +44,7 @@ public class InterneAPI {
     private final Skyllia plugin;
     private final SkyblockManager skyblockManager;
     private final CacheManager cacheManager;
-    private final WorldModifier worldModifier;
+    private final WorldModifierSelector worldSelector;
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
     private BiomesImpl biomesImpl;
@@ -57,13 +57,11 @@ public class InterneAPI {
         this.setVersionNMS();
         this.skyblockManager = new SkyblockManager(this.plugin);
         this.cacheManager = new CacheManager(this.skyblockManager, this);
-        if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
-            this.worldModifier = new FastAsyncWorldEditUtils(plugin);
-        } else if (Bukkit.getPluginManager().getPlugin("WorldEdit") != null) {
-            this.worldModifier = new WorldEditUtils(plugin);
-        } else {
-            throw new IllegalArgumentException("FastAsyncWorldEdit or WorldEdit not found!");
-        }
+        this.worldSelector = new WorldModifierSelector(
+                this.plugin,
+                Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null,
+                Bukkit.getPluginManager().getPlugin("WorldEdit") != null
+        );
         loadAPI();
     }
 
@@ -283,7 +281,7 @@ public class InterneAPI {
         return this.explosionEntityImpl;
     }
 
-    public @NotNull WorldModifier getWorldModifier() {
-        return this.worldModifier;
+    public @NotNull WorldModifier getWorldModifier(SchematicPlugin requested) {
+        return this.worldSelector.resolve(requested);
     }
 }

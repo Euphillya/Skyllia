@@ -15,6 +15,6 @@ dependencies:
       join-classpath: false
     WorldEdit:
       load: OMIT
-      required: true
+      required: false
       join-classpath: true
 

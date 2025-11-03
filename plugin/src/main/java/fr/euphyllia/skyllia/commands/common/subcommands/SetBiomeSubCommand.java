@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 public class SetBiomeSubCommand implements SubCommandInterface {
 
@@ -120,11 +122,11 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             if (args.length >= 2 && args[1].equalsIgnoreCase("island")
                     && PermissionImp.hasPermission(player, "skyllia.island.command.biome_island")) {
 
-                changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier().changeBiomeIsland(world, biome, island, ConfigLoader.general.getRegionDistance());
+                changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).changeBiomeIsland(world, biome, island, ConfigLoader.general.getRegionDistance());
                 messageToSend = "island.biome.island-success";
 
             } else {
-                changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier().changeBiomeChunk(player.getLocation(), biome);
+                changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).changeBiomeChunk(player.getLocation(), biome);
                 messageToSend = "island.biome.chunk-success";
             }
 
@@ -151,12 +153,14 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         return true;
     }
 
+    private final Stream<String> biomeNameList = Skyllia.getInstance().getInterneAPI().getBiomesImpl().getBiomeNameList().stream();
+
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
 
-            return Skyllia.getPlugin(Skyllia.class).getInterneAPI().getBiomesImpl().getBiomeNameList().stream()
+            return biomeNameList
                     .filter(biome -> PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biome)))
                     .filter(biome -> biome.toLowerCase().startsWith(partial))
                     .toList();

@@ -1,5 +1,3 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     id("java-library")
     id("java")
@@ -21,6 +19,7 @@ dependencies {
     implementation(project(":plugin"))
     implementation(project(":hook:worldedit"))
     implementation(project(":hook:fastasyncworldedit"))
+    implementation(project(":hook:internalworld"))
 
     // NMS Version
     implementation(project(":nms:v1_20_R1"))
