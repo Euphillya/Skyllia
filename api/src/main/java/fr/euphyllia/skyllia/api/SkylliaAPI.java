@@ -239,7 +239,7 @@ public final class SkylliaAPI {
     }
 
     /**
-     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     * Do not use. Reserved for Skyllia internal NMS bridges.
      */
     @ApiStatus.Internal
     public static BiomesImpl getBiomesImpl() {
@@ -247,7 +247,7 @@ public final class SkylliaAPI {
     }
 
     /**
-     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     * Do not use. Reserved for Skyllia internal NMS bridges.
      */
     @ApiStatus.Internal
     public static WorldNMS getWorldNMS() {

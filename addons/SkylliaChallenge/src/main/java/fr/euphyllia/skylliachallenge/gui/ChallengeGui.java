@@ -144,14 +144,16 @@ public class ChallengeGui {
             }
 
 
-            gui.setItem(pos.row(), pos.column(), ItemBuilder.from(base).lore(lore).asGuiItem(e -> {
-                if (manager.complete(island, c, player)) {
-                    ConfigLoader.language.sendMessage(player, "addons.challenge.player.complete", Map.of(
-                            "%challenge_name%", c.getName()
-                    ));
-                }
-                Bukkit.getAsyncScheduler().runNow(plugin, task -> open(player, currentPage));
-            }));
+            gui.setItem(pos.row(), pos.column(),
+                    ItemBuilder.from(base).lore(lore).name(miniMessage.deserialize(c.getName()))
+                            .asGuiItem(e -> {
+                                if (manager.complete(island, c, player)) {
+                                    ConfigLoader.language.sendMessage(player, "addons.challenge.player.complete", Map.of(
+                                            "%challenge_name%", c.getName()
+                                    ));
+                                }
+                                Bukkit.getAsyncScheduler().runNow(plugin, task -> open(player, currentPage));
+                            }));
         }
 
         player.getScheduler().run(plugin, task -> gui.open(player), null);

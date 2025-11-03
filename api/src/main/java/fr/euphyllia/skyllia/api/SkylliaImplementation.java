@@ -153,13 +153,13 @@ public interface SkylliaImplementation {
     double @Nullable [] getAverageTickTime(Chunk chunk);
 
     /**
-     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     * Do not use. Reserved for Skyllia internal NMS bridges.
      */
     @ApiStatus.Internal
     BiomesImpl getBiomesImpl();
 
     /**
-     * @internal Do not use. Reserved for Skyllia internal NMS bridges.
+     * Do not use. Reserved for Skyllia internal NMS bridges.
      */
     @ApiStatus.Internal
     WorldNMS getWorldNMS();

@@ -186,7 +186,7 @@ success = "The member is no longer in your trusted list"
 failed = "An error occurred while removing the person from your trust list. Were they really trusted on your island?"
 args-missing = "The command is incomplete: /skyllia untrust <player>"
 
-[admin]
+[island.admin]
 delete-args-missing = "The player's name is missing."
 delete-no-confirm = "You must add 'confirm' to the end of your command"
 setsize-args-missing = "The command is incomplete: /skylliadmin setsize <player/uuid> <number> confirm"
@@ -201,6 +201,13 @@ transfer-args-missing = "The command is incomplete: /skylliadmin transfer <previ
 transfer-no-confirm = "You must add 'confirm' to the end of your command"
 transfer-success = "Ownership has been successfully transferred from %previous_owner% to %new_owner%."
 reload = "The configurations have been reloaded."
+
+[island.admin.schematic]
+pos1-selected = "Position 1 has been selected."
+pos2-selected = "Position 2 has been selected."
+positions-not-set = "Both positions must be set before saving the schematic."
+save-success = "The schematic has been saved successfully as %schematic_name%."
+save-failed = "An error occurred while saving the schematic."
 
 [misc]
 unknown-command = "This subcommand does not exist."

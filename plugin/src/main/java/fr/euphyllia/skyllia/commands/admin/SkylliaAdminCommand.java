@@ -50,7 +50,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
     }
 
     @Override
-    public Collection<String> suggest(CommandSourceStack sender, String[] args) {
+    public @NotNull Collection<String> suggest(CommandSourceStack sender, String[] args) {
         Set<String> commands = registry.getCommandMap().keySet();
         if (args.length == 0) {
             return commands;
@@ -75,5 +75,6 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new ReloadSubCommands(), "reload");
         registry.registerSubCommand(new SetMaxMembersSubCommands(), "set_max_member", "setmaxmembers");
         registry.registerSubCommand(new SetSizeSubCommands(), "set_size", "setsize");
+        registry.registerSubCommand(new SchematicSubCommands(), "schematic", "schem");
     }
 }

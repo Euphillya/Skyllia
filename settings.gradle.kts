@@ -24,3 +24,4 @@ include("addons:SkylliaChallenge")
 // Hook
 include("hook:worldedit")
 include("hook:fastasyncworldedit")
+include("hook:internalworld")

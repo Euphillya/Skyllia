@@ -32,15 +32,7 @@ publishing {
     }
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
-            credentials {
-                username = System.getenv("GITHUB_USERNAME") ?: ""
-                password = System.getenv("GITHUB_TOKEN") ?: ""
-            }
-        }
-        maven {
-            name = "euphyllia-repo"
+            name = "Euphyllia-Repo"
             url = uri("https://repo.euphyllia.moe/repository/maven-releases/")
             credentials {
                 username = System.getenv("NEXUS_USERNAME") ?: ""

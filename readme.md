@@ -19,7 +19,7 @@ functionality, and it's not my intention at all that there should be external fe
 - Java 21
 - [WorldEdit-Folia](https://github.com/Euphillya/WorldEdit-Folia/actions)
   or [FAWE](https://ci.athion.net/job/FastAsyncWorldEdit/)
-  or [WorldEdit](https://modrinth.com/plugin/worldedit/versions?l=bukkit))
+  or [WorldEdit](https://modrinth.com/plugin/worldedit/versions?l=bukkit)) (recommended for island generation).
 
 ## Installation
 
@@ -32,8 +32,8 @@ functionality, and it's not my intention at all that there should be external fe
 
 ## Download Plugin
 
-- [Development Builds](https://github.com/Euphillya/Skyllia/actions)
-- [Release Versions](https://modrinth.com/plugin/skyllia)
+- [Release Versions on Modrinth](https://modrinth.com/plugin/skyllia)
+- [Release Versions on GitHub](https://github.com/Euphillya/Skyllia/releases)
 
 ## Configuration (Need update)
 
@@ -49,16 +49,14 @@ To add Skyllia API to your project, use the following configuration:
 ```groovy
 repositories {
     maven {
-        url = uri("https://maven.pkg.github.com/Euphillya/Skyllia")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
-        }
+        url = uri("https://repo.euphyllia.moe/repository/maven-public/")
     }
 }
 
 dependencies {
-    compileOnly("fr.euphyllia.skyllia:api:1.7")
+    compileOnly("fr.euphyllia.skyllia:api:[VERSION]")
+    compileOnly("fr.euphyllia.skyllia:plugin:[VERSION]")
+    compileOnly("fr.euphyllia.skyllia:database:[VERSION]")
 }
 ```
 
@@ -84,11 +82,11 @@ the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-
 
 ## Compatible Software
 
-|                   Software                    |    Version    |
-|:---------------------------------------------:|:-------------:|
-| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.9 |
-|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.9 |
-|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.9  |
+|                   Software                    |    Version     |
+|:---------------------------------------------:|:--------------:|
+| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.10 |
+|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.10 |
+|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.10  |
 
 ## Island Generation
 
@@ -99,6 +97,10 @@ Each island is generated in a single region file, with configurable region dista
 - [SkylliaOre](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaOre) by Euphyllia (Ore Generator)
 - [Insight Skyllia](https://github.com/Euphillya/Skyllia/tree/dev/addons/InsightsSkyllia) by Euphyllia
 - [PAPI Skyllia](https://github.com/Euphillya/Skyllia/tree/dev/addons/PapiSkyllia) by Euphyllia
+- [SkylliaChat](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaChat) by Euphyllia (Chat Integration)
+- [SkylliaBank](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaBank) by Euphyllia (Island Bank System)
+- [SkylliaChallenge](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaChallenge) by Euphyllia (Challenges
+  System)
 
 ## Contribution
 
@@ -119,9 +121,3 @@ This project is licensed under the MIT License. See the [LICENCE](LICENSE) file 
 For more information and detailed documentation, please refer to the [Wiki](https://github.com/Euphillya/Skyllia/wiki).
 
 Feel free to contribute, open issues, or join us on Discord for support and discussions!
-
-## Diagram
-
-<div align="center">
-    <img src="diagram_skyllia.png" alt="Skyllia Diagram">
-</div>
