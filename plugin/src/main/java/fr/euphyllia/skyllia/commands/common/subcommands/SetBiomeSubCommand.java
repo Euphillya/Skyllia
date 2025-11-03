@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 public class SetBiomeSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(SetBiomeSubCommand.class);
-    private final Stream<String> biomeNameList = Skyllia.getInstance().getInterneAPI().getBiomesImpl().getBiomeNameList().stream();
+    private final List<String> biomeNameList = Skyllia.getInstance().getInterneAPI().getBiomesImpl().getBiomeNameList();
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
@@ -159,7 +159,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
 
-            return biomeNameList
+            return biomeNameList.stream()
                     .filter(biome -> PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biome)))
                     .filter(biome -> biome.toLowerCase().startsWith(partial))
                     .toList();
