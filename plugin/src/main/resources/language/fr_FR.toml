@@ -306,6 +306,9 @@ previous = "<!italic><gray>Précédent</gray>"
 next = "<!italic><gray>Suivant</gray>"
 cooldown = "<!italic>⏳ Cooldown restant: %time_left%"
 
+[addons.challenge.display.requirement]
+count = "<!italic><gray>Objectif %collected%/%required% %met%</gray>"
+
 [addons.challenge.requirement.potion]
 display = "<!italic><gray>- Avoir l'effet %potion_name% (variante %potion_data%) x %amount%.</gray>"
 
