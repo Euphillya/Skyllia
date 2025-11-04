@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public record FishRequirement(int requirementId, NamespacedKey challengeKey, EntityType entityType,
-                              int amount) implements ChallengeRequirement {
+                              int count) implements ChallengeRequirement {
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
      *
@@ -24,7 +24,7 @@ public record FishRequirement(int requirementId, NamespacedKey challengeKey, Ent
     @Override
     public boolean isMet(Player player, Island island) {
         long collected = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
-        return collected >= amount;
+        return collected >= count;
     }
 
     /**
@@ -40,7 +40,7 @@ public record FishRequirement(int requirementId, NamespacedKey challengeKey, Ent
     @Override
     public Component getDisplay(Locale locale) {
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.fishing.display", Map.of(
-                "%amount%", String.valueOf(amount),
+                "%amount%", String.valueOf(count),
                 "%entity_type%", entityType.name()
         ), false);
     }

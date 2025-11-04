@@ -154,7 +154,7 @@ public final class ChallengeYamlLoader {
                     PotionType p = PotionType.valueOf(sp[1].toUpperCase(Locale.ROOT));
                     int data = Integer.parseInt(sp[2]);
                     int amount = Integer.parseInt(sp[3]);
-                    result.add(new PotionRequirement(p, data, amount));
+                    result.add(new PotionRequirement(idx, challengeKey, p, data, amount));
                 }
                 if (head.startsWith("BLOCKBREAK:")) {
                     Material material = Material.matchMaterial(head.substring("BLOCKBREAK:".length()));
@@ -194,7 +194,7 @@ public final class ChallengeYamlLoader {
                 if (hasVault) {
                     if (head.startsWith("ECO:")) {
                         double amount = Double.parseDouble(head.substring("ECO:".length()));
-                        result.add(new EcoRequirement(amount));
+                        result.add(new EcoRequirement(idx, challengeKey, amount));
                     }
                 }
             } catch (Exception e) {

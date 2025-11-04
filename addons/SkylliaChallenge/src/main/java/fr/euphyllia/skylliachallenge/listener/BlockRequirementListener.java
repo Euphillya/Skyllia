@@ -21,7 +21,6 @@ public class BlockRequirementListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-
         final Player player = event.getPlayer();
         final Block block = event.getBlock();
         final BlockState state = block.getState();

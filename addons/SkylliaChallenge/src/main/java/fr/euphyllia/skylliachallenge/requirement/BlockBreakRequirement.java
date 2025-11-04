@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public record BlockBreakRequirement(int requirementId, NamespacedKey challengeKey, Material material,
-                                    int amount, String blockName) implements ChallengeRequirement {
+                                    int count, String blockName) implements ChallengeRequirement {
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
      *
@@ -24,7 +24,7 @@ public record BlockBreakRequirement(int requirementId, NamespacedKey challengeKe
     @Override
     public boolean isMet(Player player, Island island) {
         long collected = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
-        return collected >= amount;
+        return collected >= count;
     }
 
     /**
@@ -40,7 +40,7 @@ public record BlockBreakRequirement(int requirementId, NamespacedKey challengeKe
     @Override
     public Component getDisplay(Locale locale) {
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.block_break.display", Map.of(
-                "%amount%", String.valueOf(amount),
+                "%amount%", String.valueOf(count),
                 "%block_name%", blockName,
                 "%material%", material.name()
         ), false);

@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public record PlayerConsumeRequirement(int requirementId, NamespacedKey challengeKey, Material material,
-                                       int amount) implements ChallengeRequirement {
+                                       int count) implements ChallengeRequirement {
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
      *
@@ -24,7 +24,7 @@ public record PlayerConsumeRequirement(int requirementId, NamespacedKey challeng
     @Override
     public boolean isMet(Player player, Island island) {
         long collected = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
-        return collected >= amount;
+        return collected >= count;
     }
 
     /**
@@ -40,7 +40,7 @@ public record PlayerConsumeRequirement(int requirementId, NamespacedKey challeng
     @Override
     public Component getDisplay(Locale locale) {
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.player_consume.display", Map.of(
-                "%amount%", String.valueOf(amount),
+                "%amount%", String.valueOf(count),
                 "%material%", material.name()
         ), false);
     }

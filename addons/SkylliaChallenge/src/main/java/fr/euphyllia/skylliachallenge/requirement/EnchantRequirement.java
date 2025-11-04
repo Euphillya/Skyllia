@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.Locale;
 import java.util.Map;
 
-public record EnchantRequirement(int requirementId, NamespacedKey challengeKey, Enchantment enchantment, int level, int amount,
+public record EnchantRequirement(int requirementId, NamespacedKey challengeKey, Enchantment enchantment, int level, int count,
                                  boolean strict) implements ChallengeRequirement {
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
@@ -24,7 +24,7 @@ public record EnchantRequirement(int requirementId, NamespacedKey challengeKey, 
     @Override
     public boolean isMet(Player player, Island island) {
         long collected = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
-        return collected >= amount;
+        return collected >= count;
     }
 
     /**
@@ -42,7 +42,7 @@ public record EnchantRequirement(int requirementId, NamespacedKey challengeKey, 
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.enchant.display", Map.of(
                 "%enchantment_name%", enchantment.getKey().getKey(),
                 "%enchantment_level%", String.valueOf(level),
-                "%amount%", String.valueOf(amount)
+                "%amount%", String.valueOf(count)
         ), false);
     }
 
