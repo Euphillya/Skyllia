@@ -8,6 +8,7 @@ import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.requirement.BlockBreakRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
@@ -24,6 +25,7 @@ public class BlockRequirementListener implements Listener {
         final Player player = event.getPlayer();
         final Block block = event.getBlock();
         final BlockState state = block.getState();
+        final Material material = block.getType();
         if (state instanceof Ageable ageable) {
             if (ageable.getAge() < ageable.getMaximumAge()) {
                 return;
@@ -44,7 +46,7 @@ public class BlockRequirementListener implements Listener {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof BlockBreakRequirement bbr) {
-                        if (!bbr.getMaterial().equals(block.getType())) continue;
+                        if (!bbr.getMaterial().equals(material)) continue;
                         ProgressStoragePartial.addPartial(island.getId(), challenge.getId(), bbr.requirementId(), finalDropSize);
                     }
                 }
