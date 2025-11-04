@@ -326,3 +326,7 @@ display = "<!italic><gray>- Have %amount% in your island account.</gray>"
 
 [addons.challenge.requirement.craft]
 display = "<!italic><gray>- Craft %amount% of %item_name%</gray>"
+
+[addons.challenge.reward.bank]
+success = "<green>You have received %amount% in your island account as a reward for completing the %challenge_name% challenge.</green>"
+failure = "<red>An error occurred while adding %amount% to the island's account as a reward for the challenge %challenge_name%.</red>"

@@ -29,7 +29,7 @@ public class SkylliaBankExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public List<String> getPlaceholders() {
+    public @NotNull List<String> getPlaceholders() {
         return List.of(
                 "balance",
                 "balance_formatted"

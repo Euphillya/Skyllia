@@ -5,6 +5,7 @@ import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.api.reward.ChallengeReward;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.requirement.*;
+import fr.euphyllia.skylliachallenge.reward.BankReward;
 import fr.euphyllia.skylliachallenge.reward.CommandReward;
 import fr.euphyllia.skylliachallenge.reward.ItemReward;
 import net.kyori.adventure.text.Component;
@@ -189,6 +190,9 @@ public final class ChallengeYamlLoader {
                 } else if (head.startsWith("CMD:")) {
                     String cmd = line.substring("CMD:".length()).trim();
                     list.add(new CommandReward(cmd));
+                } else if (head.startsWith("BANK:") && hasSkylliaBank) {
+                    double amount = Double.parseDouble(head.substring("BANK:".length()).trim());
+                    list.add(new BankReward(amount));
                 }
             } catch (Exception ignored) {
             }

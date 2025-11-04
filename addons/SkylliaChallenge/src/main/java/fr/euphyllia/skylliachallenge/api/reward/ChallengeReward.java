@@ -2,6 +2,7 @@ package fr.euphyllia.skylliachallenge.api.reward;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
+import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -29,10 +30,11 @@ public interface ChallengeReward {
     /**
      * Executes the reward logic for the given player and island.
      *
-     * @param player the player receiving the reward (never {@code null})
-     * @param island the island associated with the reward context (never {@code null})
+     * @param player    the player receiving the reward (never {@code null})
+     * @param island    the island associated with the reward context (never {@code null})
+     * @param challenge the challenge that was completed to earn this reward (never {@code null})
      */
-    void apply(Player player, Island island);
+    void apply(Player player, Island island, Challenge challenge);
 
     /**
      * Returns a human-readable description of this reward.

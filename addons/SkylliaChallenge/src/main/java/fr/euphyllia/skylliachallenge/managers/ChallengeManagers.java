@@ -189,7 +189,7 @@ public class ChallengeManagers {
 
         if (challenge.getRewards() != null) {
             for (ChallengeReward reward : challenge.getRewards()) {
-                reward.apply(actor, island);
+                reward.apply(actor, island, challenge);
             }
         }
 
