@@ -39,9 +39,10 @@ public record EnchantRequirement(int requirementId, NamespacedKey challengeKey, 
      */
     @Override
     public Component getDisplay(Locale locale) {
-        return ConfigLoader.language.translate(locale, "addons.challenge.requirement.player_consume.display", Map.of(
-                "%enchantment%", enchantment.getKey().getKey(),
-                "%level%", String.valueOf(level)
+        return ConfigLoader.language.translate(locale, "addons.challenge.requirement.enchant.display", Map.of(
+                "%enchantment_name%", enchantment.getKey().getKey(),
+                "%enchantment_level%", String.valueOf(level),
+                "%amount%", String.valueOf(amount)
         ), false);
     }
 

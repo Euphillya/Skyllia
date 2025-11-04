@@ -40,6 +40,7 @@ public record KillEntityRequirement(int requirementId, NamespacedKey challengeKe
     @Override
     public Component getDisplay(Locale locale) {
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.kill_entity.display", Map.of(
+                "%amount%", String.valueOf(count),
                 "%entity_type%", entityType.name()
         ), false);
     }
