@@ -2,7 +2,6 @@ package fr.euphyllia.skylliachallenge.listener;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
@@ -16,13 +15,14 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 public class BlockRequirementListener implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
-    public void onBlockBreak(BlockBreakEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final Location location = event.getBlock().getLocation();
         final int chunkX = location.getBlockX() >> 4;
@@ -36,12 +36,6 @@ public class BlockRequirementListener implements Listener {
             }
         }
 
-        int dropSize = event.getBlock().getDrops(player.getInventory().getItemInMainHand()).size();
-        if (dropSize == 0) {
-            dropSize = 1;
-        }
-
-        int finalDropSize = dropSize;
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
             Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
             if (playerIsland == null) return;
@@ -55,7 +49,7 @@ public class BlockRequirementListener implements Listener {
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof BlockBreakRequirement bbr) {
                         if (!bbr.getMaterial().equals(material)) continue;
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), bbr.requirementId(), finalDropSize);
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), bbr.requirementId(), 1);
                     }
                 }
             }
