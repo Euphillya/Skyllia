@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class CraftRequirementListener implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftItem(final CraftItemEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
@@ -69,7 +70,7 @@ public class CraftRequirementListener implements Listener {
                                     continue;
                             }
                         }
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), cr.requirementId(), result.getAmount());
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), cr.requirementId(), 1);
                     }
                 }
             }

@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 public class PlayerEnchantRequirementListener implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerEnchant(final EnchantItemEvent event) {
         final Player player = event.getEnchanter();
         final @NotNull Map<Enchantment, Integer> enchants = event.getEnchantsToAdd();
