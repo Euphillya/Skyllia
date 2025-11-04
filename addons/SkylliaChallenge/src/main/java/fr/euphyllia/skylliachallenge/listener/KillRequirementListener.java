@@ -8,6 +8,7 @@ import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.requirement.KillEntityRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -25,16 +26,24 @@ public class KillRequirementListener implements Listener {
         final EntityType entityType = entity.getType();
         if (player == null) return;
 
+        final Location location = player.getLocation();
+        final int chunkX = location.getBlockX() >> 4;
+        final int chunkZ = location.getBlockZ() >> 4;
+
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
-            if (island == null) return;
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            if (playerIsland == null) return;
+
+            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+            if (islandAtLocation == null) return;
+            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof KillEntityRequirement ker) {
                         if (!ker.entityType().equals(entityType)) continue;
-                        ProgressStoragePartial.addPartial(island.getId(), challenge.getId(), ker.requirementId(), 1);
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
                     }
                 }
             }

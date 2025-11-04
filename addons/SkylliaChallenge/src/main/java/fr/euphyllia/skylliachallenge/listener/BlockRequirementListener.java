@@ -2,12 +2,14 @@ package fr.euphyllia.skylliachallenge.listener;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.requirement.BlockBreakRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -22,6 +24,9 @@ public class BlockRequirementListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         final Player player = event.getPlayer();
+        final Location location = event.getBlock().getLocation();
+        final int chunkX = location.getBlockX() >> 4;
+        final int chunkZ = location.getBlockZ() >> 4;
         final Block block = event.getBlock();
         final BlockState state = block.getState();
         final Material material = block.getType();
@@ -38,15 +43,19 @@ public class BlockRequirementListener implements Listener {
 
         int finalDropSize = dropSize;
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
-            if (island == null) return;
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            if (playerIsland == null) return;
+
+            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+            if (islandAtLocation == null) return;
+            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof BlockBreakRequirement bbr) {
                         if (!bbr.getMaterial().equals(material)) continue;
-                        ProgressStoragePartial.addPartial(island.getId(), challenge.getId(), bbr.requirementId(), finalDropSize);
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), bbr.requirementId(), finalDropSize);
                     }
                 }
             }

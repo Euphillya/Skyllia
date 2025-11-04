@@ -8,6 +8,7 @@ import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.requirement.PlayerConsumeRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,16 +23,24 @@ public class PlayerConsumeRequirementListener implements Listener {
         final Player player = event.getPlayer();
         final Material material = event.getItem().getType();
 
+        final Location location = player.getLocation();
+        final int chunkX = location.getBlockX() >> 4;
+        final int chunkZ = location.getBlockZ() >> 4;
+
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
-            if (island == null) return;
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            if (playerIsland == null) return;
+
+            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+            if (islandAtLocation == null) return;
+            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof PlayerConsumeRequirement ker) {
                         if (!ker.getMaterial().equals(material)) continue;
-                        ProgressStoragePartial.addPartial(island.getId(), challenge.getId(), ker.requirementId(), 1);
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
                     }
                 }
             }

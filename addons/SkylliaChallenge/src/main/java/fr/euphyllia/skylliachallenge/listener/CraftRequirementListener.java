@@ -8,6 +8,7 @@ import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.requirement.CraftRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -41,9 +42,17 @@ public class CraftRequirementListener implements Listener {
             }
         }
 
+        final Location location = player.getLocation();
+        final int chunkX = location.getBlockX() >> 4;
+        final int chunkZ = location.getBlockZ() >> 4;
+
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
-            if (island == null) return;
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            if (playerIsland == null) return;
+
+            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+            if (islandAtLocation == null) return;
+            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
@@ -60,7 +69,7 @@ public class CraftRequirementListener implements Listener {
                                     continue;
                             }
                         }
-                        ProgressStoragePartial.addPartial(island.getId(), challenge.getId(), cr.requirementId(), result.getAmount());
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), cr.requirementId(), result.getAmount());
                     }
                 }
             }
