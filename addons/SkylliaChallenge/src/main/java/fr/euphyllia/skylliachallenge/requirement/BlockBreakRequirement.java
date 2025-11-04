@@ -1,0 +1,52 @@
+package fr.euphyllia.skylliachallenge.requirement;
+
+import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
+import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+
+import java.util.Locale;
+import java.util.Map;
+
+public record BlockBreakRequirement(int requirementId, NamespacedKey challengeKey, Material material,
+                                    int amount, String blockName) implements ChallengeRequirement {
+    /**
+     * Checks whether this requirement is currently fulfilled by the given player and island.
+     *
+     * @param player the player attempting the challenge (never {@code null})
+     * @param island the island associated with the challenge (never {@code null})
+     * @return {@code true} if the requirement is met and ready to be validated
+     */
+    @Override
+    public boolean isMet(Player player, Island island) {
+        long collected = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
+        return collected >= amount;
+    }
+
+    /**
+     * Returns a human-readable description of this requirement.
+     * <p>
+     * Used in GUIs and lore displays to inform the player about what is needed.
+     * For example: {@code "Avoir 64 Blé"} or {@code "Posséder 5000$ en banque"}.
+     * </p>
+     *
+     * @param locale the locale to use for translation
+     * @return a short displayable string
+     */
+    @Override
+    public Component getDisplay(Locale locale) {
+        return ConfigLoader.language.translate(locale, "addons.challenge.requirement.block_break.display", Map.of(
+                "%amount%", String.valueOf(amount),
+                "%block_name%", blockName,
+                "%material%", material.name()
+        ), false);
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+}

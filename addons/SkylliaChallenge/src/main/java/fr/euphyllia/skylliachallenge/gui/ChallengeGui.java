@@ -88,6 +88,20 @@ public class ChallengeGui {
                             });
                         }));
 
+        // Other Navigation Item
+        if (gs.other.enabled()) {
+            gui.setItem(gs.other.row(), gs.other.column(),
+                ItemBuilder.from(gs.next.toItemStack())
+                        .name(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.next", Map.of(), false))
+                        .asGuiItem(e -> {
+                            Bukkit.getGlobalRegionScheduler().execute(plugin, () -> {
+                                for (String command : gs.other.commands()) {
+                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+                                }
+                            });
+                        }));
+        }
+
         for (Challenge c : manager.getChallenges()) {
             if (!c.isShowInGUI()) continue;
             Challenge.PositionGUI pos = c.getPositionGUI();
@@ -163,10 +177,10 @@ public class ChallengeGui {
     private void countRequirement(Locale locale, List<Component> lore, long collected, int count, Component display) {
         boolean met = collected >= (long) count;
         Component loreCount = ConfigLoader.language.translate(locale, "addons.challenge.display.requirement.count", Map.of(
-                "%display%", miniMessage.serialize(display),
-                "%collected%", NF.format(collected),
-                "%required%", NF.format(count),
-                "%met%", met ? "✓" : "✗"
+                        "%display%", miniMessage.serialize(display),
+                        "%collected%", NF.format(collected),
+                        "%required%", NF.format(count),
+                        "%met%", met ? "✓" : "✗"
                 ),
                 false);
         lore.add(loreCount);
