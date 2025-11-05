@@ -180,10 +180,9 @@ public final class ChallengeYamlLoader {
                     result.add(new KillEntityRequirement(idx, challengeKey, entityType, count));
                 }
                 if (head.startsWith("CONSUME:")) {
-                    Material material = Material.matchMaterial(head.substring("CONSUME:".length()));
-                    if (material == null) continue;
+                    String materialRaw = head.substring("CONSUME:".length());
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
-                    result.add(new PlayerConsumeRequirement(idx, challengeKey, material, count));
+                    result.add(new PlayerConsumeRequirement(idx, challengeKey, materialRaw, count));
                 }
                 if (hasSkylliaBank) {
                     if (head.startsWith("BANK:")) {
