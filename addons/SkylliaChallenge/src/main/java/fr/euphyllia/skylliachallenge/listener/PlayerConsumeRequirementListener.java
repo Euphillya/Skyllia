@@ -51,13 +51,15 @@ public class PlayerConsumeRequirementListener implements Listener {
                     if (req instanceof PlayerConsumeRequirement ker) {
                         if (ker.isPotionRequirement()) {
                             for (String potionConsumed : potionsConsumed) {
-                                if (ker.isPotion(ker.parsePotion(),  potionConsumed)) {
+                                if (ker.isPotion(ker.parsePotion(), potionConsumed)) {
                                     ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
                                 }
                             }
                             return;
                         }
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
+                        if (ker.getMaterial().equals(itemStack.getType().name())) {
+                            ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
+                        }
                     }
                 }
             }
