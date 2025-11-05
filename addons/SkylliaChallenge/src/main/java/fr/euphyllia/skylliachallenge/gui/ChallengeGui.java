@@ -90,7 +90,7 @@ public class ChallengeGui {
         // Other Navigation Item
         if (gs.other.enabled()) {
             gui.setItem(gs.other.row(), gs.other.column(),
-                ItemBuilder.from(gs.next.toItemStack())
+                ItemBuilder.from(gs.other.toItemStack())
                         .name(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.next", Map.of(), false))
                         .asGuiItem(e -> {
                             Bukkit.getGlobalRegionScheduler().execute(plugin, () -> {
