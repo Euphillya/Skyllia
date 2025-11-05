@@ -38,10 +38,10 @@ public record PlayerConsumeRequirement(int requirementId, NamespacedKey challeng
      */
     @Override
     public Component getDisplay(Locale locale) {
-        String material = material().startsWith("potion[") ? parsePotion() : this.material;
+        String displayMaterial = material().startsWith("potion[") ? parsePotion() : this.material;
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.player_consume.display", Map.of(
                 "%amount%", String.valueOf(count),
-                "%material%", material
+                "%material%", displayMaterial
         ), false);
     }
 
