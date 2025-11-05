@@ -128,43 +128,55 @@ public class ChallengeGui {
             if (c.getRequirements() != null && !c.getRequirements().isEmpty()) {
                 lore.add(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.requirements", Map.of(), false));
                 for (ChallengeRequirement req : c.getRequirements()) {
-                    if (req instanceof ItemRequirement ir) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
-                        countRequirement(player.locale(), lore, collected, ir.count(), ir.getDisplay(player.locale()));
-                    } else if (req instanceof CraftRequirement cr) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), cr.requirementId());
-                        countRequirement(player.locale(), lore, collected, cr.count(), cr.getDisplay(player.locale()));
-                    } else if (req instanceof BankRequirement br) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), br.requirementId());
-                        countRequirement(player.locale(), lore, collected, (int) br.amount(), br.getDisplay(player.locale()));
-                    } else if (req instanceof BlockBreakRequirement bbr) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), bbr.requirementId());
-                        countRequirement(player.locale(), lore, collected, bbr.count(), bbr.getDisplay(player.locale()));
-                    } else if (req instanceof EcoRequirement er) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), er.requirementId());
-                        countRequirement(player.locale(), lore, collected, er.count(), er.getDisplay(player.locale()));
-                    } else if (req instanceof EnchantRequirement ee) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ee.requirementId());
-                        countRequirement(player.locale(), lore, collected, ee.count(), ee.getDisplay(player.locale()));
-                    } else if (req instanceof FishRequirement fr) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), fr.requirementId());
-                        countRequirement(player.locale(), lore, collected, fr.count(), fr.getDisplay(player.locale()));
-                    } else if (req instanceof KillEntityRequirement ker) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ker.requirementId());
-                        countRequirement(player.locale(), lore, collected, ker.count(), ker.getDisplay(player.locale()));
-                    } else if (req instanceof PlayerConsumeRequirement pcr) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), pcr.requirementId());
-                        countRequirement(player.locale(), lore, collected, pcr.count(), pcr.getDisplay(player.locale()));
-                    } else if (req instanceof PotionRequirement pr) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), pr.requirementId());
-                        countRequirement(player.locale(), lore, collected, pr.count(), pr.getDisplay(player.locale()));
-                    } else {
-                        boolean met = req.isMet(player, island);
-                        Component component = Component.text("")
-                                .append(req.getDisplay(player.locale()));
+                    switch (req) {
+                        case ItemRequirement ir -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
+                            countRequirement(player.locale(), lore, collected, ir.count(), ir.getDisplay(player.locale()));
+                        }
+                        case CraftRequirement cr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), cr.requirementId());
+                            countRequirement(player.locale(), lore, collected, cr.count(), cr.getDisplay(player.locale()));
+                        }
+                        case BankRequirement br -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), br.requirementId());
+                            countRequirement(player.locale(), lore, collected, (int) br.amount(), br.getDisplay(player.locale()));
+                        }
+                        case BlockBreakRequirement bbr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), bbr.requirementId());
+                            countRequirement(player.locale(), lore, collected, bbr.count(), bbr.getDisplay(player.locale()));
+                        }
+                        case EcoRequirement er -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), er.requirementId());
+                            countRequirement(player.locale(), lore, collected, er.count(), er.getDisplay(player.locale()));
+                        }
+                        case EnchantRequirement ee -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ee.requirementId());
+                            countRequirement(player.locale(), lore, collected, ee.count(), ee.getDisplay(player.locale()));
+                        }
+                        case FishRequirement fr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), fr.requirementId());
+                            countRequirement(player.locale(), lore, collected, fr.count(), fr.getDisplay(player.locale()));
+                        }
+                        case KillEntityRequirement ker -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ker.requirementId());
+                            countRequirement(player.locale(), lore, collected, ker.count(), ker.getDisplay(player.locale()));
+                        }
+                        case PlayerConsumeRequirement pcr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), pcr.requirementId());
+                            countRequirement(player.locale(), lore, collected, pcr.count(), pcr.getDisplay(player.locale()));
+                        }
+                        case PotionRequirement pr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), pr.requirementId());
+                            countRequirement(player.locale(), lore, collected, pr.count(), pr.getDisplay(player.locale()));
+                        }
+                        default -> {
+                            boolean met = req.isMet(player, island);
+                            Component component = Component.text("")
+                                    .append(req.getDisplay(player.locale()));
 
-                        if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
-                        lore.add(component);
+                            if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
+                            lore.add(component);
+                        }
                     }
                 }
             }
