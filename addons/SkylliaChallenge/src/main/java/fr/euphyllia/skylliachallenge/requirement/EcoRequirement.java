@@ -12,7 +12,8 @@ import org.bukkit.entity.Player;
 import java.util.Locale;
 import java.util.Map;
 
-public record EcoRequirement(int requirementId, NamespacedKey challengeKey, double count) implements ChallengeRequirement {
+public record EcoRequirement(int requirementId, NamespacedKey challengeKey,
+                             double count) implements ChallengeRequirement {
 
     @Override
     public boolean isMet(Player player, Island island) {

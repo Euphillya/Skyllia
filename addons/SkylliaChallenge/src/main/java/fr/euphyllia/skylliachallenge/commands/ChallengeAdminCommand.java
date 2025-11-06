@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.List;
 
 public record ChallengeAdminCommand(SkylliaChallenge plugin) implements SubCommandInterface {

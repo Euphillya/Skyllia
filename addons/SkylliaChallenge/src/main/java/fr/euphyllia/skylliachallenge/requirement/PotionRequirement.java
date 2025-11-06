@@ -15,7 +15,8 @@ import java.util.Map;
 /**
  * @param count how many active effects of this type (usually 1)
  */
-public record PotionRequirement(int requirementId, NamespacedKey challengeKey, PotionType potionType, int data, int count) implements ChallengeRequirement {
+public record PotionRequirement(int requirementId, NamespacedKey challengeKey, PotionType potionType, int data,
+                                int count) implements ChallengeRequirement {
 
     @Override
     public boolean isMet(Player player, Island island) {

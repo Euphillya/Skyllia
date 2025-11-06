@@ -26,6 +26,23 @@ import java.util.List;
 
 public class PlayerConsumeRequirementListener implements Listener {
 
+    private static @NotNull List<String> getPotionsConsumed(ItemStack itemStack) {
+        List<String> potionsConsumed = new ArrayList<>();
+
+        if (itemStack.getType() == Material.POTION) {
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta instanceof PotionMeta potionMeta) {
+                List<PotionEffect> potionEffects = potionMeta.getAllEffects();
+                for (PotionEffect effect : potionEffects) {
+                    // Parse comme ceci : potion[type=HEAL,level=2]
+                    String consumedPotion = "potion[type=" + effect.getType().getName().toUpperCase() + ",level=" + (effect.getAmplifier() + 1) + "]";
+                    potionsConsumed.add(consumedPotion);
+                }
+            }
+        }
+        return potionsConsumed;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerConsume(final PlayerItemConsumeEvent event) {
 
@@ -55,7 +72,7 @@ public class PlayerConsumeRequirementListener implements Listener {
                                     ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
                                 }
                             }
-                            return;
+                            continue;
                         }
                         if (ker.getMaterial().equals(itemStack.getType().name())) {
                             ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
@@ -64,23 +81,6 @@ public class PlayerConsumeRequirementListener implements Listener {
                 }
             }
         });
-    }
-
-    private static @NotNull List<String> getPotionsConsumed(ItemStack itemStack) {
-        List<String> potionsConsumed = new ArrayList<>();
-
-        if (itemStack.getType() == Material.POTION) {
-            ItemMeta meta = itemStack.getItemMeta();
-            if (meta instanceof PotionMeta potionMeta) {
-                List<PotionEffect> potionEffects = potionMeta.getAllEffects();
-                for (PotionEffect effect : potionEffects) {
-                    // Parse comme ceci : potion[type=HEAL,level=2]
-                    String consumedPotion = "potion[type=" + effect.getType().getName().toUpperCase() + ",level=" + (effect.getAmplifier() + 1) + "]";
-                    potionsConsumed.add(consumedPotion);
-                }
-            }
-        }
-        return potionsConsumed;
     }
 
 

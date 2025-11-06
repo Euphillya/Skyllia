@@ -62,7 +62,8 @@ public class GuiSettings {
     }
 
 
-    public record NavItem(int row, int column, Material material, String modelName, int customModelData, List<String> commands, boolean enabled) {
+    public record NavItem(int row, int column, Material material, String modelName, int customModelData,
+                          List<String> commands, boolean enabled) {
 
         public static NavItem fromConfig(String slot, String matStr, String modelName, int customModelData, List<String> commands, boolean enabled) {
             int r = 6, c = 3;

@@ -7,7 +7,6 @@ import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.Locale;

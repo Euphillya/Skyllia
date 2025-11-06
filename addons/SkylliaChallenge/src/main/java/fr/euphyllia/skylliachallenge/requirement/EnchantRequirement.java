@@ -12,7 +12,8 @@ import org.bukkit.entity.Player;
 import java.util.Locale;
 import java.util.Map;
 
-public record EnchantRequirement(int requirementId, NamespacedKey challengeKey, Enchantment enchantment, int level, int count,
+public record EnchantRequirement(int requirementId, NamespacedKey challengeKey, Enchantment enchantment, int level,
+                                 int count,
                                  boolean strict) implements ChallengeRequirement {
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
