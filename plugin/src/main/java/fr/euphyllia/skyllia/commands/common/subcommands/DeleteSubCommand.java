@@ -104,7 +104,7 @@ public class DeleteSubCommand implements SubCommandInterface {
         }
         String confirm = args[0];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            ConfigLoader.language.sendMessage(player, "admin.delete-no-confirm");
+            ConfigLoader.language.sendMessage(player, "island.admin.delete-no-confirm");
             return true;
         }
         try {

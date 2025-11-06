@@ -52,7 +52,7 @@ public class CommandRegistrar {
 
             commands.register(
                     "skylliadmin",
-                    "Administrator commands",
+                    "island.administrator commands",
                     java.util.List.of("isadmin", "skylliaadmin"),
                     new SkylliaAdminCommand(plugin)
             );

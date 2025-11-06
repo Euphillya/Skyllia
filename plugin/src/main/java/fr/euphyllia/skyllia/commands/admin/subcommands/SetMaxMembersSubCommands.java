@@ -31,14 +31,14 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
         }
 
         if (args.length < 3) {
-            ConfigLoader.language.sendMessage(sender, "admin.max-members.args-missing");
+            ConfigLoader.language.sendMessage(sender, "island.admin.max-members.args-missing");
             return true;
         }
         String playerName = args[0];
         String changeValue = args[1];
         String confirm = args[2];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            ConfigLoader.language.sendMessage(sender, "admin.max-members.no-confirm");
+            ConfigLoader.language.sendMessage(sender, "island.admin.max-members.no-confirm");
             return true;
         }
         try {
@@ -58,14 +58,14 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
             int members = Integer.parseInt(changeValue);
             boolean updated = island.setMaxMembers(members);
             if (updated) {
-                ConfigLoader.language.sendMessage(sender, "admin.size-success");
+                ConfigLoader.language.sendMessage(sender, "island.admin.size-success");
             } else {
-                ConfigLoader.language.sendMessage(sender, "admin.size-failed");
+                ConfigLoader.language.sendMessage(sender, "island.admin.size-failed");
             }
 
         } catch (Exception e) {
             if (e instanceof NumberFormatException ignored) {
-                ConfigLoader.language.sendMessage(sender, "admin.max-members-nan");
+                ConfigLoader.language.sendMessage(sender, "island.admin.max-members-nan");
             } else {
                 logger.log(Level.FATAL, e.getMessage(), e);
                 ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");

@@ -42,14 +42,14 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
         }
 
         if (args.length < 2) {
-            ConfigLoader.language.sendMessage(sender, "admin.delete-args-missing");
+            ConfigLoader.language.sendMessage(sender, "island.admin.delete-args-missing");
             return true;
         }
 
         String playerName = args[0];
         String confirm = args[1];
         if (!confirm.equalsIgnoreCase("confirm")) {
-            ConfigLoader.language.sendMessage(sender, "admin.delete-no-confirm");
+            ConfigLoader.language.sendMessage(sender, "island.admin.delete-no-confirm");
             return true;
         }
 

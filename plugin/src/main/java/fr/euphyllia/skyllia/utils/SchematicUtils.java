@@ -149,7 +149,9 @@ public class SchematicUtils {
             try (var writer = new OutputStreamWriter(new FileOutputStream(file.toFile()))) {
                 GSON.toJson(out, writer);
             }
-            ConfigLoader.language.sendMessage(sender, "island.admin.schematic.save-success");
+            ConfigLoader.language.sendMessage(sender, "island.admin.schematic.save-success", Map.of(
+                    "%schematic_name%", schematicName
+            ));
         } catch (Exception exception) {
             log.error("Failed to save schematic {}", schematicName, exception);
         }

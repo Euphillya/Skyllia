@@ -77,7 +77,7 @@ public class PromoteSubCommand implements SubCommandInterface {
             }
             players.setRoleType(promoteResult);
             island.updateMember(players);
-            ConfigLoader.language.sendMessage(player, "admin.rank.promote-success", Map.of(
+            ConfigLoader.language.sendMessage(player, "island.admin.rank.promote-success", Map.of(
                     "%s", playerName));
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

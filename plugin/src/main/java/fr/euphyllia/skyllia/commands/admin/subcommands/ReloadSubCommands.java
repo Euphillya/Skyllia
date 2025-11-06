@@ -20,7 +20,7 @@ public class ReloadSubCommands implements SubCommandInterface {
         }
 
         ConfigLoader.reloadConfigs();
-        ConfigLoader.language.sendMessage(sender, "admin.reload");
+        ConfigLoader.language.sendMessage(sender, "island.admin.reload");
         return true;
     }
 
