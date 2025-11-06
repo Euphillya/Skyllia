@@ -18,6 +18,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public final class ChallengeYamlLoader {
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
     private static final boolean hasSkylliaBank = Bukkit.getPluginManager().getPlugin("SkylliaBank") != null;
     private static final boolean hasVault = Bukkit.getPluginManager().getPlugin("Vault") != null;
+    private static final Logger log = LoggerFactory.getLogger(ChallengeYamlLoader.class);
 
     private ChallengeYamlLoader() {
     }
@@ -98,8 +101,8 @@ public final class ChallengeYamlLoader {
             String[] sp = line.trim().split("\\s+");
             if (sp.length == 0) continue;
             String head = sp[0];
-            try {
-                if (head.startsWith("ITEM:")) {
+            if (head.startsWith("ITEM:")) {
+                try {
                     Material material = Material.matchMaterial(head.substring("ITEM:".length()));
                     if (material == null) continue;
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
@@ -121,8 +124,12 @@ public final class ChallengeYamlLoader {
                         }
                     }
                     result.add(new ItemRequirement(idx, challengeKey, material, count, itemName, customModelData, itemModel));
+                } catch (Exception e) {
+                    log.error("Invalid material for ITEM requirement in challenge {}: {}", challengeKey, head.substring("ITEM:".length()), e);
                 }
-                if (head.startsWith("CRAFT:")) {
+            }
+            if (head.startsWith("CRAFT:")) {
+                try {
                     Material material = Material.matchMaterial(head.substring("CRAFT:".length()));
                     if (material == null) continue;
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
@@ -143,61 +150,93 @@ public final class ChallengeYamlLoader {
                         }
                     }
                     result.add(new CraftRequirement(idx, challengeKey, material, count, itemName, customModelData, itemModel));
+                } catch (Exception e) {
+                    log.error("Invalid material for CRAFT requirement in challenge {}: {}", challengeKey, head.substring("CRAFT:".length()), e);
                 }
-                if (head.startsWith("NEAR:")) {
+            }
+            if (head.startsWith("NEAR:")) {
+                try {
                     EntityType t = EntityType.valueOf(head.substring("NEAR:".length()).toUpperCase(Locale.ROOT));
                     int amount = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
                     double radius = sp.length > 2 ? Double.parseDouble(sp[2]) : 8.0D;
                     result.add(new NearEntityRequirement(t, amount, radius));
+                } catch (Exception e) {
+                    log.error("Invalid entity type for NEAR requirement in challenge {}: {}", challengeKey, head.substring("NEAR:".length()), e);
                 }
-                if (head.startsWith("POTION:")) {
+            }
+            if (head.startsWith("POTION:")) {
+                try {
                     PotionType p = PotionType.valueOf(sp[1].toUpperCase(Locale.ROOT));
                     int data = Integer.parseInt(sp[2]);
                     int amount = Integer.parseInt(sp[3]);
                     result.add(new PotionRequirement(idx, challengeKey, p, data, amount));
+                } catch (IllegalArgumentException e) {
+                    log.error("Invalid potion type for POTION requirement in challenge {}: {}", challengeKey, sp[1], e);
                 }
-                if (head.startsWith("BLOCKBREAK:")) {
+            }
+            if (head.startsWith("BLOCKBREAK:")) {
+                try {
                     Material material = Material.matchMaterial(head.substring("BLOCKBREAK:".length()));
                     if (material == null) continue;
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
                     result.add(new BlockBreakRequirement(idx, challengeKey, material, count, material.name()));
+                } catch (IllegalArgumentException exception) {
+                    log.error("Invalid material for BLOCKBREAK requirement in challenge {}: {}", challengeKey, head.substring("BLOCKBREAK:".length()), exception);
                 }
-                if (head.startsWith("ENCHANTMENT:")) {
+            }
+            if (head.startsWith("ENCHANTMENT:")) {
+                try {
                     Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(head.substring("ENCHANTMENT:".length())));
                     int level = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
                     int count = sp.length > 2 ? Integer.parseInt(sp[2]) : 1;
                     boolean strict = sp.length > 3 && Boolean.parseBoolean(sp[3]);
                     result.add(new EnchantRequirement(idx, challengeKey, enchantment, level, count, strict));
+                } catch (Exception e) {
+                    log.error("Invalid enchantment for ENCHANTMENT requirement in challenge {}: {}", challengeKey, head.substring("ENCHANTMENT:".length()), e);
                 }
-                if (head.startsWith("FISH:")) {
-                    EntityType entityType = EntityType.valueOf(head.substring("FISH:".length()).toUpperCase(Locale.ROOT));
+            }
+            if (head.startsWith("FISH:")) {
+                try {
+                    Material entityType = Material.valueOf(head.substring("FISH:".length()).toUpperCase(Locale.ROOT));
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
                     result.add(new FishRequirement(idx, challengeKey, entityType, count));
+                } catch (IllegalArgumentException exception) {
+                    log.error("Invalid material for FISH requirement in challenge {}: {}", challengeKey, head.substring("FISH:".length()), exception);
                 }
-                if (head.startsWith("KILL:")) {
+            }
+            if (head.startsWith("KILL:")) {
+                try {
                     EntityType entityType = EntityType.valueOf(head.substring("KILL:".length()).toUpperCase(Locale.ROOT));
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
                     result.add(new KillEntityRequirement(idx, challengeKey, entityType, count));
+                } catch (IllegalArgumentException exception) {
+                    log.error("Invalid entity type for KILL requirement in challenge {}: {}", challengeKey, head.substring("KILL:".length()), exception);
                 }
-                if (head.startsWith("CONSUME:")) {
-                    String materialRaw = head.substring("CONSUME:".length());
-                    int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
-                    result.add(new PlayerConsumeRequirement(idx, challengeKey, materialRaw, count));
-                }
-                if (hasSkylliaBank) {
-                    if (head.startsWith("BANK:")) {
+            }
+            if (head.startsWith("CONSUME:")) {
+                String materialRaw = head.substring("CONSUME:".length());
+                int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                result.add(new PlayerConsumeRequirement(idx, challengeKey, materialRaw, count));
+            }
+            if (hasSkylliaBank) {
+                if (head.startsWith("BANK:")) {
+                    try {
                         double amount = Double.parseDouble(head.substring("BANK:".length()));
                         result.add(new BankRequirement(idx, challengeKey, amount));
+                    } catch (NumberFormatException exception) {
+                        log.error("Invalid amount for BANK requirement in challenge {}: {}", challengeKey, head.substring("BANK:".length()), exception);
                     }
                 }
-                if (hasVault) {
-                    if (head.startsWith("ECO:")) {
+            }
+            if (hasVault) {
+                if (head.startsWith("ECO:")) {
+                    try {
                         double amount = Double.parseDouble(head.substring("ECO:".length()));
                         result.add(new EcoRequirement(idx, challengeKey, amount));
+                    } catch (NumberFormatException exception) {
+                        log.error("Invalid amount for ECO requirement in challenge {}: {}", challengeKey, head.substring("ECO:".length()), exception);
                     }
                 }
-            } catch (Exception e) {
-                // ignore: retournera null et filtré
             }
         }
         return result;

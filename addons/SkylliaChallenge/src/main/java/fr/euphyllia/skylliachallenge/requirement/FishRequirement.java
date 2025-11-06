@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player;
 import java.util.Locale;
 import java.util.Map;
 
-public record FishRequirement(int requirementId, NamespacedKey challengeKey, EntityType entityType,
+public record FishRequirement(int requirementId, NamespacedKey challengeKey, Material entityType,
                               int count) implements ChallengeRequirement {
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.

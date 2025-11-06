@@ -9,13 +9,16 @@ import fr.euphyllia.skylliachallenge.requirement.FishRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerFishRequirementListener implements Listener {
 
@@ -24,9 +27,11 @@ public class PlayerFishRequirementListener implements Listener {
         final Player player = event.getPlayer();
         if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
 
-        final Entity loot = event.getCaught();
+        final Item loot = (Item) event.getCaught();
         if (loot == null) return;
-        final EntityType entityType = loot.getType();
+        if (loot.isDead()) return;
+        final ItemStack itemStack = loot.getItemStack();
+        final Material lootType = itemStack.getType();
 
         final Location location = player.getLocation();
         final int chunkX = location.getBlockX() >> 4;
@@ -44,7 +49,7 @@ public class PlayerFishRequirementListener implements Listener {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof FishRequirement fr) {
-                        if (!fr.entityType().equals(entityType)) continue;
+                        if (!fr.entityType().equals(lootType)) continue;
                         ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), fr.requirementId(), 1);
                     }
                 }
