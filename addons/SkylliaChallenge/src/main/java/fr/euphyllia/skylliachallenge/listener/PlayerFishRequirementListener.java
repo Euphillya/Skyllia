@@ -35,6 +35,8 @@ public class PlayerFishRequirementListener implements Listener {
         final int chunkX = location.getBlockX() >> 4;
         final int chunkZ = location.getBlockZ() >> 4;
 
+        int amount = itemStack.getAmount();
+
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
             Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
             if (playerIsland == null) return;
@@ -48,7 +50,7 @@ public class PlayerFishRequirementListener implements Listener {
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof FishRequirement fr) {
                         if (!fr.entityType().equals(lootType)) continue;
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), fr.requirementId(), 1);
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), fr.requirementId(), amount);
                     }
                 }
             }
