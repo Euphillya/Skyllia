@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -24,9 +25,11 @@ public class CraftRequirementListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftItem(final CraftItemEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
-
-        final ItemStack result = event.getCurrentItem();
-        if (result == null) return;
+        if (event.getAction().equals(InventoryAction.NOTHING)) {
+            return;
+        }
+        final ItemStack result = getCraftedItem(event);
+        if (result.getType().isAir()) return;
         final Material material = result.getType();
         final ItemMeta meta = result.getItemMeta();
         NamespacedKey model;
@@ -70,10 +73,29 @@ public class CraftRequirementListener implements Listener {
                                     continue;
                             }
                         }
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), cr.requirementId(), 1);
+                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), cr.requirementId(), result.getAmount());
                     }
                 }
             }
         });
+    }
+
+    @SuppressWarnings("deprecation")
+    private ItemStack getCraftedItem(final CraftItemEvent event) {
+        if (event.isShiftClick()) {
+            final ItemStack recipeResult = event.getRecipe().getResult();
+            final int resultAmt = recipeResult.getAmount();
+            int leastIngredient = -1;
+            for (final ItemStack item : event.getInventory().getMatrix()) {
+                if (item != null && !item.getType().equals(Material.AIR)) {
+                    final int re = item.getAmount() * resultAmt;
+                    if (leastIngredient == -1 || re < leastIngredient) {
+                        leastIngredient = re;
+                    }
+                }
+            }
+            return new ItemStack(recipeResult.getType(), leastIngredient, recipeResult.getDurability());
+        }
+        return event.getCurrentItem();
     }
 }
