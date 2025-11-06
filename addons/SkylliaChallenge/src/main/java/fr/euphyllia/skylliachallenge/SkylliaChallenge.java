@@ -5,13 +5,14 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skylliachallenge.commands.ChallengeAdminCommand;
 import fr.euphyllia.skylliachallenge.commands.ChallengeCommand;
 import fr.euphyllia.skylliachallenge.gui.GuiSettings;
-import fr.euphyllia.skylliachallenge.listener.CraftRequirementListener;
+import fr.euphyllia.skylliachallenge.listener.*;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
 import fr.euphyllia.skylliachallenge.storage.InitMariaDB;
 import fr.euphyllia.skylliachallenge.storage.InitSQLite;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,8 +102,13 @@ public class SkylliaChallenge extends JavaPlugin {
         logs.add(separator);
         Bukkit.getConsoleSender().sendMessage(logs.toArray(new String[0]));
 
-        getServer().getPluginManager().registerEvents(new CraftRequirementListener(), this);
-
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new CraftRequirementListener(), this);
+        pm.registerEvents(new BlockRequirementListener(), this);
+        pm.registerEvents(new KillRequirementListener(), this);
+        pm.registerEvents(new PlayerEnchantRequirementListener(), this);
+        pm.registerEvents(new PlayerConsumeRequirementListener(), this);
+        pm.registerEvents(new PlayerFishRequirementListener(), this);
     }
 
 
@@ -117,5 +123,10 @@ public class SkylliaChallenge extends JavaPlugin {
     private String center(String text, int width) {
         int padding = (width - text.length()) / 2;
         return " ".repeat(Math.max(0, padding)) + text;
+    }
+
+    public void reload() {
+        this.guiSettings = GuiSettings.load(getConfig());
+        getChallengeManager().loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
     }
 }

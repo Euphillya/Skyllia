@@ -312,6 +312,21 @@ count = "<!italic><gray>Objectif %collected%/%required% %met%</gray>"
 [addons.challenge.requirement.potion]
 display = "<!italic><gray>- Avoir l'effet %potion_name% (variante %potion_data%) x %amount%.</gray>"
 
+[addons.challenge.requirement.player_consume]
+display = "<!italic><gray>- Avoir consommé %amount% de %material%.</gray>"
+
+[addons.challenge.requirement.kill_entity]
+display = "<!italic><gray>- Avoir tué %amount% de %entity_type%.</gray>"
+
+[addons.challenge.requirement.fishing]
+display = "<!italic><gray>- Avoir pêché %amount% de %entity_type%.</gray>"
+
+[addons.challenge.requirement.enchant]
+display = "<!italic><gray>- Avoir enchanté %amount% d'objets avec %enchantment_name% (niveau %enchantment_level%).</gray>"
+
+[addons.challenge.requirement.block_break]
+display = "<!italic><gray>- Avoir cassé %amount% de %material%.</gray>"
+
 [addons.challenge.requirement.nearby_entity]
 display = "<!italic><gray>- Avoir %amount% de %entity_type% à proximité ( %radius% m)</gray>"
 

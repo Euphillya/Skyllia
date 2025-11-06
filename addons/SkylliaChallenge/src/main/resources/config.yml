@@ -19,3 +19,11 @@ gui:
       material: "ARROW"
       model_name: ""
       custom_model_data: 0
+    other:
+      slot: "6,5"
+      enabled: false
+      material: "PAPER"
+      model_name: ""
+      custom_model_data: 0
+      execute-commands:
+        - "say You are on page {page_number} of {max_pages}."

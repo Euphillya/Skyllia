@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionType;
@@ -153,9 +154,36 @@ public final class ChallengeYamlLoader {
                     PotionType p = PotionType.valueOf(sp[1].toUpperCase(Locale.ROOT));
                     int data = Integer.parseInt(sp[2]);
                     int amount = Integer.parseInt(sp[3]);
-                    result.add(new PotionRequirement(p, data, amount));
+                    result.add(new PotionRequirement(idx, challengeKey, p, data, amount));
                 }
-
+                if (head.startsWith("BLOCKBREAK:")) {
+                    Material material = Material.matchMaterial(head.substring("BLOCKBREAK:".length()));
+                    if (material == null) continue;
+                    int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                    result.add(new BlockBreakRequirement(idx, challengeKey, material, count, material.name()));
+                }
+                if (head.startsWith("ENCHANTMENT:")) {
+                    Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(head.substring("ENCHANTMENT:".length())));
+                    int level = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                    int count = sp.length > 2 ? Integer.parseInt(sp[2]) : 1;
+                    boolean strict = sp.length > 3 && Boolean.parseBoolean(sp[3]);
+                    result.add(new EnchantRequirement(idx, challengeKey, enchantment, level, count, strict));
+                }
+                if (head.startsWith("FISH:")) {
+                    EntityType entityType = EntityType.valueOf(head.substring("FISH:".length()).toUpperCase(Locale.ROOT));
+                    int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                    result.add(new FishRequirement(idx, challengeKey, entityType, count));
+                }
+                if (head.startsWith("KILL:")) {
+                    EntityType entityType = EntityType.valueOf(head.substring("KILL:".length()).toUpperCase(Locale.ROOT));
+                    int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                    result.add(new KillEntityRequirement(idx, challengeKey, entityType, count));
+                }
+                if (head.startsWith("CONSUME:")) {
+                    String materialRaw = head.substring("CONSUME:".length());
+                    int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                    result.add(new PlayerConsumeRequirement(idx, challengeKey, materialRaw, count));
+                }
                 if (hasSkylliaBank) {
                     if (head.startsWith("BANK:")) {
                         double amount = Double.parseDouble(head.substring("BANK:".length()));
@@ -165,7 +193,7 @@ public final class ChallengeYamlLoader {
                 if (hasVault) {
                     if (head.startsWith("ECO:")) {
                         double amount = Double.parseDouble(head.substring("ECO:".length()));
-                        result.add(new EcoRequirement(amount));
+                        result.add(new EcoRequirement(idx, challengeKey, amount));
                     }
                 }
             } catch (Exception e) {

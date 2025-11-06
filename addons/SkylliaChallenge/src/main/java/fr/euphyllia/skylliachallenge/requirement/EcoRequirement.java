@@ -6,18 +6,19 @@ import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 import java.util.Locale;
 import java.util.Map;
 
-public record EcoRequirement(double amount) implements ChallengeRequirement {
+public record EcoRequirement(int requirementId, NamespacedKey challengeKey, double count) implements ChallengeRequirement {
 
     @Override
     public boolean isMet(Player player, Island island) {
         Economy eco = getEco();
         if (eco == null) return false;
-        return eco.getBalance(player) >= amount;
+        return eco.getBalance(player) >= count;
     }
 
     private Economy getEco() {
@@ -30,13 +31,13 @@ public record EcoRequirement(double amount) implements ChallengeRequirement {
     public boolean consume(Player player, Island island) {
         Economy eco = getEco();
         if (eco == null) return false;
-        return eco.withdrawPlayer(player, amount).transactionSuccess();
+        return eco.withdrawPlayer(player, count).transactionSuccess();
     }
 
     @Override
     public Component getDisplay(Locale locale) {
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.vault.display", Map.of(
-                "%amount%", String.valueOf(amount)
+                "%amount%", String.valueOf(count)
         ), false);
     }
 }

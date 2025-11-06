@@ -24,7 +24,7 @@ public record ChallengeAdminCommand(SkylliaChallenge plugin) implements SubComma
             ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.unknown-command");
             return true;
         }
-        plugin.getChallengeManager().loadChallenges(new File(plugin.getDataFolder(), "challenges"));
+        plugin.reload();
         ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.reload-success");
         return true;
     }

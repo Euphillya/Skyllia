@@ -9,8 +9,7 @@ import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
-import fr.euphyllia.skylliachallenge.requirement.CraftRequirement;
-import fr.euphyllia.skylliachallenge.requirement.ItemRequirement;
+import fr.euphyllia.skylliachallenge.requirement.*;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import net.kyori.adventure.text.Component;
@@ -88,6 +87,20 @@ public class ChallengeGui {
                             });
                         }));
 
+        // Other Navigation Item
+        if (gs.other.enabled()) {
+            gui.setItem(gs.other.row(), gs.other.column(),
+                ItemBuilder.from(gs.other.toItemStack())
+                        .name(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.next", Map.of(), false))
+                        .asGuiItem(e -> {
+                            Bukkit.getGlobalRegionScheduler().execute(plugin, () -> {
+                                for (String command : gs.other.commands()) {
+                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+                                }
+                            });
+                        }));
+        }
+
         for (Challenge c : manager.getChallenges()) {
             if (!c.isShowInGUI()) continue;
             Challenge.PositionGUI pos = c.getPositionGUI();
@@ -115,19 +128,55 @@ public class ChallengeGui {
             if (c.getRequirements() != null && !c.getRequirements().isEmpty()) {
                 lore.add(ConfigLoader.language.translate(player.locale(), "addons.challenge.display.requirements", Map.of(), false));
                 for (ChallengeRequirement req : c.getRequirements()) {
-                    if (req instanceof ItemRequirement ir) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
-                        countRequirement(player.locale(), lore, collected, ir.count(), ir.getDisplay(player.locale()));
-                    } else if (req instanceof CraftRequirement cr) {
-                        long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), cr.requirementId());
-                        countRequirement(player.locale(), lore, collected, cr.count(), cr.getDisplay(player.locale()));
-                    } else {
-                        boolean met = req.isMet(player, island);
-                        Component component = Component.text("")
-                                .append(req.getDisplay(player.locale()));
+                    switch (req) {
+                        case ItemRequirement ir -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ir.requirementId());
+                            countRequirement(player.locale(), lore, collected, ir.count(), ir.getDisplay(player.locale()));
+                        }
+                        case CraftRequirement cr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), cr.requirementId());
+                            countRequirement(player.locale(), lore, collected, cr.count(), cr.getDisplay(player.locale()));
+                        }
+                        case BankRequirement br -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), br.requirementId());
+                            countRequirement(player.locale(), lore, collected, (int) br.amount(), br.getDisplay(player.locale()));
+                        }
+                        case BlockBreakRequirement bbr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), bbr.requirementId());
+                            countRequirement(player.locale(), lore, collected, bbr.count(), bbr.getDisplay(player.locale()));
+                        }
+                        case EcoRequirement er -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), er.requirementId());
+                            countRequirement(player.locale(), lore, collected, er.count(), er.getDisplay(player.locale()));
+                        }
+                        case EnchantRequirement ee -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ee.requirementId());
+                            countRequirement(player.locale(), lore, collected, ee.count(), ee.getDisplay(player.locale()));
+                        }
+                        case FishRequirement fr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), fr.requirementId());
+                            countRequirement(player.locale(), lore, collected, fr.count(), fr.getDisplay(player.locale()));
+                        }
+                        case KillEntityRequirement ker -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), ker.requirementId());
+                            countRequirement(player.locale(), lore, collected, ker.count(), ker.getDisplay(player.locale()));
+                        }
+                        case PlayerConsumeRequirement pcr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), pcr.requirementId());
+                            countRequirement(player.locale(), lore, collected, pcr.count(), pcr.getDisplay(player.locale()));
+                        }
+                        case PotionRequirement pr -> {
+                            long collected = ProgressStoragePartial.getPartial(island.getId(), c.getId(), pr.requirementId());
+                            countRequirement(player.locale(), lore, collected, pr.count(), pr.getDisplay(player.locale()));
+                        }
+                        default -> {
+                            boolean met = req.isMet(player, island);
+                            Component component = Component.text("")
+                                    .append(req.getDisplay(player.locale()));
 
-                        if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
-                        lore.add(component);
+                            if (met) component = component.append(Component.text(" ✓", NamedTextColor.GREEN));
+                            lore.add(component);
+                        }
                     }
                 }
             }
@@ -160,13 +209,13 @@ public class ChallengeGui {
         player.getScheduler().run(plugin, task -> gui.open(player), null);
     }
 
-    private void countRequirement(Locale locale, List<Component> lore, long collected, int count, Component display) {
-        boolean met = collected >= (long) count;
+    private void countRequirement(Locale locale, List<Component> lore, Number collected, Number count, Component display) {
+        boolean met = collected.doubleValue() >= count.doubleValue();
         Component loreCount = ConfigLoader.language.translate(locale, "addons.challenge.display.requirement.count", Map.of(
-                "%display%", miniMessage.serialize(display),
-                "%collected%", NF.format(collected),
-                "%required%", NF.format(count),
-                "%met%", met ? "✓" : "✗"
+                        "%display%", miniMessage.serialize(display),
+                        "%collected%", NF.format(collected),
+                        "%required%", NF.format(count),
+                        "%met%", met ? "✓" : "✗"
                 ),
                 false);
         lore.add(loreCount);
