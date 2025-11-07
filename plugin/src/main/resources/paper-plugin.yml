@@ -17,4 +17,16 @@ dependencies:
       load: OMIT
       required: false
       join-classpath: true
+    Worlds:
+      load: BEFORE
+      required: false
+      join-classpath: false
+    MoreFoWorld:
+      load: BEFORE
+      required: false
+      join-classpath: false
+    Multiverse-Core:
+      load: BEFORE
+      required: false
+      join-classpath: false
 

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.managers.world;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
@@ -15,6 +16,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Map;
 import java.util.Random;
 
 public class WorldsManager {
@@ -28,7 +30,13 @@ public class WorldsManager {
 
     public void initWorld() {
 
-        ConfigLoader.worldManager.getWorldConfigs().forEach((name, worldConfig) -> {
+        for (Map.Entry<String, WorldConfig> entry : ConfigLoader.worldManager.getWorldConfigs().entrySet()) {
+            String name = entry.getKey();
+            WorldConfig worldConfig = entry.getValue();
+            // Vérifier si le monde existe déjà
+            if (Bukkit.getWorld(name) != null) {
+                continue;
+            }
             WorldCreator worldCreator = new WorldCreator(name);
 
             String generatorId = worldConfig.getGenerator();
@@ -59,7 +67,7 @@ public class WorldsManager {
                     w = feedbackWorld.world;
                 } else {
                     logger.log(Level.FATAL, "WORLD IMPOSSIBLE TO CREATE");
-                    return;
+                    continue;
                 }
 
             }
@@ -67,6 +75,6 @@ public class WorldsManager {
                 w.setAutoSave(true);
                 w.setSpawnLocation(0, 62, 0);
             }
-        });
+        }
     }
 }

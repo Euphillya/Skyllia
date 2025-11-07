@@ -7,12 +7,16 @@ import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Map;
 
 public record PlayerConsumeRequirement(int requirementId, NamespacedKey challengeKey, String material,
                                        int count) implements ChallengeRequirement {
+    private static final Logger log = LoggerFactory.getLogger(PlayerConsumeRequirement.class);
+
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
      *
@@ -79,6 +83,7 @@ public record PlayerConsumeRequirement(int requirementId, NamespacedKey challeng
 
     public boolean isPotion(String potionConfig, String potionConsume) {
         String normalizedConfig = potionConfig.startsWith("potion[") ? potionConfig : parsePotion();
+        log.info("Comparing configured potion '{}' with consumed potion '{}'", normalizedConfig, potionConsume);
         return normalizedConfig.equalsIgnoreCase(potionConsume);
     }
 }
