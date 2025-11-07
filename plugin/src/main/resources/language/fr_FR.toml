@@ -206,7 +206,7 @@ reload = "Les configurations ont été rechargés.."
 pos1-selected = "Position 1 sélectionnée."
 pos2-selected = "Position 2 sélectionnée."
 positions-not-set = "Les positions 1 et 2 doivent être définies avant d'enregistrer un schéma."
-save-success = "Le schéma a été enregistré avec succès sous le nom de %schematic
+save-success = "Le schéma a été enregistré avec succès sous le nom de %schematic_name%."
 save-failed = "Le schéma n'a pas pu être enregistré. Veuillez vérifier la console pour plus de détails."
 
 [misc]
