@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import io.papermc.paper.FeatureHooks;
@@ -55,8 +56,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 
@@ -286,39 +285,30 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         );
 
 
-        // serverLevel.randomSpawnSelection = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
-        try {
-            setRandomSpawnSelection(serverLevel);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        console.addLevel(serverLevel);
 
-        console.addLevel(serverLevel); // Paper - Put world into worldlist before initing the world; move up
-        console.initWorld(serverLevel, primaryLevelData, primaryLevelData, primaryLevelData.worldGenOptions());
+        serverLevel.randomSpawnSelection = new ChunkPos(serverLevel.getChunkSource().randomState().sampler().findSpawnPosition());
+
+        initWorld(serverLevel, console, primaryLevelData);
 
         serverLevel.setSpawnSettings(true);
-        // Paper - Put world into worldlist before initing the world; move up
 
-        craftServer.getServer().prepareLevels(serverLevel.getChunkSource().chunkMap.progressListener, serverLevel);
-        io.papermc.paper.FeatureHooks.tickEntityManager(serverLevel); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - chunk system
+        console.prepareLevels(serverLevel.getChunkSource().chunkMap.progressListener, serverLevel);
+        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(serverLevel);
+        FeatureHooks.tickEntityManager(serverLevel); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - chunk system
 
-        //io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(serverLevel);
-        try {
-            Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
-            getInstanceMethod.setAccessible(true);
-            Object regionizedServerInstance = getInstanceMethod.invoke(null);
-            Method addWorldMethod = regionizedServerClass.getDeclaredMethod("addWorld", ServerLevel.class);
-            addWorldMethod.setAccessible(true);
-            addWorldMethod.invoke(regionizedServerInstance, serverLevel);
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
 
-        FeatureHooks.tickEntityManager(serverLevel);
         new WorldLoadEvent(serverLevel.getWorld()).callEvent();
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(serverLevel.getWorld());
+    }
+
+    public static void initWorld(ServerLevel serverLevel, DedicatedServer console, PrimaryLevelData primaryLevelData) {
+        var x = serverLevel.randomSpawnSelection.x;
+        var z = serverLevel.randomSpawnSelection.z;
+
+        Bukkit.getRegionScheduler().run(SkylliaAPI.getPlugin(), serverLevel.getWorld(), x, z, task -> {
+            console.initWorld(serverLevel, primaryLevelData, primaryLevelData, primaryLevelData.worldGenOptions());
+        });
     }
 
     @Override

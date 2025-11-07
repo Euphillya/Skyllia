@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import io.papermc.paper.FeatureHooks;
@@ -286,13 +287,17 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         }
 
         console.addLevel(serverLevel); // Paper - Put world into worldlist before initing the world; move up
-        console.initWorld(serverLevel, primaryLevelData, primaryLevelData, primaryLevelData.worldGenOptions());
+        var x = serverLevel.randomSpawnSelection.x;
+        var z = serverLevel.randomSpawnSelection.z;
+
+        Bukkit.getRegionScheduler().run(SkylliaAPI.getPlugin(), serverLevel.getWorld(), x, z, task -> {
+            console.initWorld(serverLevel, primaryLevelData, primaryLevelData, primaryLevelData.worldGenOptions());
+        });
 
         serverLevel.setSpawnSettings(true);
         // Paper - Put world into worldlist before initing the world; move up
 
         craftServer.getServer().prepareLevels(serverLevel.getChunkSource().chunkMap.progressListener, serverLevel);
-        io.papermc.paper.FeatureHooks.tickEntityManager(serverLevel); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - chunk system
 
         //io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(serverLevel);
         try {
