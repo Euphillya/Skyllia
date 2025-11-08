@@ -83,7 +83,7 @@ public record PlayerConsumeRequirement(int requirementId, NamespacedKey challeng
 
     public boolean isPotion(String potionConfig, String potionConsume) {
         String normalizedConfig = potionConfig.startsWith("potion[") ? potionConfig : parsePotion();
-        log.info("Comparing configured potion '{}' with consumed potion '{}'", normalizedConfig, potionConsume);
         return normalizedConfig.equalsIgnoreCase(potionConsume);
     }
 }
+
