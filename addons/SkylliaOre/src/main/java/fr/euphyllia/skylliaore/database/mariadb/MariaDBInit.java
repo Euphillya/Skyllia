@@ -5,8 +5,8 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import fr.euphyllia.skylliaore.api.OreGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class MariaDBInit extends DatabaseInitializeQuery {
 
     private void createGeneratorTable() {
         try {
-            MariaDBExecute.executeQuery(database,
+            SQLExecute.executeQuery(database,
                     CREATE_GENERATOR.formatted(ConfigLoader.database.getMariaDBConfig().database()));
         } catch (Exception exception) {
             log.error("Error creating generator table: {}", exception.getMessage(), exception);
