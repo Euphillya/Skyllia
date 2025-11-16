@@ -27,8 +27,9 @@ public class KillRequirementListener implements Listener {
         final Entity entity = event.getEntity();
         final Player player = event.getEntity().getKiller();
         final EntityType entityType = entity.getType();
-        final UUID uuid = player.getUniqueId();
         if (player == null) return;
+
+        final UUID uuid = player.getUniqueId();
 
         final Location location = player.getLocation();
         final int chunkX = location.getBlockX() >> 4;
