@@ -18,6 +18,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.UUID;
+
 public class PlayerFishRequirementListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -28,6 +30,7 @@ public class PlayerFishRequirementListener implements Listener {
         final Item loot = (Item) event.getCaught();
         if (loot == null) return;
         if (loot.isDead()) return;
+
         final ItemStack itemStack = loot.getItemStack();
         final Material lootType = itemStack.getType();
 
@@ -35,22 +38,31 @@ public class PlayerFishRequirementListener implements Listener {
         final int chunkX = location.getBlockX() >> 4;
         final int chunkZ = location.getBlockZ() >> 4;
 
-        int amount = itemStack.getAmount();
+        final int amount = itemStack.getAmount();
+        final UUID uuid = player.getUniqueId();
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(uuid);
             if (playerIsland == null) return;
 
-            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
-            if (islandAtLocation == null) return;
-            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            // Vérif optionnelle selon la config
+            if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
+                Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+                if (islandAtLocation == null) return;
+                if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            }
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof FishRequirement fr) {
                         if (!fr.entityType().equals(lootType)) continue;
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), fr.requirementId(), amount);
+                        ProgressStoragePartial.addPartial(
+                                playerIsland.getId(),
+                                challenge.getId(),
+                                fr.requirementId(),
+                                amount
+                        );
                     }
                 }
             }

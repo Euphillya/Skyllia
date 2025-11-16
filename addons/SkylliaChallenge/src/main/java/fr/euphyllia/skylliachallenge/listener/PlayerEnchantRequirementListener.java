@@ -18,6 +18,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class PlayerEnchantRequirementListener implements Listener {
 
@@ -29,14 +30,17 @@ public class PlayerEnchantRequirementListener implements Listener {
         final Location location = player.getLocation();
         final int chunkX = location.getBlockX() >> 4;
         final int chunkZ = location.getBlockZ() >> 4;
+        final UUID uuid = player.getUniqueId();
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(uuid);
             if (playerIsland == null) return;
 
-            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
-            if (islandAtLocation == null) return;
-            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
+                Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+                if (islandAtLocation == null) return;
+                if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            }
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
@@ -47,7 +51,13 @@ public class PlayerEnchantRequirementListener implements Listener {
                         }
                         if (!enchants.containsKey(er.enchantment())) continue;
                         if (!enchants.get(er.enchantment()).equals(er.level())) continue;
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), er.requirementId(), 1);
+
+                        ProgressStoragePartial.addPartial(
+                                playerIsland.getId(),
+                                challenge.getId(),
+                                er.requirementId(),
+                                1
+                        );
                     }
                 }
             }

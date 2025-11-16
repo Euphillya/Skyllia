@@ -4,6 +4,8 @@ progress_storage:
 partial_progress_storage:
   threads: 2
 
+must_be_on_player_island: false
+
 gui:
   rows: 6
   page-size: 45

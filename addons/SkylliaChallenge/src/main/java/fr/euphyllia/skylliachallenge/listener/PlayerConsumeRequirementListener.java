@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerConsumeRequirementListener implements Listener {
 
@@ -35,7 +36,8 @@ public class PlayerConsumeRequirementListener implements Listener {
                 List<PotionEffect> potionEffects = potionMeta.getAllEffects();
                 for (PotionEffect effect : potionEffects) {
                     // Parse comme ceci : potion[type=HEAL,level=2]
-                    String consumedPotion = "potion[type=" + effect.getType().getName().toUpperCase() + ",level=" + (effect.getAmplifier() + 1) + "]";
+                    String consumedPotion = "potion[type=" + effect.getType().getName().toUpperCase()
+                            + ",level=" + (effect.getAmplifier() + 1) + "]";
                     potionsConsumed.add(consumedPotion);
                 }
             }
@@ -52,15 +54,18 @@ public class PlayerConsumeRequirementListener implements Listener {
         final Location location = player.getLocation();
         final int chunkX = location.getBlockX() >> 4;
         final int chunkZ = location.getBlockZ() >> 4;
+        final UUID uuid = player.getUniqueId();
         List<String> potionsConsumed = getPotionsConsumed(itemStack);
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(uuid);
             if (playerIsland == null) return;
 
-            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
-            if (islandAtLocation == null) return;
-            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
+                Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+                if (islandAtLocation == null) return;
+                if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            }
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
@@ -69,19 +74,28 @@ public class PlayerConsumeRequirementListener implements Listener {
                         if (ker.isPotionRequirement()) {
                             for (String potionConsumed : potionsConsumed) {
                                 if (ker.isPotion(ker.parsePotion(), potionConsumed)) {
-                                    ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
+                                    ProgressStoragePartial.addPartial(
+                                            playerIsland.getId(),
+                                            challenge.getId(),
+                                            ker.requirementId(),
+                                            1
+                                    );
                                 }
                             }
                             continue;
                         }
                         if (ker.getMaterial().equals(itemStack.getType().name())) {
-                            ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
+                            ProgressStoragePartial.addPartial(
+                                    playerIsland.getId(),
+                                    challenge.getId(),
+                                    ker.requirementId(),
+                                    1
+                            );
                         }
                     }
                 }
             }
         });
     }
-
 
 }

@@ -27,6 +27,7 @@ public class SkylliaChallenge extends JavaPlugin {
     private static SkylliaChallenge instance;
     private ChallengeManagers challengeManager;
     private GuiSettings guiSettings;
+    private boolean mustBeOnPlayerIsland;
 
     public static SkylliaChallenge getInstance() {
         return instance;
@@ -65,11 +66,13 @@ public class SkylliaChallenge extends JavaPlugin {
         ProgressStoragePartial.initExecutor(pspThreads);
         logs.add(gray + " » " + white + "PartialProgressStorage Threads: " + violet + pspThreads);
 
+        mustBeOnPlayerIsland = getConfig().getBoolean("must_be_on_player_island", true);
+
         // ─────────────────────────────────────────────
         getDataFolder().mkdirs();
         getDataFolder().toPath().resolve("challenges").toFile().mkdirs();
 
-        boolean usingMaria = false;
+        boolean usingMaria;
         try {
             usingMaria = InitMariaDB.initIfConfigured();
             if (!usingMaria) InitSQLite.initIfConfigured();
@@ -120,13 +123,13 @@ public class SkylliaChallenge extends JavaPlugin {
         ProgressStorage.shutdown();
     }
 
-    private String center(String text, int width) {
-        int padding = (width - text.length()) / 2;
-        return " ".repeat(Math.max(0, padding)) + text;
-    }
-
     public void reload() {
         this.guiSettings = GuiSettings.load(getConfig());
+        this.mustBeOnPlayerIsland = getConfig().getBoolean("must_be_on_player_island", true);
         getChallengeManager().loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
+    }
+
+    public boolean isMustBeOnPlayerIsland() {
+        return mustBeOnPlayerIsland;
     }
 }

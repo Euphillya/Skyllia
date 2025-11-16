@@ -51,12 +51,16 @@ public class CraftRequirementListener implements Listener {
         final int chunkZ = location.getBlockZ() >> 4;
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
+            // On travaille toujours sur l'île du joueur
             Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
             if (playerIsland == null) return;
 
-            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
-            if (islandAtLocation == null) return;
-            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            // Si activé en config, on vérifie que le joueur est bien sur SON île
+            if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
+                Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+                if (islandAtLocation == null) return;
+                if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            }
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
@@ -69,11 +73,17 @@ public class CraftRequirementListener implements Listener {
                                 if (!CraftRequirement.HAS_ITEM_MODEL_METHOD) continue;
                                 if (model == null || !model.equals(cr.itemModel())) continue;
                             } else if (cr.customModelData() != -1) {
-                                if (customModelData == null || customModelData != cr.customModelData())
+                                if (customModelData == null || !customModelData.equals(cr.customModelData())) {
                                     continue;
+                                }
                             }
                         }
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), cr.requirementId(), result.getAmount());
+                        ProgressStoragePartial.addPartial(
+                                playerIsland.getId(),
+                                challenge.getId(),
+                                cr.requirementId(),
+                                result.getAmount()
+                        );
                     }
                 }
             }

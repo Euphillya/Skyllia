@@ -40,19 +40,22 @@ public class BlockRequirementListener implements Listener {
         }
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(playerId);
-            if (playerIsland == null) return;
 
             Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
             if (islandAtLocation == null) return;
-            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+
+            if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
+                Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(playerId);
+                if (playerIsland == null) return;
+                if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            }
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof BlockBreakRequirement bbr) {
                         if (!bbr.getMaterial().equals(material)) continue;
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), bbr.requirementId(), 1);
+                        ProgressStoragePartial.addPartial(islandAtLocation.getId(), challenge.getId(), bbr.requirementId(), 1);
                     }
                 }
             }
@@ -64,6 +67,7 @@ public class BlockRequirementListener implements Listener {
         // Cette Event est fait pour annuler le progrès si un joueur place un bloc et le casse ensuite.
         final Block block = event.getBlock();
         final Location location = block.getLocation();
+        final UUID playerId = event.getPlayer().getUniqueId();
         final int chunkX = location.getBlockX() >> 4;
         final int chunkZ = location.getBlockZ() >> 4;
         final BlockData state = block.getBlockData();
@@ -71,9 +75,14 @@ public class BlockRequirementListener implements Listener {
         if (state instanceof Ageable) return; // On ne pénalise pas les placements de cultures.
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            // On décompte uniquement sur l'ile en question
             Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
             if (islandAtLocation == null) return;
+
+            if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
+                Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(playerId);
+                if (playerIsland == null) return;
+                if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            }
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;

@@ -17,6 +17,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
+import java.util.UUID;
+
 public class KillRequirementListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -25,6 +27,7 @@ public class KillRequirementListener implements Listener {
         final Entity entity = event.getEntity();
         final Player player = event.getEntity().getKiller();
         final EntityType entityType = entity.getType();
+        final UUID uuid = player.getUniqueId();
         if (player == null) return;
 
         final Location location = player.getLocation();
@@ -32,19 +35,27 @@ public class KillRequirementListener implements Listener {
         final int chunkZ = location.getBlockZ() >> 4;
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(uuid);
             if (playerIsland == null) return;
 
-            Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
-            if (islandAtLocation == null) return;
-            if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            // Si activé en config, on vérifie que le joueur est bien sur SON île
+            if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
+                Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+                if (islandAtLocation == null) return;
+                if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
+            }
 
             for (Challenge challenge : SkylliaChallenge.getInstance().getChallengeManager().getChallenges()) {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof KillEntityRequirement ker) {
                         if (!ker.entityType().equals(entityType)) continue;
-                        ProgressStoragePartial.addPartial(playerIsland.getId(), challenge.getId(), ker.requirementId(), 1);
+                        ProgressStoragePartial.addPartial(
+                                playerIsland.getId(),
+                                challenge.getId(),
+                                ker.requirementId(),
+                                1
+                        );
                     }
                 }
             }
