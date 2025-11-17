@@ -9,6 +9,7 @@ import fr.euphyllia.skylliabank.commands.BankCommand;
 import fr.euphyllia.skylliabank.database.mariadb.MariaDBBankInit;
 import fr.euphyllia.skylliabank.database.sqlite.SQLiteBankInit;
 import fr.euphyllia.skylliabank.listeners.InfoListener;
+import fr.euphyllia.skylliabank.papi.SkylliaBankExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -78,7 +79,9 @@ public final class SkylliaBank extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InfoListener(), this);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new fr.euphyllia.skylliabank.papi.SkylliaBankExpansion().register();
+            SkylliaBankExpansion expansion = new SkylliaBankExpansion();
+            expansion.init(this);
+            expansion.register();
         }
 
         getLogger().info("SkylliaBank has been successfully activated!");
