@@ -2,7 +2,7 @@ package fr.euphyllia.skylliaore.database.mariadb;
 
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.api.OreGenerator;
@@ -42,7 +42,7 @@ public class MariaDBGenerator implements OreGenerator {
         CompletableFuture<Generator> future = new CompletableFuture<>();
         try {
             String query = SELECT_GENERATOR_ISLAND.formatted(this.databaseName);
-            MariaDBExecute.executeQuery(MariaDBInit.getPool(), query, List.of(islandId), resultSet -> {
+            SQLExecute.executeQuery(MariaDBInit.getPool(), query, List.of(islandId), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         String generatorId = resultSet.getString("generator_id");
@@ -67,7 +67,7 @@ public class MariaDBGenerator implements OreGenerator {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             String query = UPSERT_GENERATOR_ISLAND.formatted(this.databaseName);
-            MariaDBExecute.executeQueryDML(MariaDBInit.getPool(), query, List.of(islandId, generatorName),
+            SQLExecute.executeQueryDML(MariaDBInit.getPool(), query, List.of(islandId, generatorName),
                     i -> completableFuture.complete(i != 0), null);
         } catch (DatabaseException exception) {
             log.error(exception.getMessage(), exception);

@@ -2,7 +2,7 @@ package fr.euphyllia.skylliabank.database.mariadb;
 
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import fr.euphyllia.skylliabank.api.BankAccount;
 import fr.euphyllia.skylliabank.api.BankGenerator;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +39,7 @@ public class MariaDBBankGenerator implements BankGenerator {
         CompletableFuture<BankAccount> future = new CompletableFuture<>();
         try {
             String query = SELECT_BANK_BALANCE.formatted(this.databaseName);
-            MariaDBExecute.executeQuery(MariaDBBankInit.getPool(), query, List.of(islandId), resultSet -> {
+            SQLExecute.executeQuery(MariaDBBankInit.getPool(), query, List.of(islandId), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         double balance = resultSet.getDouble("balance");
@@ -65,7 +65,7 @@ public class MariaDBBankGenerator implements BankGenerator {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         try {
             String query = UPSERT_BANK_BALANCE.formatted(this.databaseName);
-            MariaDBExecute.executeQueryDML(MariaDBBankInit.getPool(), query, List.of(islandId, balance),
+            SQLExecute.executeQueryDML(MariaDBBankInit.getPool(), query, List.of(islandId, balance),
                     rowsAffected -> future.complete(rowsAffected > 0), null);
         } catch (DatabaseException exception) {
             log.error(exception.getMessage(), exception);
