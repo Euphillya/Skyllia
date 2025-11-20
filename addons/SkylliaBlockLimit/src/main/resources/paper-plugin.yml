@@ -1,0 +1,13 @@
+name: SkylliaBlockLimit
+main: fr.euphyllia.blocklimit.SkylliaBlockLimit
+loader: fr.euphyllia.blocklimit.SkylliaBlockLimitLoader
+version: '1.1'
+api-version: 1.20.1
+folia-supported: true
+
+dependencies:
+  server:
+    Skyllia:
+      load: BEFORE
+      required: true
+      join-classpath: true
