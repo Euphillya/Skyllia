@@ -5,7 +5,10 @@ plugins {
     id("io.github.goooler.shadow") version "8.1.8"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.19" apply false
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.modrinth.minotaur") version "2.8.10"
 }
+
+evaluationDependsOn(":plugin")
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
 val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
@@ -37,7 +40,7 @@ dependencies {
 allprojects {
     group = "fr.euphyllia";
     version = "2.1-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
-    description = "First Skyblock plugin on Folia. If you want features, join us on our Discord.";
+    description = "Plugin Skyblock on Folia";
 
     apply(plugin = "java-library")
     apply(plugin = "io.github.goooler.shadow")
@@ -115,4 +118,67 @@ tasks {
     runServer {
         minecraftVersion("1.21.8")
     }
+}
+
+modrinth {
+    token.set(System.getenv("MODRINTH_TOKEN"))
+
+    projectId.set("skyllia")
+
+    versionNumber.set(project.version.toString())
+    versionName.set("Skyllia ${project.version}")
+
+    changelog.set(
+        System.getenv("commit_msg")
+            ?: "Automatic build from GitHub Actions."
+    )
+
+    uploadFile.set(project(":plugin").tasks.named("shadowJar"))
+
+    additionalFiles.set(
+        listOf(
+            project(":addons:SkylliaOre").tasks.named("shadowJar"),
+            project(":addons:PapiSkyllia").tasks.named("shadowJar"),
+            project(":addons:InsightsSkyllia").tasks.named("shadowJar"),
+            project(":addons:SkylliaChat").tasks.named("shadowJar"),
+            project(":addons:SkylliaBank").tasks.named("shadowJar"),
+            project(":addons:SkylliaChallenge").tasks.named("shadowJar"),
+        )
+     )
+
+    gameVersions.addAll(
+        "1.20",
+        "1.20.1",
+        "1.20.2",
+        "1.20.3",
+        "1.20.4",
+        "1.20.5",
+        "1.20.6",
+        "1.21",
+        "1.21.1",
+        "1.21.2",
+        "1.21.3",
+        "1.21.4",
+        "1.21.5",
+        "1.21.6",
+        "1.21.8",
+        "1.21.9",
+        "1.21.10",
+    )
+
+    loaders.addAll("folia", "paper", "purpur")
+
+    versionType.set("release")
+}
+
+tasks.modrinth {
+    dependsOn(
+        ":plugin:shadowJar",
+        ":addons:SkylliaOre:shadowJar",
+        ":addons:PapiSkyllia:shadowJar",
+        ":addons:InsightsSkyllia:shadowJar",
+        ":addons:SkylliaChat:shadowJar",
+        ":addons:SkylliaBank:shadowJar",
+        ":addons:SkylliaChallenge:shadowJar",
+    )
 }

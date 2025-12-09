@@ -13,29 +13,40 @@ jobs:
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v4
+
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           java-version: "21"
           cache: "gradle"
           distribution: "temurin"
+
       - name: Configure Git User
         run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
+
       - name: Permission gradlew
         run: chmod +x gradlew
+
       - name: Build Skyllia jar
         run: ./gradlew shadowJar
+
       - name: Collect jars
         run: |
           mkdir -p release
           cp build/libs/*.jar release/ || true
           cp addons/*/build/libs/*.jar release/ || true
           rm -f release/addons-*.jar
+
       - name: Upload Snapshot jar
         uses: actions/upload-artifact@v4
         with:
           name: Skyllia-Build
           path: release/*.jar
+
+      - name: Publish to Modrinth (Gradle Minotaur)
+        if: github.event_name != 'pull_request'
+        run: ./gradlew modrinth
+
       - name: Create Release
         if: github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
