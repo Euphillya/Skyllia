@@ -25,6 +25,7 @@ dependencies {
     compileOnly(project(":nms:v1_21_R4"))
     compileOnly(project(":nms:v1_21_R5"))
     compileOnly(project(":nms:v1_21_R6"))
+    compileOnly(project(":nms:v1_21_R7"))
 }
 
 java {

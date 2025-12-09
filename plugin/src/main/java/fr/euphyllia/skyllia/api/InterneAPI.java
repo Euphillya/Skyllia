@@ -133,6 +133,14 @@ public class InterneAPI {
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R6.BiomeNMS();
                 this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R6.ExplosionEntityImpl();
             }
+            case "1.21.11" -> {
+                // Notifier que cette version 1.21.11 n'est pas encore stable
+                logger.info("Warning: version 1.21.11 could not be verified ! Always make a backup when you update!");
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.ExplosionEntityImpl();
+            }
             default -> {
                 throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
             }

@@ -4,7 +4,7 @@ plugins {
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.19" apply false
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
     id("com.modrinth.minotaur") version "2.8.10"
 }
 
@@ -35,6 +35,7 @@ dependencies {
     implementation(project(":nms:v1_21_R4"))
     implementation(project(":nms:v1_21_R5"))
     implementation(project(":nms:v1_21_R6"))
+    implementation(project(":nms:v1_21_R7"))
 }
 
 allprojects {
@@ -164,6 +165,7 @@ modrinth {
         "1.21.8",
         "1.21.9",
         "1.21.10",
+        "1.21.11"
     )
 
     loaders.addAll("folia", "paper", "purpur")
