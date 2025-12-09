@@ -33,9 +33,11 @@ public class BlockRequirementListener implements Listener {
 
         final BlockData state = block.getBlockData();
         final Material material = block.getType();
-        if (state instanceof Ageable ageable) {
-            if (ageable.getAge() < ageable.getMaximumAge()) {
-                return;
+        if (!material.equals(Material.BAMBOO)) {
+            if (state instanceof Ageable ageable) {
+                if (ageable.getAge() < ageable.getMaximumAge()) {
+                    return;
+                }
             }
         }
 
