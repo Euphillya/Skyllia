@@ -36,11 +36,11 @@ public class SQLite implements DBConnect, DBInterface {
         pool.setDriverClassName("org.sqlite.JDBC");
         pool.setJdbcUrl("jdbc:sqlite:" + sqliteConfig.filePath());
 
-        pool.setMaximumPoolSize(sqliteConfig.maxPool());
-        pool.setMinimumIdle(sqliteConfig.minPool());
-        pool.setConnectionTimeout(sqliteConfig.timeout());
-        pool.setMaxLifetime(sqliteConfig.maxLifetime());
-        pool.setKeepaliveTime(sqliteConfig.keepAliveTime());
+        pool.setMaximumPoolSize(sqliteConfig.maxPool().intValue());
+        pool.setMinimumIdle(sqliteConfig.minPool().intValue());
+        pool.setConnectionTimeout(sqliteConfig.timeout().longValue());
+        pool.setMaxLifetime(sqliteConfig.maxLifetime().longValue());
+        pool.setKeepaliveTime(sqliteConfig.keepAliveTime().longValue());
 
         try (Connection connection = pool.getConnection(); Statement st = connection.createStatement()) {
             // Exécuter un petit SELECT 1 qui devrait réussir si tout va bien

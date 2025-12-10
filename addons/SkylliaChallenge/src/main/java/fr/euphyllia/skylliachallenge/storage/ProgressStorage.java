@@ -1,7 +1,7 @@
 package fr.euphyllia.skylliachallenge.storage;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.bukkit.NamespacedKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +69,7 @@ public class ProgressStorage {
             if (useMaria()) {
                 String q = "SELECT island_id, challenge_id, times_completed, last_completed_at FROM `%s`.`island_challenge_progress`;"
                         .formatted(InitMariaDB.databaseName());
-                MariaDBExecute.executeQuery(InitMariaDB.getPool(), q, null, rs -> {
+                SQLExecute.executeQuery(InitMariaDB.getPool(), q, null, rs -> {
                     try {
                         while (rs != null && rs.next()) {
                             UUID islandId = UUID.fromString(rs.getString("island_id"));
@@ -146,7 +146,7 @@ public class ProgressStorage {
                                     times_completed = VALUES(times_completed),
                                     last_completed_at = GREATEST(VALUES(last_completed_at), last_completed_at);
                                 """.formatted(InitMariaDB.databaseName());
-                        MariaDBExecute.executeQueryDML(
+                        SQLExecute.executeQueryDML(
                                 InitMariaDB.getPool(),
                                 q,
                                 List.of(islandId, challengeId, value, last),
@@ -195,7 +195,7 @@ public class ProgressStorage {
                                 times_completed = times_completed + 1,
                                 last_completed_at = VALUES(last_completed_at);
                             """.formatted(InitMariaDB.databaseName());
-                    MariaDBExecute.executeQueryDML(InitMariaDB.getPool(), q,
+                    SQLExecute.executeQueryDML(InitMariaDB.getPool(), q,
                             List.of(islandId, cid, nowEpochMillis), null, null);
                 } else {
                     String q = """
