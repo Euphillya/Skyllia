@@ -4,18 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
-import io.papermc.paper.FeatureHooks;
+import io.papermc.paper.world.PaperWorldLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtException;
-import net.minecraft.nbt.ReportedNbtException;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
@@ -45,7 +41,6 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.generator.CraftWorldInfo;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
@@ -56,8 +51,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 
@@ -132,45 +125,45 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             throw new RuntimeException(ex);
         }
 
-        Dynamic<?> dataTag;
-        if (levelStorageAccess.hasWorldData()) {
-            net.minecraft.world.level.storage.LevelSummary summary;
-            try {
-                dataTag = levelStorageAccess.getDataTag();
-                summary = levelStorageAccess.getSummary(dataTag);
-            } catch (NbtException | ReportedNbtException | IOException e) {
-                LevelStorageSource.LevelDirectory levelDirectory = levelStorageAccess.getLevelDirectory();
-                MinecraftServer.LOGGER.warn("Failed to load world data from {}", levelDirectory.dataFile(), e);
-                MinecraftServer.LOGGER.info("Attempting to use fallback");
-
-                try {
-                    dataTag = levelStorageAccess.getDataTagFallback();
-                    summary = levelStorageAccess.getSummary(dataTag);
-                } catch (NbtException | ReportedNbtException | IOException e1) {
-                    MinecraftServer.LOGGER.error("Failed to load world data from {}", levelDirectory.oldDataFile(), e1);
-                    MinecraftServer.LOGGER.error(
-                            "Failed to load world data from {} and {}. World files may be corrupted. Shutting down.",
-                            levelDirectory.dataFile(),
-                            levelDirectory.oldDataFile()
-                    );
-                    return null;
-                }
-
-                levelStorageAccess.restoreLevelDataFromOld();
-            }
-
-            if (summary.requiresManualConversion()) {
-                MinecraftServer.LOGGER.info("This world must be opened in an older version (like 1.6.4) to be safely converted");
-                return null;
-            }
-
-            if (!summary.isCompatible()) {
-                MinecraftServer.LOGGER.info("This world was created by an incompatible version.");
-                return null;
-            }
-        } else {
-            dataTag = null;
-        }
+//        Dynamic<?> dataTag;
+//        if (levelStorageAccess.hasWorldData()) {
+//            net.minecraft.world.level.storage.LevelSummary summary;
+//            try {
+//                dataTag = levelStorageAccess.getDataTag();
+//                summary = levelStorageAccess.getSummary(dataTag);
+//            } catch (NbtException | ReportedNbtException | IOException e) {
+//                LevelStorageSource.LevelDirectory levelDirectory = levelStorageAccess.getLevelDirectory();
+//                MinecraftServer.LOGGER.warn("Failed to load world data from {}", levelDirectory.dataFile(), e);
+//                MinecraftServer.LOGGER.info("Attempting to use fallback");
+//
+//                try {
+//                    dataTag = levelStorageAccess.getDataTagFallback();
+//                    summary = levelStorageAccess.getSummary(dataTag);
+//                } catch (NbtException | ReportedNbtException | IOException e1) {
+//                    MinecraftServer.LOGGER.error("Failed to load world data from {}", levelDirectory.oldDataFile(), e1);
+//                    MinecraftServer.LOGGER.error(
+//                            "Failed to load world data from {} and {}. World files may be corrupted. Shutting down.",
+//                            levelDirectory.dataFile(),
+//                            levelDirectory.oldDataFile()
+//                    );
+//                    return null;
+//                }
+//
+//                levelStorageAccess.restoreLevelDataFromOld();
+//            }
+//
+//            if (summary.requiresManualConversion()) {
+//                MinecraftServer.LOGGER.info("This world must be opened in an older version (like 1.6.4) to be safely converted");
+//                return null;
+//            }
+//
+//            if (!summary.isCompatible()) {
+//                MinecraftServer.LOGGER.info("This world was created by an incompatible version.");
+//                return null;
+//            }
+//        } else {
+//            dataTag = null;
+//        }
 
         boolean hardcore = creator.hardcore();
 
@@ -178,6 +171,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         WorldLoader.DataLoadContext context = console.worldLoaderContext;
         RegistryAccess.Frozen registryAccess = context.datapackDimensions();
         net.minecraft.core.Registry<LevelStem> contextLevelStemRegistry = registryAccess.lookupOrThrow(Registries.LEVEL_STEM);
+        Dynamic<?> dataTag = PaperWorldLoader.getLevelData(levelStorageAccess).dataTag();
         if (dataTag != null) {
             LevelDataAndDimensions levelDataAndDimensions = LevelStorageSource.getLevelDataAndDimensions(
                     dataTag, context.dataConfiguration(), contextLevelStemRegistry, context.datapackWorldgen()
@@ -256,35 +250,13 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         console.addLevel(serverLevel);
 
-        try {
-            setRandomSpawnSelection(serverLevel);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.initWorld(serverLevel, console, primaryLevelData);
+        console.initWorld(serverLevel, primaryLevelData, primaryLevelData.worldGenOptions());
 
         serverLevel.setSpawnSettings(true);
         // Paper - Put world into worldlist before initing the world; move up
 
         craftServer.getServer().prepareLevel(serverLevel);
 
-        //io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(serverLevel);
-        try {
-            Class<?> regionizedServerClass = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            Method getInstanceMethod = regionizedServerClass.getDeclaredMethod("getInstance");
-            getInstanceMethod.setAccessible(true);
-            Object regionizedServerInstance = getInstanceMethod.invoke(null);
-            Method addWorldMethod = regionizedServerClass.getDeclaredMethod("addWorld", ServerLevel.class);
-            addWorldMethod.setAccessible(true);
-            addWorldMethod.invoke(regionizedServerInstance, serverLevel);
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
-        FeatureHooks.tickEntityManager(serverLevel);
-        new WorldLoadEvent(serverLevel.getWorld()).callEvent();
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(serverLevel.getWorld());
     }
 
@@ -328,7 +300,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
      */
     @Override
     public double @Nullable [] getTPS(Location location) {
-        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.TPS(location);
+        return Bukkit.getRegionTPS(location);
     }
 
     /**
@@ -339,7 +311,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
      */
     @Override
     public double @Nullable [] getTPS(Chunk chunk) {
-        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.TPS(chunk);
+        return Bukkit.getRegionTPS(chunk);
     }
 
     /**
@@ -353,7 +325,22 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final int x = location.blockX() >> 4;
         final int z = location.blockZ() >> 4;
         final ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
-        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.getAverageTickTime(world, x, z);
+        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+                region = world.regioniser.getRegionAtSynchronised(x, z);
+        if (region == null) {
+            return null;
+        } else {
+            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
+            final io.papermc.paper.threadedregions.TickRegionScheduler.RegionScheduleHandle regionScheduleHandle = regionData.getRegionSchedulingHandle();
+            final long currTime = System.nanoTime();
+            return new double[]{
+                    regionScheduleHandle.getTickReport5s(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport15s(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport1m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport5m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport15m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+            };
+        }
     }
 
     /**
@@ -367,7 +354,22 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final int x = chunk.getX();
         final int z = chunk.getZ();
         final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
-        return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.getAverageTickTime(world, x, z);
+        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+                region = world.regioniser.getRegionAtSynchronised(x, z);
+        if (region == null) {
+            return null;
+        } else {
+            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
+            final io.papermc.paper.threadedregions.TickRegionScheduler.RegionScheduleHandle regionScheduleHandle = regionData.getRegionSchedulingHandle();
+            final long currTime = System.nanoTime();
+            return new double[]{
+                    regionScheduleHandle.getTickReport5s(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport15s(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport1m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport5m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+                    regionScheduleHandle.getTickReport15m(currTime).timePerTickData().segmentAll().average() / 1.0E6,
+            };
+        }
     }
 
 }

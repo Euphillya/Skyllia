@@ -9,7 +9,7 @@ paperweight {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
+    paperweight.foliaDevBundle("1.21.11-R0.1-SNAPSHOT")
     compileOnly(project(":nms:v1_21_R5"))
     compileOnly(project(":api"))
 
