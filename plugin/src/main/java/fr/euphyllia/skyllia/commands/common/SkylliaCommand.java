@@ -28,6 +28,7 @@ public class SkylliaCommand implements SkylliaCommandInterface {
 
     private void registerDefaultCommands() {
         registry.registerSubCommand(new AccessSubCommand(), "access");
+        registry.registerSubCommand(new BanListCommand(), "banlist", "banned");
         registry.registerSubCommand(new BanSubCommand(), "ban");
         registry.registerSubCommand(new SetBiomeSubCommand(), "biome");
         registry.registerSubCommand(new CreateSubCommand(), "create");

@@ -18,6 +18,11 @@ already-in-queue = "⏳ Vous êtes déjà dans la file d'attente pour créer une
 queued = "⌛ Ajouté à la file d'attente. Position : #%position%"
 position-update = "📣 Votre nouvelle position dans la file est : #%position%"
 
+[island.banlist]
+title = "<gold>📌 Bannis de l'île <gray>(%count%)</gray>"
+line = "<red>-</red> <white>%name%</white>"
+empty = "<gray>Aucun joueur n'est banni de votre île.</gray>"
+
 [island.home]
 success = "Vous avez été téléporté sur votre île."
 
