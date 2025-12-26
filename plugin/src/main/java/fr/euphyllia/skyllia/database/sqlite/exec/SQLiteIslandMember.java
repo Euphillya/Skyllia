@@ -46,6 +46,12 @@ public class SQLiteIslandMember extends IslandMemberQuery {
             WHERE island_id = ? AND player_name = ?;
             """;
 
+    private static final String OWNERS_ISLAND = """
+            SELECT island_id, uuid_player, player_name, role, joined
+            FROM members_in_islands
+            WHERE island_id = ? AND role = 'OWNER';
+            """;
+
     private static final String MEMBERS_ISLAND = """
             SELECT island_id, uuid_player, player_name, role, joined
             FROM members_in_islands
@@ -90,6 +96,41 @@ public class SQLiteIslandMember extends IslandMemberQuery {
     public SQLiteIslandMember(InterneAPI api, SQLiteDatabaseLoader databaseLoader) {
         this.api = api;
         this.databaseLoader = databaseLoader;
+    }
+
+    @Override
+    public CompletableFuture<Players> getOwnerByIslandId(UUID islandId) {
+        CompletableFuture<Players> future = new CompletableFuture<>();
+        try {
+            databaseLoader.executeQuery(
+                    OWNERS_ISLAND,
+                    List.of(islandId.toString()),
+                    rs -> {
+                        try {
+                            if (rs.next()) {
+                                UUID uuid = UUID.fromString(rs.getString("uuid_player"));
+                                String name = rs.getString("player_name");
+                                Players p = new Players(
+                                        uuid,
+                                        name,
+                                        islandId,
+                                        RoleType.OWNER
+                                );
+                                future.complete(p);
+                            } else {
+                                future.complete(null);
+                            }
+                        } catch (SQLException ex) {
+                            logger.error("getOwnerByIslandId", ex);
+                            future.complete(null);
+                        }
+                    },
+                    null
+            );
+        } catch (DatabaseException e) {
+            future.complete(null);
+        }
+        return future;
     }
 
     @Override

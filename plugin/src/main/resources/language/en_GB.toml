@@ -214,6 +214,13 @@ positions-not-set = "Both positions must be set before saving the schematic."
 save-success = "The schematic has been saved successfully as %schematic_name%."
 save-failed = "An error occurred while saving the schematic."
 
+[island.admin.current]
+no-island-here = "There is no island at your current location."
+no-permission = "You do not have permission to manage this island."
+player-only-command = "This command can only be executed by a player."
+no-owner = "This island has no owner."
+info = "You are currently on the island of %owner_name% (ID ile: %island_id%, ID propriétaire: %owner_uuid%)."
+
 [misc]
 unknown-command = "This subcommand does not exist."
 

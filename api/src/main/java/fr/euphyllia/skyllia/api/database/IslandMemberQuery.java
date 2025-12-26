@@ -18,6 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class IslandMemberQuery {
 
+    public abstract CompletableFuture<Players> getOwnerByIslandId(UUID islandId);
+
     /**
      * Updates the membership information of a given player within the specified {@link Island}.
      *

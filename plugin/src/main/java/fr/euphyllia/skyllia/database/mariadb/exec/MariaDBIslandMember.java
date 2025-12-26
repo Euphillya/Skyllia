@@ -45,6 +45,13 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                 FROM `%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `player_name` = ?;
             """;
+
+    private static final String OWNERS_ISLAND = """
+                SELECT `island_id`, `uuid_player`, `player_name, `role`, `joined`
+                FROM `%s`.`members_in_islands`
+                WHERE `island_id` = ? AND `role` = 'OWNER';
+            """;
+
     private static final String MEMBERS_ISLAND = """
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
                 FROM `%s`.`members_in_islands`
@@ -86,6 +93,32 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public MariaDBIslandMember(InterneAPI api, String databaseName) {
         this.api = api;
         this.databaseName = databaseName;
+    }
+
+    @Override
+    public CompletableFuture<@Nullable Players> getOwnerByIslandId(UUID islandId) {
+        CompletableFuture<Players> completableFuture = new CompletableFuture<>();
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), OWNERS_ISLAND.formatted(this.databaseName),
+                    List.of(islandId),
+                    resultSet -> {
+                        try {
+                            if (resultSet.next()) {
+                                UUID playerId = UUID.fromString(resultSet.getString("uuid_player"));
+                                String playerName = resultSet.getString("player_name");
+                                Players players = new Players(playerId, playerName, islandId, RoleType.OWNER);
+                                completableFuture.complete(players);
+                            } else {
+                                completableFuture.complete(null);
+                            }
+                        } catch (SQLException e) {
+                            completableFuture.complete(null);
+                        }
+                    }, null);
+        } catch (DatabaseException e) {
+            completableFuture.complete(null);
+        }
+        return completableFuture;
     }
 
     public CompletableFuture<Boolean> updateMember(Island island, Players players) {

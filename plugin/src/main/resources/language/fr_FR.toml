@@ -214,6 +214,13 @@ positions-not-set = "Les positions 1 et 2 doivent être définies avant d'enregi
 save-success = "Le schéma a été enregistré avec succès sous le nom de %schematic_name%."
 save-failed = "Le schéma n'a pas pu être enregistré. Veuillez vérifier la console pour plus de détails."
 
+[island.admin.current]
+no-island-here = "Aucune île n'a été trouvée à cet endroit."
+no-permission = "Vous n'avez pas la permission d'utiliser cette commande."
+player-only-command = "Cette commande ne peut être utilisée que par un joueur."
+no-owner = "L'île n'a pas de propriétaire."
+info = "Vous êtes sur l'île de %owner_name% (ID ile: %island_id%, ID propriétaire: %owner_uuid%)."
+
 [misc]
 unknown-command = "<red>Commande inconnue."
 

@@ -68,6 +68,14 @@ public class IslandHook extends Island {
      * {@inheritDoc}
      */
     @Override
+    public Players getOwner() {
+        return this.plugin.getInterneAPI().getSkyblockManager().getOwnerIsland(this).join();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Timestamp getCreateDate() {
         return this.createDate;
     }

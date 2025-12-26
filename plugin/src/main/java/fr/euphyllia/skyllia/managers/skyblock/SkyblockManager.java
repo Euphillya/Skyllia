@@ -80,6 +80,10 @@ public class SkyblockManager {
         return future;
     }
 
+    public CompletableFuture<@Nullable Players> getOwnerByIslandId(UUID islandId) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getOwnerByIslandId(islandId);
+    }
+
     /**
      * Retrieves an island by its unique islandId.
      *

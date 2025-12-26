@@ -18,6 +18,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class Island {
 
     /**
+     * Gets the owner of the island.
+     *
+     * @return The {@link Players} object representing the island owner.
+     */
+    public abstract Players getOwner();
+
+    /**
      * Gets the creation date of the island.
      *
      * @return The creation date as a {@link Timestamp}, or {@code null} if unknown.

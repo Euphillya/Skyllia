@@ -69,6 +69,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
     }
 
     private void registerDefaultCommands() {
+        registry.registerSubCommand(new CurrentSubCommands(), "current");
         registry.registerSubCommand(new ForceDeleteSubCommands(), "force_delete", "forcedelete");
         registry.registerSubCommand(new ForceTransferSubCommands(), "force_transfer", "forcetransfer");
         registry.registerSubCommand(new InfoSubCommand(), "info", "information");
