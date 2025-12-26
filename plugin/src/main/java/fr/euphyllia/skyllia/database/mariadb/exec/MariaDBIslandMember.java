@@ -7,7 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,7 +124,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Boolean> updateMember(Island island, Players players) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_MEMBERS.formatted(this.databaseName),
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_MEMBERS.formatted(this.databaseName),
                     List.of(island.getId(), players.getMojangId(), players.getLastKnowName(), players.getRoleType().name(), players.getRoleType().name()),
                     i -> completableFuture.complete(i != 0), null);
         } catch (DatabaseException e) {
@@ -136,7 +136,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Players> getPlayersIsland(Island island, UUID playerId) {
         CompletableFuture<Players> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_ISLAND_MOJANG_ID.formatted(this.databaseName),
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_ISLAND_MOJANG_ID.formatted(this.databaseName),
                     List.of(island.getId(), playerId),
                     resultSet -> {
                         try {
@@ -162,7 +162,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<@Nullable Players> getPlayersIsland(Island island, String playerName) {
         CompletableFuture<Players> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_ISLAND_MOJANG_NAME.formatted(this.databaseName),
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_ISLAND_MOJANG_NAME.formatted(this.databaseName),
                     List.of(island.getId(), playerName),
                     resultSet -> {
                         try {
@@ -188,7 +188,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         CompletableFuture<CopyOnWriteArrayList<Players>> completableFuture = new CompletableFuture<>();
         CopyOnWriteArrayList<Players> playersList = new CopyOnWriteArrayList<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), MEMBERS_ISLAND.formatted(this.databaseName),
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), MEMBERS_ISLAND.formatted(this.databaseName),
                     List.of(island.getId()),
                     resultSet -> {
                         try {
@@ -250,7 +250,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<@Nullable Players> getOwnerInIslandId(Island island) {
         CompletableFuture<Players> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), OWNER_ISLAND.formatted(this.databaseName, this.databaseName), List.of(island.getId()), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), OWNER_ISLAND.formatted(this.databaseName, this.databaseName), List.of(island.getId()), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         String ownerId = resultSet.getString("mi.uuid_player");
@@ -273,7 +273,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Boolean> addMemberClear(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), i -> completableFuture.complete(i != 0), null);
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), ADD_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), i -> completableFuture.complete(i != 0), null);
         } catch (DatabaseException e) {
             completableFuture.complete(false);
         }
@@ -283,7 +283,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Boolean> deleteMemberClear(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), i -> {
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), i -> {
                 completableFuture.complete(i != 0);
             }, null);
         } catch (DatabaseException e) {
@@ -295,7 +295,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId, RemovalCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), resultSet -> {
+            SQLExecute.executeQuery(this.api.getDatabaseLoader(), SELECT_MEMBER_CLEAR.formatted(this.databaseName), List.of(playerId, cause.name()), resultSet -> {
                 try {
                     completableFuture.complete(resultSet.next());
                 } catch (SQLException e) {
@@ -312,7 +312,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<Boolean> deleteMember(Island island, Players oldMember) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBERS.formatted(this.databaseName),
+            SQLExecute.executeQueryDML(this.api.getDatabaseLoader(), DELETE_MEMBERS.formatted(this.databaseName),
                     List.of(island.getId(), oldMember.getMojangId()),
                     var1 -> completableFuture.complete(var1 != 0),
                     null);

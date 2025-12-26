@@ -8,7 +8,7 @@ import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.configuration.MariaDBConfig;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -189,7 +189,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             );
 
             try {
-                MariaDBExecute.executeQueryDML(
+                SQLExecute.executeQueryDML(
                         api.getDatabaseLoader(),
                         String.format(INSERT_SPIRAL, database),
                         null,
@@ -205,11 +205,11 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void executeQuery(String query) throws DatabaseException {
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query);
+        SQLExecute.executeQuery(api.getDatabaseLoader(), query);
     }
 
     private void executeQuery(String query, List<Object> params) throws DatabaseException {
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null);
+        SQLExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null);
     }
 
     private void executeAsync(Runnable task) {

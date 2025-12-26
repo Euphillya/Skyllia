@@ -5,8 +5,8 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
 import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.execute.SQLExecute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
 
     private void createBankTable() {
         try {
-            MariaDBExecute.executeQuery(database,
+            SQLExecute.executeQuery(database,
                     CREATE_BANK_TABLE.formatted(ConfigLoader.database.getMariaDBConfig().database()));
         } catch (Exception exception) {
             log.error("Error creating island_bank table: {}", exception.getMessage(), exception);
