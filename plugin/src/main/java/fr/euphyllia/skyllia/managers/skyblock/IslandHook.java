@@ -221,6 +221,11 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().getMembersInIsland(this).join();
     }
 
+    @Override
+    public CopyOnWriteArrayList<Players> getBannedMembers() {
+        return this.plugin.getInterneAPI().getSkyblockManager().getBannedMembersInIsland(this).join();
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -40,9 +40,7 @@ public class BanListCommand implements SubCommandInterface {
                 return;
             }
 
-            List<Players> banned = island.getMembers().stream()
-                    .filter(p -> p != null && p.getRoleType() == RoleType.BAN)
-                    .toList();
+            List<Players> banned = island.getBannedMembers();
 
             if (banned.isEmpty()) {
                 ConfigLoader.language.sendMessage(player, "island.banlist.empty");

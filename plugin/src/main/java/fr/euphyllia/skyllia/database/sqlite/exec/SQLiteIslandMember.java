@@ -52,6 +52,12 @@ public class SQLiteIslandMember extends IslandMemberQuery {
             WHERE island_id = ? AND role NOT IN ('BAN', 'VISITOR');
             """;
 
+    private static final String MEMBERS_BANNED_ISLAND = """
+            SELECT island_id, uuid_player, player_name, role, joined
+            FROM members_in_islands
+            WHERE island_id = ? AND role = 'BAN';
+            """;
+
     private static final String OWNER_ISLAND = """
             SELECT mi.island_id, mi.uuid_player, mi.player_name, mi.role, mi.joined
             FROM members_in_islands mi
@@ -203,6 +209,38 @@ public class SQLiteIslandMember extends IslandMemberQuery {
                     null
             );
         } catch (DatabaseException e) {
+            future.complete(new CopyOnWriteArrayList<>());
+        }
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<@Nullable CopyOnWriteArrayList<Players>> getBannedMembersInIsland(Island island) {
+        CompletableFuture<CopyOnWriteArrayList<Players>> future = new CompletableFuture<>();
+        CopyOnWriteArrayList<Players> playersList = new CopyOnWriteArrayList<>();
+        try {
+            databaseLoader.executeQuery(
+                    MEMBERS_BANNED_ISLAND,
+                    List.of(island.getId().toString()),
+                    rs -> {
+                        try {
+                            while (rs.next()) {
+                                UUID uuid = UUID.fromString(rs.getString("uuid_player"));
+                                RoleType roleType = RoleType.valueOf(rs.getString("role"));
+                                String name = rs.getString("player_name");
+                                Players p = new Players(uuid, name, island.getId(), roleType);
+                                playersList.add(p);
+                            }
+                            future.complete(playersList);
+                        } catch (Exception ex) {
+                            logger.error("getBannedMembersInIsland", ex);
+                            future.complete(new CopyOnWriteArrayList<>());
+                        }
+                    },
+                    null
+            );
+        } catch (DatabaseException e) {
+            logger.error("getBannedMembersInIsland", e);
             future.complete(new CopyOnWriteArrayList<>());
         }
         return future;

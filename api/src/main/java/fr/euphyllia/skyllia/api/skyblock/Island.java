@@ -118,6 +118,13 @@ public abstract class Island {
     public abstract CopyOnWriteArrayList<Players> getMembers();
 
     /**
+     * Gets the list of all banned members in the island.
+     *
+     * @return A {@link CopyOnWriteArrayList} of {@link Players} who are banned.
+     */
+    public abstract CopyOnWriteArrayList<Players> getBannedMembers();
+
+    /**
      * Gets the cached list of all members on the island (from memory/cache).
      *
      * @return A {@link CopyOnWriteArrayList} of {@link Players}.

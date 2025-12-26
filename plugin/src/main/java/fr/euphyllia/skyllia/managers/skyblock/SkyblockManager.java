@@ -221,6 +221,10 @@ public class SkyblockManager {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getMembersInIsland(island);
     }
 
+    public CompletableFuture<@Nullable CopyOnWriteArrayList<Players>> getBannedMembersInIsland(Island island) {
+        return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getBannedMembersInIsland(island);
+    }
+
     /**
      * Gets a specific member by their UUID from the island.
      *

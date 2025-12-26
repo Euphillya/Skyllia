@@ -57,6 +57,14 @@ public abstract class IslandMemberQuery {
     public abstract CompletableFuture<@Nullable CopyOnWriteArrayList<Players>> getMembersInIsland(Island island);
 
     /**
+     * Retrieves all banned members in the specified {@link Island}.
+     *
+     * @param island the {@link Island} whose banned members are to be retrieved
+     * @return a {@link CopyOnWriteArrayList} of {@link Players} who are banned from the island
+     */
+    public abstract CompletableFuture<@Nullable CopyOnWriteArrayList<Players>> getBannedMembersInIsland(Island island);
+
+    /**
      * Retrieves the owner of the specified {@link Island}.
      *
      * @param island the {@link Island} to query

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MariaDBIslandMember extends IslandMemberQuery {
 
@@ -48,6 +49,12 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                 SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
                 FROM `%s`.`members_in_islands`
                 WHERE `island_id` = ? AND `role` NOT IN ('BAN', 'VISITOR');
+            """;
+
+    private static final String BANNED_MEMBERS_ISLAND = """
+                SELECT `island_id`, `uuid_player`, `player_name`, `role`, `joined`
+                FROM `%s`.`members_in_islands`
+                WHERE `island_id` = ? AND `role` = 'BAN';
             """;
 
     private static final String OWNER_ISLAND = """
@@ -170,6 +177,39 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                     }, null);
         } catch (DatabaseException e) {
             completableFuture.complete(new CopyOnWriteArrayList<>());
+        }
+        return completableFuture;
+    }
+
+    @Override
+    public CompletableFuture<@Nullable CopyOnWriteArrayList<Players>> getBannedMembersInIsland(Island island) {
+        CompletableFuture<CopyOnWriteArrayList<Players>> completableFuture = new CompletableFuture<>();
+        CopyOnWriteArrayList<Players> playersList = new CopyOnWriteArrayList<>();
+        try {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), BANNED_MEMBERS_ISLAND.formatted(this.databaseName),
+                    List.of(island.getId()),
+                    resultSet -> {
+                        try {
+                            if (resultSet.next()) {
+                                do {
+                                    UUID playerId = UUID.fromString(resultSet.getString("uuid_player"));
+                                    RoleType roleType = RoleType.valueOf(resultSet.getString("role"));
+                                    String playerName = resultSet.getString("player_name");
+                                    Players players = new Players(playerId, playerName, island.getId(), roleType);
+                                    playersList.add(players);
+                                } while (resultSet.next());
+                                completableFuture.complete(playersList);
+                            } else {
+                                completableFuture.complete(new CopyOnWriteArrayList<>());
+                            }
+                        } catch (Exception e) {
+                            logger.log(Level.FATAL, e.getMessage(), e);
+                            completableFuture.complete(new CopyOnWriteArrayList<>());
+                        }
+                    }, null);
+        } catch (Exception e) {
+            completableFuture.complete(new CopyOnWriteArrayList<>());
+            logger.log(Level.FATAL, e.getMessage(), e);
         }
         return completableFuture;
     }
