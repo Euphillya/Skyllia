@@ -69,7 +69,7 @@ public class IslandHook extends Island {
      */
     @Override
     public Players getOwner() {
-        return this.plugin.getInterneAPI().getSkyblockManager().getOwnerIsland(this).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().getOwnerByIslandId(this.islandId).join();
     }
 
     /**
