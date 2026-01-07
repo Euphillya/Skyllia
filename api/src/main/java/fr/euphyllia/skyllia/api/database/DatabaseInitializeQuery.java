@@ -18,5 +18,5 @@ public abstract class DatabaseInitializeQuery {
      * @return {@code true} if the initialization is successful, {@code false} otherwise
      * @throws DatabaseException if an error occurs during the database initialization
      */
-    public abstract boolean init() throws DatabaseException;
+    public abstract Boolean init() throws DatabaseException;
 }

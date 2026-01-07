@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.sgbd.model;
+package fr.euphyllia.skyllia.sgbd.utils.model;
 
 /**
  * The {@code DBCallbackInt} interface defines a single method

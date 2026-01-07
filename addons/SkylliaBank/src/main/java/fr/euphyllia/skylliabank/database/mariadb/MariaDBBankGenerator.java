@@ -2,7 +2,7 @@ package fr.euphyllia.skylliabank.database.mariadb;
 
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.MariaDBExecute;
 import fr.euphyllia.skylliabank.api.BankAccount;
 import fr.euphyllia.skylliabank.api.BankGenerator;
 import org.apache.logging.log4j.LogManager;

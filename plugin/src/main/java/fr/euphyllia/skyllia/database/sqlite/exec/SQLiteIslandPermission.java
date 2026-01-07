@@ -54,57 +54,10 @@ public class SQLiteIslandPermission extends IslandPermissionQuery {
         this.databaseLoader = databaseLoader;
     }
 
-    @Override
-    public CompletableFuture<Boolean> updateIslandsPermission(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        try {
-            databaseLoader.executeUpdate(
-                    UPSERT_PERMISSIONS_ISLANDS,
-                    List.of(
-                            island.getId().toString(),
-                            permissionsType.name(),
-                            roleType.name(),
-                            permissions
-                    ),
-                    i -> future.complete(i > 0),
-                    null
-            );
-        } catch (DatabaseException e) {
-            future.complete(false);
-        }
-        return future;
-    }
+
 
     @Override
-    public CompletableFuture<PermissionRoleIsland> getIslandPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
-        CompletableFuture<PermissionRoleIsland> future = new CompletableFuture<>();
-        try {
-            databaseLoader.executeQuery(
-                    SELECT_ISLAND_PERMISSION,
-                    List.of(islandId.toString(), roleType.name(), permissionsType.name()),
-                    rs -> {
-                        try {
-                            if (rs.next()) {
-                                long flags = rs.getLong("flags");
-                                future.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, flags));
-                            } else {
-                                future.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
-                            }
-                        } catch (SQLException ex) {
-                            logger.error("getIslandPermission", ex);
-                            future.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
-                        }
-                    },
-                    null
-            );
-        } catch (DatabaseException e) {
-            future.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
-        }
-        return future;
-    }
-
-    @Override
-    public CompletableFuture<Long> getIslandGameRule(Island island) {
+    public Long getIslandGameRule(Island island) {
         CompletableFuture<Long> future = new CompletableFuture<>();
         try {
             databaseLoader.executeQuery(

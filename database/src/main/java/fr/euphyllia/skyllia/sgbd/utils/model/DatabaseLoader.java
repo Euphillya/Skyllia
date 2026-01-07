@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.sgbd.model;
+package fr.euphyllia.skyllia.sgbd.utils.model;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.jetbrains.annotations.Nullable;
@@ -11,12 +11,12 @@ public interface DatabaseLoader {
      * @return {@code true} if the database was successfully connected; {@code false} otherwise.
      * @throws DatabaseException if an error occurs while initializing the connection pool.
      */
-    public abstract boolean loadDatabase() throws DatabaseException;
+    boolean loadDatabase() throws DatabaseException;
 
     /**
      * Closes the database connection if it is currently open.
      */
-    public abstract void closeDatabase();
+    void closeDatabase();
 
     /**
      * Retrieves a Connection instance.
@@ -24,5 +24,5 @@ public interface DatabaseLoader {
      * @return a valid Connection or {@code null}.
      * @throws DatabaseException if an error occurs while retrieving the connection.
      */
-    public abstract @Nullable Object getConnection() throws DatabaseException;
+    @Nullable Object getConnection() throws DatabaseException;
 }

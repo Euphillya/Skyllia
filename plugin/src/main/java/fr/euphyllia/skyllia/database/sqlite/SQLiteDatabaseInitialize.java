@@ -114,7 +114,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     @Override
-    public boolean init() throws DatabaseException {
+    public Boolean init() throws DatabaseException {
         // Création des tables
         createDatabaseAndTables();
 

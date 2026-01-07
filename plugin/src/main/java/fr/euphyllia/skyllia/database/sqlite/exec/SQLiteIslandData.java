@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SQLiteIslandData extends IslandDataQuery {
+public class  SQLiteIslandData extends IslandDataQuery {
 
     private static final Logger logger = LogManager.getLogger(SQLiteIslandData.class);
 
@@ -85,7 +85,7 @@ public class SQLiteIslandData extends IslandDataQuery {
     }
 
     @Override
-    public CompletableFuture<@Nullable Island> getIslandByOwnerId(UUID playerId) {
+    public @Nullable Island getIslandByOwnerId(UUID playerId) {
         CompletableFuture<Island> future = new CompletableFuture<>();
         try {
             databaseLoader.executeQuery(
@@ -115,7 +115,7 @@ public class SQLiteIslandData extends IslandDataQuery {
     }
 
     @Override
-    public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId) {
+    public @Nullable Island getIslandByPlayerId(UUID playerId) {
         CompletableFuture<Island> future = new CompletableFuture<>();
         try {
             databaseLoader.executeQuery(

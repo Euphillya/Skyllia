@@ -1,11 +1,11 @@
-package fr.euphyllia.skyllia.sgbd.mariadb.execute;
+package fr.euphyllia.skyllia.sgbd.utils.sql;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.model.DBCallback;
-import fr.euphyllia.skyllia.sgbd.model.DBCallbackInt;
-import fr.euphyllia.skyllia.sgbd.model.DBWork;
-import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBCallback;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBCallbackInt;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBWork;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,12 +15,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Utility class for executing MariaDB queries with optional callbacks and custom work.
+ * Utility class for executing SQL queries with optional callbacks and custom work.
  */
-public class MariaDBExecute {
+public class SQLExecute {
 
     private static final String DATABASE_NOT_FOUND_ERROR = "Cannot get connection to the database";
-    private static final Logger logger = LogManager.getLogger(MariaDBExecute.class);
+    private static final Logger logger = LogManager.getLogger(SQLExecute.class);
 
     /**
      * Executes a SQL query without parameters, without callback, and without custom work.

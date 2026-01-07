@@ -18,7 +18,7 @@ import fr.euphyllia.skyllia.managers.world.WorldModifierSelector;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.sgbd.mariadb.stream;
+package fr.euphyllia.skyllia.sgbd.utils.stream;
 
 /**
  * The {@code BinaryStream} record encapsulates a binary {@link java.io.InputStream}

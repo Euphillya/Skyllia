@@ -1,10 +1,10 @@
 package fr.euphyllia.skyllia.sgbd.sqlite;
 
 import com.zaxxer.hikari.HikariDataSource;
+import fr.euphyllia.skyllia.sgbd.DatabaseConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.model.DBConnect;
-import fr.euphyllia.skyllia.sgbd.model.DBInterface;
-import fr.euphyllia.skyllia.sgbd.sqlite.configuration.SQLiteConfig;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBConnect;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,11 +15,11 @@ import java.sql.Statement;
 public class SQLite implements DBConnect, DBInterface {
 
     private final Logger logger = LogManager.getLogger(SQLite.class);
-    private final SQLiteConfig sqliteConfig;
+    private final DatabaseConfig sqliteConfig;
     private HikariDataSource pool;
     private boolean connected;
 
-    public SQLite(final SQLiteConfig sqliteConfig) {
+    public SQLite(final DatabaseConfig sqliteConfig) {
         this.sqliteConfig = sqliteConfig;
         this.connected = false;
     }
@@ -38,8 +38,8 @@ public class SQLite implements DBConnect, DBInterface {
 
         pool.setMaximumPoolSize(sqliteConfig.maxPool());
         pool.setMinimumIdle(sqliteConfig.minPool());
-        pool.setConnectionTimeout(sqliteConfig.timeout());
-        pool.setMaxLifetime(sqliteConfig.maxLifetime());
+        pool.setConnectionTimeout(sqliteConfig.timeOut());
+        pool.setMaxLifetime(sqliteConfig.maxLifeTime());
         pool.setKeepaliveTime(sqliteConfig.keepAliveTime());
 
         try (Connection connection = pool.getConnection(); Statement st = connection.createStatement()) {

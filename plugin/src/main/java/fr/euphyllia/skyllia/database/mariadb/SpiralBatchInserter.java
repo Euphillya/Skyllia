@@ -2,7 +2,7 @@ package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.skyllia.api.skyblock.IslandData;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.model.DBWork;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBWork;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

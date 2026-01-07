@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.sgbd.mariadb;
+package fr.euphyllia.skyllia.sgbd.postgre;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
@@ -12,22 +12,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * The {@code DatabaseLoader} class provides methods to load and close a MariaDB connection pool,
- * execute SQL queries, and handle prepared statements with various parameter types.
- */
-public class MariaDBLoader implements DatabaseLoader {
-
-    private final MariaDB mariaDB;
-
-    /**
-     * Constructs a new {@code DatabaseLoader} with the specified {@link MariaDB} instance.
-     *
-     * @param mariaDB the {@link MariaDB} instance used to manage connections.
-     */
-    public MariaDBLoader(MariaDB mariaDB) {
-        this.mariaDB = mariaDB;
-    }
+public record PostgresLoader(Postgres pg) implements DatabaseLoader {
 
     /**
      * Loads the database connection if not already connected.
@@ -37,9 +22,7 @@ public class MariaDBLoader implements DatabaseLoader {
      */
     @Override
     public boolean loadDatabase() throws DatabaseException {
-        if (mariaDB != null && !mariaDB.isConnected()) {
-            return mariaDB.onLoad();
-        }
+        if (pg != null && !pg.isConnected()) return pg.onLoad();
         return false;
     }
 
@@ -48,21 +31,19 @@ public class MariaDBLoader implements DatabaseLoader {
      */
     @Override
     public void closeDatabase() {
-        if (mariaDB != null) {
-            mariaDB.onClose();
-        }
+        if (pg != null) pg.onClose();
     }
 
     /**
-     * Retrieves a {@link Connection} from the {@link MariaDB} instance.
+     * Retrieves a Connection instance.
      *
-     * @return a valid {@link Connection}, or {@code null} if {@code mariaDB} is {@code null}.
+     * @return a valid Connection or {@code null}.
      * @throws DatabaseException if an error occurs while retrieving the connection.
      */
     @Nullable
     @Override
     public Connection getConnection() throws DatabaseException {
-        return mariaDB != null ? mariaDB.getConnection() : null;
+        return pg != null ? pg.getConnection() : null;
     }
 
     /**

@@ -1,7 +1,7 @@
 package fr.euphyllia.skylliachallenge.storage;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.MariaDBExecute;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 import org.bukkit.NamespacedKey;
 import org.slf4j.Logger;

@@ -5,9 +5,8 @@ import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.managers.ConfigManager;
+import fr.euphyllia.skyllia.sgbd.DatabaseConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.configuration.MariaDBConfig;
-import fr.euphyllia.skyllia.sgbd.sqlite.configuration.SQLiteConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +16,8 @@ public class DatabaseConfigManager implements ConfigManager {
     private static final Logger log = LogManager.getLogger(DatabaseConfigManager.class);
     private final CommentedFileConfig config;
     private int configVersion;
-    private MariaDBConfig mariaDBConfig;
-    private SQLiteConfig sqLiteConfig;
+    private DatabaseConfig mariaDBConfig;
+    private DatabaseConfig sqLiteConfig;
     private boolean changed = false;
 
     public DatabaseConfigManager(CommentedFileConfig config) {
@@ -48,7 +47,7 @@ public class DatabaseConfigManager implements ConfigManager {
             long keepAliveTime = getOrSetDefault("mariadb.keepAliveTime", 0L, Long.class);
             long maxLifeTime = getOrSetDefault("mariadb.maxLifeTime", 1800000L, Long.class);
             int timeOut = getOrSetDefault("mariadb.timeOut", 5000, Integer.class);
-            this.mariaDBConfig = new MariaDBConfig(hostname, String.valueOf(port), username, password, useSSL, minPool, maxPool, maxLifeTime, keepAliveTime, timeOut, database);
+            this.mariaDBConfig = new DatabaseConfig(hostname, String.valueOf(port), username, password, useSSL, minPool, maxPool, maxLifeTime, keepAliveTime, timeOut, database, null);
 
             if (changed) config.save();
             return;
@@ -63,7 +62,7 @@ public class DatabaseConfigManager implements ConfigManager {
             long keepAliveTime = getOrSetDefault("sqlite.keepAliveTime", 0L, Long.class);
             long maxLifeTime = getOrSetDefault("sqlite.maxLifeTime", 1800000L, Long.class);
             int timeOut = getOrSetDefault("sqlite.timeOut", 30000, Integer.class);
-            this.sqLiteConfig = new SQLiteConfig(file, minPool, maxPool, keepAliveTime, maxLifeTime, timeOut);
+            this.sqLiteConfig = new DatabaseConfig(null, null, null, null, false, minPool, maxPool, maxLifeTime, keepAliveTime, timeOut, null, file);
 
             if (changed) {
                 TomlWriter tomlWriter = new TomlWriter();
@@ -104,11 +103,11 @@ public class DatabaseConfigManager implements ConfigManager {
         throw new IllegalStateException("Cannot convert value at path '" + path + "' from " + value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
-    public @Nullable MariaDBConfig getMariaDBConfig() {
+    public @Nullable DatabaseConfig getMariaDBConfig() {
         return mariaDBConfig;
     }
 
-    public @Nullable SQLiteConfig getSqLiteConfig() {
+    public @Nullable DatabaseConfig getSqLiteConfig() {
         return sqLiteConfig;
     }
 

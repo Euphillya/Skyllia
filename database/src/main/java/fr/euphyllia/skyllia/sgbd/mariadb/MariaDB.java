@@ -1,10 +1,10 @@
 package fr.euphyllia.skyllia.sgbd.mariadb;
 
 import com.zaxxer.hikari.HikariDataSource;
+import fr.euphyllia.skyllia.sgbd.DatabaseConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.configuration.MariaDBConfig;
-import fr.euphyllia.skyllia.sgbd.model.DBConnect;
-import fr.euphyllia.skyllia.sgbd.model.DBInterface;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBConnect;
+import fr.euphyllia.skyllia.sgbd.utils.model.DBInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +21,7 @@ import java.sql.SQLException;
 public class MariaDB implements DBConnect, DBInterface {
 
     private final Logger logger = LogManager.getLogger(MariaDB.class);
-    private final MariaDBConfig mariaDBConfig;
+    private final DatabaseConfig mariaDBConfig;
     private HikariDataSource pool;
     private boolean connected;
 
@@ -30,7 +30,7 @@ public class MariaDB implements DBConnect, DBInterface {
      *
      * @param configMariaDB the configuration object for connecting to the MariaDB database.
      */
-    public MariaDB(final MariaDBConfig configMariaDB) {
+    public MariaDB(final DatabaseConfig configMariaDB) {
         this.mariaDBConfig = configMariaDB;
         this.connected = false;
     }

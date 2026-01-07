@@ -4,17 +4,15 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.IslandPermissionQuery;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.utils.sql.MariaDBExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class MariaDBIslandPermission extends IslandPermissionQuery {
@@ -51,46 +49,7 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
         this.databaseName = databaseName;
     }
 
-    public CompletableFuture<Boolean> updateIslandsPermission(Island island, PermissionsType permissionsType, RoleType roleType, long permissions) {
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-
-        try {
-            MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_PERMISSIONS_ISLANDS.formatted(this.databaseName),
-                    List.of(island.getId(), permissionsType.name(), roleType.name(), permissions, roleType.name(), permissionsType.name(), permissions), i -> {
-                        completableFuture.complete(i != 0);
-                    }, null);
-        } catch (DatabaseException e) {
-            completableFuture.complete(false);
-        }
-
-        return completableFuture;
-    }
-
-    public CompletableFuture<PermissionRoleIsland> getIslandPermission(UUID islandId, PermissionsType permissionsType, RoleType roleType) {
-        CompletableFuture<PermissionRoleIsland> completableFuture = new CompletableFuture<>();
-        try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_PERMISSION_ROLE.formatted(this.databaseName), List.of(islandId, roleType.name(), permissionsType.name()), resultSet -> {
-                try {
-                    if (resultSet.next()) {
-                        long flags = resultSet.getLong("flags");
-                        PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, flags);
-                        completableFuture.complete(permissionsIsland);
-                    } else {
-                        PermissionRoleIsland permissionsIsland = new PermissionRoleIsland(islandId, permissionsType, roleType, 0);
-                        completableFuture.complete(permissionsIsland);
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.FATAL, e.getMessage(), e);
-                    completableFuture.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
-                }
-            }, null);
-        } catch (DatabaseException e) {
-            completableFuture.complete(new PermissionRoleIsland(islandId, permissionsType, roleType, 0));
-        }
-        return completableFuture;
-    }
-
-    public CompletableFuture<Long> getIslandGameRule(Island island) {
+    public Long getIslandGameRule(Island island) {
         CompletableFuture<Long> completableFuture = new CompletableFuture<>();
         try {
             MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), ISLAND_GAMERULES_ROLE.formatted(this.databaseName), List.of(
@@ -113,7 +72,7 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
         return completableFuture;
     }
 
-    public CompletableFuture<Boolean> updateIslandGameRule(Island island, long value) {
+    public Boolean updateIslandGameRule(Island island, long value) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             MariaDBExecute.executeQueryDML(this.api.getDatabaseLoader(), UPSERT_GAMERULES_ISLANDS.formatted(this.databaseName), List.of(island.getId(), value, value), var1 -> {

@@ -99,7 +99,7 @@ public class SQLiteIslandMember extends IslandMemberQuery {
     }
 
     @Override
-    public CompletableFuture<Players> getOwnerByIslandId(UUID islandId) {
+    public Players getOwnerByIslandId(UUID islandId) {
         CompletableFuture<Players> future = new CompletableFuture<>();
         try {
             databaseLoader.executeQuery(
