@@ -1,6 +1,8 @@
 rootProject.name = "Skyllia"
 
 include("api")
+include("hook:canvas")
+include("hook:luminol")
 include("database")
 include("plugin")
 // NMS Version

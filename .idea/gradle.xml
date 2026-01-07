@@ -19,8 +19,10 @@
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/database" />
             <option value="$PROJECT_DIR$/hook" />
+            <option value="$PROJECT_DIR$/hook/canvas" />
             <option value="$PROJECT_DIR$/hook/fastasyncworldedit" />
             <option value="$PROJECT_DIR$/hook/internalworld" />
+            <option value="$PROJECT_DIR$/hook/luminol" />
             <option value="$PROJECT_DIR$/hook/worldedit" />
             <option value="$PROJECT_DIR$/nms" />
             <option value="$PROJECT_DIR$/nms/v1_20_R1" />
