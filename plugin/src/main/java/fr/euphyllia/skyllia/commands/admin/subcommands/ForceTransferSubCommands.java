@@ -55,14 +55,14 @@ public class ForceTransferSubCommands implements SubCommandInterface {
             }
 
             SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByOwner(previousOwnerId).join();
+            Island island = skyblockManager.getIslandByOwner(previousOwnerId);
 
             if (island == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.no-island");
                 return true;
             }
 
-            Players oldOwner = skyblockManager.getOwnerByIslandID(island).join();
+            Players oldOwner = skyblockManager.getOwnerByIslandID(island);
             if (oldOwner == null || !oldOwner.getMojangId().equals(previousOwnerId)) {
                 ConfigLoader.language.sendMessage(sender, "island.only-owner");
                 return true;

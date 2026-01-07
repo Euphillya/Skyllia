@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.sgbd.utils.model.DBWork;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,9 +28,8 @@ public class SQLExecute {
      *
      * @param pool  The connection pool to use.
      * @param query The SQL query to execute.
-     * @throws DatabaseException If an error occurs during query execution.
      */
-    public static void executeQuery(DatabaseLoader pool, String query) throws DatabaseException {
+    public static void executeQuery(DatabaseLoader pool, String query) {
         executeQuery(pool, query, null, null, null);
     }
 
@@ -44,22 +44,19 @@ public class SQLExecute {
      *                       <p>
      *                       <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
      *                       </p>
-     * @throws DatabaseException If an error occurs during query execution.
      * @implSpec <ul>
      * <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>
      * <li>Otherwise, executes the query, invokes the callback if provided, and closes the connection before executing the callback.</li>
      * </ul>
      */
-    public static void executeQuery(DatabaseLoader databaseLoader, String query, List<?> param, DBCallback callback, DBWork work) throws DatabaseException {
-        if (databaseLoader == null) {
-            throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
-        }
+    public static void executeQuery(@NotNull DatabaseLoader databaseLoader, String query, List<?> param, DBCallback callback, DBWork work) {
         MariaDBLoader pool = (MariaDBLoader) databaseLoader;
         Connection connection = null;
         try {
             connection = pool.getConnection();
             if (connection == null) {
-                throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
+                logger.error("Connection is null");
+                return;
             }
             if (work != null) {
                 work.run(connection);
@@ -76,10 +73,9 @@ public class SQLExecute {
                     connection.close();
                 } catch (SQLException closeException) {
                     logger.error("Erreur lors de la fermeture de la connexion après une exception", closeException);
-                    throw new DatabaseException(closeException);
                 }
             }
-            throw new DatabaseException(exception);
+            logger.error("Database exception occurred", exception);
         }
     }
 
@@ -94,16 +90,12 @@ public class SQLExecute {
      *                       <p>
      *                       <strong>Important:</strong> If `work` is not null, the user is responsible for closing the connection.
      *                       </p>
-     * @throws DatabaseException If an error occurs during query execution.
      * @implSpec <ul>
      * <li>If `work` is provided, executes `work.run(connection)` and does not close the connection. The user must close the connection.</li>
      * <li>Otherwise, executes the DML query, invokes the callback if provided, and closes the connection before executing the callback.</li>
      * </ul>
      */
-    public static void executeQueryDML(DatabaseLoader databaseLoader, String query, List<?> param, DBCallbackInt callback, DBWork work) throws DatabaseException {
-        if (databaseLoader == null) {
-            throw new DatabaseException(DATABASE_NOT_FOUND_ERROR);
-        }
+    public static void executeQueryDML(@NotNull DatabaseLoader databaseLoader, String query, List<?> param, DBCallbackInt callback, DBWork work) {
         MariaDBLoader pool = (MariaDBLoader) databaseLoader;
         Connection connection = null;
         try {
@@ -128,10 +120,10 @@ public class SQLExecute {
                     connection.close();
                 } catch (SQLException closeException) {
                     logger.error("Erreur lors de la fermeture de la connexion après une exception", closeException);
-                    throw new DatabaseException(closeException);
+                    return;
                 }
             }
-            throw new DatabaseException(exception);
+            logger.error("Database exception occurred", exception);
         }
     }
 }

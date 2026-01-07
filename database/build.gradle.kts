@@ -12,6 +12,10 @@ java {
     withSourcesJar()
 }
 
+dependencies {
+    compileOnly(project(":api"))
+}
+
 tasks {
     compileJava {
         options.encoding = "UTF-8"

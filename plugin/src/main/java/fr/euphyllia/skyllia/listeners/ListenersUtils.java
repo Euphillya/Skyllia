@@ -5,12 +5,9 @@ import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEv
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.Permissions;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;

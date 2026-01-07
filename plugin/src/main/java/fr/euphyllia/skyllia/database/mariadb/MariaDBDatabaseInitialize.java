@@ -125,7 +125,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     @Override
-    public boolean init() throws DatabaseException {
+    public Boolean init() throws DatabaseException {
         // Create Database and Tables
         createDatabaseAndTables();
 

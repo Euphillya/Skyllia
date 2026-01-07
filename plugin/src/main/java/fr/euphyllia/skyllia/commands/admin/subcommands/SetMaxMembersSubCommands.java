@@ -49,7 +49,7 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
                 playerId = Bukkit.getPlayerUniqueId(playerName);
             }
             SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(playerId).join();
+            Island island = skyblockManager.getIslandByPlayerId(playerId);
             if (island == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.no-island");
                 return true;

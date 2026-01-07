@@ -42,8 +42,6 @@ public final class PermissionModuleManager {
             e.module().registerPermissions(registry, e.owner());
         }
 
-        registry.seal();
-
         for (Entry e : pending) {
             core.getServer().getPluginManager().registerEvents(e.module(), core);
         }

@@ -2,13 +2,10 @@ package fr.euphyllia.skyllia.cache;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.commands.InviteCacheExecution;
 import fr.euphyllia.skyllia.cache.island.*;
 import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
-import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,12 +24,12 @@ public class CacheManager {
         this.skyblockManager = skyblockManager;
         this.api = interneAPI;
 
-        PermissionRoleInIslandCache.init(skyblockManager);
+//        PermissionRoleInIslandCache.init(skyblockManager);
         PermissionGameRuleInIslandCache.init(skyblockManager);
     }
 
     public void updateCache(Player bPlayer) {
-        Island island = skyblockManager.getIslandByPlayerId(bPlayer.getUniqueId()).join();
+        Island island = skyblockManager.getIslandByPlayerId(bPlayer.getUniqueId());
         if (island == null) {
             PlayersInIslandCache.removeIslandForPlayer(bPlayer.getUniqueId());
             return;
@@ -52,8 +49,6 @@ public class CacheManager {
 
         PlayersInIslandCache.delete(islandId);
 
-        PermissionRoleInIslandCache.invalidateIsland(islandId);
-
         PermissionGameRuleInIslandCache.invalidateGameRule(islandId);
 
         PositionIslandCache.updateIslandPositions(island);
@@ -62,11 +57,11 @@ public class CacheManager {
         if (reloadedIsland != null) {
             PlayersInIslandCache.getPlayersCached(islandId);
 
-            for (RoleType roleType : RoleType.values()) {
-                for (PermissionsType permissionsType : PermissionsType.values()) {
-                    PermissionRoleInIslandCache.getPermissionRoleIsland(islandId, roleType, permissionsType);
-                }
-            }
+//            for (RoleType roleType : RoleType.values()) {
+//                for (PermissionsType permissionsType : PermissionsType.values()) {
+//                    PermissionRoleInIslandCache.getPermissionRoleIsland(islandId, roleType, permissionsType);
+//                }
+//            }
 
             PermissionGameRuleInIslandCache.getGameRule(islandId);
 
@@ -84,8 +79,6 @@ public class CacheManager {
         for (var member : island.getMembers()) {
             PlayersInIslandCache.removeIslandForPlayer(member.getMojangId());
         }
-
-        PermissionRoleInIslandCache.invalidateIsland(islandId);
 
         PermissionGameRuleInIslandCache.invalidateGameRule(islandId);
 
@@ -106,7 +99,6 @@ public class CacheManager {
 
         // Rules
         PermissionGameRuleInIslandCache.invalidateAll();
-        PermissionRoleInIslandCache.invalidateAll();
         WarpsInIslandCache.invalidateAll();
     }
 }

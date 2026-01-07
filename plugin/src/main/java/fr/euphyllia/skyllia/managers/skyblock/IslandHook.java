@@ -8,7 +8,6 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
 import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
 import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
@@ -274,21 +273,21 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
-        boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager()
-                .updatePermissionIsland(this, permissionsType, roleType, permissions).join();
-        if (isUpdated) {
-            Bukkit.getAsyncScheduler().runNow(plugin, task ->
-                    Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions))
-            );
-            return true;
-        }
-        return false;
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
+//        boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager()
+//                .updatePermissionIsland(this, permissionsType, roleType, permissions).join();
+//        if (isUpdated) {
+//            Bukkit.getAsyncScheduler().runNow(plugin, task ->
+//                    Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions))
+//            );
+//            return true;
+//        }
+//        return false;
+//    }
 
     /**
      * {@inheritDoc}
@@ -338,15 +337,15 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().getGameRulePermission(this).join();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getPermission(PermissionsType permissionsType, RoleType roleType) {
-        return this.plugin.getInterneAPI()
-                .getSkyblockManager()
-                .getPermissionIsland(this.islandId, permissionsType, roleType)
-                .join()
-                .permission();
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public long getPermission(PermissionsType permissionsType, RoleType roleType) {
+//        return this.plugin.getInterneAPI()
+//                .getSkyblockManager()
+//                .getPermissionIsland(this.islandId, permissionsType, roleType)
+//                .join()
+//                .permission();
+//    }
 }

@@ -6,7 +6,6 @@ import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -175,16 +174,6 @@ public abstract class Island {
     public abstract boolean updateMember(Players member);
 
     /**
-     * Updates the permission value for a given role and permission type.
-     *
-     * @param permissionsType The {@link PermissionsType}.
-     * @param roleType        The {@link RoleType}.
-     * @param permissions     The new permission value.
-     * @return {@code true} if successfully updated, {@code false} otherwise.
-     */
-    public abstract boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions);
-
-    /**
      * Gets the position (region-based) of the island.
      *
      * @return A {@link Position} object representing the island's coordinates.
@@ -220,15 +209,6 @@ public abstract class Island {
      * @return The game rule permission value as a {@code long}.
      */
     public abstract long getGameRulePermission();
-
-    /**
-     * Retrieves the permission value for the specified permissions type and role.
-     *
-     * @param permissionsType The {@link PermissionsType}.
-     * @param roleType        The {@link RoleType}.
-     * @return The permission value as a {@code long}.
-     */
-    public abstract long getPermission(PermissionsType permissionsType, RoleType roleType);
 
     public final CompiledPermissions getCompiledPermissions() {
         CompiledPermissions local = this.compiledPermissions;

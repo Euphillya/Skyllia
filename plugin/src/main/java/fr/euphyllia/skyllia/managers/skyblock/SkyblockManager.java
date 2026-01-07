@@ -6,16 +6,14 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
-import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -62,17 +60,17 @@ public class SkyblockManager {
                     event.getIslandSettings().rayon(),
                     null
             );
-            // Insert into database (async)
-            this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery()
-                    .insertIslands(futureIsland)
-                    // This callback is executed once the insertion is completed successfully
-                    .thenAcceptAsync(future::complete)
-                    // This handles any exception that occurs in the asynchronous chain
-                    .exceptionally(throwable -> {
-                        LOGGER.fatal("Exception while creating a new island asynchronously", throwable);
-                        future.complete(false);
-                        return null;
-                    });
+
+            var dataQuery = this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery();
+
+            boolean successInsertIsland = dataQuery.insertIslands(futureIsland);
+
+            if  (successInsertIsland) {
+                future.complete(true);
+            } else {
+                LOGGER.fatal("Exception while creating a new island asynchronously");
+                future.complete(false);
+            }
         } catch (Exception e) {
             LOGGER.fatal("Exception before starting async creation", e);
             future.complete(false);
@@ -80,7 +78,7 @@ public class SkyblockManager {
         return future;
     }
 
-    public CompletableFuture<@Nullable Players> getOwnerByIslandId(UUID islandId) {
+    public @Nullable Players getOwnerByIslandId(UUID islandId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getOwnerByIslandId(islandId);
     }
 
@@ -90,11 +88,11 @@ public class SkyblockManager {
      * @param islandId The UUID of the island.
      * @return A {@link CompletableFuture} containing the {@link Island}, or {@code null} if not found.
      */
-    public CompletableFuture<Island> getIslandByIslandId(UUID islandId) {
+    public Island getIslandByIslandId(UUID islandId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByIslandId(islandId);
     }
 
-    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+    public List<Island> getAllIslandsValid() {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getAllIslandsValid();
     }
 
@@ -105,7 +103,7 @@ public class SkyblockManager {
      * @param disabled {@code true} to disable, {@code false} to enable.
      * @return A {@link CompletableFuture} with {@code true} if successfully updated, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> disableIsland(Island island, boolean disabled) {
+    public Boolean disableIsland(Island island, boolean disabled) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updateDisable(island, disabled);
     }
 
@@ -115,7 +113,7 @@ public class SkyblockManager {
      * @param island The {@link Island}.
      * @return A {@link CompletableFuture} with {@code true} if disabled, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> isDisabledIsland(Island island) {
+    public Boolean isDisabledIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isDisabledIsland(island);
     }
 
@@ -126,7 +124,7 @@ public class SkyblockManager {
      * @param privateIsland {@code true} for private, {@code false} for public.
      * @return A {@link CompletableFuture} with {@code true} if the state was successfully updated.
      */
-    public CompletableFuture<Boolean> setPrivateIsland(Island island, boolean privateIsland) {
+    public Boolean setPrivateIsland(Island island, boolean privateIsland) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updatePrivate(island, privateIsland);
     }
 
@@ -136,7 +134,7 @@ public class SkyblockManager {
      * @param island The {@link Island}.
      * @return A {@link CompletableFuture} with {@code true} if private, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> isPrivateIsland(Island island) {
+    public Boolean isPrivateIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isPrivateIsland(island);
     }
 
@@ -146,7 +144,7 @@ public class SkyblockManager {
      * @param playerId The player's UUID.
      * @return A {@link CompletableFuture} that completes with the {@link Island}, or {@code null} if none.
      */
-    public CompletableFuture<@Nullable Island> getIslandByOwner(UUID playerId) {
+    public @Nullable Island getIslandByOwner(UUID playerId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByOwnerId(playerId);
     }
 
@@ -156,7 +154,7 @@ public class SkyblockManager {
      * @param playerId The player's UUID.
      * @return A {@link CompletableFuture} that completes with the {@link Island}, or {@code null} if none.
      */
-    public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerId) {
+    public @Nullable Island getIslandByPlayerId(UUID playerId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByPlayerId(playerId);
     }
 
@@ -168,7 +166,7 @@ public class SkyblockManager {
      * @param playerLocation The warp location.
      * @return A {@link CompletableFuture} with {@code true} if successfully added, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> addWarpsIsland(UUID islandId, String name, Location playerLocation) {
+    public Boolean addWarpsIsland(UUID islandId, String name, Location playerLocation) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().updateWarp(islandId, name, playerLocation);
     }
 
@@ -179,7 +177,7 @@ public class SkyblockManager {
      * @param name     The warp name.
      * @return A {@link CompletableFuture} with {@code true} if deleted, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> delWarpsIsland(UUID islandId, String name) {
+    public Boolean delWarpsIsland(UUID islandId, String name) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().deleteWarp(islandId, name);
     }
 
@@ -190,7 +188,7 @@ public class SkyblockManager {
      * @param name     The warp name.
      * @return A {@link CompletableFuture} with the {@link WarpIsland}, or {@code null} if not found.
      */
-    public CompletableFuture<@Nullable WarpIsland> getWarpIslandByName(UUID islandId, String name) {
+    public @Nullable WarpIsland getWarpIslandByName(UUID islandId, String name) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getWarpByName(islandId, name);
     }
 
@@ -200,7 +198,7 @@ public class SkyblockManager {
      * @param islandId The UUID of the island.
      * @return A {@link CompletableFuture} containing a list of {@link WarpIsland} objects.
      */
-    public CompletableFuture<@Nullable CopyOnWriteArrayList<WarpIsland>> getWarpsIsland(UUID islandId) {
+    public @Nullable List<WarpIsland> getWarpsIsland(UUID islandId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().getListWarp(islandId);
     }
 
@@ -211,7 +209,7 @@ public class SkyblockManager {
      * @param players The {@link Players} object representing the member.
      * @return A {@link CompletableFuture} with {@code true} if successfully updated, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> updateMember(Island island, Players players) {
+    public Boolean updateMember(Island island, Players players) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().updateMember(island, players);
     }
 
@@ -221,11 +219,11 @@ public class SkyblockManager {
      * @param island The {@link Island}.
      * @return A {@link CompletableFuture} with a list of members in a {@link CopyOnWriteArrayList}.
      */
-    public CompletableFuture<CopyOnWriteArrayList<Players>> getMembersInIsland(Island island) {
+    public List<Players> getMembersInIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getMembersInIsland(island);
     }
 
-    public CompletableFuture<@Nullable CopyOnWriteArrayList<Players>> getBannedMembersInIsland(Island island) {
+    public List<Players> getBannedMembersInIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getBannedMembersInIsland(island);
     }
 
@@ -236,7 +234,7 @@ public class SkyblockManager {
      * @param playerId The player's UUID.
      * @return A {@link CompletableFuture} with the member {@link Players} object.
      */
-    public CompletableFuture<Players> getMemberInIsland(Island island, UUID playerId) {
+    public Players getMemberInIsland(Island island, UUID playerId) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerId);
     }
 
@@ -247,7 +245,7 @@ public class SkyblockManager {
      * @param playerName The player's name.
      * @return A {@link CompletableFuture} with the member {@link Players} object or {@code null} if not found.
      */
-    public CompletableFuture<@Nullable Players> getMemberInIsland(Island island, String playerName) {
+    public @Nullable Players getMemberInIsland(Island island, String playerName) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerName);
     }
 
@@ -258,7 +256,7 @@ public class SkyblockManager {
      * @param cause    The {@link RemovalCause}.
      * @return A {@link CompletableFuture} with {@code true} if successful, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> addClearMemberNextLogin(UUID playerId, RemovalCause cause) {
+    public Boolean addClearMemberNextLogin(UUID playerId, RemovalCause cause) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().addMemberClear(playerId, cause);
     }
 
@@ -269,7 +267,7 @@ public class SkyblockManager {
      * @param cause    The {@link RemovalCause}.
      * @return A {@link CompletableFuture} with {@code true} if deleted, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> deleteClearMember(UUID playerId, RemovalCause cause) {
+    public Boolean deleteClearMember(UUID playerId, RemovalCause cause) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMemberClear(playerId, cause);
     }
 
@@ -280,40 +278,8 @@ public class SkyblockManager {
      * @param cause    The {@link RemovalCause}.
      * @return A {@link CompletableFuture} with {@code true} if exists, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> checkClearMemberExist(UUID playerId, RemovalCause cause) {
+    public Boolean checkClearMemberExist(UUID playerId, RemovalCause cause) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId, cause);
-    }
-
-    /**
-     * Updates the island permission for a specific role.
-     *
-     * @param island          The {@link Island}.
-     * @param permissionsType The {@link PermissionsType}.
-     * @param roleType        The {@link RoleType}.
-     * @param permissions     The new permission value.
-     * @return A {@link CompletableFuture} with {@code true} if updated, {@code false} otherwise.
-     */
-    public CompletableFuture<Boolean> updatePermissionIsland(Island island,
-                                                             PermissionsType permissionsType,
-                                                             RoleType roleType,
-                                                             long permissions) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery()
-                .updateIslandsPermission(island, permissionsType, roleType, permissions);
-    }
-
-    /**
-     * Retrieves the permission value for the given role and permission type on an island.
-     *
-     * @param islandId        The island's UUID.
-     * @param permissionsType The {@link PermissionsType}.
-     * @param roleType        The {@link RoleType}.
-     * @return A {@link CompletableFuture} with a {@link PermissionRoleIsland}.
-     */
-    public CompletableFuture<PermissionRoleIsland> getPermissionIsland(UUID islandId,
-                                                                       PermissionsType permissionsType,
-                                                                       RoleType roleType) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery()
-                .getIslandPermission(islandId, permissionsType, roleType);
     }
 
     /**
@@ -323,7 +289,7 @@ public class SkyblockManager {
      * @param gameRuleValue The new game rule value.
      * @return A {@link CompletableFuture} with {@code true} if updated, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> updateGamerule(Island island, long gameRuleValue) {
+    public Boolean updateGamerule(Island island, long gameRuleValue) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandGameRule(island, gameRuleValue);
     }
 
@@ -333,7 +299,7 @@ public class SkyblockManager {
      * @param island The {@link Island}.
      * @return A {@link CompletableFuture} with the game rule permission as a {@code long}.
      */
-    public CompletableFuture<Long> getGameRulePermission(Island island) {
+    public Long getGameRulePermission(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandGameRule(island);
     }
 
@@ -344,7 +310,7 @@ public class SkyblockManager {
      * @param oldMember The {@link Players} object representing the member to delete.
      * @return A {@link CompletableFuture} with {@code true} if deleted, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> deleteMember(Island island, Players oldMember) {
+    public Boolean deleteMember(Island island, Players oldMember) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMember(island, oldMember);
     }
 
@@ -354,7 +320,7 @@ public class SkyblockManager {
      * @param island The {@link Island}.
      * @return A {@link CompletableFuture} with the {@link Players} object of the owner, or null if none.
      */
-    public CompletableFuture<@Nullable Players> getOwnerByIslandID(Island island) {
+    public @Nullable Players getOwnerByIslandID(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getOwnerInIslandId(island);
     }
 
@@ -364,7 +330,7 @@ public class SkyblockManager {
      * @param island The {@link Island}.
      * @return A {@link CompletableFuture} with the max member count, or -1 if not found.
      */
-    public CompletableFuture<Integer> getMaxMemberInIsland(Island island) {
+    public Integer getMaxMemberInIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getMaxMemberInIsland(island);
     }
 
@@ -375,7 +341,7 @@ public class SkyblockManager {
      * @param newValue The new maximum.
      * @return A {@link CompletableFuture} with {@code true} if successfully updated, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> setMaxMemberInIsland(Island island, int newValue) {
+    public Boolean setMaxMemberInIsland(Island island, int newValue) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setMaxMemberInIsland(island, newValue);
     }
 
@@ -386,21 +352,21 @@ public class SkyblockManager {
      * @param newValue The new size (radius).
      * @return A {@link CompletableFuture} with {@code true} if successfully updated, {@code false} otherwise.
      */
-    public CompletableFuture<Boolean> setSizeIsland(Island island, double newValue) {
+    public Boolean setSizeIsland(Island island, double newValue) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setSizeIsland(island, newValue);
     }
 
     /**
      * Met à jour l'état "locked" de l'île (vaut true pendant un delete).
      */
-    public CompletableFuture<Boolean> setLockedIsland(Island island, boolean locked) {
+    public Boolean setLockedIsland(Island island, boolean locked) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setLockedIsland(island, locked);
     }
 
     /**
      * Vérifie si l'île est actuellement "locked".
      */
-    public CompletableFuture<Boolean> isLockedIsland(Island island) {
+    public Boolean isLockedIsland(Island island) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().isLockedIsland(island);
     }
 

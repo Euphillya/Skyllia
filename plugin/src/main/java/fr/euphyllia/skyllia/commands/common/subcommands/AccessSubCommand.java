@@ -6,10 +6,8 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +38,7 @@ public class AccessSubCommand implements SubCommandInterface {
         }
 
         SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId());
 
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -49,9 +47,9 @@ public class AccessSubCommand implements SubCommandInterface {
 
         Players executorPlayer = island.getMember(player.getUniqueId());
 
-        if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.ACCESS, false)) {
-            return true;
-        }
+//        if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.ACCESS, false)) {
+//            return true;
+//        }
 
         boolean statusAccessUpdate = !island.isPrivateIsland();
 
