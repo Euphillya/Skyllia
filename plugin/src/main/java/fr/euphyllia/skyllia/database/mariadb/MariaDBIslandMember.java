@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.sgbd.mariadb.exec;
+package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.skyllia.api.database.IslandMemberQuery;
 import fr.euphyllia.skyllia.api.skyblock.Island;

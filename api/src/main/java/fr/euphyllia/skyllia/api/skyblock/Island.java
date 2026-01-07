@@ -4,14 +4,13 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents a Skyblock island and provides methods to manage its properties and members.
@@ -62,7 +61,7 @@ public abstract class Island {
      *
      * @return A list of {@link WarpIsland} objects, or {@code null} if none.
      */
-    public abstract @Nullable CopyOnWriteArrayList<WarpIsland> getWarps();
+    public abstract @Nullable List<WarpIsland> getWarps();
 
     /**
      * Gets a warp by its name.
@@ -123,23 +122,23 @@ public abstract class Island {
     /**
      * Gets the list of all members in the island (from the database).
      *
-     * @return A {@link CopyOnWriteArrayList} of {@link Players}.
+     * @return A {@link List} of {@link Players}.
      */
-    public abstract CopyOnWriteArrayList<Players> getMembers();
+    public abstract List<Players> getMembers();
 
     /**
      * Gets the list of all banned members in the island.
      *
-     * @return A {@link CopyOnWriteArrayList} of {@link Players} who are banned.
+     * @return A {@link List} of {@link Players} who are banned.
      */
-    public abstract CopyOnWriteArrayList<Players> getBannedMembers();
+    public abstract List<Players> getBannedMembers();
 
     /**
      * Gets the cached list of all members on the island (from memory/cache).
      *
-     * @return A {@link CopyOnWriteArrayList} of {@link Players}.
+     * @return A {@link List} of {@link Players}.
      */
-    public abstract CopyOnWriteArrayList<Players> getMembersCached();
+    public abstract List<Players> getMembersCached();
 
     /**
      * Gets a specific member by their UUID.

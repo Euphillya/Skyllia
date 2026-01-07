@@ -4,12 +4,15 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.mariadb.MariaDBDatabaseInitialize;
-import fr.euphyllia.skyllia.database.mariadb.exec.*;
 import fr.euphyllia.skyllia.database.sqlite.SQLiteDatabaseInitialize;
 import fr.euphyllia.skyllia.database.sqlite.exec.*;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.exec.MariaDBIslandMember;
+import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandData;
+import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandMember;
+import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandUpdate;
+import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandWarp;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,12 +42,16 @@ public class IslandQuery {
     private void init() throws DatabaseException {
         // Todo future support database
         if (ConfigLoader.database.getMariaDBConfig() != null) {
-            this.databaseInitializeQuery = new MariaDBDatabaseInitialize(this.api);
-            this.islandDataQuery = new MariaDBIslandData(api, databaseName);
-            this.islandUpdateQuery = new MariaDBIslandUpdate(api, databaseName);
-            this.islandWarpQuery = new MariaDBIslandWarp(api, databaseName);
-            this.islandMemberQuery = new MariaDBIslandMember(api.getDatabaseLoader(), databaseName);
-            this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
+            DatabaseLoader loader = this.api.getDatabaseLoader();
+            if (loader == null) {
+                throw new DatabaseException("Database loader is not initialized.");
+            }
+            this.databaseInitializeQuery = new MariaDBDatabaseInitialize(loader, ConfigLoader.database.getMariaDBConfig(), ConfigLoader.database.getConfigVersion(), ConfigLoader.general.getRegionDistance(), ConfigLoader.general.getMaxIslands());
+            this.islandDataQuery = new MariaDBIslandData(loader, databaseName);
+            this.islandUpdateQuery = new MariaDBIslandUpdate(loader, databaseName);
+            this.islandWarpQuery = new MariaDBIslandWarp(loader, databaseName);
+            this.islandMemberQuery = new MariaDBIslandMember(loader, databaseName);
+//            this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
             return;
         }
         if (ConfigLoader.database.getSqLiteConfig() != null) {

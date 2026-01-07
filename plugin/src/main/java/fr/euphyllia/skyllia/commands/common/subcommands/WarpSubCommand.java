@@ -61,7 +61,7 @@ public class WarpSubCommand implements SubCommandInterface {
             }
 
             UUID islandId = island.getId();
-            CopyOnWriteArrayList<WarpIsland> warps = WarpsInIslandCache.getWarpsCached(islandId);
+            List<WarpIsland> warps = WarpsInIslandCache.getWarpsCached(islandId);
 
             WarpIsland targetWarp = null;
             for (WarpIsland warp : warps) {

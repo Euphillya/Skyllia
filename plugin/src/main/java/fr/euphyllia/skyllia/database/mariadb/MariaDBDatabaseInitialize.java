@@ -1,18 +1,18 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
-import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.api.skyblock.IslandData;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
-import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.configuration.MariaDBConfig;
-import fr.euphyllia.skyllia.sgbd.utils.sql.MariaDBExecute;
+import fr.euphyllia.skyllia.sgbd.DatabaseConfig;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,20 +112,21 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
     private final Logger logger = LogManager.getLogger(MariaDBDatabaseInitialize.class);
     private final String database;
-    private final InterneAPI api;
+    private final DatabaseLoader databaseLoader;
+    private final int configVersion;
+    public final int regionDistance;
+    public final int maxIslands;
 
-    public MariaDBDatabaseInitialize(InterneAPI interneAPI) throws DatabaseException {
-        this.api = interneAPI;
-        MariaDBConfig dbConfig = ConfigLoader.database.getMariaDBConfig();
-
-        if (dbConfig == null) {
-            throw new DatabaseException("No database is mentioned in the configuration of the plugin.", null);
-        }
+    public MariaDBDatabaseInitialize(@NotNull DatabaseLoader databaseLoader, @NotNull DatabaseConfig dbConfig, int configVersion, int regionDistance, int maxIslands) {
+        this.databaseLoader = databaseLoader;
         this.database = dbConfig.database();
+        this.configVersion = configVersion;
+        this.regionDistance = regionDistance;
+        this.maxIslands = maxIslands;
     }
 
     @Override
-    public Boolean init() throws DatabaseException {
+    public Boolean init() {
         // Create Database and Tables
         createDatabaseAndTables();
 
@@ -138,7 +139,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         return true;
     }
 
-    private void createDatabaseAndTables() throws DatabaseException {
+    private void createDatabaseAndTables() {
         executeQuery(CREATE_DATABASE_TEMPLATE.formatted(database));
         executeQuery(CREATE_ISLANDS_TABLE.formatted(database));
         executeQuery(CREATE_ISLANDS_MEMBERS_TABLE.formatted(database));
@@ -153,8 +154,8 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         executeQuery(CREATE_MEMBER_BY_ISLAND_ROLE_INDEX.formatted(database));
     }
 
-    private void applyMigrations() throws DatabaseException {
-        if (ConfigLoader.database.getConfigVersion() <= 1) {
+    private void applyMigrations() {
+        if (configVersion <= 1) {
             executeQuery("ALTER TABLE `%s`.`islands` MODIFY `size` DOUBLE;".formatted(database));
             executeQuery("""
                     ALTER TABLE `%s`.`islands_gamerule` DROP PRIMARY KEY,
@@ -165,7 +166,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void initializeSpiralTable() {
-        int distancePerIsland = ConfigLoader.general.getRegionDistance();
+        int distancePerIsland = regionDistance;
         if (distancePerIsland <= 0) {
             logger.log(Level.FATAL, "You must set a value greater than 1 for region distance per island (config/config.toml -> settings.island.region-distance). " +
                     "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
@@ -174,7 +175,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
         Runnable spiralTask = () -> {
             List<IslandData> islandDataList = new ArrayList<>();
-            for (int i = 1; i < ConfigLoader.general.getMaxIslands(); i++) {
+            for (int i = 1; i < maxIslands; i++) {
                 Position position = RegionUtils.computeNewIslandRegionPosition(i);
                 islandDataList.add(new IslandData(
                         i,
@@ -188,33 +189,27 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
                     islandDataList
             );
 
-            try {
-                MariaDBExecute.executeQueryDML(
-                        api.getDatabaseLoader(),
-                        String.format(INSERT_SPIRAL, database),
-                        null,
-                        null,
-                        batchInserter
-                );
-            } catch (DatabaseException e) {
-                logger.log(Level.ERROR, "Error inserting into spiral table", e);
-            }
+            SQLExecute.executeQueryDML(
+                    databaseLoader,
+                    String.format(INSERT_SPIRAL, database),
+                    null,
+                    null,
+                    batchInserter
+            );
         };
 
         executeAsync(spiralTask);
     }
 
-    private void executeQuery(String query) throws DatabaseException {
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query);
+    private void executeQuery(String query) {
+        SQLExecute.executeQuery(databaseLoader, query);
     }
 
-    private void executeQuery(String query, List<Object> params) throws DatabaseException {
-        MariaDBExecute.executeQuery(api.getDatabaseLoader(), query, params, null, null);
+    private void executeQuery(String query, List<Object> params) {
+        SQLExecute.executeQuery(databaseLoader, query, params, null, null);
     }
 
     private void executeAsync(Runnable task) {
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
-            task.run();
-        });
+        Bukkit.getAsyncScheduler().runNow(SkylliaAPI.getPlugin(), scheduledTask -> task.run());
     }
 }
