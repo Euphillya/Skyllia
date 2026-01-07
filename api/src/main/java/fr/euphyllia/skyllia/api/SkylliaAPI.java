@@ -1,7 +1,9 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
+import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
@@ -258,4 +260,13 @@ public final class SkylliaAPI {
     public static PermissionsManagers getPermissionsManager() {
         return implementation.getPermissionsManager();
     }
+
+    public static PermissionModuleManager getPermissionModuleManager() {
+        return implementation.getPermissionModuleManager();
+    }
+
+    public static PermissionRegistry getPermissionRegistry() {
+        return implementation.getPermissionRegistry();
+    }
+
 }

@@ -1,6 +1,8 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
+import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
@@ -166,4 +168,9 @@ public interface SkylliaImplementation {
     WorldNMS getWorldNMS();
 
     PermissionsManagers getPermissionsManager();
+
+    PermissionModuleManager getPermissionModuleManager();
+
+    PermissionRegistry getPermissionRegistry();
+
 }

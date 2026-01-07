@@ -1,6 +1,8 @@
 package fr.euphyllia.skyllia.api.skyblock;
 
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
+import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
@@ -16,6 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Represents a Skyblock island and provides methods to manage its properties and members.
  */
 public abstract class Island {
+
+    private transient volatile CompiledPermissions compiledPermissions;
 
     /**
      * Gets the owner of the island.
@@ -225,4 +229,18 @@ public abstract class Island {
      * @return The permission value as a {@code long}.
      */
     public abstract long getPermission(PermissionsType permissionsType, RoleType roleType);
+
+    public final CompiledPermissions getCompiledPermissions() {
+        CompiledPermissions local = this.compiledPermissions;
+        if (local != null) return local;
+
+        synchronized (this) {
+            local = this.compiledPermissions;
+            if (local == null) {
+                local = new CompiledPermissions(SkylliaAPI.getPermissionRegistry());
+                this.compiledPermissions = local;
+            }
+            return local;
+        }
+    }
 }

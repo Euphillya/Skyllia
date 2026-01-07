@@ -145,7 +145,7 @@ modrinth {
             project(":addons:SkylliaBank").tasks.named("shadowJar"),
             project(":addons:SkylliaChallenge").tasks.named("shadowJar"),
         )
-     )
+    )
 
     gameVersions.addAll(
         "1.20",

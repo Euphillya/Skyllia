@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.cache.CacheScheduler;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
+import fr.euphyllia.skyllia.listeners.permissions.player.PlayerDropItemPermissions;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.logging.log4j.Level;
@@ -66,6 +67,9 @@ public class Skyllia extends JavaPlugin {
         this.interneAPI.setManagers(new fr.euphyllia.skyllia.managers.Managers(interneAPI));
         this.interneAPI.getManagers().init();
 
+        var permModules = this.interneAPI.getManagers().getPermissionModuleManager();
+        permModules.addModule(this, new PlayerDropItemPermissions());
+
         // Register commands via CommandRegistrar
         CommandRegistrar commandRegistrar = new CommandRegistrar(this);
         commandRegistrar.registerCommands();
@@ -82,6 +86,8 @@ public class Skyllia extends JavaPlugin {
         checkDisabledConfig();
 
         new Metrics(this, 20874);
+
+        interneAPI.getManagers().getPermissionModuleManager().initAndRegisterAll();
     }
 
     @Override

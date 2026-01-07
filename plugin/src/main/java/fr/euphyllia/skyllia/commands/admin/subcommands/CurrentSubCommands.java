@@ -41,13 +41,13 @@ public class CurrentSubCommands implements SubCommandInterface {
         Players owner = island.getOwner();
 
         if (owner == null) { // Normalement impossible
-            ConfigLoader.language.sendMessage(player, "island.admin.current.no-owner",  Map.of(
+            ConfigLoader.language.sendMessage(player, "island.admin.current.no-owner", Map.of(
                     "%island_id%", String.valueOf(island.getId())
             ));
             return true;
         }
 
-        ConfigLoader.language.sendMessage(player, "island.admin.current.info",  Map.of(
+        ConfigLoader.language.sendMessage(player, "island.admin.current.info", Map.of(
                 "%island_id%", String.valueOf(island.getId()),
                 "%owner_name%", owner.getLastKnowName(),
                 "%owner_uuid%", String.valueOf(owner.getMojangId())

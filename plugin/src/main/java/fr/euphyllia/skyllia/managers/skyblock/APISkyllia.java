@@ -4,6 +4,9 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.SkylliaImplementation;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
+import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
+import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -209,6 +212,22 @@ public final class APISkyllia implements SkylliaImplementation {
     public WorldNMS getWorldNMS() {
         return this.interneAPI.getWorldNMS();
     }
+
+    @Override
+    public PermissionsManagers getPermissionsManager() {
+        return this.interneAPI.getManagers().getPermissionsManagers();
+    }
+
+    @Override
+    public PermissionModuleManager getPermissionModuleManager() {
+        return this.interneAPI.getManagers().getPermissionModuleManager();
+    }
+
+    @Override
+    public PermissionRegistry getPermissionRegistry() {
+        return this.interneAPI.getManagers().getPermissionRegistry();
+    }
+
 
     private double[] append(double[] arr, double element) {
         double[] newArr = new double[arr.length + 1];
