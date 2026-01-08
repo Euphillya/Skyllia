@@ -246,9 +246,9 @@ public class InterneAPI {
      */
     public IslandQuery getIslandQuery() {
         if (ConfigLoader.database.getMariaDBConfig() != null) {
-            return new IslandQuery(this, ConfigLoader.database.getMariaDBConfig().database());
+            return new IslandQuery(this);
         } else if (ConfigLoader.database.getSqLiteConfig() != null) {
-            return new IslandQuery(this, ConfigLoader.database.getSqLiteConfig().filePath());
+            return new IslandQuery(this);
         }
         return null;
     }

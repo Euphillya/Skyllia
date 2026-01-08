@@ -48,10 +48,14 @@ public class MariaDB implements DBConnect, DBInterface {
             return connected;
         }
 
+        ensureDatabaseExists();
+
         this.pool = new HikariDataSource();
         this.pool.setPoolName("skyllia-hikari");
         this.pool.setDriverClassName("org.mariadb.jdbc.Driver");
-        this.pool.setJdbcUrl("jdbc:mariadb://%s:%s/".formatted(mariaDBConfig.hostname(), mariaDBConfig.port()));
+        this.pool.setJdbcUrl("jdbc:mariadb://%s:%s/%s"
+                .formatted(mariaDBConfig.hostname(), mariaDBConfig.port(), mariaDBConfig.database()));
+
         this.pool.setUsername(mariaDBConfig.user());
         this.pool.setPassword(mariaDBConfig.pass());
 
@@ -122,4 +126,28 @@ public class MariaDB implements DBConnect, DBInterface {
             throw new DatabaseException("Unable to get a connection from the pool (getConnection returned null).", e);
         }
     }
+
+    private void ensureDatabaseExists() throws DatabaseException {
+        String bootstrapUrl = "jdbc:mariadb://%s:%s/"
+                .formatted(mariaDBConfig.hostname(), mariaDBConfig.port());
+
+        try (Connection connection = java.sql.DriverManager.getConnection(
+                bootstrapUrl,
+                mariaDBConfig.user(),
+                mariaDBConfig.pass()
+        );
+             var statement = connection.createStatement()) {
+
+            statement.execute(
+                    "CREATE DATABASE IF NOT EXISTS `%s`"
+                            .formatted(mariaDBConfig.database())
+            );
+
+            logger.info("Database '{}' ensured.", mariaDBConfig.database());
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to create database if not exists", e);
+        }
+    }
+
 }

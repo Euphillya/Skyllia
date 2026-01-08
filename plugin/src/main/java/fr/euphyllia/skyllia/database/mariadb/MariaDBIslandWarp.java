@@ -14,121 +14,129 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MariaDBIslandWarp extends IslandWarpQuery {
 
     private static final String SELECT_WARP_NAME = """
-                SELECT iw.`world_name`, iw.`x`, iw.`y`, iw.`z`, iw.`pitch`, iw.`yaw`
-                FROM `%s`.`islands_warp` iw
-                INNER JOIN %s.islands i on i.island_id = iw.island_id
-                WHERE iw.`island_id` = ? AND i.`disable` = 0 AND iw.`warp_name` = ?;
+            SELECT iw.world_name, iw.x, iw.y, iw.z, iw.pitch, iw.yaw
+            FROM islands_warp iw
+            INNER JOIN islands i ON i.island_id = iw.island_id
+            WHERE iw.island_id = ?
+              AND i.disable = 0
+              AND iw.warp_name = ?
+            LIMIT 1;
             """;
 
     private static final String SELECT_LIST_WARP = """
-                SELECT iw.`warp_name`, iw.`world_name`, iw.`x`, iw.`y`, iw.`z`, iw.`pitch`, iw.`yaw`
-                FROM `%s`.`islands_warp` iw
-                INNER JOIN %s.islands i on i.island_id = iw.island_id
-                WHERE iw.`island_id` = ? AND i.`disable` = 0;
+            SELECT iw.warp_name, iw.world_name, iw.x, iw.y, iw.z, iw.pitch, iw.yaw
+            FROM islands_warp iw
+            INNER JOIN islands i ON i.island_id = iw.island_id
+            WHERE iw.island_id = ?
+              AND i.disable = 0;
             """;
+
     private static final String UPSERT_WARPS = """
-                INSERT INTO `%s`.`islands_warp`
-                (island_id, warp_name, world_name, x, y, z, pitch, yaw)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                on DUPLICATE key UPDATE x = ?, y = ?, z = ?, pitch = ?, yaw = ?;
+            INSERT INTO islands_warp (island_id, warp_name, world_name, x, y, z, pitch, yaw)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                world_name = VALUES(world_name),
+                x = VALUES(x),
+                y = VALUES(y),
+                z = VALUES(z),
+                pitch = VALUES(pitch),
+                yaw = VALUES(yaw);
             """;
 
     private static final String DELETE_WARP = """
-            DELETE FROM `%s`.`islands_warp`
-            WHERE `island_id` = ? AND `warp_name` = ?;
+            DELETE FROM islands_warp
+            WHERE island_id = ? AND warp_name = ?;
             """;
+
     private static final Logger log = LoggerFactory.getLogger(MariaDBIslandWarp.class);
 
-    public DatabaseLoader databaseLoader;
-    public String databaseName;
+    private final DatabaseLoader databaseLoader;
 
-    public MariaDBIslandWarp(DatabaseLoader databaseLoader, String databaseName) {
+    public MariaDBIslandWarp(DatabaseLoader databaseLoader) {
         this.databaseLoader = databaseLoader;
-        this.databaseName = databaseName;
     }
-
 
     @Override
     public Boolean updateWarp(UUID islandId, String warpName, Location location) {
-        AtomicBoolean result = new AtomicBoolean(false);
-        SQLExecute.executeQueryDML(databaseLoader, UPSERT_WARPS.formatted(databaseName), List.of(
-                islandId,
+        if (location == null || location.getWorld() == null) return false;
+
+        // Table = DOUBLE => conserve la précision (pas getBlockX/Y/Z)
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+        float pitch = location.getPitch();
+        float yaw = location.getYaw();
+
+        int affected = SQLExecute.update(databaseLoader, UPSERT_WARPS, List.of(
+                islandId.toString(),
                 warpName,
                 location.getWorld().getName(),
-                location.getBlockX(),
-                location.getBlockY(),
-                location.getBlockZ(),
-                location.getPitch(),
-                location.getYaw(),
-                location.getBlockX(),
-                location.getBlockY(),
-                location.getBlockZ(),
-                location.getPitch(),
-                location.getYaw()
-        ), affectedRows -> result.set(affectedRows != 0), null);
-        return result.get();
+                x, y, z,
+                pitch, yaw
+        ));
+
+        return affected != 0;
     }
 
     @Override
     public @Nullable WarpIsland getWarpByName(UUID islandId, String warpName) {
-        AtomicReference<WarpIsland> result = new AtomicReference<>();
-        SQLExecute.executeQuery(databaseLoader, SELECT_WARP_NAME.formatted(databaseName, databaseName), List.of(islandId, warpName), resultSet -> {
+        return SQLExecute.queryMap(databaseLoader, SELECT_WARP_NAME, List.of(islandId.toString(), warpName), rs -> {
             try {
-                if (resultSet.next()) {
-                    String worldName = resultSet.getString("world_name");
-                    double x = resultSet.getDouble("x");
-                    double y = resultSet.getDouble("y");
-                    double z = resultSet.getDouble("z");
-                    float pitch = resultSet.getFloat("pitch");
-                    float yaw = resultSet.getFloat("yaw");
-                    World world = Bukkit.getWorld(worldName);
-                    WarpIsland warpIsland = new WarpIsland(islandId, warpName, new Location(world, x, y, z, yaw, pitch));
-                    result.set(warpIsland);
-                }
+                if (!rs.next()) return null;
+
+                String worldName = rs.getString("world_name");
+                double x = rs.getDouble("x");
+                double y = rs.getDouble("y");
+                double z = rs.getDouble("z");
+                float pitch = rs.getFloat("pitch");
+                float yaw = rs.getFloat("yaw");
+
+                World world = Bukkit.getWorld(worldName);
+                if (world == null) return null;
+
+                return new WarpIsland(islandId, warpName, new Location(world, x, y, z, yaw, pitch));
             } catch (Exception e) {
                 log.error("SQL Exception while fetching warp '{}' for island {}", warpName, islandId, e);
+                return null;
             }
-        }, null);
-        return result.get();
+        });
     }
 
     @Override
     public @Nullable List<WarpIsland> getListWarp(UUID islandId) {
-        List<WarpIsland> result = new ArrayList<>();
-        SQLExecute.executeQuery(databaseLoader, SELECT_LIST_WARP.formatted(databaseName, databaseName), List.of(islandId), resultSet -> {
+        List<WarpIsland> out = SQLExecute.queryMap(databaseLoader, SELECT_LIST_WARP, List.of(islandId.toString()), rs -> {
+            List<WarpIsland> result = new ArrayList<>();
             try {
-                while (resultSet.next()) {
-                    String warpName = resultSet.getString("warp_name");
-                    String worldName = resultSet.getString("world_name");
-                    double x = resultSet.getDouble("x");
-                    double y = resultSet.getDouble("y");
-                    double z = resultSet.getDouble("z");
-                    float pitch = resultSet.getFloat("pitch");
-                    float yaw = resultSet.getFloat("yaw");
+                while (rs.next()) {
+                    String warpName = rs.getString("warp_name");
+                    String worldName = rs.getString("world_name");
+                    double x = rs.getDouble("x");
+                    double y = rs.getDouble("y");
+                    double z = rs.getDouble("z");
+                    float pitch = rs.getFloat("pitch");
+                    float yaw = rs.getFloat("yaw");
+
                     World world = Bukkit.getWorld(worldName);
-                    WarpIsland warpIsland = new WarpIsland(islandId, warpName, new Location(world, x, y, z, yaw, pitch));
-                    result.add(warpIsland);
+                    if (world == null) continue;
+
+                    result.add(new WarpIsland(islandId, warpName, new Location(world, x, y, z, yaw, pitch)));
                 }
             } catch (Exception e) {
                 log.error("SQL Exception while fetching warps for island {}", islandId, e);
             }
-        }, null);
-        return result;
+            return result;
+        });
+
+        return out != null ? out : List.of();
     }
 
     @Override
     public Boolean deleteWarp(UUID islandId, String name) {
-        AtomicBoolean result = new AtomicBoolean(false);
-        SQLExecute.executeQueryDML(databaseLoader, DELETE_WARP.formatted(databaseName), List.of(
-                islandId,
-                name
-        ), affectedRows -> result.set(affectedRows != 0), null);
-        return result.get();
+        int affected = SQLExecute.update(databaseLoader, DELETE_WARP, List.of(islandId.toString(), name));
+        return affected != 0;
     }
 }

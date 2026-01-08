@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.database.mariadb;
+package fr.euphyllia.skyllia.database.sqlite;
 
 import fr.euphyllia.skyllia.api.database.IslandMemberQuery;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -7,24 +7,26 @@ import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MariaDBIslandMember extends IslandMemberQuery {
+public class SQLiteIslandMember extends IslandMemberQuery {
+
+    private static final Logger logger = LogManager.getLogger(SQLiteIslandMember.class);
 
     private static final String UPSERT_MEMBERS = """
-            INSERT INTO members_in_islands
-                (island_id, uuid_player, player_name, role, joined)
-            VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP())
-            ON DUPLICATE KEY UPDATE
-                role = VALUES(role),
-                player_name = VALUES(player_name);
+            INSERT INTO members_in_islands (island_id, uuid_player, player_name, role, joined)
+            VALUES (?, ?, ?, ?, DATETIME('now'))
+            ON CONFLICT(island_id, uuid_player)
+            DO UPDATE SET
+                role = excluded.role,
+                player_name = excluded.player_name;
             """;
 
     private static final String DELETE_MEMBERS = """
@@ -57,7 +59,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
             WHERE island_id = ? AND role NOT IN ('BAN', 'VISITOR');
             """;
 
-    private static final String BANNED_MEMBERS_ISLAND = """
+    private static final String MEMBERS_BANNED_ISLAND = """
             SELECT island_id, uuid_player, player_name, role, joined
             FROM members_in_islands
             WHERE island_id = ? AND role = 'BAN';
@@ -74,15 +76,15 @@ public class MariaDBIslandMember extends IslandMemberQuery {
             """;
 
     private static final String ADD_MEMBER_CLEAR = """
-            INSERT IGNORE INTO player_clear (uuid_player, cause)
-            VALUES (?, ?);
+            INSERT INTO player_clear (uuid_player, cause)
+            VALUES (?, ?)
+            ON CONFLICT(uuid_player, cause) DO NOTHING;
             """;
 
     private static final String SELECT_MEMBER_CLEAR = """
             SELECT uuid_player
             FROM player_clear
-            WHERE uuid_player = ? AND cause = ?
-            LIMIT 1;
+            WHERE uuid_player = ? AND cause = ?;
             """;
 
     private static final String DELETE_MEMBER_CLEAR = """
@@ -90,11 +92,9 @@ public class MariaDBIslandMember extends IslandMemberQuery {
             WHERE uuid_player = ? AND cause = ?;
             """;
 
-    private static final Logger log = LoggerFactory.getLogger(MariaDBIslandMember.class);
-
     private final DatabaseLoader databaseLoader;
 
-    public MariaDBIslandMember(DatabaseLoader databaseLoader) {
+    public SQLiteIslandMember(DatabaseLoader databaseLoader) {
         this.databaseLoader = databaseLoader;
     }
 
@@ -103,12 +103,12 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         return SQLExecute.queryMap(databaseLoader, OWNERS_ISLAND, List.of(islandId.toString()), rs -> {
             try {
                 if (rs.next()) {
-                    UUID playerId = UUID.fromString(rs.getString("uuid_player"));
-                    String playerName = rs.getString("player_name");
-                    return new Players(playerId, playerName, islandId, RoleType.OWNER);
+                    UUID uuid = UUID.fromString(rs.getString("uuid_player"));
+                    String name = rs.getString("player_name");
+                    return new Players(uuid, name, islandId, RoleType.OWNER);
                 }
-            } catch (Exception e) {
-                log.error("Error fetching owner by island ID {}", islandId, e);
+            } catch (SQLException ex) {
+                logger.error("getOwnerByIslandId", ex);
             }
             return null;
         });
@@ -122,7 +122,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                 players.getLastKnowName(),
                 players.getRoleType().name()
         ));
-        return affected != 0;
+        return affected > 0;
     }
 
     @Override
@@ -133,13 +133,12 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         ), rs -> {
             try {
                 if (rs.next()) {
-                    UUID mojangId = UUID.fromString(rs.getString("uuid_player"));
                     String playerName = rs.getString("player_name");
                     RoleType roleType = RoleType.valueOf(rs.getString("role"));
-                    return new Players(mojangId, playerName, island.getId(), roleType);
+                    return new Players(playerId, playerName, island.getId(), roleType);
                 }
-            } catch (Exception e) {
-                log.error("Error fetching player by island {} and playerId {}", island.getId(), playerId, e);
+            } catch (Exception ex) {
+                logger.error("getPlayersIsland", ex);
             }
             return null;
         });
@@ -153,31 +152,31 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         ), rs -> {
             try {
                 if (rs.next()) {
-                    UUID mojangId = UUID.fromString(rs.getString("uuid_player"));
-                    String pName = rs.getString("player_name");
+                    UUID uuid = UUID.fromString(rs.getString("uuid_player"));
                     RoleType roleType = RoleType.valueOf(rs.getString("role"));
-                    return new Players(mojangId, pName, island.getId(), roleType);
+                    String pName = rs.getString("player_name");
+                    return new Players(uuid, pName, island.getId(), roleType);
                 }
-            } catch (Exception e) {
-                log.error("Error fetching player by island {} and name {}", island.getId(), playerName, e);
+            } catch (Exception ex) {
+                logger.error("getPlayersIsland by name", ex);
             }
             return null;
         });
     }
 
     @Override
-    public @Nullable List<Players> getMembersInIsland(Island island) {
+    public List<Players> getMembersInIsland(Island island) {
         List<Players> out = SQLExecute.queryMap(databaseLoader, MEMBERS_ISLAND, List.of(island.getId().toString()), rs -> {
             List<Players> players = new ArrayList<>();
             try {
                 while (rs.next()) {
-                    UUID playerId = UUID.fromString(rs.getString("uuid_player"));
-                    String playerName = rs.getString("player_name");
+                    UUID uuid = UUID.fromString(rs.getString("uuid_player"));
                     RoleType roleType = RoleType.valueOf(rs.getString("role"));
-                    players.add(new Players(playerId, playerName, island.getId(), roleType));
+                    String name = rs.getString("player_name");
+                    players.add(new Players(uuid, name, island.getId(), roleType));
                 }
-            } catch (Exception e) {
-                log.error("Error fetching members in island {}", island.getId(), e);
+            } catch (Exception ex) {
+                logger.error("getMembersInIsland", ex);
             }
             return players;
         });
@@ -186,18 +185,18 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     }
 
     @Override
-    public @Nullable List<Players> getBannedMembersInIsland(Island island) {
-        List<Players> out = SQLExecute.queryMap(databaseLoader, BANNED_MEMBERS_ISLAND, List.of(island.getId().toString()), rs -> {
+    public List<Players> getBannedMembersInIsland(Island island) {
+        List<Players> out = SQLExecute.queryMap(databaseLoader, MEMBERS_BANNED_ISLAND, List.of(island.getId().toString()), rs -> {
             List<Players> players = new ArrayList<>();
             try {
                 while (rs.next()) {
-                    UUID playerId = UUID.fromString(rs.getString("uuid_player"));
-                    String playerName = rs.getString("player_name");
+                    UUID uuid = UUID.fromString(rs.getString("uuid_player"));
                     RoleType roleType = RoleType.valueOf(rs.getString("role"));
-                    players.add(new Players(playerId, playerName, island.getId(), roleType));
+                    String name = rs.getString("player_name");
+                    players.add(new Players(uuid, name, island.getId(), roleType));
                 }
-            } catch (Exception e) {
-                log.error("Error fetching banned members in island {}", island.getId(), e);
+            } catch (Exception ex) {
+                logger.error("getBannedMembersInIsland", ex);
             }
             return players;
         });
@@ -210,12 +209,12 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         return SQLExecute.queryMap(databaseLoader, OWNER_ISLAND, List.of(island.getId().toString()), rs -> {
             try {
                 if (rs.next()) {
-                    String ownerId = rs.getString("uuid_player");
-                    String playerName = rs.getString("player_name");
-                    return new Players(UUID.fromString(ownerId), playerName, island.getId(), RoleType.OWNER);
+                    UUID ownerId = UUID.fromString(rs.getString("uuid_player"));
+                    String name = rs.getString("player_name");
+                    return new Players(ownerId, name, island.getId(), RoleType.OWNER);
                 }
-            } catch (Exception e) {
-                log.error("Error fetching owner in island {}", island.getId(), e);
+            } catch (Exception ex) {
+                logger.error("getOwnerInIslandId", ex);
             }
             return null;
         });
@@ -223,14 +222,14 @@ public class MariaDBIslandMember extends IslandMemberQuery {
 
     @Override
     public Boolean addMemberClear(UUID playerId, RemovalCause cause) {
-        int affected = SQLExecute.update(databaseLoader, ADD_MEMBER_CLEAR, List.of(playerId.toString(), cause.name()));
-        return affected != 0;
+        SQLExecute.update(databaseLoader, ADD_MEMBER_CLEAR, List.of(playerId.toString(), cause.name()));
+        return checkClearMemberExist(playerId, cause);
     }
 
     @Override
     public Boolean deleteMemberClear(UUID playerId, RemovalCause cause) {
         int affected = SQLExecute.update(databaseLoader, DELETE_MEMBER_CLEAR, List.of(playerId.toString(), cause.name()));
-        return affected != 0;
+        return affected > 0;
     }
 
     @Override
@@ -238,8 +237,8 @@ public class MariaDBIslandMember extends IslandMemberQuery {
         Boolean exists = SQLExecute.queryMap(databaseLoader, SELECT_MEMBER_CLEAR, List.of(playerId.toString(), cause.name()), rs -> {
             try {
                 return rs.next();
-            } catch (SQLException e) {
-                log.error("Error checking clear member existence for {} {}", playerId, cause, e);
+            } catch (SQLException ex) {
+                logger.error("checkClearMemberExist", ex);
                 return false;
             }
         });
@@ -252,6 +251,6 @@ public class MariaDBIslandMember extends IslandMemberQuery {
                 island.getId().toString(),
                 oldMember.getMojangId().toString()
         ));
-        return affected != 0;
+        return affected > 0;
     }
 }

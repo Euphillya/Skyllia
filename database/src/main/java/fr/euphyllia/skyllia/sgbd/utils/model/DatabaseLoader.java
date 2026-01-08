@@ -3,6 +3,8 @@ package fr.euphyllia.skyllia.sgbd.utils.model;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Connection;
+
 public interface DatabaseLoader {
 
     /**
@@ -18,11 +20,6 @@ public interface DatabaseLoader {
      */
     void closeDatabase();
 
-    /**
-     * Retrieves a Connection instance.
-     *
-     * @return a valid Connection or {@code null}.
-     * @throws DatabaseException if an error occurs while retrieving the connection.
-     */
-    @Nullable Object getConnection() throws DatabaseException;
+    @Nullable
+    Connection getConnection() throws DatabaseException;
 }

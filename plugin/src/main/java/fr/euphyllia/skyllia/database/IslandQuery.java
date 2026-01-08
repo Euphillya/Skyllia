@@ -3,14 +3,9 @@ package fr.euphyllia.skyllia.database;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBDatabaseInitialize;
-import fr.euphyllia.skyllia.database.sqlite.SQLiteDatabaseInitialize;
-import fr.euphyllia.skyllia.database.sqlite.exec.*;
+import fr.euphyllia.skyllia.database.mariadb.*;
+import fr.euphyllia.skyllia.database.sqlite.*;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandData;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandMember;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandUpdate;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBIslandWarp;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import org.apache.logging.log4j.Level;
@@ -21,7 +16,6 @@ public class IslandQuery {
 
     private final Logger logger = LogManager.getLogger(IslandQuery.class);
     private final InterneAPI api;
-    private final String databaseName;
     private DatabaseInitializeQuery databaseInitializeQuery;
     private IslandDataQuery islandDataQuery;
     private IslandUpdateQuery islandUpdateQuery;
@@ -29,9 +23,8 @@ public class IslandQuery {
     private IslandMemberQuery islandMemberQuery;
     private IslandPermissionQuery islandPermissionQuery;
 
-    public IslandQuery(InterneAPI api, String databaseName) {
+    public IslandQuery(InterneAPI api) {
         this.api = api;
-        this.databaseName = databaseName;
         try {
             this.init();
         } catch (DatabaseException exception) {
@@ -46,23 +39,21 @@ public class IslandQuery {
             if (loader == null) {
                 throw new DatabaseException("Database loader is not initialized.");
             }
-            this.databaseInitializeQuery = new MariaDBDatabaseInitialize(loader, ConfigLoader.database.getMariaDBConfig(), ConfigLoader.database.getConfigVersion(), ConfigLoader.general.getRegionDistance(), ConfigLoader.general.getMaxIslands());
-            this.islandDataQuery = new MariaDBIslandData(loader, databaseName);
-            this.islandUpdateQuery = new MariaDBIslandUpdate(loader, databaseName);
-            this.islandWarpQuery = new MariaDBIslandWarp(loader, databaseName);
-            this.islandMemberQuery = new MariaDBIslandMember(loader, databaseName);
-//            this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
+            this.databaseInitializeQuery = new MariaDBDatabaseInitialize(loader);
+            this.islandDataQuery = new MariaDBIslandData(loader);
+            this.islandUpdateQuery = new MariaDBIslandUpdate(loader);
+            this.islandWarpQuery = new MariaDBIslandWarp(loader);
+            this.islandMemberQuery = new MariaDBIslandMember(loader);
             return;
         }
         if (ConfigLoader.database.getSqLiteConfig() != null) {
             SQLiteDatabaseLoader loader = (SQLiteDatabaseLoader) this.api.getDatabaseLoader();
 
-            this.databaseInitializeQuery = new SQLiteDatabaseInitialize(this.api, loader);
-            this.islandDataQuery = new SQLiteIslandData(this.api, loader);
-            this.islandUpdateQuery = new SQLiteIslandUpdate(this.api, loader);
-            this.islandWarpQuery = new SQLiteIslandWarp(this.api, loader);
-            this.islandMemberQuery = new SQLiteIslandMember(this.api, loader);
-            this.islandPermissionQuery = new SQLiteIslandPermission(this.api, loader);
+            this.databaseInitializeQuery = new SQLiteDatabaseInitialize(loader);
+            this.islandDataQuery = new SQLiteIslandData(loader);
+            this.islandUpdateQuery = new SQLiteIslandUpdate(loader);
+            this.islandWarpQuery = new SQLiteIslandWarp(loader);
+            this.islandMemberQuery = new SQLiteIslandMember(loader);
             return;
         }
 

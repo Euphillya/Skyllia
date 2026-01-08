@@ -17,147 +17,146 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MariaDBIslandData extends IslandDataQuery {
 
     private static final String SELECT_ISLAND_BY_OWNER = """
             SELECT i.*
-            FROM `%s`.`islands` i
-            JOIN `%s`.`members_in_islands` mi ON i.`island_id` = mi.`island_id`
-            WHERE mi.`role` = 'OWNER'
-            AND mi.`uuid_player` = ?
-            AND i.`disable` = 0;
+            FROM islands i
+            JOIN members_in_islands mi ON i.island_id = mi.island_id
+            WHERE mi.role = 'OWNER'
+              AND mi.uuid_player = ?
+              AND i.disable = 0;
             """;
 
     private static final String SELECT_ISLAND_BY_PLAYER_ID = """
             SELECT i.*
-            FROM `%s`.`islands` i
-            JOIN `%s`.`members_in_islands` mi ON i.`island_id` = mi.`island_id`
-            WHERE mi.`role` NOT IN ('BAN', 'VISITOR')
-            AND mi.`uuid_player` = ?
-            AND i.`disable` = 0 LIMIT 1;
+            FROM islands i
+            JOIN members_in_islands mi ON i.island_id = mi.island_id
+            WHERE mi.role NOT IN ('BAN', 'VISITOR')
+              AND mi.uuid_player = ?
+              AND i.disable = 0
+            LIMIT 1;
             """;
+
     private static final String SELECT_ISLAND_BY_ISLAND_ID = """
-            SELECT `island_id`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`, `max_members`
-            FROM `%s`.`islands`
-            WHERE `island_id` = ?;
+            SELECT island_id, disable, region_x, region_z, private, size, create_time, max_members
+            FROM islands
+            WHERE island_id = ?;
             """;
+
     private static final String ADD_ISLANDS = """
-                INSERT INTO `%s`.`islands`
-                (`island_id`,`disable`,`region_x`,`region_z`,`private`,`size`,`create_time`,`max_members`,`locked`)
-                    SELECT ?, 0, S.region_x, S.region_z, ?, ?, CURRENT_TIMESTAMP(), ?, 0
-                    FROM `%s`.`spiral` S
-                    LEFT JOIN `%s`.`islands` S2
-                    ON S.region_x = S2.region_x
-                    AND S.region_z = S2.region_z
-                AND (S2.locked = 1 OR S2.disable = 0)
-                    WHERE S2.region_x IS NULL
-                    ORDER BY S.id
-                LIMIT 1;
+            INSERT INTO islands
+                (island_id, disable, region_x, region_z, private, size, create_time, max_members, locked)
+            SELECT ?, 0, s.region_x, s.region_z, ?, ?, CURRENT_TIMESTAMP(), ?, 0
+            FROM spiral s
+            LEFT JOIN islands s2
+                   ON s.region_x = s2.region_x
+                  AND s.region_z = s2.region_z
+                  AND (s2.locked = 1 OR s2.disable = 0)
+            WHERE s2.region_x IS NULL
+            ORDER BY s.id
+            LIMIT 1;
             """;
+
     private static final String SELECT_ALL_ISLANDS_VALID = """
-            SELECT `island_id`, `disable`, `region_x`, `region_z`, `private`, `size`, `create_time`, `max_members`
-            FROM `%s`.`islands`
-            WHERE `disable` = 0;
+            SELECT island_id, disable, region_x, region_z, private, size, create_time, max_members
+            FROM islands
+            WHERE disable = 0;
             """;
 
     private static final Logger log = LoggerFactory.getLogger(MariaDBIslandData.class);
 
-    public DatabaseLoader databaseLoader;
-    public String databaseName;
+    private final DatabaseLoader databaseLoader;
 
-    public MariaDBIslandData(DatabaseLoader databaseLoader, String databaseName) {
+    public MariaDBIslandData(DatabaseLoader databaseLoader) {
         this.databaseLoader = databaseLoader;
-        this.databaseName = databaseName;
     }
 
     @Override
     public @Nullable Island getIslandByOwnerId(UUID playerId) {
-        AtomicReference<Island> island = new AtomicReference<>();
-        SQLExecute.executeQuery(databaseLoader, SELECT_ISLAND_BY_OWNER.formatted(databaseName, databaseName), List.of(playerId), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    island.set(constructIslandQuery(resultSet));
-                }
-            } catch (SQLException e) {
-                log.error("SQL Exception while fetching island by owner id {}", playerId, e);
-            }
-        }, null);
-        return island.get();
+        return SQLExecute.queryMap(
+                databaseLoader,
+                SELECT_ISLAND_BY_OWNER,
+                List.of(playerId.toString()),
+                rs -> firstIsland(rs, playerId, "owner")
+        );
     }
 
     @Override
     public @Nullable Island getIslandByPlayerId(UUID playerId) {
-        AtomicReference<Island> island = new AtomicReference<>();
-        SQLExecute.executeQuery(databaseLoader, SELECT_ISLAND_BY_PLAYER_ID.formatted(databaseName, databaseName), List.of(playerId), resultSet -> {
-            try {
-                if (resultSet.next()) {
-                    island.set(constructIslandQuery(resultSet));
-                }
-            } catch (SQLException e) {
-                log.error("SQL Exception while fetching island by player id {}", playerId, e);
-            }
-        }, null);
-        return island.get();
+        return SQLExecute.queryMap(
+                databaseLoader,
+                SELECT_ISLAND_BY_PLAYER_ID,
+                List.of(playerId.toString()),
+                rs -> firstIsland(rs, playerId, "player")
+        );
     }
 
     @Override
     public Boolean insertIslands(Island futurIsland) {
-        AtomicReference<Boolean> result = new AtomicReference<>(false);
-        SQLExecute.executeQueryDML(databaseLoader, ADD_ISLANDS.formatted(databaseName, databaseName, databaseName), List.of(
-                futurIsland.getId(), 1, futurIsland.getSize(), futurIsland.getMaxMembers()
-        ), i -> result.set(i != 0), null);
-        return result.get();
+        int affected = SQLExecute.update(
+                databaseLoader,
+                ADD_ISLANDS,
+                List.of(
+                        futurIsland.getId().toString(),
+                        futurIsland.isPrivateIsland() ? 1 : 0,
+                        futurIsland.getSize(),
+                        futurIsland.getMaxMembers()
+                )
+        );
+        return affected != 0;
     }
 
     @Override
     public @Nullable Island getIslandByIslandId(UUID islandId) {
-        AtomicReference<Island> island = new AtomicReference<>();
-        SQLExecute.executeQuery(databaseLoader, SELECT_ISLAND_BY_ISLAND_ID.formatted(databaseName), List.of(islandId), resultSet -> {
+        return SQLExecute.queryMap(databaseLoader, SELECT_ISLAND_BY_ISLAND_ID, List.of(islandId.toString()), rs -> {
             try {
-                if (resultSet.next()) {
-                    island.set(constructIslandQuery(resultSet));
-                }
+                if (rs.next()) return constructIslandQuery(rs);
             } catch (SQLException e) {
                 log.error("SQL Exception while fetching island by island id {}", islandId, e);
             }
-        }, null);
-        return island.get();
+            return null;
+        });
     }
 
     @Override
     public List<Island> getAllIslandsValid() {
-        List<Island> islands = new ArrayList<>();
-        SQLExecute.executeQuery(databaseLoader, SELECT_ALL_ISLANDS_VALID.formatted(databaseName), null, resultSet -> {
+        List<Island> out = SQLExecute.queryMap(databaseLoader, SELECT_ALL_ISLANDS_VALID, null, rs -> {
+            List<Island> islands = new ArrayList<>();
             try {
-                while (resultSet.next()) {
-                    Island island = constructIslandQuery(resultSet);
-                    if (island != null) {
-                        islands.add(island);
-                    }
+                while (rs.next()) {
+                    Island island = constructIslandQuery(rs);
+                    if (island != null) islands.add(island);
                 }
             } catch (SQLException e) {
                 log.error("SQL Exception while fetching all valid islands", e);
             }
-        }, null);
-        return islands;
+            return islands;
+        });
+        return out != null ? out : List.of();
     }
 
     @Override
     public Integer getMaxMemberInIsland(Island island) {
-        AtomicReference<Integer> maxMembers = new AtomicReference<>(-1);
-        SQLExecute.executeQuery(databaseLoader, SELECT_ISLAND_BY_ISLAND_ID.formatted(databaseName), List.of(island.getId()), resultSet -> {
+        Integer max = SQLExecute.queryMap(databaseLoader, SELECT_ISLAND_BY_ISLAND_ID, List.of(island.getId().toString()), rs -> {
             try {
-                if (resultSet.next()) {
-                    int max = resultSet.getInt("max_members");
-                    maxMembers.set(max);
-                }
+                if (rs.next()) return rs.getInt("max_members");
             } catch (SQLException e) {
                 log.error("SQL Exception while fetching max members for island id {}", island.getId(), e);
             }
-        }, null);
-        return maxMembers.get();
+            return -1;
+        });
+        return max != null ? max : -1;
+    }
+
+    private @Nullable Island firstIsland(ResultSet rs, UUID playerId, String kind) {
+        try {
+            if (rs.next()) return constructIslandQuery(rs);
+        } catch (SQLException e) {
+            log.error("SQL Exception while fetching island by {} id {}", kind, playerId, e);
+        }
+        return null;
     }
 
     private @Nullable Island constructIslandQuery(ResultSet resultSet) throws SQLException {
@@ -167,11 +166,12 @@ public class MariaDBIslandData extends IslandDataQuery {
         int regionZ = resultSet.getInt("region_z");
         double size = resultSet.getDouble("size");
         Timestamp timestamp = resultSet.getTimestamp("create_time");
+
         Position position = new Position(regionX, regionZ);
         try {
             return new IslandHook(UUID.fromString(islandId), maxMembers, position, size, timestamp);
-        } catch (MaxIslandSizeExceedException maxIslandSizeExceedException) {
-            log.error("Failed to construct island with id {} due to size exceed exception.", islandId, maxIslandSizeExceedException);
+        } catch (MaxIslandSizeExceedException e) {
+            log.error("Failed to construct island with id {} due to size exceed exception.", islandId, e);
             return null;
         }
     }
