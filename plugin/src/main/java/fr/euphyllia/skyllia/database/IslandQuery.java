@@ -47,25 +47,19 @@ public class IslandQuery {
             this.islandUpdateQuery = new MariaDBIslandUpdate(loader);
             this.islandWarpQuery = new MariaDBIslandWarp(loader);
             this.islandMemberQuery = new MariaDBIslandMember(loader);
-            // TODO permissions :
-            // this.islandPermissionQuery = new MariaDBIslandPermission(loader);
+            this.islandPermissionQuery = new MariaDBIslandPermission(loader);
 
             return;
         }
 
         // --- PostgreSQL ---
         if (ConfigLoader.database.getPostgreConfig() != null) {
-            // selon ton config object :
-            // final String dbName = ConfigLoader.database.getPostgreConfig().database();
-
             this.databaseInitializeQuery = new PostgreSQLDatabaseInitialize(loader);
             this.islandDataQuery = new PostgreSQLIslandData(loader);
             this.islandUpdateQuery = new PostgreSQLIslandUpdate(loader);
             this.islandWarpQuery = new PostgreSQLIslandWarp(loader);
             this.islandMemberQuery = new PostgreSQLIslandMember(loader);
-
-            // TODO permissions :
-            // this.islandPermissionQuery = new PostgreSQLIslandPermission(loader);
+            this.islandPermissionQuery = new PostgreSQLIslandPermission(loader);
 
             return;
         }
@@ -83,9 +77,7 @@ public class IslandQuery {
             this.islandUpdateQuery = new SQLiteIslandUpdate(sqliteLoader);
             this.islandWarpQuery = new SQLiteIslandWarp(sqliteLoader);
             this.islandMemberQuery = new SQLiteIslandMember(sqliteLoader);
-
-            // TODO permissions :
-            // this.islandPermissionQuery = new SQLiteIslandPermission(sqliteLoader);
+            this.islandPermissionQuery = new SQLiteIslandPermission(sqliteLoader);
 
             return;
         }

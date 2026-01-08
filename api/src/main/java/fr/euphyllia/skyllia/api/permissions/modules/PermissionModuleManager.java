@@ -9,11 +9,8 @@ public final class PermissionModuleManager {
     private final Plugin core;
     private final PermissionRegistry registry;
     private final List<Entry> pending = new ArrayList<>();
-    private boolean initialized;
     private final Set<PermissionModule> registered = Collections.newSetFromMap(new IdentityHashMap<>());
-
-    private record Entry(Plugin owner, PermissionModule module) {
-    }
+    private boolean initialized;
 
     public PermissionModuleManager(Plugin core, PermissionRegistry registry) {
         this.core = core;
@@ -47,5 +44,8 @@ public final class PermissionModuleManager {
         }
 
         pending.clear();
+    }
+
+    private record Entry(Plugin owner, PermissionModule module) {
     }
 }

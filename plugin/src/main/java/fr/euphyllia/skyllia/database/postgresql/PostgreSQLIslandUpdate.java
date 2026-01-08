@@ -13,52 +13,52 @@ import java.util.List;
 public class PostgreSQLIslandUpdate extends IslandUpdateQuery {
 
     private static final String SELECT_STATUS_ISLAND = """
-        SELECT disable
-        FROM islands
-        WHERE island_id = ?;
-        """;
+            SELECT disable
+            FROM islands
+            WHERE island_id = ?;
+            """;
 
     private static final String UPDATE_DISABLE_ISLAND = """
-        UPDATE islands
-        SET disable = ?
-        WHERE island_id = ?;
-        """;
+            UPDATE islands
+            SET disable = ?
+            WHERE island_id = ?;
+            """;
 
     private static final String UPDATE_MEMBERS_ISLAND = """
-        UPDATE islands
-        SET max_members = ?
-        WHERE island_id = ?;
-        """;
+            UPDATE islands
+            SET max_members = ?
+            WHERE island_id = ?;
+            """;
 
     private static final String UPDATE_SIZE_ISLAND = """
-        UPDATE islands
-        SET size = ?
-        WHERE island_id = ?;
-        """;
+            UPDATE islands
+            SET size = ?
+            WHERE island_id = ?;
+            """;
 
     private static final String SELECT_PRIVATE_ISLAND = """
-        SELECT private
-        FROM islands
-        WHERE island_id = ?;
-        """;
+            SELECT private
+            FROM islands
+            WHERE island_id = ?;
+            """;
 
     private static final String UPDATE_PRIVATE_ISLAND = """
-        UPDATE islands
-        SET private = ?
-        WHERE island_id = ?;
-        """;
+            UPDATE islands
+            SET private = ?
+            WHERE island_id = ?;
+            """;
 
     private static final String SELECT_LOCKED_ISLAND = """
-        SELECT locked
-        FROM islands
-        WHERE island_id = ?;
-        """;
+            SELECT locked
+            FROM islands
+            WHERE island_id = ?;
+            """;
 
     private static final String UPDATE_LOCKED_ISLAND = """
-        UPDATE islands
-        SET locked = ?
-        WHERE island_id = ?;
-        """;
+            UPDATE islands
+            SET locked = ?
+            WHERE island_id = ?;
+            """;
 
     private static final Logger log = LoggerFactory.getLogger(PostgreSQLIslandUpdate.class);
 

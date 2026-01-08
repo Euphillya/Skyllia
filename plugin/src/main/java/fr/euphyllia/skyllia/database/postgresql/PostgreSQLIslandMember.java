@@ -19,77 +19,77 @@ import java.util.UUID;
 public class PostgreSQLIslandMember extends IslandMemberQuery {
 
     private static final String UPSERT_MEMBERS = """
-        INSERT INTO members_in_islands (island_id, uuid_player, player_name, role, joined)
-        VALUES (?, ?, ?, ?, NOW())
-        ON CONFLICT (island_id, uuid_player)
-        DO UPDATE SET
-            role = EXCLUDED.role,
-            player_name = EXCLUDED.player_name;
-        """;
+            INSERT INTO members_in_islands (island_id, uuid_player, player_name, role, joined)
+            VALUES (?, ?, ?, ?, NOW())
+            ON CONFLICT (island_id, uuid_player)
+            DO UPDATE SET
+                role = EXCLUDED.role,
+                player_name = EXCLUDED.player_name;
+            """;
 
     private static final String DELETE_MEMBERS = """
-        DELETE FROM members_in_islands
-        WHERE island_id = ? AND uuid_player = ?;
-        """;
+            DELETE FROM members_in_islands
+            WHERE island_id = ? AND uuid_player = ?;
+            """;
 
     private static final String SELECT_MEMBER_ISLAND_MOJANG_ID = """
-        SELECT island_id, uuid_player, player_name, role, joined
-        FROM members_in_islands
-        WHERE island_id = ? AND uuid_player = ?;
-        """;
+            SELECT island_id, uuid_player, player_name, role, joined
+            FROM members_in_islands
+            WHERE island_id = ? AND uuid_player = ?;
+            """;
 
     private static final String SELECT_MEMBER_ISLAND_MOJANG_NAME = """
-        SELECT island_id, uuid_player, player_name, role, joined
-        FROM members_in_islands
-        WHERE island_id = ? AND player_name = ?;
-        """;
+            SELECT island_id, uuid_player, player_name, role, joined
+            FROM members_in_islands
+            WHERE island_id = ? AND player_name = ?;
+            """;
 
     private static final String OWNERS_ISLAND = """
-        SELECT island_id, uuid_player, player_name, role, joined
-        FROM members_in_islands
-        WHERE island_id = ? AND role = 'OWNER'
-        LIMIT 1;
-        """;
+            SELECT island_id, uuid_player, player_name, role, joined
+            FROM members_in_islands
+            WHERE island_id = ? AND role = 'OWNER'
+            LIMIT 1;
+            """;
 
     private static final String MEMBERS_ISLAND = """
-        SELECT island_id, uuid_player, player_name, role, joined
-        FROM members_in_islands
-        WHERE island_id = ? AND role NOT IN ('BAN', 'VISITOR');
-        """;
+            SELECT island_id, uuid_player, player_name, role, joined
+            FROM members_in_islands
+            WHERE island_id = ? AND role NOT IN ('BAN', 'VISITOR');
+            """;
 
     private static final String BANNED_MEMBERS_ISLAND = """
-        SELECT island_id, uuid_player, player_name, role, joined
-        FROM members_in_islands
-        WHERE island_id = ? AND role = 'BAN';
-        """;
+            SELECT island_id, uuid_player, player_name, role, joined
+            FROM members_in_islands
+            WHERE island_id = ? AND role = 'BAN';
+            """;
 
     private static final String OWNER_ISLAND = """
-        SELECT mi.island_id, mi.uuid_player, mi.player_name, mi.role, mi.joined
-        FROM members_in_islands mi
-        JOIN islands i ON mi.island_id = i.island_id
-        WHERE mi.island_id = ?
-          AND mi.role = 'OWNER'
-          AND i.disable = FALSE
-        LIMIT 1;
-        """;
+            SELECT mi.island_id, mi.uuid_player, mi.player_name, mi.role, mi.joined
+            FROM members_in_islands mi
+            JOIN islands i ON mi.island_id = i.island_id
+            WHERE mi.island_id = ?
+              AND mi.role = 'OWNER'
+              AND i.disable = FALSE
+            LIMIT 1;
+            """;
 
     private static final String ADD_MEMBER_CLEAR = """
-        INSERT INTO player_clear (uuid_player, cause)
-        VALUES (?, ?)
-        ON CONFLICT (uuid_player, cause) DO NOTHING;
-        """;
+            INSERT INTO player_clear (uuid_player, cause)
+            VALUES (?, ?)
+            ON CONFLICT (uuid_player, cause) DO NOTHING;
+            """;
 
     private static final String SELECT_MEMBER_CLEAR = """
-        SELECT uuid_player
-        FROM player_clear
-        WHERE uuid_player = ? AND cause = ?
-        LIMIT 1;
-        """;
+            SELECT uuid_player
+            FROM player_clear
+            WHERE uuid_player = ? AND cause = ?
+            LIMIT 1;
+            """;
 
     private static final String DELETE_MEMBER_CLEAR = """
-        DELETE FROM player_clear
-        WHERE uuid_player = ? AND cause = ?;
-        """;
+            DELETE FROM player_clear
+            WHERE uuid_player = ? AND cause = ?;
+            """;
 
     private static final Logger log = LoggerFactory.getLogger(PostgreSQLIslandMember.class);
 

@@ -76,7 +76,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                 AtomicInteger worldsLeft = new AtomicInteger(ConfigLoader.worldManager.getWorldConfigs().size());
                 AtomicBoolean failed = new AtomicBoolean(false);
                 if (worldsLeft.get() == 0) {
-                    boolean value =  skyblockManager.setLockedIsland(island, false);
+                    boolean value = skyblockManager.setLockedIsland(island, false);
 
                     if (value) {
                         ConfigLoader.language.sendMessage(sender, "island.delete-success");

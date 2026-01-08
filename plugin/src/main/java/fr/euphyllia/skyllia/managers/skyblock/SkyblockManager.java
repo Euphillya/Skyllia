@@ -65,7 +65,7 @@ public class SkyblockManager {
 
             boolean successInsertIsland = dataQuery.insertIslands(futureIsland);
 
-            if  (successInsertIsland) {
+            if (successInsertIsland) {
                 future.complete(true);
             } else {
                 LOGGER.fatal("Exception while creating a new island asynchronously");

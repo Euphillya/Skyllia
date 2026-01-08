@@ -21,113 +21,111 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
 
     private static final Logger logger = LogManager.getLogger(PostgreSQLDatabaseInitialize.class);
 
-    private final String schema;
-
     private static final String CREATE_ISLANDS_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.islands (
-            island_id    UUID PRIMARY KEY,
-            disable      BOOLEAN NOT NULL DEFAULT FALSE,
-            region_x     INTEGER NOT NULL,
-            region_z     INTEGER NOT NULL,
-            private      BOOLEAN NOT NULL DEFAULT FALSE,
-            locked       BOOLEAN NOT NULL DEFAULT FALSE,
-            size         DOUBLE PRECISION NOT NULL,
-            create_time  TIMESTAMPTZ,
-            max_members  INTEGER NOT NULL
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.islands (
+                island_id    UUID PRIMARY KEY,
+                disable      BOOLEAN NOT NULL DEFAULT FALSE,
+                region_x     INTEGER NOT NULL,
+                region_z     INTEGER NOT NULL,
+                "private"    BOOLEAN NOT NULL DEFAULT FALSE,
+                locked       BOOLEAN NOT NULL DEFAULT FALSE,
+                size         DOUBLE PRECISION NOT NULL,
+                create_time  TIMESTAMPTZ NOT NULL DEFAULT now(),
+                max_members  INTEGER NOT NULL
+            );
+            """;
 
     private static final String CREATE_ISLANDS_REGION_UNIQUE = """
-        CREATE UNIQUE INDEX IF NOT EXISTS islands_region_unique
-        ON %s.islands (region_x, region_z);
-        """;
+            CREATE UNIQUE INDEX IF NOT EXISTS islands_region_unique
+            ON %s.islands (region_x, region_z)
+            WHERE disable = FALSE;
+            """;
 
     private static final String CREATE_ISLANDS_GAMERULE_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.islands_gamerule (
-            island_id UUID PRIMARY KEY REFERENCES %s.islands(island_id) ON DELETE CASCADE,
-            flags     BIGINT NOT NULL DEFAULT 0
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.islands_gamerule (
+                island_id UUID PRIMARY KEY REFERENCES %s.islands(island_id) ON DELETE CASCADE,
+                flags     BIGINT NOT NULL DEFAULT 0
+            );
+            """;
 
     private static final String CREATE_ISLANDS_MEMBERS_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.members_in_islands (
-            island_id    UUID NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
-            uuid_player  UUID NOT NULL,
-            player_name  VARCHAR(40),
-            role         VARCHAR(40),
-            joined       TIMESTAMPTZ,
-            PRIMARY KEY (island_id, uuid_player)
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.members_in_islands (
+                island_id    UUID NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
+                uuid_player  UUID NOT NULL,
+                player_name  VARCHAR(40),
+                role         VARCHAR(40),
+                joined       TIMESTAMPTZ,
+                PRIMARY KEY (island_id, uuid_player)
+            );
+            """;
 
     private static final String CREATE_ISLANDS_WARP_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.islands_warp (
-            id          BIGSERIAL PRIMARY KEY,
-            island_id   UUID NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
-            warp_name   VARCHAR(100),
-            world_name  VARCHAR(100),
-            x           DOUBLE PRECISION,
-            y           DOUBLE PRECISION,
-            z           DOUBLE PRECISION,
-            pitch       REAL,
-            yaw         REAL,
-            UNIQUE (island_id, warp_name)
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.islands_warp (
+                id          BIGSERIAL PRIMARY KEY,
+                island_id   UUID NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
+                warp_name   VARCHAR(100),
+                world_name  VARCHAR(100),
+                x           DOUBLE PRECISION,
+                y           DOUBLE PRECISION,
+                z           DOUBLE PRECISION,
+                pitch       REAL,
+                yaw         REAL,
+                UNIQUE (island_id, warp_name)
+            );
+            """;
 
     private static final String CREATE_SPIRAL_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.spiral (
-            id       INTEGER PRIMARY KEY,
-            region_x INTEGER NOT NULL,
-            region_z INTEGER NOT NULL
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.spiral (
+                id       INTEGER PRIMARY KEY,
+                region_x INTEGER NOT NULL,
+                region_z INTEGER NOT NULL
+            );
+            """;
 
     private static final String CREATE_ISLANDS_PERMISSIONS_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.islands_permissions (
-            island_id UUID NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
-            type      VARCHAR(36) NOT NULL,
-            role      VARCHAR(40) NOT NULL,
-            flags     BIGINT NOT NULL DEFAULT 0,
-            PRIMARY KEY (island_id, type, role)
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.islands_permissions_v2 (
+                island_id UUID NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
+                role TEXT NOT NULL,
+                words BYTEA NOT NULL,
+                PRIMARY KEY (island_id, role)
+            );
+            """;
 
     private static final String CREATE_PLAYER_CLEAR_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.player_clear (
-            uuid_player UUID NOT NULL,
-            cause       VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED',
-            PRIMARY KEY (uuid_player, cause)
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.player_clear (
+                uuid_player UUID NOT NULL,
+                cause       VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED',
+                PRIMARY KEY (uuid_player, cause)
+            );
+            """;
 
     private static final String CREATE_ISLANDS_INDEX = """
-        CREATE INDEX IF NOT EXISTS region_xz_disabled
-        ON %s.islands (region_x, region_z, disable);
-        """;
+            CREATE INDEX IF NOT EXISTS region_xz_disabled
+            ON %s.islands (region_x, region_z, disable);
+            """;
 
     private static final String CREATE_SPIRAL_INDEX = """
-        CREATE INDEX IF NOT EXISTS region_xz
-        ON %s.spiral (region_x, region_z);
-        """;
+            CREATE INDEX IF NOT EXISTS region_xz
+            ON %s.spiral (region_x, region_z);
+            """;
 
     private static final String CREATE_MEMBERS_BY_PLAYER_INDEX = """
-        CREATE INDEX IF NOT EXISTS idx_member_by_player
-        ON %s.members_in_islands (uuid_player, role, island_id);
-        """;
+            CREATE INDEX IF NOT EXISTS idx_member_by_player
+            ON %s.members_in_islands (uuid_player, role, island_id);
+            """;
 
     private static final String CREATE_MEMBER_BY_ISLAND_ROLE_INDEX = """
-        CREATE INDEX IF NOT EXISTS idx_member_by_island_role
-        ON %s.members_in_islands (island_id, role, uuid_player);
-        """;
+            CREATE INDEX IF NOT EXISTS idx_member_by_island_role
+            ON %s.members_in_islands (island_id, role, uuid_player);
+            """;
 
-    // INSERT SPIRAL
     private static final String INSERT_SPIRAL = """
-        INSERT INTO %s.spiral (id, region_x, region_z)
-        VALUES (?, ?, ?)
-        ON CONFLICT (id) DO NOTHING;
-        """;
+            INSERT INTO %s.spiral (id, region_x, region_z)
+            VALUES (?, ?, ?)
+            ON CONFLICT (id) DO NOTHING;
+            """;
 
+    private final String schema;
     private final DatabaseLoader databaseLoader;
     private final int regionDistance;
     private final int maxIslands;
@@ -145,6 +143,10 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
         this.maxIslands = ConfigLoader.general.getMaxIslands();
     }
 
+    private static String sanitizeIdent(String ident) {
+        return ident.replaceAll("[^a-zA-Z0-9_]", "");
+    }
+
     @Override
     public Boolean init() {
         createSchemaIfNeeded();
@@ -155,10 +157,11 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void createSchemaIfNeeded() {
-        if ("public".equalsIgnoreCase(schema)) return;
+        final String s = sanitizeIdent(schema);
+        if ("public".equalsIgnoreCase(s)) return;
 
         SQLExecute.update(databaseLoader,
-                "CREATE SCHEMA IF NOT EXISTS " + sanitizeIdent(schema) + ";",
+                "CREATE SCHEMA IF NOT EXISTS " + s + ";",
                 null
         );
     }
@@ -183,7 +186,6 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
     }
 
     private void applyMigrations() {
-
     }
 
     private void initializeSpiralTable() {
@@ -206,7 +208,8 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
                 ));
             }
 
-            final String insertSql = INSERT_SPIRAL.formatted(sanitizeIdent(schema));
+            final String s = sanitizeIdent(schema);
+            final String insertSql = INSERT_SPIRAL.formatted(s);
 
             SQLExecute.work(databaseLoader, connection -> {
                 PostgreSQLSpiralBatchInserter batch = new PostgreSQLSpiralBatchInserter(insertSql, islandDataList);
@@ -219,9 +222,5 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
 
     private void exec(String sql) {
         SQLExecute.update(databaseLoader, sql, null);
-    }
-
-    private static String sanitizeIdent(String ident) {
-        return ident.replaceAll("[^a-zA-Z0-9_]", "");
     }
 }

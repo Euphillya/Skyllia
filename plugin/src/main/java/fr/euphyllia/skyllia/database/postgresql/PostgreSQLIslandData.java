@@ -21,49 +21,49 @@ import java.util.UUID;
 public class PostgreSQLIslandData extends IslandDataQuery {
 
     private static final String SELECT_ISLAND_BY_OWNER = """
-        SELECT i.*
-        FROM islands i
-        JOIN members_in_islands mi ON i.island_id = mi.island_id
-        WHERE mi.role = 'OWNER'
-          AND mi.uuid_player = ?
-          AND i.disable = FALSE;
-        """;
+            SELECT i.*
+            FROM islands i
+            JOIN members_in_islands mi ON i.island_id = mi.island_id
+            WHERE mi.role = 'OWNER'
+              AND mi.uuid_player = ?
+              AND i.disable = FALSE;
+            """;
 
     private static final String SELECT_ISLAND_BY_PLAYER_ID = """
-        SELECT i.*
-        FROM islands i
-        JOIN members_in_islands mi ON i.island_id = mi.island_id
-        WHERE mi.role NOT IN ('BAN', 'VISITOR')
-          AND mi.uuid_player = ?
-          AND i.disable = FALSE
-        LIMIT 1;
-        """;
+            SELECT i.*
+            FROM islands i
+            JOIN members_in_islands mi ON i.island_id = mi.island_id
+            WHERE mi.role NOT IN ('BAN', 'VISITOR')
+              AND mi.uuid_player = ?
+              AND i.disable = FALSE
+            LIMIT 1;
+            """;
 
     private static final String SELECT_ISLAND_BY_ISLAND_ID = """
-        SELECT island_id, disable, region_x, region_z, private, locked, size, create_time, max_members
-        FROM islands
-        WHERE island_id = ?;
-        """;
+            SELECT island_id, disable, region_x, region_z, private, locked, size, create_time, max_members
+            FROM islands
+            WHERE island_id = ?;
+            """;
 
     private static final String ADD_ISLANDS = """
-        INSERT INTO islands (island_id, disable, region_x, region_z, private, size, create_time, max_members, locked)
-        SELECT
-            ?, FALSE, s.region_x, s.region_z, ?, ?, NOW(), ?, FALSE
-        FROM spiral s
-        LEFT JOIN islands i
-               ON s.region_x = i.region_x
-              AND s.region_z = i.region_z
-              AND (i.locked = TRUE OR i.disable = FALSE)
-        WHERE i.region_x IS NULL
-        ORDER BY s.id
-        LIMIT 1;
-        """;
+            INSERT INTO islands (island_id, disable, region_x, region_z, private, size, create_time, max_members, locked)
+            SELECT
+                ?, FALSE, s.region_x, s.region_z, ?, ?, NOW(), ?, FALSE
+            FROM spiral s
+            LEFT JOIN islands i
+                   ON s.region_x = i.region_x
+                  AND s.region_z = i.region_z
+                  AND (i.locked = TRUE OR i.disable = FALSE)
+            WHERE i.region_x IS NULL
+            ORDER BY s.id
+            LIMIT 1;
+            """;
 
     private static final String SELECT_ALL_ISLANDS_VALID = """
-        SELECT island_id, disable, region_x, region_z, private, locked, size, create_time, max_members
-        FROM islands
-        WHERE disable = FALSE;
-        """;
+            SELECT island_id, disable, region_x, region_z, private, locked, size, create_time, max_members
+            FROM islands
+            WHERE disable = FALSE;
+            """;
 
     private static final Logger log = LoggerFactory.getLogger(PostgreSQLIslandData.class);
 

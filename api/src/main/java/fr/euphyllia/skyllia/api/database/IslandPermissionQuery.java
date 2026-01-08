@@ -1,32 +1,27 @@
 package fr.euphyllia.skyllia.api.database;
 
-import fr.euphyllia.skyllia.api.skyblock.Island;
-import java.util.concurrent.CompletableFuture;
+import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
+import fr.euphyllia.skyllia.api.permissions.PermissionId;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
+import fr.euphyllia.skyllia.api.permissions.PermissionSetCodec;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 
-/**
- * The {@code IslandPermissionQuery} class defines an abstract set of methods
- * for managing island permissions in a SkyBlock context.
- * <p>
- * Implementations should handle permission updates and retrieval for different
- * roles and game rule configurations.
- */
+import java.util.UUID;
+
 public abstract class IslandPermissionQuery {
 
-    /**
-     * Retrieves the game rule value (usually represented as a long) for the specified island.
-     *
-     * @param island the {@link Island} whose game rule is to be retrieved
-     * @return a {@link CompletableFuture} that completes with the game rule value
-     */
-    public abstract Long getIslandGameRule(Island island);
+    public abstract CompiledPermissions loadCompiled(UUID islandId, PermissionRegistry registry);
 
-    /**
-     * Updates the game rule value for the specified island.
-     *
-     * @param island the {@link Island} whose game rule is to be updated
-     * @param value  the new game rule value as a {@code long}
-     * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     * or {@code false} otherwise
-     */
-    public abstract Boolean updateIslandGameRule(Island island, long value);
+    public abstract boolean set(UUID islandId, RoleType role, PermissionId id, boolean value);
+
+    public abstract boolean saveRole(UUID islandId, RoleType role, byte[] wordsBlob);
+
+    public abstract boolean deleteRole(UUID islandId, RoleType role);
+
+    public boolean set(UUID islandId, PermissionRegistry registry, RoleType role, PermissionId id, boolean value) {
+        CompiledPermissions compiled = loadCompiled(islandId, registry);
+        compiled.setFor(role).set(id, value);
+        byte[] blob = PermissionSetCodec.encodeLongs(compiled.setFor(role).snapshotWords());
+        return saveRole(islandId, role, blob);
+    }
 }

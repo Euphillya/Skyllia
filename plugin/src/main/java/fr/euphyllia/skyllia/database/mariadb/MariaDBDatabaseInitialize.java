@@ -84,12 +84,11 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             """;
 
     private static final String CREATE_ISLANDS_PERMISSIONS_TABLE = """
-            CREATE TABLE IF NOT EXISTS islands_permissions (
-                island_id VARCHAR(36) NOT NULL,
-                type VARCHAR(36) NOT NULL,
+            CREATE TABLE IF NOT EXISTS islands_permissions_v2 (
+                island_id CHAR(36) NOT NULL,
                 role VARCHAR(40) NOT NULL,
-                flags INT UNSIGNED NOT NULL DEFAULT 0,
-                PRIMARY KEY (island_id, type, role)
+                words LONGBLOB NOT NULL,
+                PRIMARY KEY (`island_id`, `role`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 

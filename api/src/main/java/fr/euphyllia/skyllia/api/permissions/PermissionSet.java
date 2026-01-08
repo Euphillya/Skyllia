@@ -30,4 +30,14 @@ public final class PermissionSet {
         System.arraycopy(words, 0, newArr, 0, words.length);
         words = newArr;
     }
+
+    public synchronized long[] snapshotWords() {
+        long[] copy = new long[words.length];
+        System.arraycopy(words, 0, copy, 0, words.length);
+        return copy;
+    }
+
+    public synchronized void loadWords(long[] newWords) {
+        this.words = newWords != null ? newWords : new long[0];
+    }
 }

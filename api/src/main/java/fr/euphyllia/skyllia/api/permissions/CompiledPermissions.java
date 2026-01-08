@@ -5,8 +5,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import java.util.EnumMap;
 
 public final class CompiledPermissions {
-    private int version;
     private final EnumMap<RoleType, PermissionSet> byRole = new EnumMap<>(RoleType.class);
+    private int version;
 
     public CompiledPermissions(PermissionRegistry registry) {
         int size = registry.size();
@@ -36,4 +36,13 @@ public final class CompiledPermissions {
         ensureUpToDate(registry);
         return byRole.get(role).has(id);
     }
+
+    public PermissionSet setFor(RoleType role) {
+        return byRole.get(role);
+    }
+
+    public void replace(RoleType role, PermissionSet set) {
+        byRole.put(role, set);
+    }
+
 }

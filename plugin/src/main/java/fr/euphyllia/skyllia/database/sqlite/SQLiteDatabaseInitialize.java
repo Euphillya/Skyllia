@@ -80,12 +80,11 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
             """;
 
     private static final String CREATE_ISLANDS_PERMISSIONS_TABLE = """
-            CREATE TABLE IF NOT EXISTS islands_permissions (
-                island_id TEXT NOT NULL,
-                type TEXT NOT NULL,
-                role TEXT NOT NULL,
-                flags INTEGER NOT NULL DEFAULT 0,
-                PRIMARY KEY (island_id, type, role)
+            CREATE TABLE IF NOT EXISTS islands_permissions_v2 (
+                  island_id TEXT NOT NULL,
+                  role TEXT NOT NULL,
+                  words BLOB NOT NULL,
+                  PRIMARY KEY (island_id, role)
             );
             """;
 

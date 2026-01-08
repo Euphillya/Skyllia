@@ -56,9 +56,17 @@ public class PostgreSQLSpiralBatchInserter implements DBWork {
             throw new DatabaseException("Error during batch insertion (PostgreSQL)", e);
         } finally {
             if (ps != null) {
-                try { ps.close(); } catch (SQLException e) { logger.error("Error closing PreparedStatement", e); }
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    logger.error("Error closing PreparedStatement", e);
+                }
             }
-            try { connection.setAutoCommit(true); } catch (SQLException e) { logger.error("Error resetting auto-commit", e); }
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.error("Error resetting auto-commit", e);
+            }
         }
     }
 }
