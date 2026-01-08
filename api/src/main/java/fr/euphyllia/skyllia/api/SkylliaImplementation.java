@@ -15,6 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -31,7 +32,7 @@ public interface SkylliaImplementation {
      * @param playerUniqueId The UUID of the player.
      * @return A CompletableFuture that will contain the island associated with the player's UUID.
      */
-    public CompletableFuture<@NotNull Island> getIslandByPlayerId(UUID playerUniqueId);
+    public @Nullable Island getIslandByPlayerId(UUID playerUniqueId);
 
     /**
      * Retrieves the island associated with a player's UUID.
@@ -47,7 +48,7 @@ public interface SkylliaImplementation {
      * @param islandId The UUID of the island.
      * @return A CompletableFuture that will contain the island associated with the island ID.
      */
-    public CompletableFuture<@NotNull Island> getIslandByIslandId(UUID islandId);
+    public @Nullable Island getIslandByIslandId(UUID islandId);
 
     /**
      * Retrieves the island associated with an island ID.
@@ -87,7 +88,7 @@ public interface SkylliaImplementation {
      *
      * @return A CompletableFuture containing a thread-safe list of active islands.
      */
-    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid();
+    public List<Island> getAllIslandsValid();
 
     /**
      * Checks if a world with the given name is a Skyblock world.

@@ -1,13 +1,12 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -34,14 +33,14 @@ public class HomeSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.home")) {
+
+        if (!player.hasPermission("skyllia.island.command.home")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
         try {
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;

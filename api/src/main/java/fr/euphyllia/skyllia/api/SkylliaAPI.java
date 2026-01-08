@@ -16,6 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -51,7 +52,7 @@ public final class SkylliaAPI {
      * @param playerUniqueId The UUID of the player.
      * @return A CompletableFuture that will contain the island associated with the player's UUID.
      */
-    public static CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerUniqueId) {
+    public static @Nullable Island getIslandByPlayerId(UUID playerUniqueId) {
         return implementation.getIslandByPlayerId(playerUniqueId);
     }
 
@@ -61,7 +62,7 @@ public final class SkylliaAPI {
      * @param islandId The UUID of the island.
      * @return A CompletableFuture that will contain the island associated with the island ID.
      */
-    public static CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
+    public static @Nullable Island getIslandByIslandId(UUID islandId) {
         return implementation.getIslandByIslandId(islandId);
     }
 
@@ -195,7 +196,7 @@ public final class SkylliaAPI {
      *
      * @return A CompletableFuture containing a thread-safe list of active islands.
      */
-    public static CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+    public static List<Island> getAllIslandsValid() {
         return implementation.getAllIslandsValid();
     }
 

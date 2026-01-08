@@ -1,29 +1,31 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionId;
+import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.commands.InviteCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,63 +33,76 @@ public class InviteSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(InviteSubCommand.class);
 
+    private final PermissionId ISLAND_INVITE_PERMISSION;
+
+    public InviteSubCommand() {
+        this.ISLAND_INVITE_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
+                new NamespacedKey(Skyllia.getInstance(), "command.island.invite"),
+                "Inviter un joueur",
+                "Autorise à inviter/supprimer une invitation sur l'île"
+        ));
+    }
+
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.invite")) {
+
+        if (!player.hasPermission("skyllia.island.command.invite")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
+
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.invite.args-missing");
             return true;
         }
         String type = args[0];
-        Skyllia skyblock = Skyllia.getPlugin(Skyllia.class);
+
         if (type.equalsIgnoreCase("accept")) {
             if (args.length < 2) {
                 ConfigLoader.language.sendMessage(player, "island.invite.accept-args-missing");
                 return true;
             }
             String playerOrOwner = args[1];
-            acceptPlayer(skyblock, player, playerOrOwner);
+            acceptPlayer(player, playerOrOwner);
         } else if (type.equalsIgnoreCase("decline")) {
             if (args.length < 2) {
                 ConfigLoader.language.sendMessage(player, "island.invite.decline-args-missing");
                 return true;
             }
             String playerOrOwner = args[1];
-            declinePlayer(skyblock, player, playerOrOwner);
+            declinePlayer(player, playerOrOwner);
         } else if (type.equalsIgnoreCase("delete")) {
             if (args.length < 2) {
                 ConfigLoader.language.sendMessage(player, "island.invite.remove-args-missing");
                 return true;
             }
             String playerOrOwner = args[1];
-            deleteInvitePlayer(skyblock, player, playerOrOwner);
+            deleteInvitePlayer(player, playerOrOwner);
         } else {
-            invitePlayer(skyblock, player, args[0]);
+            invitePlayer(player, args[0]);
         }
         return true;
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        var onlinePlayers = Bukkit.getOnlinePlayers();
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
             return Stream.concat(
                     Stream.of("accept", "decline", "delete"),
-                    new ArrayList<>(Bukkit.getOnlinePlayers())
+                    onlinePlayers
                             .stream()
                             .map(Player::getName)
             ).filter(cmd -> cmd.toLowerCase().startsWith(partial)).collect(Collectors.toList());
         } else if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
 
-            return new ArrayList<>(Bukkit.getOnlinePlayers()).stream()
+            return onlinePlayers.stream()
                     .map(CommandSender::getName)
                     .filter(name -> name.toLowerCase().startsWith(partial))
                     .sorted()
@@ -96,16 +111,17 @@ public class InviteSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private void deleteInvitePlayer(Skyllia plugin, Player ownerIsland, String playerInvited) {
-        SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
+    private void deleteInvitePlayer(Player ownerIsland, String playerInvited) {
+        Island island = SkylliaAPI.getIslandByPlayerId(ownerIsland.getUniqueId());
+
         if (island == null) {
             ConfigLoader.language.sendMessage(ownerIsland, "island.player.no-island");
             return;
         }
-        Players executorPlayer = island.getMember(ownerIsland.getUniqueId());
 
-        if (!PermissionsManagers.testPermissions(executorPlayer, ownerIsland, island, PermissionsCommandIsland.INVITE, false)) {
+        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(ownerIsland, island, ISLAND_INVITE_PERMISSION);
+        if (!allowed) {
+            ConfigLoader.language.sendMessage(ownerIsland, "island.player.permission-denied");
             return;
         }
 
@@ -120,9 +136,8 @@ public class InviteSubCommand implements SubCommandInterface {
                 "%s", playerInvited));
     }
 
-    private void invitePlayer(Skyllia plugin, Player ownerIsland, String playerInvited) {
+    private void invitePlayer(Player ownerIsland, String playerInvited) {
         try {
-
             UUID playerInvitedId = Bukkit.getPlayerUniqueId(playerInvited);
             if (playerInvitedId == null) {
                 ConfigLoader.language.sendMessage(ownerIsland, "island.player.not-found");
@@ -134,16 +149,15 @@ public class InviteSubCommand implements SubCommandInterface {
                 return;
             }
 
-            SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(ownerIsland.getUniqueId()).join();
+            Island island = SkylliaAPI.getIslandByPlayerId(ownerIsland.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(ownerIsland, "island.player.no-island");
                 return;
             }
 
-            Players executorPlayer = island.getMember(ownerIsland.getUniqueId());
-
-            if (!PermissionsManagers.testPermissions(executorPlayer, ownerIsland, island, PermissionsCommandIsland.INVITE, false)) {
+            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(ownerIsland, island, ISLAND_INVITE_PERMISSION);
+            if (!allowed) {
+                ConfigLoader.language.sendMessage(ownerIsland, "island.player.permission-denied");
                 return;
             }
 
@@ -160,7 +174,7 @@ public class InviteSubCommand implements SubCommandInterface {
         }
     }
 
-    private void acceptPlayer(Skyllia plugin, Player playerWantJoin, String ownerIsland) {
+    private void acceptPlayer(Player playerWantJoin, String ownerIsland) {
         try {
             Island islandPlayer = SkylliaAPI.getCacheIslandByPlayerId(playerWantJoin.getUniqueId());
             if (islandPlayer != null) {
@@ -209,7 +223,7 @@ public class InviteSubCommand implements SubCommandInterface {
         }
     }
 
-    private void declinePlayer(Skyllia plugin, Player playerWantDecline, String ownerIsland) {
+    private void declinePlayer(Player playerWantDecline, String ownerIsland) {
         try {
 
             UUID ownerIslandId = Bukkit.getPlayerUniqueId(ownerIsland);

@@ -24,7 +24,6 @@ public class ConfigLoader {
     public static PlayerConfigManager playerManager;
     public static SchematicConfigManager schematicManager;
     public static LanguageConfigManager language;
-    public static PermissionsConfigManager permissions;
 
     private static CommentedFileConfig generalConfig;
     private static CommentedFileConfig databaseConfig;
@@ -53,7 +52,6 @@ public class ConfigLoader {
         playerManager = new PlayerConfigManager(playerConfig);
         schematicManager = new SchematicConfigManager(schematicConfig);
         language = new LanguageConfigManager();
-        permissions = new PermissionsConfigManager(permissionsConfig);
 
         configManagers.add(general);
         configManagers.add(database);
@@ -62,7 +60,6 @@ public class ConfigLoader {
         configManagers.add(playerManager);
         configManagers.add(schematicManager);
         configManagers.add(language);
-        configManagers.add(permissions);
 
         reloadConfigs();
 

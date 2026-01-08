@@ -2,24 +2,23 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionId;
+import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.CommandSender;
@@ -35,16 +34,28 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(SetBiomeSubCommand.class);
     private final List<String> biomeNameList = Skyllia.getInstance().getInterneAPI().getBiomesImpl().getBiomeNameList();
 
+    private final PermissionId ISLAND_SET_BIOME_PERMISSION;
+
+    public SetBiomeSubCommand() {
+        this.ISLAND_SET_BIOME_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
+                new NamespacedKey(Skyllia.getInstance(), "command.island.set_biome"),
+                "Changer le biome",
+                "Autorise à changer le biome de l'île (chunk / île si autorisé)"
+        ));
+    }
+
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome")) {
+
+        if (!player.hasPermission("skyllia.island.command.biome")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
+
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.biome.args-missing");
             return true;
@@ -53,7 +64,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         String selectBiome = args[0];
         Biome biome;
 
-        InterneAPI api = Skyllia.getPlugin(Skyllia.class).getInterneAPI();
+        InterneAPI api = Skyllia.getInstance().getInterneAPI();
         BiomesImpl biomesImpl = api.getBiomesImpl();
         biome = api.getBiomesImpl().getBiome(selectBiome);
         if (biome == null) {
@@ -65,9 +76,8 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         String biomeName = biomesImpl.getNameBiome(biome);
         String biomeRaw = biomeName.split(":")[1];
 
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biomeRaw))) {
-            ConfigLoader.language.sendMessage(player, "island.biome.permission-denied", Map.of(
-                    "%s", selectBiome));
+        if (!player.hasPermission("skyllia.island.command.biome.%s".formatted(biomeRaw))) {
+            ConfigLoader.language.sendMessage(player, "island.biome.permission-denied", Map.of("%s", selectBiome));
             return true;
         }
 
@@ -80,9 +90,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         }
 
         try {
-
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
 
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -98,9 +106,10 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             CommandCacheExecution.addCommandExecute(islandId, "biome");
 
-            Players executorPlayer = island.getMember(player.getUniqueId());
-
-            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.SET_BIOME, false)) {
+            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_BIOME_PERMISSION);
+            if (!allowed) {
+                ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
+                CommandCacheExecution.removeCommandExec(islandId, "biome");
                 return true;
             }
 
@@ -120,7 +129,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             String messageToSend;
 
             if (args.length >= 2 && args[1].equalsIgnoreCase("island")
-                    && PermissionImp.hasPermission(player, "skyllia.island.command.biome_island")) {
+                    && player.hasPermission("skyllia.island.command.biome_island")) {
 
                 changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).changeBiomeIsland(world, biome, island, ConfigLoader.general.getRegionDistance());
                 messageToSend = "island.biome.island-success";
@@ -159,7 +168,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             String partial = args[0].trim().toLowerCase();
 
             return biomeNameList.stream()
-                    .filter(biome -> PermissionImp.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biome)))
+                    .filter(biome -> sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome)))
                     .filter(biome -> biome.toLowerCase().startsWith(partial))
                     .toList();
         }
@@ -169,7 +178,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             List<String> options = new ArrayList<>();
             options.add("chunk");
-            if (PermissionImp.hasPermission(sender, "skyllia.island.command.biome_island")) {
+            if (sender.hasPermission("skyllia.island.command.biome_island")) {
                 options.add("island");
             }
 

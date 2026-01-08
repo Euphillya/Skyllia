@@ -1,20 +1,19 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionId;
+import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -29,6 +28,17 @@ public class WarpSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(WarpSubCommand.class);
 
+    private final PermissionId ISLAND_WARP_PERMISSION;
+
+    public WarpSubCommand() {
+        this.ISLAND_WARP_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
+                new NamespacedKey(Skyllia.getInstance(), "command.island.warp"),
+                "Se téléporter à un warp",
+                "Autorise à utiliser /is warp sur l'île"
+        ));
+    }
+
+
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -39,7 +49,8 @@ public class WarpSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.warp.args-missing");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.warp")) {
+
+        if (!player.hasPermission("skyllia.island.command.warp")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -47,15 +58,16 @@ public class WarpSubCommand implements SubCommandInterface {
         String warpName = args[0];
 
         try {
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
-            Players executorPlayer = island.getMember(player.getUniqueId());
-            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.TELEPORT_WARP, false)) {
+            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_WARP_PERMISSION);
+            if (!allowed) {
+                ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 return true;
             }
 
@@ -88,7 +100,7 @@ public class WarpSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (PermissionImp.hasPermission(sender, "skyllia.island.command.warp") && sender instanceof Player player) {
+        if (sender instanceof Player player && sender.hasPermission("skyllia.island.command.warp")) {
             if (args.length == 1) {
                 List<String> warpList = CacheCommands.getWarps(player.getUniqueId());
                 if (warpList == null || warpList.isEmpty()) {

@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.utils.TPSFormatter;
@@ -24,7 +23,8 @@ public class TPSSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.tps")) {
+
+        if (!player.hasPermission("skyllia.island.command.tps")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

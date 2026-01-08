@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
@@ -11,7 +11,6 @@ import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.island.IslandCreationQueue;
@@ -47,16 +46,15 @@ public class CreateSubCommand implements SubCommandInterface {
                 return;
             }
             CommandCacheExecution.addCommandExecute(playerId, "create");
-            if (!PermissionImp.hasPermission(player, "skyllia.island.command.create")) {
+            if (!player.hasPermission("skyllia.island.command.create")) {
                 CommandCacheExecution.removeCommandExec(playerId, "create");
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 return;
             }
 
             try {
-                SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                AtomicReference<Island> islandAtomic = new AtomicReference<>(skyblockManager.getIslandByPlayerId(playerId).join());
-                if (islandAtomic.get() == null) {
+                AtomicReference<Island> island = new AtomicReference<>(SkylliaAPI.getIslandByPlayerId(playerId));
+                if (island.get() == null) {
                     List<String> schematicsKeys = ConfigLoader.schematicManager.getIslandTypes();
                     if (schematicsKeys.isEmpty()) {
                         ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
@@ -78,7 +76,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         return;
                     }
 
-                    if (!PermissionImp.hasPermission(player, "skyllia.island.command.create.%s".formatted(schemKey))) {
+                    if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
                         ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         return;
@@ -86,35 +84,41 @@ public class CreateSubCommand implements SubCommandInterface {
 
                     ConfigLoader.language.sendMessage(player, "island.create-in-progress");
                     UUID idIsland = UUID.randomUUID();
+                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
                     boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings).join());
                     if (!isCreate) {
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         ConfigLoader.language.sendMessage(player, "island.generic-error");
                         return;
                     }
-                    islandAtomic.set(skyblockManager.getIslandByIslandId(idIsland).join());
-                    new SkyblockCreateEvent(islandAtomic.get(), playerId).callEvent();
+                    island.set(SkylliaAPI.getIslandByIslandId(idIsland));
+                    if (island.get() == null) {
+                        CommandCacheExecution.removeCommandExec(playerId, "create");
+                        ConfigLoader.language.sendMessage(player, "island.generic-error");
+                        return;
+                    }
+                    new SkyblockCreateEvent(island.get(), playerId).callEvent();
 
                     boolean isFirstIteration = true;
                     for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
                         String worldName = entry.getKey();
                         SchematicSetting schematicSetting = entry.getValue();
-                        Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), islandAtomic.get().getPosition().x(), islandAtomic.get().getPosition().z());
+                        Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.get().getPosition().x(), island.get().getPosition().z());
                         centerPaste.setY(schematicSetting.height());
-                        this.pasteSchematic(islandAtomic.get(), centerPaste, schematicSetting);
+                        this.pasteSchematic(island.get(), centerPaste, schematicSetting);
                         if (isFirstIteration) {
-                            this.setFirstHome(islandAtomic.get(), centerPaste);
-                            this.setPermissionsRole(islandAtomic.get());
+                            this.setFirstHome(island.get(), centerPaste);
+                            this.setPermissionsRole(island.get());
                             Location loc = centerPaste.clone();
                             loc.add(0, 0.5, 0);
-                            this.addOwnerIslandInMember(islandAtomic.get(), player);
+                            this.addOwnerIslandInMember(island.get(), player);
                             player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN)
                                     .thenRun(() -> {
                                         player.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
                                         player.setFallDistance(0);
-                                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, islandAtomic.get().getSize(), 0, 0);
+                                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.get().getSize(), 0, 0);
                                     });
-                            new SkyblockLoadEvent(islandAtomic.get()).callEvent();
+                            new SkyblockLoadEvent(island.get()).callEvent();
                             isFirstIteration = false;
                         }
                     }
@@ -145,13 +149,13 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.create")) {
+        if (!sender.hasPermission("skyllia.island.command.create")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
         boolean bypass = ConfigLoader.general.isAllowBypassIslandQueue()
-                && PermissionImp.hasPermission(player, "skyllia.island.bypass.queue");
+                && player.hasPermission("skyllia.island.bypass.queue");
 
         if (bypass) {
             runCreateIsland(Skyllia.getInstance(), player, args);
@@ -174,7 +178,7 @@ public class CreateSubCommand implements SubCommandInterface {
 
             List<String> list = new ArrayList<>();
             for (String schem : nameSchem) {
-                if (PermissionImp.hasPermission(sender, "skyllia.island.command.create.%s".formatted(schem))) {
+                if (sender.hasPermission("skyllia.island.command.create.%s".formatted(schem))) {
                     if (schem.toLowerCase().startsWith(partial)) {
                         list.add(schem);
                     }
@@ -206,9 +210,9 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private void setPermissionsRole(Island island) {
         for (RoleType roleType : RoleType.values()) {
-            island.updatePermission(PermissionsType.ISLAND, roleType, ConfigLoader.permissions.getPermissionIsland().get(roleType));
-            island.updatePermission(PermissionsType.COMMANDS, roleType, ConfigLoader.permissions.getPermissionsCommands().get(roleType));
-            island.updatePermission(PermissionsType.INVENTORY, roleType, ConfigLoader.permissions.getPermissionInventory().get(roleType));
+//            island.updatePermission(PermissionsType.ISLAND, roleType, ConfigLoader.permissions.getPermissionIsland().get(roleType));
+//            island.updatePermission(PermissionsType.COMMANDS, roleType, ConfigLoader.permissions.getPermissionsCommands().get(roleType));
+//            island.updatePermission(PermissionsType.INVENTORY, roleType, ConfigLoader.permissions.getPermissionInventory().get(roleType));
         }
     }
 }

@@ -1,21 +1,21 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionId;
+import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -28,19 +28,29 @@ public class SetHomeSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(SetHomeSubCommand.class);
 
+    private final PermissionId ISLAND_SET_HOME_PERMISSION;
+
+    public SetHomeSubCommand() {
+        this.ISLAND_SET_HOME_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
+                new NamespacedKey(Skyllia.getInstance(), "command.island.set_home"),
+                "Définir le home",
+                "Autorise à définir le home de l'île"
+        ));
+    }
+
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.sethome")) {
+
+        if (!player.hasPermission("skyllia.island.command.sethome")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
-        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
@@ -50,7 +60,9 @@ public class SetHomeSubCommand implements SubCommandInterface {
 
         Players executorPlayer = island.getMember(player.getUniqueId());
 
-        if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.SET_HOME, false)) {
+        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_HOME_PERMISSION);
+        if (!allowed) {
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 

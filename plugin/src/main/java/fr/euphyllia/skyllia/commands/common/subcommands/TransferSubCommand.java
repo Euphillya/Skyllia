@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -37,7 +36,7 @@ public class TransferSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.transfer")) {
+        if (!player.hasPermission("skyllia.island.command.transfer")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -51,15 +50,15 @@ public class TransferSubCommand implements SubCommandInterface {
             return true;
         }
 
-        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+        SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
+        Island island = skyblockManager.getIslandByOwner(player.getUniqueId());
 
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
-        Players ownerIsland = skyblockManager.getOwnerByIslandID(island).join();
+        Players ownerIsland = skyblockManager.getOwnerByIslandID(island);
 
         if (ownerIsland == null || !ownerIsland.getMojangId().equals(player.getUniqueId())) {
             ConfigLoader.language.sendMessage(player, "island.only-owner");

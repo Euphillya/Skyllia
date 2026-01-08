@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -15,57 +14,52 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class BanListCommand implements SubCommandInterface {
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
+    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
 
-        if (!PermissionImp.hasPermission(player, permission())) {
+        if (!player.hasPermission(permission())) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
-        CompletableFuture<Island> futureIsland = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        // ⚠️ sync: selon ton implémentation ça peut taper DB (à éviter sur thread principal)
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        if (island == null) {
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
+            return true;
+        }
 
-        futureIsland.thenAcceptAsync(island -> {
-            if (island == null) {
-                ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                return;
-            }
+        List<Players> banned = island.getBannedMembers();
+        if (banned.isEmpty()) {
+            ConfigLoader.language.sendMessage(player, "island.banlist.empty");
+            return true;
+        }
 
-            List<Players> banned = island.getBannedMembers();
+        Component message = ConfigLoader.language.translate(player, "island.banlist.title", Map.of(
+                "%count%", String.valueOf(banned.size())
+        ));
 
-            if (banned.isEmpty()) {
-                ConfigLoader.language.sendMessage(player, "island.banlist.empty");
-                return;
-            }
+        for (Players ban : banned) {
+            message = message.append(Component.newline()).append(
+                    ConfigLoader.language.translate(player, "island.banlist.line", Map.of(
+                            "%name%", ban.getLastKnowName()
+                    ))
+            );
+        }
 
-            Component message = ConfigLoader.language.translate(player, "island.banlist.title", Map.of(
-                    "%count%", String.valueOf(banned.size())
-            ));
-
-            for (Players ban : banned) {
-                message = message.append(Component.newline()).append(
-                        ConfigLoader.language.translate(player, "island.banlist.line", Map.of(
-                                "%name%", ban.getLastKnowName()
-                        ))
-                );
-            }
-
-            player.sendMessage(message);
-        });
-
+        player.sendMessage(message);
         return true;
     }
 
     @Override
-    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull String[] args) {
         return List.of();
     }
 

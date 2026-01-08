@@ -10,10 +10,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -27,14 +24,14 @@ import java.util.List;
 
 public class AccessSubCommand implements SubCommandInterface {
 
-    private final Logger logger = LogManager.getLogger(AccessSubCommand.class);
+    private static final String NODE = "command.island.access";
     private final PermissionId ACCESS_COMMAND_PERMISSION;
 
     public AccessSubCommand() {
         this.ACCESS_COMMAND_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
-                new NamespacedKey(Skyllia.getInstance(), "command.island.access"),
-                "",
-                ""
+                new NamespacedKey(SkylliaAPI.getPlugin(), NODE),
+                "Accès île: ouvrir/fermer",
+                "Autorise à changer l'accès de l'île (public/privé)"
         ));
     }
 
@@ -49,42 +46,51 @@ public class AccessSubCommand implements SubCommandInterface {
             return true;
         }
 
-        SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId());
-
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
 
-        boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ACCESS_COMMAND_PERMISSION);
+        boolean hasPermission = SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, ACCESS_COMMAND_PERMISSION);
+
         if (!hasPermission) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
         boolean statusAccessUpdate = !island.isPrivateIsland();
-
         boolean isUpdate = island.setPrivateIsland(statusAccessUpdate);
+
         if (isUpdate) {
             if (statusAccessUpdate) {
                 ConfigLoader.language.sendMessage(player, "island.access.close");
                 ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
-                    RegionUtils.getEntitiesInRegion(Skyllia.getPlugin(Skyllia.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(name), island.getPosition(), island.getSize(), entity -> {
-                        Player playerInIsland = (Player) entity;
-                        if (!player.hasPermission("skyllia.island.command.access.bypass")) {
-                            return;
-                        }
-                        Runnable teleportPlayerRun = () -> {
-                            Players players = island.getMember(playerInIsland.getUniqueId());
-                            if (players == null || players.getRoleType().equals(RoleType.BAN) || players.getRoleType().equals(RoleType.VISITOR)) {
-                                PlayerUtils.teleportPlayerSpawn(playerInIsland);
+                    RegionUtils.getEntitiesInRegion(
+                            Skyllia.getPlugin(Skyllia.class),
+                            ConfigLoader.general.getRegionDistance(),
+                            EntityType.PLAYER,
+                            Bukkit.getWorld(name),
+                            island.getPosition(),
+                            island.getSize(),
+                            entity -> {
+                                Player playerInIsland = (Player) entity;
+
+                                // NOTE: ton code d'origine check la permission sur "player" (le sender),
+                                // pas sur "playerInIsland". Je garde le même comportement.
+                                if (!player.hasPermission("skyllia.island.command.access.bypass")) return;
+
+                                Bukkit.getAsyncScheduler().runNow(Skyllia.getPlugin(Skyllia.class), t -> {
+                                    Players players = island.getMember(playerInIsland.getUniqueId());
+                                    if (players == null
+                                            || players.getRoleType().equals(RoleType.BAN)
+                                            || players.getRoleType().equals(RoleType.VISITOR)) {
+                                        PlayerUtils.teleportPlayerSpawn(playerInIsland);
+                                    }
+                                });
                             }
-                        };
-                        Bukkit.getAsyncScheduler().runNow(Skyllia.getPlugin(Skyllia.class), scheduledTask -> {
-                            teleportPlayerRun.run();
-                        });
-                    });
+                    );
                 });
             } else {
                 ConfigLoader.language.sendMessage(player, "island.access.open");
