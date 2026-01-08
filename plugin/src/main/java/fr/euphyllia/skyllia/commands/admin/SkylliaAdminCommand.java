@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SkylliaCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
@@ -31,7 +30,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
     @Override
     public void execute(CommandSourceStack sender, String @NotNull [] args) {
         Player player = sender.getSender() instanceof Player ? (Player) sender.getSender() : null;
-        if (!PermissionImp.hasPermission(sender.getSender(), "skyllia.admins.commands")) {
+        if (!sender.getSender().hasPermission("skyllia.admins.commands")) {
             ConfigLoader.language.sendMessage(player != null ? player : sender.getSender(), "island.player.permission-denied");
             return;
         }

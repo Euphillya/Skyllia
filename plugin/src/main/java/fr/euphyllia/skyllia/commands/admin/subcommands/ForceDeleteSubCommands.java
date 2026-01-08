@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -36,7 +35,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.delete")) {
+        if (!sender.hasPermission("skyllia.admins.commands.island.delete")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return true;
         }
@@ -116,7 +115,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.delete")) {
+        if (!sender.hasPermission("skyllia.admins.commands.island.delete")) {
             return Collections.emptyList();
         }
         if (args.length == 1) {

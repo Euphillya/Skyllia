@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -28,7 +27,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.transfer")) {
+        if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return true;
         }
@@ -111,7 +110,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.transfer")) {
+        if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
             return Collections.emptyList();
         }
 

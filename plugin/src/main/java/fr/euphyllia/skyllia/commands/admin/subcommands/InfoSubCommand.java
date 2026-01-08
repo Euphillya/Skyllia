@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.IslandInfoEvent;
@@ -39,7 +38,7 @@ public class InfoSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!PermissionImp.hasPermission(player, permission())) {
+        if (!player.hasPermission(permission())) {
             ConfigLoader.language.sendMessage(player, "island.info.no-permission");
             return true;
         }
@@ -70,7 +69,7 @@ public class InfoSubCommand implements SubCommandInterface {
             Timestamp createdAt = island.getCreateDate();
             double size = island.getSize();
             int maxMembers = island.getMaxMembers();
-            CopyOnWriteArrayList<Players> members = island.getMembers();
+            List<Players> members = island.getMembers();
 
             Component infoComponent = Component.text("")
                     .append(ConfigLoader.language.translate(player, "island.info.display.title")).append(Component.newline())

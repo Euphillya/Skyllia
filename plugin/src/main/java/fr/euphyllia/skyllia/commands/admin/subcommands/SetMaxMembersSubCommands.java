@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -25,7 +24,7 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.setmaxmembers")) {
+        if (!sender.hasPermission("skyllia.admins.commands.island.setmaxmembers")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return true;
         }
@@ -76,7 +75,7 @@ public class SetMaxMembersSubCommands implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.setmaxmembers")) {
+        if (!sender.hasPermission("skyllia.admins.commands.island.setmaxmembers")) {
             return Collections.emptyList();
         }
 
