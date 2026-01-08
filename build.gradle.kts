@@ -40,7 +40,7 @@ dependencies {
 
 allprojects {
     group = "fr.euphyllia";
-    version = "2.1-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
+    version = "3.0-BETA-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
     description = "Plugin Skyblock on Folia";
 
     apply(plugin = "java-library")
