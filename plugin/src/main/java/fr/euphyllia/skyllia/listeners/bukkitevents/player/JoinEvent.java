@@ -72,33 +72,29 @@ public class JoinEvent implements Listener {
                     api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
                 }
             }
+            checkAndClearPlayerStuffOnJoin(player);
         };
 
         executeAsync(task);
     }
 
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
-        Player player = playerLoginEvent.getPlayer();
+    private void checkAndClearPlayerStuffOnJoin(Player player) {
+        UUID uuid = player.getUniqueId();
 
-        Runnable task = () -> {
-            for (RemovalCause cause : RemovalCause.values()) {
-                boolean exist = api.getSkyblockManager().checkClearMemberExist(player.getUniqueId(), cause);
-                if (!exist) continue;
+        for (RemovalCause cause : RemovalCause.values()) {
+            boolean exist = api.getSkyblockManager().checkClearMemberExist(uuid, cause);
+            if (!exist) continue;
 
-                api.getSkyblockManager().deleteClearMember(player.getUniqueId(), cause);
+            api.getSkyblockManager().deleteClearMember(uuid, cause);
 
-                Runnable playerTask = () -> {
-                    clearPlayerData(player, cause);
-                    player.setGameMode(GameMode.SURVIVAL);
-                };
+            Runnable playerTask = () -> {
+                clearPlayerData(player, cause);
+                player.setGameMode(GameMode.SURVIVAL);
+            };
 
-                player.getScheduler().execute(api.getPlugin(), playerTask, null, 1L);
-            }
-        };
-
-        executeAsync(task);
+            player.getScheduler().execute(api.getPlugin(), playerTask, null, 1L);
+        }
     }
 
     private void executeAsync(Runnable task) {
