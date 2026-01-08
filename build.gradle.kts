@@ -23,6 +23,8 @@ dependencies {
     implementation(project(":hook:worldedit"))
     implementation(project(":hook:fastasyncworldedit"))
     implementation(project(":hook:internalworld"))
+    implementation(project(":hook:canvas"))
+    implementation(project(":hook:luminol"))
 
     // NMS Version
     implementation(project(":nms:v1_20_R1"))
