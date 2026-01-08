@@ -23,6 +23,7 @@ import fr.euphyllia.skyllia.listeners.permissions.island.*;
 import fr.euphyllia.skyllia.listeners.permissions.island.flags.*;
 import fr.euphyllia.skyllia.listeners.permissions.player.ItemDropPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.player.ItemPickupPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.player.TeleportPermissions;
 import fr.euphyllia.skyllia.listeners.skyblockevents.SkyblockEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,6 +90,7 @@ public class ListenersRegistrar {
         moduleManager.addModule(plugin, new InventoryOpenPermissions());
         moduleManager.addModule(plugin, new ItemPickupPermissions());
         moduleManager.addModule(plugin, new ItemDropPermissions());
+        moduleManager.addModule(plugin, new TeleportPermissions());
 
         // Permissions flags island
         moduleManager.addModule(plugin, new IslandCreeperGriefFlag());

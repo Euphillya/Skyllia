@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 public class PlayerTeleportHooks implements Listener {
 
     @EventHandler
-    public void onEntityTeleport(EntityTeleportAsyncEvent event) {
+    public void onEntityTeleport(final EntityTeleportAsyncEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
         Location to = event.getTo();
@@ -26,6 +26,8 @@ public class PlayerTeleportHooks implements Listener {
                 event.getFrom(),
                 to,
                 island,
+                event.getCause(),
+                event.isCancelled(),
                 true
         ).callEvent();
     }
