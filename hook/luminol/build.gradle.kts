@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(project(":api"))
     compileOnly("me.earthme.luminol:luminol-api:1.21.11-R0.1-SNAPSHOT")
 }
 

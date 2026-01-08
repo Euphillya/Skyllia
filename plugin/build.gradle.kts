@@ -13,6 +13,8 @@ dependencies {
     compileOnly(project(":hook:worldedit"))
     compileOnly(project(":hook:fastasyncworldedit"))
     compileOnly(project(":hook:internalworld"))
+    compileOnly(project(":hook:canvas"))
+    compileOnly(project(":hook:luminol"))
 
     // NMS Version
     compileOnly(project(":nms:v1_20_R1"))

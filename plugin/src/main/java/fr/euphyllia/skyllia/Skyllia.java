@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.cache.CacheScheduler;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.hook.HookBootstrap;
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.md_5.bungee.api.ChatColor;
@@ -77,6 +78,8 @@ public class Skyllia extends JavaPlugin {
 
         // Register listeners
         new ListenersRegistrar(this, interneAPI).registerListeners();
+
+        HookBootstrap.registerAll(this);
 
         // Schedule cache updates
         new CacheScheduler(this, interneAPI).scheduleCacheUpdate();
