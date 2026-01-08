@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
@@ -19,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
@@ -43,15 +45,15 @@ public class JoinEvent implements Listener {
             CacheCommands.refreshFor(playerId);
             SkyblockManager skyblockManager = api.getSkyblockManager();
 
-            Island island = skyblockManager.getIslandByPlayerId(playerId).join();
+            Island island = SkylliaAPI.getIslandByPlayerId(playerId);
 
             if (island != null) {
-                Players member = skyblockManager.getMemberInIsland(island, playerId).join();
+                Players member = island.getMember(playerId);
                 if (member != null) {
                     String currentName = player.getName();
                     if (!member.getLastKnowName().equals(currentName)) {
                         member.setLastKnowName(currentName);
-                        skyblockManager.updateMember(island, member).join();
+                        skyblockManager.updateMember(island, member);
                     }
                 }
             }
@@ -83,7 +85,7 @@ public class JoinEvent implements Listener {
 
         Runnable task = () -> {
             for (RemovalCause cause : RemovalCause.values()) {
-                boolean exist = api.getSkyblockManager().checkClearMemberExist(player.getUniqueId(), cause).join();
+                boolean exist = api.getSkyblockManager().checkClearMemberExist(player.getUniqueId(), cause);
                 if (!exist) continue;
 
                 api.getSkyblockManager().deleteClearMember(player.getUniqueId(), cause);

@@ -24,7 +24,7 @@ public class IslandClosedCache {
     }
 
     private static Boolean loadIslandClosed(UUID islandId) {
-        Island island = SkylliaAPI.getIslandByIslandId(islandId).join();
+        Island island = SkylliaAPI.getIslandByIslandId(islandId);
         if (island == null) {
             return false;
         }

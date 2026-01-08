@@ -49,7 +49,7 @@ public class PlayersInIslandCache {
     // =====================================================================
 
     private static CopyOnWriteArrayList<Players> loadPlayersFromIslandCache(UUID islandId) {
-        Island island = SkylliaAPI.getIslandByIslandId(islandId).join();
+        Island island = SkylliaAPI.getIslandByIslandId(islandId);
         if (island == null) {
             return new CopyOnWriteArrayList<>();
         }

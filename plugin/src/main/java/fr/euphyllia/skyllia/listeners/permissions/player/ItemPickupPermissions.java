@@ -9,30 +9,29 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.plugin.Plugin;
 
-public class PlayerDropItemPermissions implements PermissionModule {
+public class ItemPickupPermissions implements PermissionModule {
 
-    private PermissionId PLAYER_DROP_ITEM;
-
+    private PermissionId ITEM_PICKUP;
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlayerDropItem(final PlayerDropItemEvent event) {
-        final Player player = event.getPlayer();
-        final Location location = player.getLocation();
+    public void onPickup(final EntityPickupItemEvent event) {
+        final Entity entity = event.getEntity();
+        if (!(entity instanceof Player player)) return;
 
+        final Location location = player.getLocation();
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
-        Chunk chunk = location.getChunk();
-
-        Island island = SkylliaAPI.getIslandByChunk(chunk);
+        final Chunk chunk = location.getChunk();
+        final Island island = SkylliaAPI.getIslandByChunk(chunk);
         if (island == null) return;
 
-        boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, PLAYER_DROP_ITEM);
-
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ITEM_PICKUP);
         if (!hasPermission) {
             event.setCancelled(true);
         }
@@ -40,10 +39,10 @@ public class PlayerDropItemPermissions implements PermissionModule {
 
     @Override
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
-        this.PLAYER_DROP_ITEM = registry.register(new PermissionNode(
-                new NamespacedKey(owner, "player.drop-item"),
-                "Jeter des objets",
-                "Autorise le joueur à jeter des objets au sol"
+        this.ITEM_PICKUP = registry.register(new PermissionNode(
+                new NamespacedKey(owner, "item.pickup"),
+                "Ramasser des objets",
+                "Placeholder"
         ));
     }
 }

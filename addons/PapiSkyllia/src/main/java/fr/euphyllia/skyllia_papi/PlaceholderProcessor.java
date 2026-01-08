@@ -5,13 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
-import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.gamerule.GameRuleIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
-import fr.euphyllia.skyllia.cache.rules.PermissionGameRuleInIslandCache;
-import fr.euphyllia.skyllia.cache.rules.PermissionRoleInIslandCache;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -143,16 +136,11 @@ public class PlaceholderProcessor {
      * @return an {@link Optional} containing the island if found, otherwise empty
      */
     private static @NotNull Optional<Island> loadIslandByUUID(@NotNull UUID playerId) {
-        CompletableFuture<Island> future = SkylliaAPI.getIslandByPlayerId(playerId);
+        Island future = SkylliaAPI.getIslandByPlayerId(playerId);
         if (future == null) {
             return Optional.empty();
         }
-        try {
-            return Optional.ofNullable(future.get(5, TimeUnit.SECONDS));
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            LOGGER.error("Unable to load island for player {}: {}", playerId, e.getMessage());
-            return Optional.empty();
-        }
+        return Optional.of(future);
     }
 
     /**
@@ -203,51 +191,7 @@ public class PlaceholderProcessor {
      * @return the placeholder value as a string
      */
     private static String processPermissionsPlaceholder(Island island, UUID playerId, String placeholder) {
-        String[] split = placeholder.split("_", 4);
-        if (split.length < 4) {
-            return "Invalid placeholder format";
-        }
-
-        String roleTypeRaw = split[1];
-        String permissionTypeRaw = split[2];
-        String permissionNameRaw = split[3];
-
-        RoleType roleType;
-        PermissionsType permissionsType;
-        try {
-            roleType = RoleType.valueOf(roleTypeRaw.toUpperCase());
-            permissionsType = PermissionsType.valueOf(permissionTypeRaw.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return "Invalid role or permission type";
-        }
-
-        Permissions permissions;
-        try {
-            switch (permissionsType) {
-                case COMMANDS:
-                    permissions = PermissionsCommandIsland.valueOf(permissionNameRaw.toUpperCase());
-                    break;
-                case ISLAND:
-                    permissions = PermissionsIsland.valueOf(permissionNameRaw.toUpperCase());
-                    break;
-                case INVENTORY:
-                    permissions = PermissionsInventory.valueOf(permissionNameRaw.toUpperCase());
-                    break;
-                default:
-                    return "Invalid permission type";
-            }
-        } catch (IllegalArgumentException e) {
-            return "Invalid permission name";
-        }
-
-        PermissionRoleIsland permissionRoleIsland = PermissionRoleInIslandCache.getPermissionRoleIsland(
-                island.getId(),
-                roleType,
-                permissions.getPermissionType()
-        );
-        PermissionManager permissionManager = new PermissionManager(permissionRoleIsland.permission());
-
-        return String.valueOf(permissionManager.hasPermission(permissions));
+        throw new UnsupportedOperationException("Permission placeholders are not supported yet.");
     }
 
     /**
@@ -258,23 +202,24 @@ public class PlaceholderProcessor {
      * @return the placeholder value as a string
      */
     private static String processGamerulePlaceholder(Island island, String placeholder) {
-        String[] split = placeholder.split("_", 2);
-        if (split.length < 2) {
-            return "Invalid placeholder format";
-        }
-
-        String gameRuleRaw = split[1];
-        GameRuleIsland gameRuleIsland;
-        try {
-            gameRuleIsland = GameRuleIsland.valueOf(gameRuleRaw.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return "Invalid GameRule";
-        }
-
-        long permissionChecker = PermissionGameRuleInIslandCache.getGameRule(island.getId());
-        PermissionManager permissionManager = new PermissionManager(permissionChecker);
-
-        return String.valueOf(permissionManager.hasPermission(gameRuleIsland.getPermissionValue()));
+        throw new UnsupportedOperationException("GameRule placeholders are not supported yet.");
+//        String[] split = placeholder.split("_", 2);
+//        if (split.length < 2) {
+//            return "Invalid placeholder format";
+//        }
+//
+//        String gameRuleRaw = split[1];
+//        GameRuleIsland gameRuleIsland;
+//        try {
+//            gameRuleIsland = GameRuleIsland.valueOf(gameRuleRaw.toUpperCase());
+//        } catch (IllegalArgumentException e) {
+//            return "Invalid GameRule";
+//        }
+//
+//        long permissionChecker = PermissionGameRuleInIslandCache.getGameRule(island.getId());
+//        PermissionManager permissionManager = new PermissionManager(permissionChecker);
+//
+//        return String.valueOf(permissionManager.hasPermission(gameRuleIsland.getPermissionValue()));
     }
 
     /**

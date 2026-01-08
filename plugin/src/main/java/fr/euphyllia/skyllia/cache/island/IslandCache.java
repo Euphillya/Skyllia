@@ -27,6 +27,6 @@ public class IslandCache {
     }
 
     private static Island loadIsland(UUID islandId) {
-        return SkylliaAPI.getIslandByIslandId(islandId).join();
+        return SkylliaAPI.getIslandByIslandId(islandId);
     }
 }

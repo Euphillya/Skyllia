@@ -32,6 +32,17 @@ public final class PermissionRegistry {
         return id;
     }
 
+    public synchronized PermissionId getIfPresent(NamespacedKey node) {
+        return ids.get(node);
+    }
+
+    public synchronized PermissionId idOrRegister(PermissionNode node) {
+        PermissionId existing = ids.get(node.node());
+        if (existing != null) return existing;
+        return register(node);
+    }
+
+
     public synchronized PermissionId id(NamespacedKey node) {
         PermissionId id = ids.get(node);
         if (id == null) throw new IllegalArgumentException("Unknown permission node: " + node);

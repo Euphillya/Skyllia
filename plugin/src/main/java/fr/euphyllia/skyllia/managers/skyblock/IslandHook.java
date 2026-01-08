@@ -309,39 +309,4 @@ public class IslandHook extends Island {
     public boolean setMaxMembers(int newMax) {
         return this.plugin.getInterneAPI().getSkyblockManager().setMaxMemberInIsland(this, newMax);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean updateGamerule(long gameRuleValue) {
-        boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updateGamerule(this, gameRuleValue);
-        if (isUpdated) {
-            Bukkit.getAsyncScheduler().runNow(plugin, task ->
-                    Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleValue))
-            );
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getGameRulePermission() {
-        return this.plugin.getInterneAPI().getSkyblockManager().getGameRulePermission(this);
-    }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public long getPermission(PermissionsType permissionsType, RoleType roleType) {
-//        return this.plugin.getInterneAPI()
-//                .getSkyblockManager()
-//                .getPermissionIsland(this.islandId, permissionsType, roleType)
-//                .join()
-//                .permission();
-//    }
 }

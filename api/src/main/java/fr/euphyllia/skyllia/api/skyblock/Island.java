@@ -194,21 +194,6 @@ public abstract class Island {
      */
     public abstract boolean setMaxMembers(int maxMembers);
 
-    /**
-     * Updates the game rules for the island.
-     *
-     * @param gamerules The new game rule value.
-     * @return {@code true} if successfully updated, {@code false} otherwise.
-     */
-    public abstract boolean updateGamerule(long gamerules);
-
-    /**
-     * Retrieves the current game rule permission value for the island.
-     *
-     * @return The game rule permission value as a {@code long}.
-     */
-    public abstract long getGameRulePermission();
-
     public final CompiledPermissions getCompiledPermissions() {
         CompiledPermissions local = this.compiledPermissions;
         if (local != null) return local;

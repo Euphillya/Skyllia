@@ -24,59 +24,6 @@ public class ListenersUtils {
     }
 
     /**
-     * Checks if a given {@link Location} is within an island, validates the specified {@link GameRuleIsland},
-     * and cancels the event if needed. If the world is not a Skyblock world, returns {@code null}.
-     *
-     * @param location    The {@link Location} to check.
-     * @param gameRule    The {@link GameRuleIsland} to validate.
-     * @param cancellable The event that can be cancelled.
-     * @return The {@link Island} if valid, or {@code null} if the location is not in a Skyblock world.
-     */
-    public static @Nullable Island checkGameRuleIsland(Location location, GameRuleIsland gameRule, Cancellable cancellable) {
-        Island island = getIslandFromLocation(location, cancellable);
-        if (island == null) {
-            return null;
-        }
-
-        if (isBlockOutsideIsland(island, location, cancellable)) {
-            return island;
-        }
-
-        if (PermissionsManagers.testGameRule(gameRule, island)) {
-            cancellable.setCancelled(true);
-        }
-        return island;
-    }
-
-    /**
-     * Checks if a given {@link Location} is within an island and if the specified {@link Player} has
-     * the required {@link Permissions} to perform an action. Cancels the event if the conditions are not met.
-     *
-     * @param location          The {@link Location} to check.
-     * @param player            The {@link Player} performing the action.
-     * @param permissionsIsland The {@link Permissions} that need to be validated.
-     * @param cancellable       The event that can be cancelled.
-     * @return The {@link Island} if valid, or {@code null} if the location is not in a Skyblock world.
-     */
-    public static @Nullable Island checkPermission(@NotNull Location location, Player player, Permissions permissionsIsland, Cancellable cancellable) {
-        Island island = getIslandFromLocation(location, cancellable);
-        if (island == null) {
-            return null;
-        }
-
-        if (isBlockOutsideIsland(island, location, cancellable)) {
-            return island;
-        }
-
-        Players playersInIsland = PlayersInIslandCache.getPlayers(island.getId(), player.getUniqueId());
-
-        if (!PermissionsManagers.testPermissions(playersInIsland, player, island, permissionsIsland, true)) {
-            cancellable.setCancelled(true);
-        }
-        return island;
-    }
-
-    /**
      * Retrieves the {@link Island} from a given {@link Chunk}, cancelling the event if no island is found.
      *
      * @param chunk       The {@link Chunk} to check.

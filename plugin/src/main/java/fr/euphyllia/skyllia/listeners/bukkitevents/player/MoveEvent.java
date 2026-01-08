@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
@@ -26,14 +25,15 @@ import java.util.Map;
 
 public class MoveEvent implements Listener {
 
-    public MoveEvent(InterneAPI interneAPI) {
+    public MoveEvent() {
+
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerTeleportOutside(final PlayerMoveEvent event) {
         if (!ConfigLoader.general.isTeleportOutsideIsland()) return;
         final Player player = event.getPlayer();
-        if (PermissionImp.hasPermission(player, "skyllia.island.outside.bypass")) return;
+        if (player.hasPermission("skyllia.island.outside.bypass")) return;
 
         Location location = player.getLocation();
         World world = location.getWorld();
@@ -75,7 +75,7 @@ public class MoveEvent implements Listener {
 
         if (!WorldUtils.isWorldSkyblock(to.getWorld().getName())) return;
 
-        if (PermissionImp.hasPermission(player, "skyllia.island.outside.bypass")) return;
+        if (player.hasPermission("skyllia.island.outside.bypass")) return;
 
         final Location from = event.getFrom();
         if (from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ()) return;

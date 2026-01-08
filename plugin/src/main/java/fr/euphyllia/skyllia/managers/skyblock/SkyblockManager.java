@@ -53,7 +53,6 @@ public class SkyblockManager {
         try {
             // Construct a new IslandHook instance before inserting it into the database
             Island futureIsland = new IslandHook(
-                    this.plugin,
                     event.getIslandId(),
                     event.getIslandSettings().maxMembers(),
                     null,
@@ -280,27 +279,6 @@ public class SkyblockManager {
      */
     public Boolean checkClearMemberExist(UUID playerId, RemovalCause cause) {
         return this.plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().checkClearMemberExist(playerId, cause);
-    }
-
-    /**
-     * Updates the game rule value for the island.
-     *
-     * @param island        The {@link Island}.
-     * @param gameRuleValue The new game rule value.
-     * @return A {@link CompletableFuture} with {@code true} if updated, {@code false} otherwise.
-     */
-    public Boolean updateGamerule(Island island, long gameRuleValue) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().updateIslandGameRule(island, gameRuleValue);
-    }
-
-    /**
-     * Retrieves the current game rule permission value for the island.
-     *
-     * @param island The {@link Island}.
-     * @return A {@link CompletableFuture} with the game rule permission as a {@code long}.
-     */
-    public Long getGameRulePermission(Island island) {
-        return this.plugin.getInterneAPI().getIslandQuery().getIslandPermissionQuery().getIslandGameRule(island);
     }
 
     /**
