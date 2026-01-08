@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Postgres implements DBConnect, DBInterface {
@@ -35,6 +36,8 @@ public class Postgres implements DBConnect, DBInterface {
     @Override
     public boolean onLoad() throws DatabaseException {
         if (pool != null && !pool.isClosed()) return connected;
+
+        ensureDatabaseExists();
 
         this.pool = new HikariDataSource();
         this.pool.setPoolName("skyllia-pg-hikari");
@@ -110,4 +113,41 @@ public class Postgres implements DBConnect, DBInterface {
             throw new DatabaseException("getConnection failed", e);
         }
     }
+
+    private void ensureDatabaseExists() throws DatabaseException {
+        final String bootstrapDb = "postgres";
+        final String bootstrapUrl = "jdbc:postgresql://%s:%s/%s"
+                .formatted(cfg.hostname(), cfg.port(), bootstrapDb);
+
+        final String dbName = cfg.database();
+
+        try (Connection c = DriverManager.getConnection(bootstrapUrl, cfg.user(), cfg.pass())) {
+
+            boolean exists;
+            try (var ps = c.prepareStatement("SELECT 1 FROM pg_database WHERE datname = ?")) {
+                ps.setString(1, dbName);
+                try (var rs = ps.executeQuery()) {
+                    exists = rs.next();
+                }
+            }
+
+            if (!exists) {
+                final String quotedDb = "\"" + dbName.replace("\"", "\"\"") + "\"";
+                try (var stmt = c.createStatement()) {
+                    stmt.execute("CREATE DATABASE " + quotedDb);
+                }
+                logger.info("PostgreSQL database '{}' created.", dbName);
+            } else {
+                logger.info("PostgreSQL database '{}' already exists.", dbName);
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException(
+                    "Failed to ensure PostgreSQL database exists (needs CREATEDB privilege)",
+                    e
+            );
+        }
+    }
+
+
 }

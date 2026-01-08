@@ -16,8 +16,11 @@ public class DatabaseConfigManager implements ConfigManager {
     private static final Logger log = LogManager.getLogger(DatabaseConfigManager.class);
     private final CommentedFileConfig config;
     private int configVersion;
+
     private DatabaseConfig mariaDBConfig;
+    private DatabaseConfig postgreConfig;
     private DatabaseConfig sqLiteConfig;
+
     private boolean changed = false;
 
     public DatabaseConfigManager(CommentedFileConfig config) {
@@ -33,7 +36,10 @@ public class DatabaseConfigManager implements ConfigManager {
     public void loadConfig() throws DatabaseException {
         changed = false;
         configVersion = getOrSetDefault("config-version", 3, Integer.class);
+
+        // --------------------
         // MariaDB
+        // --------------------
         boolean enabledMariaDB = getOrSetDefault("mariadb.enabled", true, Boolean.class);
         if (enabledMariaDB) {
             String hostname = getOrSetDefault("mariadb.hostname", "127.0.0.1", String.class);
@@ -47,13 +53,67 @@ public class DatabaseConfigManager implements ConfigManager {
             long keepAliveTime = getOrSetDefault("mariadb.keepAliveTime", 0L, Long.class);
             long maxLifeTime = getOrSetDefault("mariadb.maxLifeTime", 1800000L, Long.class);
             int timeOut = getOrSetDefault("mariadb.timeOut", 5000, Integer.class);
-            this.mariaDBConfig = new DatabaseConfig(hostname, String.valueOf(port), username, password, useSSL, minPool, maxPool, maxLifeTime, keepAliveTime, timeOut, database, null);
+
+            this.mariaDBConfig = new DatabaseConfig(
+                    hostname,
+                    String.valueOf(port),
+                    username,
+                    password,
+                    useSSL,
+                    minPool,
+                    maxPool,
+                    maxLifeTime,
+                    keepAliveTime,
+                    timeOut,
+                    database,
+                    null
+            );
 
             if (changed) config.save();
             return;
         }
 
-        // SQlite
+        // --------------------
+        // PostgreSQL
+        // --------------------
+        boolean enabledPostgre = getOrSetDefault("postgres.enabled", false, Boolean.class);
+        if (enabledPostgre) {
+            String hostname = getOrSetDefault("postgres.hostname", "127.0.0.1", String.class);
+            int port = getOrSetDefault("postgres.port", 5432, Integer.class);
+            String database = getOrSetDefault("postgres.database", "skyblock", String.class);
+            String username = getOrSetDefault("postgres.username", "user", String.class);
+            String password = getOrSetDefault("postgres.password", "password", String.class);
+
+            boolean useSSL = getOrSetDefault("postgres.useSSL", false, Boolean.class);
+
+            int minPool = getOrSetDefault("postgres.minPool", 1, Integer.class);
+            int maxPool = getOrSetDefault("postgres.maxPool", 10, Integer.class);
+            long keepAliveTime = getOrSetDefault("postgres.keepAliveTime", 0L, Long.class);
+            long maxLifeTime = getOrSetDefault("postgres.maxLifeTime", 1800000L, Long.class);
+            int timeOut = getOrSetDefault("postgres.timeOut", 5000, Integer.class);
+
+            this.postgreConfig = new DatabaseConfig(
+                    hostname,
+                    String.valueOf(port),
+                    username,
+                    password,
+                    useSSL,
+                    minPool,
+                    maxPool,
+                    maxLifeTime,
+                    keepAliveTime,
+                    timeOut,
+                    database,
+                    null
+            );
+
+            if (changed) config.save();
+            return;
+        }
+
+        // --------------------
+        // SQLite
+        // --------------------
         boolean enabledSQlite = getOrSetDefault("sqlite.enabled", false, Boolean.class);
         if (enabledSQlite) {
             String file = getOrSetDefault("sqlite.file", "plugins/Skyllia/skyllia.db", String.class);
@@ -62,7 +122,21 @@ public class DatabaseConfigManager implements ConfigManager {
             long keepAliveTime = getOrSetDefault("sqlite.keepAliveTime", 0L, Long.class);
             long maxLifeTime = getOrSetDefault("sqlite.maxLifeTime", 1800000L, Long.class);
             int timeOut = getOrSetDefault("sqlite.timeOut", 30000, Integer.class);
-            this.sqLiteConfig = new DatabaseConfig(null, null, null, null, false, minPool, maxPool, maxLifeTime, keepAliveTime, timeOut, null, file);
+
+            this.sqLiteConfig = new DatabaseConfig(
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    minPool,
+                    maxPool,
+                    maxLifeTime,
+                    keepAliveTime,
+                    timeOut,
+                    null,
+                    file
+            );
 
             if (changed) {
                 TomlWriter tomlWriter = new TomlWriter();
@@ -73,7 +147,6 @@ public class DatabaseConfigManager implements ConfigManager {
         }
 
         throw new DatabaseException("No Database configured!");
-        // Todo ? Autre database
     }
 
     @Override
@@ -87,7 +160,7 @@ public class DatabaseConfigManager implements ConfigManager {
         }
 
         if (expectedClass.isInstance(value)) {
-            return (T) value; // Bonne instance directement
+            return (T) value;
         }
 
         // Cas spécial : Integer → Long
@@ -100,11 +173,16 @@ public class DatabaseConfigManager implements ConfigManager {
             return (T) Float.valueOf(((Double) value).floatValue());
         }
 
-        throw new IllegalStateException("Cannot convert value at path '" + path + "' from " + value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
+        throw new IllegalStateException("Cannot convert value at path '" + path + "' from " +
+                value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
     public @Nullable DatabaseConfig getMariaDBConfig() {
         return mariaDBConfig;
+    }
+
+    public @Nullable DatabaseConfig getPostgreConfig() {
+        return postgreConfig;
     }
 
     public @Nullable DatabaseConfig getSqLiteConfig() {
