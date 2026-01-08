@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class InfoSubCommand implements SubCommandInterface {

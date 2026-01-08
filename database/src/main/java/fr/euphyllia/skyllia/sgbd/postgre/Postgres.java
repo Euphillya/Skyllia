@@ -115,6 +115,12 @@ public class Postgres implements DBConnect, DBInterface {
     }
 
     private void ensureDatabaseExists() throws DatabaseException {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new DatabaseException("PostgreSQL JDBC driver not found in classpath", e);
+        }
+
         final String bootstrapDb = "postgres";
         final String bootstrapUrl = "jdbc:postgresql://%s:%s/%s"
                 .formatted(cfg.hostname(), cfg.port(), bootstrapDb);

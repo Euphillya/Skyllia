@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.plugin.Plugin;
 
-public class ItemDropPermissions  implements PermissionModule {
+public class ItemDropPermissions implements PermissionModule {
 
     private PermissionId ITEM_DROP;
 

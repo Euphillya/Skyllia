@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.Metrics;
@@ -10,7 +9,6 @@ import fr.euphyllia.skyllia.cache.CacheScheduler;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
-import fr.euphyllia.skyllia.listeners.permissions.player.ItemDropPermissions ;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.logging.log4j.Level;
@@ -55,11 +53,13 @@ public class Skyllia extends JavaPlugin {
         }
 
         if (!initializeInterneAPI()) {
+            logger.error("Incompatible Minecraft version detected. Disabling plugin.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
         if (!loadConfigurations()) {
+            logger.error("Configuration loading failed.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -118,7 +118,11 @@ public class Skyllia extends JavaPlugin {
 
             ConfigLoader.init(getDataFolder());
 
-            return this.interneAPI.setupSGBD();
+            boolean ok = this.interneAPI.setupSGBD();
+            if (!ok) {
+                logger.error("[SGBD] setupSGBD() returned false (no exception). Check DB config/credentials/driver/reachability.");
+            }
+            return ok;
         } catch (DatabaseException exception) {
             logger.log(Level.FATAL, exception, exception);
             return false;

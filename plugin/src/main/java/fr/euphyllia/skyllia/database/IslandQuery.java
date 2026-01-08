@@ -40,7 +40,6 @@ public class IslandQuery {
 
         // --- MariaDB ---
         if (ConfigLoader.database.getMariaDBConfig() != null) {
-            final String dbName = ConfigLoader.database.getMariaDBConfig().database();
 
             this.databaseInitializeQuery = new MariaDBDatabaseInitialize(loader);
             this.islandDataQuery = new MariaDBIslandData(loader);

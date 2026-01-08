@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
-import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;

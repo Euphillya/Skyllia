@@ -18,6 +18,8 @@ import fr.euphyllia.skyllia.managers.world.WorldModifierSelector;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
+import fr.euphyllia.skyllia.sgbd.postgre.Postgres;
+import fr.euphyllia.skyllia.sgbd.postgre.PostgresLoader;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
@@ -203,6 +205,14 @@ public class InterneAPI {
                 return false;
             }
             return getIslandQuery().getDatabaseInitializeQuery().init();
+        }
+        if (ConfigLoader.database.getPostgreConfig() != null) {
+            Postgres postgres = new Postgres(ConfigLoader.database.getPostgreConfig());
+            this.database = new PostgresLoader(postgres);
+            if (!this.database.loadDatabase()) {
+                return false;
+            }
+            return getIslandQuery().getDatabaseInitializeQuery().init();
         } else if (ConfigLoader.database.getSqLiteConfig() != null) {
             SQLite sqlite = new SQLite(ConfigLoader.database.getSqLiteConfig());
             this.database = new SQLiteDatabaseLoader(sqlite);
@@ -246,6 +256,8 @@ public class InterneAPI {
      */
     public IslandQuery getIslandQuery() {
         if (ConfigLoader.database.getMariaDBConfig() != null) {
+            return new IslandQuery(this);
+        } else if (ConfigLoader.database.getPostgreConfig() != null) {
             return new IslandQuery(this);
         } else if (ConfigLoader.database.getSqLiteConfig() != null) {
             return new IslandQuery(this);
