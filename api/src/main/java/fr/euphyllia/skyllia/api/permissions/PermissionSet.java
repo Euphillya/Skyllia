@@ -1,6 +1,10 @@
 package fr.euphyllia.skyllia.api.permissions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class PermissionSet {
+    private static final Logger log = LoggerFactory.getLogger(PermissionSet.class);
     private long[] words;
 
     public PermissionSet(int bitCount) {
@@ -19,8 +23,12 @@ public final class PermissionSet {
         ensureCapacity(bit + 1);
         int w = bit >>> 6;
         long m = 1L << (bit & 63);
-        if (value) words[w] |= m;
-        else words[w] &= ~m;
+        if (value) {
+            words[w] |= m;
+        } else {
+            words[w] &= ~m;
+        }
+        log.info("Bit modifié pour PermissionId: " + id + ", nouvelle valeur: " + has(id));
     }
 
     public synchronized void ensureCapacity(int bitCount) {

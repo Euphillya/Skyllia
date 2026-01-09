@@ -123,6 +123,17 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             CREATE INDEX IF NOT EXISTS idx_member_by_island_role
             ON members_in_islands (island_id, role, uuid_player);
             """;
+
+    private static final String CREATE_PERMISSION_REGISTRY_TABLE = """
+            CREATE TABLE IF NOT EXISTS permission_registry (
+              idx INT NOT NULL AUTO_INCREMENT,
+              node VARCHAR(255) NOT NULL,
+              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              PRIMARY KEY (node),
+              UNIQUE KEY uq_permission_registry_idx (idx)
+            );
+            
+            """;
     public final int regionDistance;
     public final int maxIslands;
     private final DatabaseLoader databaseLoader;
@@ -145,6 +156,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
     private void createDatabaseAndTables() {
         exec(CREATE_ISLANDS_TABLE);
+        exec(CREATE_PERMISSION_REGISTRY_TABLE);
         exec(CREATE_ISLANDS_MEMBERS_TABLE);
         exec(CREATE_ISLANDS_WARP_TABLE);
         exec(CREATE_SPIRAL_TABLE);

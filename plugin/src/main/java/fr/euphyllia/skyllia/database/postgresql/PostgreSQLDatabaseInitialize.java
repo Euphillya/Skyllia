@@ -125,6 +125,19 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
             ON CONFLICT (id) DO NOTHING;
             """;
 
+    private static final String CREATE_PERMISSION_REGISTRY_SEQ = """
+        CREATE SEQUENCE IF NOT EXISTS %s.permission_registry_idx_seq;
+        """;
+
+    private static final String CREATE_PERMISSION_REGISTRY_TABLE = """
+        CREATE TABLE IF NOT EXISTS %s.permission_registry (
+            node TEXT PRIMARY KEY,                     -- "namespace:key"
+            idx  INTEGER NOT NULL UNIQUE DEFAULT nextval('%s.permission_registry_idx_seq'),
+            created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+        );
+        """;
+
+
     private final String schema;
     private final DatabaseLoader databaseLoader;
     private final int regionDistance;
@@ -178,6 +191,9 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_ISLANDS_PERMISSIONS_TABLE.formatted(s, s));
         exec(CREATE_PLAYER_CLEAR_TABLE.formatted(s));
         exec(CREATE_ISLANDS_GAMERULE_TABLE.formatted(s, s));
+
+        exec(CREATE_PERMISSION_REGISTRY_SEQ.formatted(s));
+        exec(CREATE_PERMISSION_REGISTRY_TABLE.formatted(s, s));
 
         exec(CREATE_ISLANDS_INDEX.formatted(s));
         exec(CREATE_SPIRAL_INDEX.formatted(s));

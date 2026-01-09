@@ -7,6 +7,8 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.UUID;
  */
 public abstract class Island {
 
+    private static final Logger log = LoggerFactory.getLogger(Island.class);
     private transient volatile CompiledPermissions compiledPermissions;
 
     /**
@@ -196,15 +199,11 @@ public abstract class Island {
 
     public final CompiledPermissions getCompiledPermissions() {
         CompiledPermissions local = this.compiledPermissions;
-        if (local != null) return local;
-
-        synchronized (this) {
-            local = this.compiledPermissions;
-            if (local == null) {
-                local = new CompiledPermissions(SkylliaAPI.getPermissionRegistry());
-                this.compiledPermissions = local;
-            }
-            return local;
+        if (local == null) {
+            local = new CompiledPermissions(SkylliaAPI.getPermissionRegistry()); // Création de permissions compilées
+            log.info("Rechargement des permissions compilées pour l'île " + getId());
+            this.compiledPermissions = local;
         }
+        return local;
     }
 }

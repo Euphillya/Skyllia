@@ -53,11 +53,18 @@ success = "The gamerule %gamerule% has been set to %value%."
 failed = "The gamerule %gamerule% could not be set to %value%."
 
 [island.permission]
-args-missing = "The command is incomplete: /skyllia permission <island/commands/inventory> <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN> <PERMISSION_NAME> <true/false>"
-role-invalid = "The role is invalid, possible values: <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN>"
+player-only-command = "This command can only be executed by a player."
+not-on-island = "You must be on an island."
+no-island = "You don't have an island!"
+no-permission-edit = "You do not have permission to edit island permissions."
+value-invalid = "Value invalid, use true/false or on/off."
+role-invalid = "The role is invalid, possible values: <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/FLAGS/BAN>"
 permissions-invalid = "This permission does not exist."
-permission-type-invalid = "The type is invalid, possible values: <island/commands/inventory>"
-fail-high-equals-status = "You cannot modify your own permissions or the permissions of roles higher than you."
+action-invalid = "Invalid action, use: <list/set/toggle>"
+
+[island.permission.list]
+header = "Permissions for %role% (page %page%/%pages%)"
+line = "- %node%: %value%"
 
 [island.permission.update]
 success = "The permission has been updated!"

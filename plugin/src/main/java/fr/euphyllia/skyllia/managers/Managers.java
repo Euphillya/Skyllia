@@ -1,6 +1,8 @@
 package fr.euphyllia.skyllia.managers;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.permissions.PermissionIndexStore;
+import fr.euphyllia.skyllia.api.permissions.PermissionIndexStoreFactory;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
@@ -20,7 +22,14 @@ public class Managers {
         this.api = interneAPI;
         this.worldsManager = new WorldsManager(this.api);
 
-        this.permissionRegistry = new PermissionRegistry();
+        var loader = api.getDatabaseLoader();
+        if (loader == null) {
+            throw new IllegalStateException("Database not initialized (DatabaseLoader is null)");
+        }
+
+        PermissionIndexStore indexStore = PermissionIndexStoreFactory.create(loader);
+
+        this.permissionRegistry = new PermissionRegistry(indexStore);
         this.permissionModuleManager = new PermissionModuleManager(api.getPlugin(), this.permissionRegistry);
         this.permissionsManagers = new PermissionsManagers();
     }

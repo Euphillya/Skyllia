@@ -110,6 +110,15 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 ON spiral (region_x, region_z);
             """;
 
+    private static final String CREATE_PERMISSION_REGISTRY_TABLE = """
+            CREATE TABLE IF NOT EXISTS permission_registry (
+                idx INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                node TEXT NOT NULL UNIQUE,
+                created_at TEXT NOT NULL DEFAULT (datetime('now'))
+              );
+            
+            """;
+
     private final DatabaseLoader databaseLoader;
 
     public SQLiteDatabaseInitialize(DatabaseLoader databaseLoader) {
