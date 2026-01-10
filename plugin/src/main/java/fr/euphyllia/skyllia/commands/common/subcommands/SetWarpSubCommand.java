@@ -7,8 +7,8 @@ import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -91,7 +91,6 @@ public class SetWarpSubCommand implements SubCommandInterface {
         try {
             boolean success = island.addWarps(warpName, playerLocation, false);
             if (success) {
-                WarpsInIslandCache.invalidate(island.getId());
                 ConfigLoader.language.sendMessage(player, "island.warp.create-success", Map.of("%s", warpName));
             } else {
                 ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
@@ -106,6 +105,22 @@ public class SetWarpSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        return List.of("home", "visit", "...");
+        if (!(sender instanceof Player player)) return List.of();
+        if (args.length != 1) return List.of();
+
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        if (island == null) return List.of("home", "visit");
+
+        var warps = island.getWarps();
+        if (warps == null || warps.isEmpty()) return List.of("home", "visit");
+
+        String prefix = args[0].toLowerCase();
+        return warps.stream()
+                .map(WarpIsland::warpName) // si record: warpName()
+                .distinct()
+                .filter(n -> n.toLowerCase().startsWith(prefix))
+                .limit(20)
+                .toList();
     }
+
 }

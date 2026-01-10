@@ -52,6 +52,7 @@ public class PromoteSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.rank.promote-args-missing");
             return true;
         }
+
         try {
             String playerName = args[0];
 
@@ -62,6 +63,10 @@ public class PromoteSubCommand implements SubCommandInterface {
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
+            if (executorPlayer == null) {
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+                return true;
+            }
 
             boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_PROMOTE_PERMISSION);
             if (!allowed) {
@@ -69,47 +74,57 @@ public class PromoteSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            Players players = island.getMember(playerName);
-
-            if (players == null) {
+            Players target = island.getMember(playerName);
+            if (target == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-found");
                 return true;
             }
 
-            if (executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
+            if (target.getRoleType() == RoleType.OWNER ||
+                    executorPlayer.getRoleType().getValue() <= target.getRoleType().getValue()) {
                 ConfigLoader.language.sendMessage(player, "island.rank.promote-high-rank");
                 return true;
             }
 
-            RoleType promoteResult = RoleType.getRoleById(players.getRoleType().getValue() + 1);
-            if (promoteResult.getValue() == 0 || promoteResult.getValue() == RoleType.OWNER.getValue()) {
-                ConfigLoader.language.sendMessage(player, "island.rank.promote-failed", Map.of(
-                        "%s", playerName));
+            RoleType promoteResult = RoleType.getRoleById(target.getRoleType().getValue() + 1);
+            if (promoteResult.getValue() == 0 || promoteResult == RoleType.OWNER) {
+                ConfigLoader.language.sendMessage(player, "island.rank.promote-failed", Map.of("%s", playerName));
                 return true;
             }
-            players.setRoleType(promoteResult);
-            island.updateMember(players);
-            ConfigLoader.language.sendMessage(player, "island.admin.rank.promote-success", Map.of(
-                    "%s", playerName));
+
+            target.setRoleType(promoteResult);
+            boolean ok = island.updateMember(target);
+            if (ok) {
+                ConfigLoader.language.sendMessage(player, "island.admin.rank.promote-success", Map.of("%s", playerName));
+            } else {
+                ConfigLoader.language.sendMessage(player, "island.rank.promote-failed", Map.of("%s", playerName));
+            }
+
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
-
         return true;
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 1 && sender instanceof Player player) {
+        if (!(sender instanceof Player player)) return Collections.emptyList();
+        if (!player.hasPermission("skyllia.island.command.promote")) return Collections.emptyList();
+
+        if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) return Collections.emptyList();
-            return island.getMembersCached().stream()
+
+            return island.getMembers().stream()
                     .map(Players::getLastKnowName)
-                    .filter(cmd -> cmd.toLowerCase().startsWith(partial))
+                    .filter(name -> name != null && name.toLowerCase().startsWith(partial))
+                    .sorted()
                     .toList();
         }
+
         return Collections.emptyList();
     }
 }

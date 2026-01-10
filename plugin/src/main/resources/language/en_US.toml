@@ -53,22 +53,28 @@ success = "The gamerule %gamerule% has been set to %value%."
 failed = "The gamerule %gamerule% could not be set to %value%."
 
 [island.permission]
-player-only-command = "This command can only be executed by a player."
-not-on-island = "You must be on an island."
-no-island = "You don't have an island!"
-no-permission-edit = "You do not have permission to edit island permissions."
-value-invalid = "Value invalid, use true/false or on/off."
-role-invalid = "The role is invalid, possible values: <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/FLAGS/BAN>"
-permissions-invalid = "This permission does not exist."
-action-invalid = "Invalid action, use: <list/set/toggle>"
+value = "<light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>=</gray> <aqua>%value%</aqua>"
+usage = "<gray>Usage:</gray> <light_purple>/is permission list [filter]</light_purple>\n<gray> - </gray><light_purple>/is permission <role> <namespace:key> [true|false]</light_purple>\n<gray> - </gray><light_purple>/is permission toggle <role> <namespace:key></light_purple>\n<gray> - </gray><light_purple>/is permission set <role> <namespace:key> <true|false></light_purple>"
+
+[island.permission.role]
+invalid = "<red>Invalid role:</red> <white>%role%</white>"
+
+[island.permission.perm]
+invalid-format = "<red>Invalid permission format:</red> <white>%perm%</white> <gray>(expected namespace:key)</gray>"
+unknown = "<red>Unknown permission:</red> <white>%perm%</white>"
+
+[island.permission.bool]
+invalid = "<red>Invalid boolean value:</red> <white>%value%</white> <gray>(use true/false or on/off)</gray>"
 
 [island.permission.list]
-header = "Permissions for %role% (page %page%/%pages%)"
-line = "- %node%: %value%"
+empty = "<red>No permissions found.</red>"
+header = "<light_purple>Registered permissions</light_purple> <gray>(</gray><white>%count%</white><gray>)</gray>:"
+entry = "<gray>-</gray> <white>%perm%</white>"
+more = "<gray>... and</gray> <white>%more%</white> <gray>more (use filter)</gray>"
 
 [island.permission.update]
-success = "The permission has been updated!"
-failed = "The permission could not be updated. Please check the syntax of your command."
+success = "<green>Updated:</green> <light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>:</gray> <yellow>%old%</yellow> <gray>-></gray> <aqua>%new%</aqua>"
+failed = "<red>Database update failed.</red>"
 
 [island.debug]
 args-missing = "The command is incomplete: /skyllia debug <gamerule/commands/inventory/island"

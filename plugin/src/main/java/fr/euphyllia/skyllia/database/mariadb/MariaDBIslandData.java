@@ -168,11 +168,6 @@ public class MariaDBIslandData extends IslandDataQuery {
         Timestamp timestamp = resultSet.getTimestamp("create_time");
 
         Position position = new Position(regionX, regionZ);
-        try {
-            return new IslandHook(UUID.fromString(islandId), maxMembers, position, size, timestamp);
-        } catch (MaxIslandSizeExceedException e) {
-            log.error("Failed to construct island with id {} due to size exceed exception.", islandId, e);
-            return null;
-        }
+        return new IslandHook(UUID.fromString(islandId), maxMembers, position, size, timestamp);
     }
 }

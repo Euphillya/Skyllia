@@ -201,26 +201,6 @@ public final class SkylliaAPI {
     }
 
     /**
-     * Retrieves the island associated with a player's UUID.
-     *
-     * @param playerUniqueId The UUID of the player.
-     * @return An island associated with the player's UUID.
-     */
-    public static @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
-        return implementation.getCacheIslandByPlayerId(playerUniqueId);
-    }
-
-    /**
-     * Retrieves the island associated with an island ID.
-     *
-     * @param islandId The UUID of the island.
-     * @return An island associated with the island ID.
-     */
-    public static @Nullable Island getCacheIslandByIslandId(UUID islandId) {
-        return implementation.getCacheIslandByIslandId(islandId);
-    }
-
-    /**
      * Registers commands with the provided command interface.
      *
      * @param commandInterface The command interface to use for the commands.

@@ -174,45 +174,65 @@ public class InviteSubCommand implements SubCommandInterface {
         }
     }
 
-    private void acceptPlayer(Player playerWantJoin, String ownerIsland) {
+    private void acceptPlayer(Player playerWantJoin, String ownerIslandName) {
         try {
-            Island islandPlayer = SkylliaAPI.getCacheIslandByPlayerId(playerWantJoin.getUniqueId());
+            Island islandPlayer = SkylliaAPI.getIslandByPlayerId(playerWantJoin.getUniqueId());
             if (islandPlayer != null) {
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.already-on-island");
                 return;
             }
-            UUID ownerIslandId = Bukkit.getPlayerUniqueId(ownerIsland);
-            if (ownerIslandId == null) {
+
+            UUID ownerId = Bukkit.getPlayerUniqueId(ownerIslandName);
+            if (ownerId == null) {
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.player.not-found");
                 return;
             }
-            Island islandOwner = SkylliaAPI.getCacheIslandByPlayerId(ownerIslandId);
+
+            Island islandOwner = SkylliaAPI.getIslandByPlayerId(ownerId);
             if (islandOwner == null) {
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.island-not-found");
                 return;
             }
+
             if (!InviteCacheExecution.isInvitedCache(islandOwner.getId(), playerWantJoin.getUniqueId())) {
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.invite-not-found");
                 return;
             }
+
             InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantJoin.getUniqueId());
-            if (islandOwner.getMaxMembers() >= islandOwner.getMembers().size()) {
-                Players newPlayers = new Players(playerWantJoin.getUniqueId(), playerWantJoin.getName(), islandOwner.getId(), RoleType.MEMBER);
-                islandOwner.updateMember(newPlayers);
+
+            int maxMembers = islandOwner.getMaxMembers();
+            int currentMembers = islandOwner.getMembers().size();
+
+            if (currentMembers < maxMembers) {
+                Players newPlayer = new Players(
+                        playerWantJoin.getUniqueId(),
+                        playerWantJoin.getName(),
+                        islandOwner.getId(),
+                        RoleType.MEMBER
+                );
+
+                boolean updated = islandOwner.updateMember(newPlayer);
+                if (!updated) {
+                    ConfigLoader.language.sendMessage(playerWantJoin, "island.generic.unexpected-error");
+                    return;
+                }
+
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.join-success");
 
-                Player ownerPlayer = Bukkit.getPlayer(ownerIslandId);
-                if (ownerPlayer != null && ownerPlayer.isOnline()) {
-                    ConfigLoader.language.sendMessage(ownerPlayer, "island.invite.accept-notify-owner", Map.of("%player_accept%", playerWantJoin.getName()));
+                Player ownerOnline = Bukkit.getPlayer(ownerId);
+                if (ownerOnline != null && ownerOnline.isOnline()) {
+                    ConfigLoader.language.sendMessage(ownerOnline, "island.invite.accept-notify-owner",
+                            Map.of("%player_accept%", playerWantJoin.getName()));
                 }
 
                 if (ConfigLoader.general.isTeleportWhenAcceptingInvitation()) {
-                    WarpIsland homeIsland = islandOwner.getWarpByName("home");
-                    if (homeIsland == null) {
+                    WarpIsland home = islandOwner.getWarpByName("home"); // cache warps TTL 5s
+                    if (home == null || home.location() == null || home.location().getWorld() == null) {
                         ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.home-not-found");
                         return;
                     }
-                    playerWantJoin.teleportAsync(homeIsland.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    playerWantJoin.teleportAsync(home.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 }
             } else {
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.member-limit-reached");
@@ -223,24 +243,33 @@ public class InviteSubCommand implements SubCommandInterface {
         }
     }
 
-    private void declinePlayer(Player playerWantDecline, String ownerIsland) {
+    private void declinePlayer(Player playerWantDecline, String ownerIslandName) {
         try {
-
-            UUID ownerIslandId = Bukkit.getPlayerUniqueId(ownerIsland);
-            if (ownerIslandId == null) {
+            UUID ownerId = Bukkit.getPlayerUniqueId(ownerIslandName);
+            if (ownerId == null) {
                 ConfigLoader.language.sendMessage(playerWantDecline, "island.player.not-found");
                 return;
             }
-            Island islandOwner = SkylliaAPI.getCacheIslandByPlayerId(ownerIslandId);
+
+            Island islandOwner = SkylliaAPI.getIslandByPlayerId(ownerId);
             if (islandOwner == null) {
                 ConfigLoader.language.sendMessage(playerWantDecline, "island.invite.island-not-found");
                 return;
             }
+
+            if (!InviteCacheExecution.isInvitedCache(islandOwner.getId(), playerWantDecline.getUniqueId())) {
+                ConfigLoader.language.sendMessage(playerWantDecline, "island.invite.invite-not-found");
+                return;
+            }
+
             InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantDecline.getUniqueId());
-            ConfigLoader.language.sendMessage(playerWantDecline, "island.invite.decline-success", Map.of("%player_invite%", ownerIsland));
-            Player ownerPlayer = Bukkit.getPlayer(ownerIslandId);
-            if (ownerPlayer != null && ownerPlayer.isOnline()) {
-                ConfigLoader.language.sendMessage(ownerPlayer, "island.invite.decline-notify-owner", Map.of("%player_decline%", playerWantDecline.getName()));
+            ConfigLoader.language.sendMessage(playerWantDecline, "island.invite.decline-success",
+                    Map.of("%player_invite%", ownerIslandName));
+
+            Player ownerOnline = Bukkit.getPlayer(ownerId);
+            if (ownerOnline != null && ownerOnline.isOnline()) {
+                ConfigLoader.language.sendMessage(ownerOnline, "island.invite.decline-notify-owner",
+                        Map.of("%player_decline%", playerWantDecline.getName()));
             }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

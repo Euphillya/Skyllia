@@ -90,16 +90,26 @@ public class KickSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 1 && sender instanceof Player player) {
+        if (!(sender instanceof Player player)) return Collections.emptyList();
+        if (!sender.hasPermission("skyllia.island.command.kick")) return Collections.emptyList();
+
+        if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) return Collections.emptyList();
-            return island.getMembersCached().stream()
+
+            List<Players> members = island.getMembers();
+            if (members == null || members.isEmpty()) return Collections.emptyList();
+
+            return members.stream()
                     .map(Players::getLastKnowName)
-                    .filter(cmd -> cmd.toLowerCase().startsWith(partial))
+                    .filter(name -> name != null && !name.isBlank())
+                    .filter(name -> name.toLowerCase().startsWith(partial))
                     .sorted()
                     .toList();
         }
+
         return Collections.emptyList();
     }
 }

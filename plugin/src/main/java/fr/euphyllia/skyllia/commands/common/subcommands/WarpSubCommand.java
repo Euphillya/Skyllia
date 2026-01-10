@@ -8,7 +8,6 @@ import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
-import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class WarpSubCommand implements SubCommandInterface {
@@ -58,30 +58,21 @@ public class WarpSubCommand implements SubCommandInterface {
         String warpName = args[0];
 
         try {
-
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
             }
 
-            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_WARP_PERMISSION);
+            boolean allowed = SkylliaAPI.getPermissionsManager()
+                    .hasPermission(player, island, ISLAND_WARP_PERMISSION);
+
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 return true;
             }
 
-            UUID islandId = island.getId();
-            List<WarpIsland> warps = WarpsInIslandCache.getWarpsCached(islandId);
-
-            WarpIsland targetWarp = null;
-            for (WarpIsland warp : warps) {
-                if (warp.warpName().equalsIgnoreCase(warpName)) {
-                    targetWarp = warp;
-                    break;
-                }
-            }
-
+            WarpIsland targetWarp = island.getWarpByName(warpName);
             if (targetWarp == null) {
                 ConfigLoader.language.sendMessage(player, "island.warp.warp-not-exist");
                 return true;
@@ -89,29 +80,35 @@ public class WarpSubCommand implements SubCommandInterface {
 
             player.teleportAsync(targetWarp.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
+            return true;
+
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            return true;
         }
-
-
-        return true;
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (sender instanceof Player player && sender.hasPermission("skyllia.island.command.warp")) {
-            if (args.length == 1) {
-                List<String> warpList = CacheCommands.getWarps(player.getUniqueId());
-                if (warpList == null || warpList.isEmpty()) {
-                    return Collections.emptyList();
-                }
-                String partial = args[0].trim().toLowerCase();
-                return warpList.stream()
-                        .filter(warp -> warp.toLowerCase().startsWith(partial))
-                        .toList();
-            }
-        }
-        return Collections.emptyList();
+        if (!(sender instanceof Player player)) return Collections.emptyList();
+        if (!player.hasPermission("skyllia.island.command.warp")) return Collections.emptyList();
+        if (args.length != 1) return Collections.emptyList();
+
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        if (island == null) return Collections.emptyList();
+
+        List<WarpIsland> warps = island.getWarps();
+        if (warps == null || warps.isEmpty()) return Collections.emptyList();
+
+        String prefix = args[0].trim().toLowerCase(Locale.ROOT);
+
+        return warps.stream()
+                .map(WarpIsland::warpName) // record -> warpName()
+                .filter(n -> n != null && n.toLowerCase(Locale.ROOT).startsWith(prefix))
+                .distinct()
+                .sorted()
+                .limit(20)
+                .toList();
     }
 }

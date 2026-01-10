@@ -93,4 +93,9 @@ public final class PermissionRegistry {
     private static String toNodeKey(NamespacedKey key) {
         return key.getNamespace() + ":" + key.getKey();
     }
+
+    public synchronized List<NamespacedKey> keys() {
+        return new ArrayList<>(ids.keySet());
+    }
+
 }

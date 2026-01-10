@@ -85,7 +85,7 @@ public class CreateSubCommand implements SubCommandInterface {
                     ConfigLoader.language.sendMessage(player, "island.create-in-progress");
                     UUID idIsland = UUID.randomUUID();
                     SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings).join());
+                    boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings));
                     if (!isCreate) {
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         ConfigLoader.language.sendMessage(player, "island.generic-error");

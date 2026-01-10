@@ -1,15 +1,16 @@
 package fr.euphyllia.skyllia.listeners;
 
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
-import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.Nullable;
@@ -20,38 +21,26 @@ public class ListenersUtils {
 
     }
 
-    /**
-     * Retrieves the {@link Island} from a given {@link Chunk}, cancelling the event if no island is found.
-     *
-     * @param chunk       The {@link Chunk} to check.
-     * @param cancellable The event that can be cancelled.
-     * @return The {@link Island} if found, or {@code null} otherwise.
-     */
     public static @Nullable Island checkChunkIsIsland(Chunk chunk, Cancellable cancellable) {
-        Position position = RegionHelper.getRegionFromChunk(chunk.getX(), chunk.getZ());
-        Island island = PositionIslandCache.getIsland(position);
+        Position pos = RegionHelper.getRegionFromChunk(chunk.getX(), chunk.getZ());
+        Island island = SkylliaAPI.getIslandByPosition(pos);
+
         if (island == null) {
-            cancellable.setCancelled(true); // Sécurité !
+            cancellable.setCancelled(true);
         }
         return island;
     }
 
-    /**
-     * Retrieves the {@link Island} from a given chunk coordinates, cancelling the event if no island is found.
-     *
-     * @param chunkX      The X coordinate of the chunk.
-     * @param chunkZ      The Z coordinate of the chunk.
-     * @param cancellable The event that can be cancelled.
-     * @return The {@link Island} if found, or {@code null} otherwise.
-     */
-    public static @Nullable Island checkChunkIsIsland(int chunkX, int chunkZ, Cancellable cancellable) {
-        Position position = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
-        Island island = PositionIslandCache.getIsland(position);
+    public static @Nullable Island checkChunkIsIsland(int chunkX, int chunkZ, World world, Cancellable cancellable) {
+        Position pos = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
+        Island island = SkylliaAPI.getIslandByPosition(pos);
+
         if (island == null) {
-            cancellable.setCancelled(true); // Sécurité !
+            cancellable.setCancelled(true);
         }
         return island;
     }
+
 
     /**
      * Triggers a {@link PlayerPrepareChangeWorldSkyblockEvent} if the specified world is a Skyblock world.
@@ -76,15 +65,12 @@ public class ListenersUtils {
      */
     public static boolean isBlockOutsideIsland(Island island, Location location, Cancellable cancellable) {
         Position origin = island.getPosition();
-        boolean outsideIsland = !RegionHelper.isBlockWithinSquare(
-                RegionHelper.getCenterRegion(location.getWorld(), origin.x(), origin.z()),
-                location.getBlockX(), location.getBlockZ(), island.getSize()
-        );
-        if (outsideIsland) {
-            cancellable.setCancelled(true);
-        }
-        return outsideIsland;
+        Location center = RegionHelper.getCenterRegion(location.getWorld(), origin.x(), origin.z());
+        boolean outside = !RegionHelper.isBlockWithinSquare(center, location.getBlockX(), location.getBlockZ(), island.getSize());
+        if (outside) cancellable.setCancelled(true);
+        return outside;
     }
+
 
     /**
      * Utility method that attempts to retrieve an {@link Island} based on a {@link Location}:

@@ -5,7 +5,6 @@ import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.Metrics;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
-import fr.euphyllia.skyllia.cache.CacheScheduler;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.hook.HookBootstrap;
@@ -81,9 +80,6 @@ public class Skyllia extends JavaPlugin {
 
         HookBootstrap.registerAll(this);
 
-        // Schedule cache updates
-        new CacheScheduler(this, interneAPI).scheduleCacheUpdate();
-
         checkDisabledConfig();
 
         new Metrics(this, 20874);
@@ -94,7 +90,6 @@ public class Skyllia extends JavaPlugin {
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
         if (this.interneAPI != null) {
-            this.interneAPI.getCacheManager().invalidateAll();
             if (this.interneAPI.getDatabaseLoader() != null) {
                 this.interneAPI.getDatabaseLoader().closeDatabase();
             }

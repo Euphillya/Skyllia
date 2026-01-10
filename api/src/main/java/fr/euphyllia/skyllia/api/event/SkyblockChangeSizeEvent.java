@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api.event;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -49,33 +50,27 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see Island
  */
-public class SkyblockChangeSizeEvent extends Event {
+public class SkyblockChangeSizeEvent extends IslandEvent {
 
     /**
      * The handler list for this event.
      */
     private static final HandlerList handlerList = new HandlerList();
 
-    /**
-     * The island whose size is being changed.
-     */
-    private final Island island;
+    private final double oldSize;
+    private final double newSize;
 
     /**
-     * The new size (radius) of the island.
-     */
-    private final double sizeIsland;
-
-    /**
-     * Constructs a new {@code SkyblockChangeSizeEvent}.
+     * Constructs a new SkyblockChangeSizeEvent.
      *
-     * @param island     The island whose size is being changed.
-     * @param sizeIsland The new radius of the island.
+     * @param island  The island whose size is being changed.
+     * @param oldSize The previous size (radius) of the island.
+     * @param newSize The new size (radius) of the island.
      */
-    public SkyblockChangeSizeEvent(Island island, double sizeIsland) {
-        super(true);
-        this.island = island;
-        this.sizeIsland = sizeIsland;
+    public SkyblockChangeSizeEvent(Island island, double oldSize, double newSize) {
+        super(island, !Bukkit.isPrimaryThread());
+        this.oldSize = oldSize;
+        this.newSize = newSize;
     }
 
     /**
@@ -97,21 +92,8 @@ public class SkyblockChangeSizeEvent extends Event {
         return getHandlerList();
     }
 
-    /**
-     * Retrieves the island whose size is being changed.
-     *
-     * @return The island.
-     */
-    public Island getIsland() {
-        return this.island;
-    }
+    public double getOldSize() { return oldSize; }
+    public double getNewSize() { return newSize; }
 
-    /**
-     * Retrieves the new size (radius) of the island.
-     *
-     * @return The new size of the island.
-     */
-    public double getSizeIsland() {
-        return this.sizeIsland;
-    }
+
 }

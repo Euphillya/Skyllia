@@ -35,47 +35,56 @@ public class JoinEvent implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         final UUID playerId = player.getUniqueId();
         final String worldName = player.getWorld().getName();
 
-        Runnable task = () -> {
-            CacheCommands.refreshFor(playerId);
-            SkyblockManager skyblockManager = api.getSkyblockManager();
+        executeAsync(() -> {
+            try {
+                CacheCommands.refreshFor(playerId);
 
-            Island island = SkylliaAPI.getIslandByPlayerId(playerId);
+                final SkyblockManager skyblockManager = api.getSkyblockManager();
+                final Island island = SkylliaAPI.getIslandByPlayerId(playerId);
 
-            if (island != null) {
-                Players member = island.getMember(playerId);
-                if (member != null) {
-                    String currentName = player.getName();
-                    if (!member.getLastKnowName().equals(currentName)) {
-                        member.setLastKnowName(currentName);
-                        skyblockManager.updateMember(island, member);
+                if (island != null) {
+                    Players member = island.getMember(playerId);
+                    if (member != null) {
+                        String currentName = player.getName();
+                        String last = member.getLastKnowName();
+                        if (last == null || !last.equals(currentName)) {
+                            member.setLastKnowName(currentName);
+                            skyblockManager.updateMember(island, member);
+                        }
                     }
                 }
-            }
 
-            boolean shouldTeleportSpawn = island == null ||
-                    (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && !WorldUtils.isWorldSkyblock(worldName));
+                boolean shouldTeleportSpawn = island == null ||
+                        (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && !WorldUtils.isWorldSkyblock(worldName));
 
-            if (shouldTeleportSpawn) {
-                if (ConfigLoader.playerManager.isTeleportSpawnIfNoIsland()) {
-                    PlayerUtils.teleportPlayerSpawn(player);
+                if (shouldTeleportSpawn) {
+                    if (ConfigLoader.playerManager.isTeleportSpawnIfNoIsland()) {
+                        player.getScheduler().execute(api.getPlugin(), () -> PlayerUtils.teleportPlayerSpawn(player), null, 1L);
+                    }
+                } else {
+                    if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(worldName)) {
+                        player.getScheduler().execute(api.getPlugin(), () -> {
+                            Location centerIsland = RegionHelper.getCenterRegion(
+                                    player.getWorld(),
+                                    island.getPosition().x(),
+                                    island.getPosition().z()
+                            );
+                            api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+                        }, null, 1L);
+                    }
                 }
-            } else {
-                api.updateCache(player);
-                if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(worldName)) {
-                    Location centerIsland = RegionHelper.getCenterRegion(
-                            player.getWorld(), island.getPosition().x(), island.getPosition().z());
-                    api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
-                }
-            }
-            checkAndClearPlayerStuffOnJoin(player);
-        };
 
-        executeAsync(task);
+                checkAndClearPlayerStuffOnJoin(player);
+
+            } catch (Exception e) {
+                logger.error("Error during JoinEvent async task for {}", playerId, e);
+            }
+        });
     }
 
 
@@ -88,12 +97,10 @@ public class JoinEvent implements Listener {
 
             api.getSkyblockManager().deleteClearMember(uuid, cause);
 
-            Runnable playerTask = () -> {
+            player.getScheduler().execute(api.getPlugin(), () -> {
                 clearPlayerData(player, cause);
                 player.setGameMode(GameMode.SURVIVAL);
-            };
-
-            player.getScheduler().execute(api.getPlugin(), playerTask, null, 1L);
+            }, null, 1L);
         }
     }
 

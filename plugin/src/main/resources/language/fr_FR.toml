@@ -53,15 +53,29 @@ success = "La gamerule %gamerule% a été définie sur %value%."
 failed = "La gamerule %gamerule% n'a pas pu être définie sur %value%."
 
 [island.permission]
-args-missing = "La commande est incomplète : /skyllia permission <island/commands/inventory> <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN> <PERMISSION_NAME> <true/false>"
-role-invalid = "Le rôle est invalide, valeurs possibles : <OWNER/CO_OWNER/MODERATOR/MEMBER/VISITOR/BAN>"
-permissions-invalid = "Cette permission n'existe pas."
-permission-type-invalid = "La type est invalide, valeurs possibles : <island/commands/inventory>"
-fail-high-equals-status = "Vous ne pouvez pas modifier vos propres permissions ou celles de rôles supérieurs à vous."
+usage = "<gray>Usage:</gray> <light_purple>/is permission list [filter]</light_purple>\n<gray> - </gray><light_purple>/is permission <role> <namespace:key> [true|false]</light_purple>\n<gray> - </gray><light_purple>/is permission toggle <role> <namespace:key></light_purple>\n<gray> - </gray><light_purple>/is permission set <role> <namespace:key> <true|false></light_purple>"
+value = "<light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>=</gray> <aqua>%value%</aqua>"
+
+[island.permission.role]
+invalid = "<red>Invalid role:</red> <white>%role%</white>"
+
+[island.permission.perm]
+invalid-format = "<red>Invalid permission format:</red> <white>%perm%</white> <gray>(expected namespace:key)</gray>"
+unknown = "<red>Unknown permission:</red> <white>%perm%</white>"
+
+[island.permission.bool]
+invalid = "<red>Invalid boolean value:</red> <white>%value%</white> <gray>(use true/false or on/off)</gray>"
+
+[island.permission.list]
+empty = "<red>No permissions found.</red>"
+header = "<light_purple>Registered permissions</light_purple> <gray>(</gray><white>%count%</white><gray>)</gray>:"
+entry = "<gray>-</gray> <white>%perm%</white>"
+more = "<gray>... and</gray> <white>%more%</white> <gray>more (use filter)</gray>"
 
 [island.permission.update]
-success = "La permission a été mise à jour !"
-failed = "La permission n'a pas pu être mise à jour. Veuillez vérifier la syntaxe de votre commande."
+success = "<green>Updated:</green> <light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>:</gray> <yellow>%old%</yellow> <gray>-></gray> <aqua>%new%</aqua>"
+failed = "<red>Database update failed.</red>"
+
 
 [island.debug]
 args-missing = "La commande est incomplète : /skyllia debug <gamerule/commands/inventory/island>"

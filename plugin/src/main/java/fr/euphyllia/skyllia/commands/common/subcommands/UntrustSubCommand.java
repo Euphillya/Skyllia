@@ -6,21 +6,20 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class UntrustSubCommand implements SubCommandInterface {
 
@@ -54,15 +53,17 @@ public class UntrustSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.untrust.args-missing");
             return true;
         }
+
         try {
-            UUID playerTrustedId = Bukkit.getPlayerUniqueId(args[0]);
-            if (playerTrustedId == null) {
+            String targetName = args[0];
+
+            UUID targetId = Bukkit.getPlayerUniqueId(targetName);
+            if (targetId == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-found");
                 return true;
             }
 
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
-
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
@@ -76,21 +77,57 @@ public class UntrustSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            boolean isRemove = PlayersInIslandCache.removePlayerTrustedInIsland(island.getId(), playerTrustedId);
-            if (isRemove) {
-                ConfigLoader.language.sendMessage(player, "island.untrust.success");
+            boolean removed = Skyllia.getInstance()
+                    .getInterneAPI()
+                    .getTrustService()
+                    .removeTrusted(island.getId(), targetId);
+
+            if (removed) {
+                ConfigLoader.language.sendMessage(player, "island.untrust.success", Map.of("%trusted_name", targetName));
             } else {
-                ConfigLoader.language.sendMessage(player, "island.untrust.failed");
+                ConfigLoader.language.sendMessage(player, "island.untrust.failed", Map.of("%trusted_name%", targetName));
             }
+
+            return true;
+
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            return true;
         }
-        return true;
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        return new ArrayList<>();
+        if (!(sender instanceof Player player)) {
+            return List.of();
+        }
+
+        if (args.length != 1) {
+            return List.of();
+        }
+
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        if (island == null) {
+            return List.of();
+        }
+
+        Set<UUID> trusted = Skyllia.getInstance()
+                .getInterneAPI()
+                .getTrustService()
+                .getTrusted(island.getId());
+
+        if (trusted == null || trusted.isEmpty()) {
+            return List.of();
+        }
+
+        String prefix = args[0].toLowerCase();
+
+        return trusted.stream()
+                .map(Bukkit::getOfflinePlayer)
+                .map(OfflinePlayer::getName)
+                .filter(name -> name != null && name.toLowerCase().startsWith(prefix))
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

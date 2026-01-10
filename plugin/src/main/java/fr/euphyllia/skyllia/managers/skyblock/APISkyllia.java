@@ -9,12 +9,8 @@ import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
-import fr.euphyllia.skyllia.cache.island.IslandCache;
-import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
-import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -42,52 +38,24 @@ public final class APISkyllia implements SkylliaImplementation {
         return this.interneAPI.getSkyblockManager().getIslandByPlayerId(playerUniqueId);
     }
 
-    /**
-     * Retrieves the island associated with a player's UUID.
-     *
-     * @param playerUniqueId The UUID of the player.
-     * @return A CompletableFuture that will contain the island associated with the player's UUID.
-     */
-    @Override
-    public @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
-        UUID islandId = PlayersInIslandCache.getIslandIdByPlayer(playerUniqueId);
-        if (islandId == null) {
-            return null;
-        }
-        return IslandCache.getIsland(islandId);
-    }
-
     @Override
     public @Nullable Island getIslandByIslandId(UUID islandId) {
         return this.interneAPI.getSkyblockManager().getIslandByIslandId(islandId);
     }
 
-    /**
-     * Retrieves the island associated with an island ID.
-     *
-     * @param islandId The UUID of the island.
-     * @return An island associated with the island ID.
-     */
-    @Override
-    public @Nullable Island getCacheIslandByIslandId(UUID islandId) {
-        return IslandCache.getIsland(islandId);
-    }
-
     @Override
     public @Nullable Island getIslandByPosition(Position position) {
-        return PositionIslandCache.getIsland(position);
+        return null;
     }
 
     @Override
     public @Nullable Island getIslandByChunk(Chunk chunk) {
-        Position position = RegionHelper.getRegionFromChunk(chunk.getX(), chunk.getZ());
-        return PositionIslandCache.getIsland(position);
+        return null;
     }
 
     @Override
     public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
-        Position position = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
-        return PositionIslandCache.getIsland(position);
+        return null;
     }
 
     /**

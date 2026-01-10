@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DemoteSubCommand implements SubCommandInterface {
@@ -52,6 +53,7 @@ public class DemoteSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.rank.demote-args-missing");
             return true;
         }
+
         try {
             String playerName = args[0];
 
@@ -62,6 +64,10 @@ public class DemoteSubCommand implements SubCommandInterface {
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
+            if (executorPlayer == null) {
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+                return true;
+            }
 
             boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_DEMOTE_PERMISSION);
             if (!allowed) {
@@ -69,31 +75,35 @@ public class DemoteSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            Players players = island.getMember(playerName);
-
-            if (players == null) {
+            Players target = island.getMember(playerName);
+            if (target == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-found");
                 return true;
             }
 
-            if (players.getRoleType().equals(RoleType.OWNER) || executorPlayer.getRoleType().getValue() <= players.getRoleType().getValue()) {
+            if (target.getRoleType() == RoleType.OWNER || executorPlayer.getRoleType().getValue() <= target.getRoleType().getValue()) {
                 ConfigLoader.language.sendMessage(player, "island.rank.demote-high-rank");
                 return true;
             }
 
-            RoleType demoteResult = RoleType.getRoleById(players.getRoleType().getValue() - 1);
+            RoleType demoteResult = RoleType.getRoleById(target.getRoleType().getValue() - 1);
             if (demoteResult.getValue() == 0 || demoteResult.getValue() == -1) {
-                ConfigLoader.language.sendMessage(player, "island.rank.demote-failed", Map.of(
-                        "%s", playerName));
+                ConfigLoader.language.sendMessage(player, "island.rank.demote-failed", Map.of("%s", playerName));
                 return true;
             }
-            players.setRoleType(demoteResult);
-            island.updateMember(players);
-            ConfigLoader.language.sendMessage(player, "island.rank.demote-success", Map.of(
-                    "%s", playerName));
+
+            target.setRoleType(demoteResult);
+            boolean ok = island.updateMember(target);
+
+            if (ok) {
+                ConfigLoader.language.sendMessage(player, "island.rank.demote-success", Map.of("%s", playerName));
+            } else {
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            }
+
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
-            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
         }
 
         return true;
@@ -101,16 +111,25 @@ public class DemoteSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 1 && sender instanceof Player player) {
-            String partial = args[0].trim().toLowerCase();
-            Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+        if (!(sender instanceof Player player)) return Collections.emptyList();
+        if (!player.hasPermission("skyllia.island.command.demote")) return Collections.emptyList();
+
+        if (args.length == 1) {
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) return Collections.emptyList();
-            return island.getMembersCached().stream()
+
+            String partial = args[0].trim().toLowerCase(Locale.ROOT);
+
+            return island.getMembers().stream()
+                    .filter(p -> p != null && p.getLastKnowName() != null)
+                    .filter(p -> !p.getMojangId().equals(player.getUniqueId())) // pas soi-même
+                    .filter(p -> p.getRoleType() != RoleType.OWNER) // jamais owner
                     .map(Players::getLastKnowName)
-                    .filter(cmd -> cmd.toLowerCase().startsWith(partial))
+                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(partial))
                     .sorted()
                     .toList();
         }
+
         return Collections.emptyList();
     }
 }

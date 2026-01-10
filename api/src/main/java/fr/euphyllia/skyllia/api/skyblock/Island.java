@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api.skyblock;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
@@ -20,7 +21,6 @@ import java.util.UUID;
 public abstract class Island {
 
     private static final Logger log = LoggerFactory.getLogger(Island.class);
-    private transient volatile CompiledPermissions compiledPermissions;
 
     /**
      * Gets the owner of the island.
@@ -137,13 +137,6 @@ public abstract class Island {
     public abstract List<Players> getBannedMembers();
 
     /**
-     * Gets the cached list of all members on the island (from memory/cache).
-     *
-     * @return A {@link List} of {@link Players}.
-     */
-    public abstract List<Players> getMembersCached();
-
-    /**
      * Gets a specific member by their UUID.
      *
      * @param mojangId The UUID of the member.
@@ -197,13 +190,8 @@ public abstract class Island {
      */
     public abstract boolean setMaxMembers(int maxMembers);
 
-    public final CompiledPermissions getCompiledPermissions() {
-        CompiledPermissions local = this.compiledPermissions;
-        if (local == null) {
-            local = new CompiledPermissions(SkylliaAPI.getPermissionRegistry()); // Création de permissions compilées
-            log.info("Rechargement des permissions compilées pour l'île " + getId());
-            this.compiledPermissions = local;
-        }
-        return local;
-    }
+    public abstract CompiledPermissions getCompiledPermissions();
+
+    public abstract void invalidateCompiledPermissions();
+
 }

@@ -207,11 +207,6 @@ public class SQLiteIslandData extends IslandDataQuery {
         Timestamp timestamp = parseSqliteTimestamp(rs.getString("create_time"));
 
         Position position = new Position(regionX, regionZ);
-        try {
-            return new IslandHook(UUID.fromString(islandId), maxMembers, position, size, timestamp);
-        } catch (MaxIslandSizeExceedException e) {
-            logger.log(Level.ERROR, "Failed to construct island with id {} due to size exceed.", islandId, e);
-            return null;
-        }
+        return new IslandHook(UUID.fromString(islandId), maxMembers, position, size, timestamp);
     }
 }

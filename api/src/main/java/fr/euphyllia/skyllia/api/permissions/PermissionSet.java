@@ -28,7 +28,6 @@ public final class PermissionSet {
         } else {
             words[w] &= ~m;
         }
-        log.info("Bit modifié pour PermissionId: " + id + ", nouvelle valeur: " + has(id));
     }
 
     public synchronized void ensureCapacity(int bitCount) {

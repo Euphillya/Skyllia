@@ -1,16 +1,14 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Skyllia;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.*;
-import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
+import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
-import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
-import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
-import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +28,7 @@ public class IslandHook extends Island {
     private final Position position;
     private final int maxMemberInIsland;
     private double islandSize;
+    private transient volatile CompiledPermissions compiledPermissions;
 
     /**
      * Constructs a new {@code IslandHook} instance.
@@ -39,24 +38,17 @@ public class IslandHook extends Island {
      * @param position   The region-based position of the island (X/Z).
      * @param size       The radius (size) of the island.
      * @param date       The creation date, or {@code null} if unknown.
-     * @throws MaxIslandSizeExceedException If the specified size is out of the allowed range.
      */
     public IslandHook(UUID islandId,
                       int maxMembers,
                       Position position,
                       double size,
-                      Timestamp date) throws MaxIslandSizeExceedException {
+                      Timestamp date) {
         this.plugin = Skyllia.getInstance();
         this.islandId = islandId;
         this.createDate = date;
         this.position = position;
         this.maxMemberInIsland = maxMembers;
-
-        // Validate the island size
-        if (size >= (255 * ConfigLoader.general.getRegionDistance()) || size <= 1) {
-            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! "
-                    + "Must be between 2 and " + (255 * ConfigLoader.general.getRegionDistance()) + ".");
-        }
         this.islandSize = size;
     }
 
@@ -96,13 +88,8 @@ public class IslandHook extends Island {
      * {@inheritDoc}
      */
     @Override
-    public boolean setSize(double newSize) throws MaxIslandSizeExceedException {
-        if (newSize >= (255 * ConfigLoader.general.getRegionDistance()) || newSize <= 1) {
-            throw new MaxIslandSizeExceedException(
-                    "The size of the island exceeds the permitted limit! Must be between 2 and "
-                            + (255 * ConfigLoader.general.getRegionDistance()) + ".");
-        }
-
+    public boolean setSize(double newSize) {
+        double oldSize = this.islandSize;
         this.islandSize = newSize;
         // Update in database
         boolean isUpdated = this.plugin.getInterneAPI()
@@ -110,10 +97,7 @@ public class IslandHook extends Island {
                 .setSizeIsland(this, newSize);
 
         if (isUpdated) {
-            // Fire event asynchronously
-            Bukkit.getAsyncScheduler().runNow(plugin, task ->
-                    Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, newSize))
-            );
+            Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, oldSize, newSize));
             return true;
         }
         return false;
@@ -124,7 +108,7 @@ public class IslandHook extends Island {
      */
     @Override
     public @Nullable List<WarpIsland> getWarps() {
-        return WarpsInIslandCache.getWarpsCached(this.islandId);
+        return this.plugin.getInterneAPI().getSkyblockManager().getWarpsIsland(this.islandId);
     }
 
     /**
@@ -147,12 +131,8 @@ public class IslandHook extends Island {
                 return false;
             }
         }
-        boolean success = this.plugin.getInterneAPI().getSkyblockManager()
+        return this.plugin.getInterneAPI().getSkyblockManager()
                 .addWarpsIsland(this.islandId, event.getWarpName(), event.getWarpLocation());
-        if (success) {
-            WarpsInIslandCache.invalidate(this.islandId);
-        }
-        return success;
     }
 
     /**
@@ -165,12 +145,8 @@ public class IslandHook extends Island {
         if (event.isCancelled()) {
             return false;
         }
-        boolean success = this.plugin.getInterneAPI().getSkyblockManager()
+        return this.plugin.getInterneAPI().getSkyblockManager()
                 .delWarpsIsland(this.islandId, event.getWarpName());
-        if (success) {
-            WarpsInIslandCache.invalidate(this.islandId);
-        }
-        return success;
     }
 
     /**
@@ -207,12 +183,6 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean setPrivateIsland(boolean privateIsland) {
-        SkyblockChangeAccessEvent event = new SkyblockChangeAccessEvent(this);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return false;
-        }
-        IslandClosedCache.invalidateIsland(this.getId());
         return this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland);
     }
 
@@ -228,15 +198,6 @@ public class IslandHook extends Island {
     public List<Players> getBannedMembers() {
         return this.plugin.getInterneAPI().getSkyblockManager().getBannedMembersInIsland(this);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Players> getMembersCached() {
-        return PlayersInIslandCache.getPlayersCached(this.islandId);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -268,23 +229,6 @@ public class IslandHook extends Island {
     public boolean updateMember(Players member) {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member);
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
-//        boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager()
-//                .updatePermissionIsland(this, permissionsType, roleType, permissions);
-//        if (isUpdated) {
-//            Bukkit.getAsyncScheduler().runNow(plugin, task ->
-//                    Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions))
-//            );
-//            return true;
-//        }
-//        return false;
-//    }
-
     /**
      * {@inheritDoc}
      */
@@ -308,5 +252,36 @@ public class IslandHook extends Island {
     @Override
     public boolean setMaxMembers(int newMax) {
         return this.plugin.getInterneAPI().getSkyblockManager().setMaxMemberInIsland(this, newMax);
+    }
+
+    @Override
+    public final CompiledPermissions getCompiledPermissions() {
+        CompiledPermissions local = this.compiledPermissions;
+        if (local != null) return local;
+
+        synchronized (this) {
+            local = this.compiledPermissions;
+            if (local != null) return local;
+
+            PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
+
+            var query = Skyllia.getInstance()
+                    .getInterneAPI()
+                    .getIslandQuery()
+                    .getIslandPermissionQuery();
+
+            CompiledPermissions loaded = null;
+            if (query != null) {
+                loaded = query.loadCompiled(getId(), registry);
+            }
+
+            local = (loaded != null) ? loaded : new CompiledPermissions(registry);
+            this.compiledPermissions = local;
+            return local;
+        }
+    }
+
+    public final void invalidateCompiledPermissions() {
+        this.compiledPermissions = null;
     }
 }

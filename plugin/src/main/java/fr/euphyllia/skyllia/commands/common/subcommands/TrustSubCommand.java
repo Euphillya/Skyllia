@@ -6,7 +6,8 @@ import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
+import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -55,15 +57,17 @@ public class TrustSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.trust.args-missing");
             return true;
         }
+
         try {
-            UUID playerTrustedId = Bukkit.getPlayerUniqueId(args[0]);
-            if (playerTrustedId == null) {
+            String targetName = args[0];
+
+            UUID targetId = Bukkit.getPlayerUniqueId(targetName);
+            if (targetId == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-found");
                 return true;
             }
 
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
-
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
@@ -77,13 +81,24 @@ public class TrustSubCommand implements SubCommandInterface {
                 return true;
             }
 
-            PlayersInIslandCache.addPlayerTrustedInIsland(island.getId(), playerTrustedId);
-            ConfigLoader.language.sendMessage(player, "island.trust.success");
+            boolean added = Skyllia.getInstance()
+                    .getInterneAPI()
+                    .getTrustService()
+                    .addTrusted(island.getId(), targetId);
+
+            if (added) {
+                ConfigLoader.language.sendMessage(player, "island.trust.success", Map.of("%trusted_name%", targetName));
+            } else {
+                ConfigLoader.language.sendMessage(player, "island.trust.already-trusted", Map.of("%trusted_name%", targetName));
+            }
+
+            return true;
+
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            return true;
         }
-        return true;
     }
 
     @Override

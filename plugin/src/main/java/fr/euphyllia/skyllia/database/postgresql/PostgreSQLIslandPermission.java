@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionSet;
+import fr.euphyllia.skyllia.api.permissions.PermissionSetCodec;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
@@ -13,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,26 +64,6 @@ public class PostgreSQLIslandPermission extends IslandPermissionQuery {
         return ident.replaceAll("[^a-zA-Z0-9_]", "");
     }
 
-    // Encode long[] -> byte[] (little-endian)
-    private static byte[] encodeLongArray(long[] words) {
-        if (words == null || words.length == 0) return new byte[0];
-        ByteBuffer buf = ByteBuffer.allocate(words.length * Long.BYTES).order(ByteOrder.LITTLE_ENDIAN);
-        for (long w : words) buf.putLong(w);
-        return buf.array();
-    }
-
-    // Decode byte[] -> long[] (little-endian)
-    private static long[] decodeLongArray(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return new long[0];
-        int longs = bytes.length / Long.BYTES;
-        if (longs <= 0) return new long[0];
-
-        ByteBuffer buf = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-        long[] out = new long[longs];
-        for (int i = 0; i < longs; i++) out[i] = buf.getLong();
-        return out;
-    }
-
     @Override
     public @Nullable CompiledPermissions loadCompiled(UUID islandId, PermissionRegistry registry) {
         CompiledPermissions compiled = new CompiledPermissions(registry);
@@ -104,9 +83,9 @@ public class PostgreSQLIslandPermission extends IslandPermissionQuery {
             return out;
         });
 
-        if (rows == null) {
-            return null;
-        }
+        if (rows == null) return null;
+
+        int regSize = registry.size();
 
         for (RoleRow row : rows) {
             RoleType role;
@@ -116,10 +95,11 @@ public class PostgreSQLIslandPermission extends IslandPermissionQuery {
                 continue;
             }
 
-            long[] wordsArr = decodeLongArray(row.words());
-            PermissionSet set = new PermissionSet(registry.size());
+            long[] wordsArr = PermissionSetCodec.decodeLongs(row.words());
+            PermissionSet set = new PermissionSet(regSize);
             set.loadWords(wordsArr);
-            set.ensureCapacity(registry.size());
+            set.ensureCapacity(regSize);
+
             compiled.replace(role, set);
         }
 
@@ -127,20 +107,13 @@ public class PostgreSQLIslandPermission extends IslandPermissionQuery {
         return compiled;
     }
 
+    /**
+     * DB-only write. Runtime update is handled by your command/service after DB success.
+     */
     @Override
     public boolean set(UUID islandId, RoleType role, PermissionId id, boolean value) {
-        CompiledPermissions compiled = loadCompiled(islandId, SkylliaAPI.getPermissionRegistry());
-        if (compiled == null) return false;
-
-        PermissionSet set = compiled.setFor(role);
-        if (set == null) return false;
-
-        set.set(id, value);
-        byte[] blob = encodeLongArray(set.snapshotWords());
-        return saveRole(islandId, role, blob);
+        return super.set(islandId, SkylliaAPI.getPermissionRegistry(), role, id, value);
     }
-
-    /* ---------------- serialization helpers ---------------- */
 
     @Override
     public boolean saveRole(UUID islandId, RoleType role, byte[] wordsBlob) {
