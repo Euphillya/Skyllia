@@ -21,6 +21,10 @@ public final class PermissionRegistry {
         this.indexStore = indexStore;
     }
 
+    private static String toNodeKey(NamespacedKey key) {
+        return key.getNamespace() + ":" + key.getKey();
+    }
+
     public synchronized int version() {
         return version;
     }
@@ -90,12 +94,13 @@ public final class PermissionRegistry {
         while (byIndex.size() < size) byIndex.add(null);
     }
 
-    private static String toNodeKey(NamespacedKey key) {
-        return key.getNamespace() + ":" + key.getKey();
-    }
-
     public synchronized List<NamespacedKey> keys() {
         return new ArrayList<>(ids.keySet());
     }
+
+    public synchronized Map<NamespacedKey, PermissionId> entries() {
+        return Map.copyOf(ids);
+    }
+
 
 }

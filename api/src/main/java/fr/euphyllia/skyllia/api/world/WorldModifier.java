@@ -20,7 +20,7 @@ public interface WorldModifier {
      * @param loc      The location where the schematic will be pasted.
      * @param settings The settings for the schematic paste operation.
      */
-    public void pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings);
+    void pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings);
 
     /**
      * Delete an island by replacing its blocks with air.
@@ -30,7 +30,7 @@ public interface WorldModifier {
      * @param regionDistance The distance around the island to be cleared.
      * @param onFinish       A callback function that will be called with a boolean indicating success or failure when the operation is complete.
      */
-    public void deleteIsland(@NotNull Island island, @NotNull World world, int regionDistance, Consumer<Boolean> onFinish);
+    void deleteIsland(@NotNull Island island, @NotNull World world, int regionDistance, Consumer<Boolean> onFinish);
 
     /**
      * Change the biome of a specific chunk.
@@ -39,7 +39,7 @@ public interface WorldModifier {
      * @param biome    The new biome to set for the chunk.
      * @return A CompletableFuture that will contain true if the operation was successful, false otherwise.
      */
-    public CompletableFuture<Boolean> changeBiomeChunk(@NotNull Location location, @NotNull Biome biome);
+    CompletableFuture<Boolean> changeBiomeChunk(@NotNull Location location, @NotNull Biome biome);
 
     /**
      * Change the biome of a specific chunk.
@@ -50,7 +50,7 @@ public interface WorldModifier {
      * @param biome  The new biome to set for the chunk.
      * @return A CompletableFuture that will contain true if the operation was successful, false otherwise.
      */
-    public CompletableFuture<Boolean> changeBiomeChunk(@NotNull World world, int chunkX, int chunkZ, @NotNull Biome biome);
+    CompletableFuture<Boolean> changeBiomeChunk(@NotNull World world, int chunkX, int chunkZ, @NotNull Biome biome);
 
     /**
      * Change the biome of an entire island.
@@ -61,7 +61,7 @@ public interface WorldModifier {
      * @param regionDistance The distance around the island to be affected.
      * @return A CompletableFuture that will contain true if the operation was successful, false otherwise.
      */
-    public CompletableFuture<Boolean> changeBiomeIsland(@NotNull World world, @NotNull Biome biome, @NotNull Island island, int regionDistance);
+    CompletableFuture<Boolean> changeBiomeIsland(@NotNull World world, @NotNull Biome biome, @NotNull Island island, int regionDistance);
 
 
 }

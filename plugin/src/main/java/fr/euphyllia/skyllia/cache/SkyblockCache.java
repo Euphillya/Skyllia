@@ -144,7 +144,9 @@ public class SkyblockCache {
     }
 
 
-    private record WarpKey(UUID islandId, String nameLower) {}
+    private record WarpKey(UUID islandId, String nameLower) {
+    }
 
-    public record IslandStateSnapshot(boolean disabled, boolean priv, boolean locked, int maxMembers, double size) {}
+    public record IslandStateSnapshot(boolean disabled, boolean priv, boolean locked, int maxMembers, double size) {
+    }
 }

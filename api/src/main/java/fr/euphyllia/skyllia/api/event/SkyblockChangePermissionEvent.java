@@ -1,11 +1,5 @@
 package fr.euphyllia.skyllia.api.event;
 
-import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
-
 public class SkyblockChangePermissionEvent /*extends Event*/ {
 //
 //    /**

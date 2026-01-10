@@ -49,13 +49,10 @@ public class InterneAPI {
     private final SkyblockCache skyblockCache;
     private final TrustService trustService;
     private final SkyblockManager skyblockManager;
-
-    // IslandQuery : lazy (DB must be initialized first)
-    private volatile @Nullable IslandQuery islandQuery;
-
     // World tools
     private final WorldModifierSelector worldSelector;
-
+    // IslandQuery : lazy (DB must be initialized first)
+    private volatile @Nullable IslandQuery islandQuery;
     // NMS bridges
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
@@ -156,7 +153,8 @@ public class InterneAPI {
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.BiomeNMS();
                 this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.ExplosionEntityImpl();
             }
-            default -> throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
+            default ->
+                    throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
         }
     }
 

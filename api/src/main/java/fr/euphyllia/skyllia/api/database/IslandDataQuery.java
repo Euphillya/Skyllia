@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api.database;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,4 +33,6 @@ public abstract class IslandDataQuery {
 
 
     public abstract Integer getMaxMemberInIsland(Island island);
+
+    public abstract @Nullable Island getIslandByPosition(Position position);
 }

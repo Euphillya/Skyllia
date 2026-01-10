@@ -13,7 +13,8 @@ public class HookBootstrap {
 
     private static final Logger log = LoggerFactory.getLogger(HookBootstrap.class);
 
-    private HookBootstrap() {}
+    private HookBootstrap() {
+    }
 
     public static void registerAll(Plugin skylliaPlugin) {
         List<ServerHook> hooks = List.of(

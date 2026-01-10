@@ -2,7 +2,7 @@ package fr.euphyllia.skyllia.listeners.skyblockevents;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.event.*;
+import fr.euphyllia.skyllia.api.event.SkyblockChangeSizeEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;

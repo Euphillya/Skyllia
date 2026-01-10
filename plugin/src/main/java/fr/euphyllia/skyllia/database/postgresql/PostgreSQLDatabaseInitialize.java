@@ -126,16 +126,16 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
             """;
 
     private static final String CREATE_PERMISSION_REGISTRY_SEQ = """
-        CREATE SEQUENCE IF NOT EXISTS %s.permission_registry_idx_seq;
-        """;
+            CREATE SEQUENCE IF NOT EXISTS %s.permission_registry_idx_seq;
+            """;
 
     private static final String CREATE_PERMISSION_REGISTRY_TABLE = """
-        CREATE TABLE IF NOT EXISTS %s.permission_registry (
-            node TEXT PRIMARY KEY,                     -- "namespace:key"
-            idx  INTEGER NOT NULL UNIQUE DEFAULT nextval('%s.permission_registry_idx_seq'),
-            created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-        );
-        """;
+            CREATE TABLE IF NOT EXISTS %s.permission_registry (
+                node TEXT PRIMARY KEY,                     -- "namespace:key"
+                idx  INTEGER NOT NULL UNIQUE DEFAULT nextval('%s.permission_registry_idx_seq'),
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+            );
+            """;
 
 
     private final String schema;

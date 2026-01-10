@@ -2,7 +2,6 @@ package fr.euphyllia.skyllia.api.event;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,8 +91,13 @@ public class SkyblockChangeSizeEvent extends IslandEvent {
         return getHandlerList();
     }
 
-    public double getOldSize() { return oldSize; }
-    public double getNewSize() { return newSize; }
+    public double getOldSize() {
+        return oldSize;
+    }
+
+    public double getNewSize() {
+        return newSize;
+    }
 
 
 }

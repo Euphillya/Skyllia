@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.SkyblockChangeOwnerEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -51,7 +52,7 @@ public class TransferSubCommand implements SubCommandInterface {
         }
 
         SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
-        Island island = skyblockManager.getIslandByOwner(player.getUniqueId());
+        Island island = SkylliaAPI.getIslandByOwner(player.getUniqueId());
 
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");

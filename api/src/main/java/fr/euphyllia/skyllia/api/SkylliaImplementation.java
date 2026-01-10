@@ -2,9 +2,9 @@ package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
+import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The SkylliaImplementation interface defines the methods that must be implemented
@@ -41,6 +39,14 @@ public interface SkylliaImplementation {
      * @return A CompletableFuture that will contain the island associated with the island ID.
      */
     public @Nullable Island getIslandByIslandId(UUID islandId);
+
+    /**
+     * Retrieves the island owned by a specific owner.
+     *
+     * @param ownerId The UUID of the island owner.
+     * @return The island owned by the specified owner, or null if none is found.
+     */
+    public @Nullable Island getIslandByOwner(UUID ownerId);
 
     /**
      * Retrieves the island at a specific position.

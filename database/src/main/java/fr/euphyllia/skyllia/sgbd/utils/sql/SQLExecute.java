@@ -1,10 +1,6 @@
 package fr.euphyllia.skyllia.sgbd.utils.sql;
 
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.utils.model.DBCallback;
-import fr.euphyllia.skyllia.sgbd.utils.model.DBCallbackInt;
-import fr.euphyllia.skyllia.sgbd.utils.model.DBWork;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,10 +91,17 @@ public final class SQLExecute {
                 work.run(c);
                 c.commit();
             } catch (Exception e) {
-                try { c.rollback(); } catch (SQLException ex) { e.addSuppressed(ex); }
+                try {
+                    c.rollback();
+                } catch (SQLException ex) {
+                    e.addSuppressed(ex);
+                }
                 throw e;
             } finally {
-                try { c.setAutoCommit(oldAutoCommit); } catch (SQLException ignored) {}
+                try {
+                    c.setAutoCommit(oldAutoCommit);
+                } catch (SQLException ignored) {
+                }
             }
         } catch (Exception e) {
             logger.error("SQL transaction failed", e);

@@ -2,8 +2,6 @@ package fr.euphyllia.skyllia.api.database;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * The {@code IslandUpdateQuery} class defines an abstract set of methods
  * for updating various properties of an {@link Island} in a SkyBlock context.

@@ -2,7 +2,10 @@ package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.event.*;
+import fr.euphyllia.skyllia.api.event.SkyblockChangeSizeEvent;
+import fr.euphyllia.skyllia.api.event.SkyblockCreateWarpEvent;
+import fr.euphyllia.skyllia.api.event.SkyblockDeleteEvent;
+import fr.euphyllia.skyllia.api.event.SkyblockDeleteWarpEvent;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -198,6 +201,7 @@ public class IslandHook extends Island {
     public List<Players> getBannedMembers() {
         return this.plugin.getInterneAPI().getSkyblockManager().getBannedMembersInIsland(this);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -229,6 +233,7 @@ public class IslandHook extends Island {
     public boolean updateMember(Players member) {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member);
     }
+
     /**
      * {@inheritDoc}
      */

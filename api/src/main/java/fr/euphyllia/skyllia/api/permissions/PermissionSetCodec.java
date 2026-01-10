@@ -4,7 +4,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public final class PermissionSetCodec {
-    private PermissionSetCodec() {}
+    private PermissionSetCodec() {
+    }
 
     public static byte[] encodeLongs(long[] words) {
         if (words == null) return new byte[0];

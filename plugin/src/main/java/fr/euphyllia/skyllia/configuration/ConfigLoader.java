@@ -24,6 +24,7 @@ public class ConfigLoader {
     public static PlayerConfigManager playerManager;
     public static SchematicConfigManager schematicManager;
     public static LanguageConfigManager language;
+    public static PermissionsV2ConfigManager permissionsV2;
 
     private static CommentedFileConfig generalConfig;
     private static CommentedFileConfig databaseConfig;
@@ -31,7 +32,7 @@ public class ConfigLoader {
     private static CommentedFileConfig islandConfig;
     private static CommentedFileConfig playerConfig;
     private static CommentedFileConfig schematicConfig;
-    private static CommentedFileConfig permissionsConfig;
+    private static CommentedFileConfig permissionsV2Config;
 
     public static void init(File allConfig) {
 
@@ -43,7 +44,8 @@ public class ConfigLoader {
         islandConfig = loadFile(new File(configDir, "islands.toml"));
         playerConfig = loadFile(new File(configDir, "players.toml"));
         schematicConfig = loadFile(new File(configDir, "schematics.toml"));
-        permissionsConfig = loadFile(new File(configDir, "permissions.toml"));
+        permissionsV2Config = loadFile(new File(configDir, "permissions-v2.toml"));
+
 
         general = new GeneralConfigManager(generalConfig);
         database = new DatabaseConfigManager(databaseConfig);
@@ -52,6 +54,7 @@ public class ConfigLoader {
         playerManager = new PlayerConfigManager(playerConfig);
         schematicManager = new SchematicConfigManager(schematicConfig);
         language = new LanguageConfigManager();
+        permissionsV2 = new PermissionsV2ConfigManager(permissionsV2Config);
 
         configManagers.add(general);
         configManagers.add(database);

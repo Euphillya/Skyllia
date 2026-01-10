@@ -29,7 +29,6 @@ public class BanListCommand implements SubCommandInterface {
             return true;
         }
 
-        // ⚠️ sync: selon ton implémentation ça peut taper DB (à éviter sur thread principal)
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");

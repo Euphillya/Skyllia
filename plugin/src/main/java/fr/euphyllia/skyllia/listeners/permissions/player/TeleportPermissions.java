@@ -33,7 +33,7 @@ public class TeleportPermissions implements PermissionModule {
     @EventHandler
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         // Implementation basic
-        final  Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         Location to = event.getTo();
         if (!SkylliaAPI.isWorldSkyblock(to.getWorld())) return;
 

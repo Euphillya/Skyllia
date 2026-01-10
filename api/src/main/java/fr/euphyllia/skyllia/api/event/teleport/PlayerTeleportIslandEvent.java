@@ -36,6 +36,10 @@ public class PlayerTeleportIslandEvent extends IslandEvent implements Cancellabl
         this.cancelled = cancelled;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -63,10 +67,6 @@ public class PlayerTeleportIslandEvent extends IslandEvent implements Cancellabl
 
     @Override
     public @NonNull HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 }

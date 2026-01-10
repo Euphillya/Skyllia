@@ -83,6 +83,8 @@ public class Skyllia extends JavaPlugin {
         checkDisabledConfig();
 
         new Metrics(this, 20874);
+
+        ConfigLoader.permissionsV2.compileNow();
     }
 
     @Override

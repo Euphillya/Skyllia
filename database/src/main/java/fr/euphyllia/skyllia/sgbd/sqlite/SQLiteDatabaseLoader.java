@@ -3,7 +3,9 @@ package fr.euphyllia.skyllia.sgbd.sqlite;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SQLiteDatabaseLoader implements DatabaseLoader {
 

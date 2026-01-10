@@ -6,17 +6,21 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
+import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.cache.SkyblockCache;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -28,10 +32,15 @@ public class SkyblockManager {
     private static final Logger LOGGER = LogManager.getLogger(SkyblockManager.class);
     private final Skyllia plugin;
     private final SkyblockCache cache;
+    private final ConcurrentHashMap<Long, UUID> islandByPosition = new ConcurrentHashMap<>();
 
     public SkyblockManager(Skyllia plugin, SkyblockCache cache) {
         this.plugin = plugin;
         this.cache = cache;
+    }
+
+    private static long pack(int x, int z) {
+        return (((long) x) << 32) ^ (z & 0xffffffffL);
     }
 
     /**
@@ -67,6 +76,17 @@ public class SkyblockManager {
                     .insertIslands(futureIsland);
 
             if (success) {
+                var permQuery = plugin.getInterneAPI()
+                        .getIslandQuery()
+                        .getIslandPermissionQuery();
+                if (permQuery != null && ConfigLoader.permissionsV2 != null) {
+                    String typeKey = event.getIslandSettings().name();
+
+                    var blobs = ConfigLoader.permissionsV2.buildDefaultRoleBlobs(typeKey);
+                    for (var entry : blobs.entrySet()) {
+                        permQuery.saveRole(event.getIslandId(), entry.getKey(), entry.getValue());
+                    }
+                }
                 cache.invalidateIsland(event.getIslandId());
                 return true;
             } else {
@@ -101,6 +121,7 @@ public class SkyblockManager {
         Island island = plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByIslandId(islandId);
         if (island != null) {
             cache.putIsland(island);
+            indexPositionIfPresent(island);
         }
         return island;
     }
@@ -179,6 +200,52 @@ public class SkyblockManager {
         return priv;
     }
 
+    public @Nullable Island getIslandByPosition(Position position) {
+        if (position == null) return null;
+
+        long key = pack(position.x(), position.z());
+
+        UUID islandId = islandByPosition.get(key);
+        if (islandId != null) {
+            Island cached = cache.getIsland(islandId);
+            if (cached != null) return cached;
+
+            Island fromDbById = plugin.getInterneAPI()
+                    .getIslandQuery()
+                    .getIslandDataQuery()
+                    .getIslandByIslandId(islandId);
+
+            if (fromDbById != null) {
+                cache.putIsland(fromDbById);
+                indexPositionIfPresent(fromDbById);
+                return fromDbById;
+            } else {
+                islandByPosition.remove(key, islandId);
+            }
+        }
+
+        Island island = plugin.getInterneAPI()
+                .getIslandQuery()
+                .getIslandDataQuery()
+                .getIslandByPosition(position);
+
+        if (island != null) {
+            cache.putIsland(island);
+            indexPositionIfPresent(island);
+        }
+        return island;
+    }
+
+    public @Nullable Island getIslandByChunk(Chunk chunk) {
+        if (chunk == null) return null;
+        return getIslandByChunk(chunk.getX(), chunk.getZ());
+    }
+
+    public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
+        Position pos = new Position(chunkX, chunkZ);
+        return getIslandByPosition(pos);
+    }
+
     /**
      * Retrieves the island owned by a specific player.
      *
@@ -196,6 +263,7 @@ public class SkyblockManager {
         if (island != null) {
             cache.putIsland(island);
             cache.putIslandIdByPlayer(playerId, island.getId());
+            indexPositionIfPresent(island);
         }
         return island;
     }
@@ -217,6 +285,7 @@ public class SkyblockManager {
         if (island != null) {
             cache.putIsland(island);
             cache.putIslandIdByPlayer(playerId, island.getId());
+            indexPositionIfPresent(island);
         }
         return island;
     }
@@ -477,6 +546,12 @@ public class SkyblockManager {
 
         cache.putState(island.getId(), new SkyblockCache.IslandStateSnapshot(disabled, priv, locked, max, size));
         return locked;
+    }
+
+    private void indexPositionIfPresent(Island island) {
+        Position pos = island.getPosition();
+        if (pos == null) return;
+        islandByPosition.put(pack(pos.x(), pos.z()), island.getId());
     }
 
 }

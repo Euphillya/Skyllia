@@ -18,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The SkylliaAPI class provides various methods to interact with Skyblock islands and check the server environment.
@@ -64,6 +62,10 @@ public final class SkylliaAPI {
      */
     public static @Nullable Island getIslandByIslandId(UUID islandId) {
         return implementation.getIslandByIslandId(islandId);
+    }
+
+    public static @Nullable Island getIslandByOwner(UUID playerUniqueId) {
+        return implementation.getIslandByOwner(playerUniqueId);
     }
 
     /**

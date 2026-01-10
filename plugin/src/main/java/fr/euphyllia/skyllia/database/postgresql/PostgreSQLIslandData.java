@@ -1,7 +1,6 @@
 package fr.euphyllia.skyllia.database.postgresql;
 
 import fr.euphyllia.skyllia.api.database.IslandDataQuery;
-import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
@@ -64,6 +63,17 @@ public class PostgreSQLIslandData extends IslandDataQuery {
             FROM islands
             WHERE disable = FALSE;
             """;
+
+    private static final String SELECT_ISLAND_BY_POSITION_VALID = """
+            SELECT island_id, disable, region_x, region_z, private, locked, size, create_time, max_members
+            FROM islands
+            WHERE region_x = ?
+              AND region_z = ?
+              AND disable = FALSE
+              AND locked = FALSE
+            LIMIT 1;
+            """;
+
 
     private static final Logger log = LoggerFactory.getLogger(PostgreSQLIslandData.class);
 
@@ -135,6 +145,26 @@ public class PostgreSQLIslandData extends IslandDataQuery {
         });
         return max != null ? max : -1;
     }
+
+    @Override
+    public @Nullable Island getIslandByPosition(Position position) {
+        if (position == null) return null;
+
+        return SQLExecute.queryMap(
+                databaseLoader,
+                SELECT_ISLAND_BY_POSITION_VALID,
+                List.of(position.x(), position.z()),
+                rs -> {
+                    try {
+                        if (rs.next()) return constructIslandQuery(rs);
+                    } catch (SQLException e) {
+                        log.error("SQL Exception while fetching island by position {} {}", position.x(), position.z(), e);
+                    }
+                    return null;
+                }
+        );
+    }
+
 
     private @Nullable Island firstIsland(ResultSet rs, UUID playerId, String kind) {
         try {

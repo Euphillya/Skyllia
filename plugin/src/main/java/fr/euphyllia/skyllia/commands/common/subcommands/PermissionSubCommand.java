@@ -4,11 +4,7 @@ import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.database.IslandPermissionQuery;
-import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionNode;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.PermissionSet;
+import fr.euphyllia.skyllia.api.permissions.*;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -37,6 +33,35 @@ public class PermissionSubCommand implements SubCommandInterface {
                 "Permissions île: gérer les permissions",
                 "Autorise à gérer les permissions des rôles de l'île"
         ));
+    }
+
+    private static boolean isAction(String s) {
+        if (s == null) return false;
+        String v = s.toLowerCase(Locale.ROOT);
+        return ACTIONS.stream().anyMatch(a -> a.equals(v));
+    }
+
+    private static RoleType parseRole(String input) {
+        if (input == null) return null;
+        try {
+            return RoleType.valueOf(input.toUpperCase(Locale.ROOT));
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private static Boolean parseBool(String input) {
+        if (input == null) return null;
+        String v = input.toLowerCase(Locale.ROOT);
+        return switch (v) {
+            case "true", "on", "1", "yes" -> true;
+            case "false", "off", "0", "no" -> false;
+            default -> null;
+        };
+    }
+
+    private static String toKeyString(NamespacedKey key) {
+        return key.getNamespace() + ":" + key.getKey();
     }
 
     @Override
@@ -219,35 +244,6 @@ public class PermissionSubCommand implements SubCommandInterface {
     private boolean canEdit(Player player, Island island) {
         return SkylliaAPI.getPermissionsManager()
                 .hasPermission(player, island, PERMISSION_COMMAND_PERMISSION);
-    }
-
-    private static boolean isAction(String s) {
-        if (s == null) return false;
-        String v = s.toLowerCase(Locale.ROOT);
-        return ACTIONS.stream().anyMatch(a -> a.equals(v));
-    }
-
-    private static RoleType parseRole(String input) {
-        if (input == null) return null;
-        try {
-            return RoleType.valueOf(input.toUpperCase(Locale.ROOT));
-        } catch (Exception ignored) {
-            return null;
-        }
-    }
-
-    private static Boolean parseBool(String input) {
-        if (input == null) return null;
-        String v = input.toLowerCase(Locale.ROOT);
-        return switch (v) {
-            case "true", "on", "1", "yes" -> true;
-            case "false", "off", "0", "no" -> false;
-            default -> null;
-        };
-    }
-
-    private static String toKeyString(NamespacedKey key) {
-        return key.getNamespace() + ":" + key.getKey();
     }
 
     @Override

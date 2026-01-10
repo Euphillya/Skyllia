@@ -2,7 +2,7 @@ package fr.euphyllia.skyllia.api.hooks;
 
 import org.bukkit.plugin.Plugin;
 
-public interface ServerHook  {
+public interface ServerHook {
 
     String name();
 

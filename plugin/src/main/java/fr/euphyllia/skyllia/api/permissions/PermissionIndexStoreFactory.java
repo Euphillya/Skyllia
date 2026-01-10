@@ -8,11 +8,12 @@ import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 
 public final class PermissionIndexStoreFactory {
 
-    private PermissionIndexStoreFactory() {}
+    private PermissionIndexStoreFactory() {
+    }
 
     public static PermissionIndexStore create(DatabaseLoader loader) {
         if (ConfigLoader.database.getPostgreConfig() != null) {
-            return new PostgreSQLPermissionIndexStore(loader,  "public");
+            return new PostgreSQLPermissionIndexStore(loader, "public");
         }
         if (ConfigLoader.database.getMariaDBConfig() != null) {
             return new MariaDBPermissionIndexStore(loader);

@@ -44,18 +44,23 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
+    public @Nullable Island getIslandByOwner(UUID ownerId) {
+        return this.interneAPI.getSkyblockManager().getIslandByOwner(ownerId);
+    }
+
+    @Override
     public @Nullable Island getIslandByPosition(Position position) {
-        return null;
+        return this.interneAPI.getSkyblockManager().getIslandByPosition(position);
     }
 
     @Override
     public @Nullable Island getIslandByChunk(Chunk chunk) {
-        return null;
+        return this.interneAPI.getSkyblockManager().getIslandByChunk(chunk);
     }
 
     @Override
     public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
-        return null;
+        return this.interneAPI.getSkyblockManager().getIslandByChunk(chunkX, chunkZ);
     }
 
     /**
