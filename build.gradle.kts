@@ -188,7 +188,6 @@ tasks.modrinth {
     dependsOn(
         "shadowJar",
         ":addons:SkylliaOre:shadowJar",
-        ":addons:PapiSkyllia:shadowJar",
         ":addons:InsightsSkyllia:shadowJar",
         ":addons:SkylliaChat:shadowJar",
         ":addons:SkylliaBank:shadowJar",
