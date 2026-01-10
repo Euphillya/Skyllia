@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,9 +31,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class SkyblockManager {
 
     private static final Logger LOGGER = LogManager.getLogger(SkyblockManager.class);
+
+    private static final int BLOCKS_PER_REGION = 512;
+    private static final int REGION_HALF_SIZE = 256;
+
     private final Skyllia plugin;
     private final SkyblockCache cache;
-    private final ConcurrentHashMap<Long, UUID> islandByPosition = new ConcurrentHashMap<>();
+
+    private final ConcurrentHashMap<Long, UUID> islandByRegion = new ConcurrentHashMap<>();
+
+    private final ConcurrentHashMap<UUID, Set<Long>> regionsByIsland = new ConcurrentHashMap<>();
 
     public SkyblockManager(Skyllia plugin, SkyblockCache cache) {
         this.plugin = plugin;
@@ -41,6 +49,64 @@ public class SkyblockManager {
 
     private static long pack(int x, int z) {
         return (((long) x) << 32) ^ (z & 0xffffffffL);
+    }
+
+    private static int chunkToRegion(int chunk) {
+        return chunk >> 5;
+    }
+
+    private static int blockToRegion(int block) {
+        return block >> 9;
+    }
+
+    private static int regionCenterBlock(int region) {
+        return (region << 9) + REGION_HALF_SIZE;
+    }
+
+    private void unindexIsland(UUID islandId) {
+        Set<Long> keys = regionsByIsland.remove(islandId);
+        if (keys != null) {
+            for (long k : keys) {
+                islandByRegion.remove(k, islandId);
+            }
+        }
+    }
+
+    private void reindexIslandCoverage(Island island) {
+        Position root = island.getPosition();
+        if (root == null) return;
+
+        int rootRx = root.x();
+        int rootRz = root.z();
+
+        int centerX = regionCenterBlock(rootRx);
+        int centerZ = regionCenterBlock(rootRz);
+
+        int radiusBlocks = (int) (island.getSize() / 2.0);
+
+        int minRx = blockToRegion(centerX - radiusBlocks);
+        int maxRx = blockToRegion(centerX + radiusBlocks);
+        int minRz = blockToRegion(centerZ - radiusBlocks);
+        int maxRz = blockToRegion(centerZ + radiusBlocks);
+
+        UUID id = island.getId();
+
+        unindexIsland(id);
+
+        Set<Long> now = ConcurrentHashMap.newKeySet();
+        for (int rx = minRx; rx <= maxRx; rx++) {
+            for (int rz = minRz; rz <= maxRz; rz++) {
+                long k = pack(rx, rz);
+                islandByRegion.put(k, id);
+                now.add(k);
+            }
+        }
+        regionsByIsland.put(id, now);
+    }
+
+    private void cacheIslandAndIndex(Island island) {
+        cache.putIsland(island);
+        reindexIslandCoverage(island);
     }
 
     /**
@@ -87,7 +153,8 @@ public class SkyblockManager {
                         permQuery.saveRole(event.getIslandId(), entry.getKey(), entry.getValue());
                     }
                 }
-                cache.invalidateIsland(event.getIslandId());
+
+                invalidateIsland(event.getIslandId());
                 return true;
             } else {
                 LOGGER.fatal("Exception while creating a new island asynchronously");
@@ -97,6 +164,11 @@ public class SkyblockManager {
             LOGGER.fatal("Exception before starting async creation", e);
             return false;
         }
+    }
+
+    public void invalidateIsland(UUID islandId) {
+        cache.invalidateIsland(islandId);
+        unindexIsland(islandId);
     }
 
     public @Nullable Players getOwnerByIslandId(UUID islandId) {
@@ -120,8 +192,7 @@ public class SkyblockManager {
 
         Island island = plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByIslandId(islandId);
         if (island != null) {
-            cache.putIsland(island);
-            indexPositionIfPresent(island);
+            cacheIslandAndIndex(island);
         }
         return island;
     }
@@ -140,7 +211,7 @@ public class SkyblockManager {
     public Boolean disableIsland(Island island, boolean disabled) {
         boolean ok = plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().updateDisable(island, disabled);
         if (ok) {
-            cache.invalidateIsland(island.getId());
+            invalidateIsland(island.getId());
         }
         return ok;
     }
@@ -204,11 +275,13 @@ public class SkyblockManager {
         if (position == null) return null;
 
         long key = pack(position.x(), position.z());
+        UUID islandId = islandByRegion.get(key);
 
-        UUID islandId = islandByPosition.get(key);
         if (islandId != null) {
             Island cached = cache.getIsland(islandId);
-            if (cached != null) return cached;
+            if (cached != null) {
+                return cached;
+            }
 
             Island fromDbById = plugin.getInterneAPI()
                     .getIslandQuery()
@@ -216,11 +289,11 @@ public class SkyblockManager {
                     .getIslandByIslandId(islandId);
 
             if (fromDbById != null) {
-                cache.putIsland(fromDbById);
-                indexPositionIfPresent(fromDbById);
+                cacheIslandAndIndex(fromDbById);
                 return fromDbById;
             } else {
-                islandByPosition.remove(key, islandId);
+                // index stale
+                islandByRegion.remove(key, islandId);
             }
         }
 
@@ -229,11 +302,15 @@ public class SkyblockManager {
                 .getIslandDataQuery()
                 .getIslandByPosition(position);
 
-        if (island != null) {
-            cache.putIsland(island);
-            indexPositionIfPresent(island);
-        }
+        if (island != null) cacheIslandAndIndex(island);
         return island;
+    }
+
+    private int regionRadiusFromConfig() {
+        int d = ConfigLoader.general.getRegionDistance();
+        if (d <= 0) return 1;
+        int maxRadiusBlocks = d / 2;
+        return Math.max(1, (int) Math.ceil(maxRadiusBlocks / 512.0));
     }
 
     public @Nullable Island getIslandByChunk(Chunk chunk) {
@@ -242,8 +319,9 @@ public class SkyblockManager {
     }
 
     public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
-        Position pos = new Position(chunkX, chunkZ);
-        return getIslandByPosition(pos);
+        int rx = chunkToRegion(chunkX);
+        int rz = chunkToRegion(chunkZ);
+        return getIslandByPosition(new Position(rx, rz));
     }
 
     /**
@@ -261,9 +339,8 @@ public class SkyblockManager {
 
         Island island = plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByOwnerId(playerId);
         if (island != null) {
-            cache.putIsland(island);
             cache.putIslandIdByPlayer(playerId, island.getId());
-            indexPositionIfPresent(island);
+            cacheIslandAndIndex(island);
         }
         return island;
     }
@@ -283,9 +360,8 @@ public class SkyblockManager {
 
         Island island = plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByPlayerId(playerId);
         if (island != null) {
-            cache.putIsland(island);
             cache.putIslandIdByPlayer(playerId, island.getId());
-            indexPositionIfPresent(island);
+            cacheIslandAndIndex(island);
         }
         return island;
     }
@@ -514,10 +590,14 @@ public class SkyblockManager {
      */
     public Boolean setSizeIsland(Island island, double newValue) {
         boolean ok = plugin.getInterneAPI().getIslandQuery().getIslandUpdateQuery().setSizeIsland(island, newValue);
-        if (ok) {
-            cache.invalidateState(island.getId());
-        }
-        return ok;
+        if (!ok) return false;
+        cache.invalidateState(island.getId());
+
+        Island reloaded = plugin.getInterneAPI().getIslandQuery().getIslandDataQuery().getIslandByIslandId(island.getId());
+        if (reloaded != null) cacheIslandAndIndex(reloaded);
+        else invalidateIsland(island.getId());
+
+        return true;
     }
 
     /**
@@ -546,12 +626,6 @@ public class SkyblockManager {
 
         cache.putState(island.getId(), new SkyblockCache.IslandStateSnapshot(disabled, priv, locked, max, size));
         return locked;
-    }
-
-    private void indexPositionIfPresent(Island island) {
-        Position pos = island.getPosition();
-        if (pos == null) return;
-        islandByPosition.put(pack(pos.x(), pos.z()), island.getId());
     }
 
 }
