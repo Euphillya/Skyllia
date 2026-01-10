@@ -142,7 +142,6 @@ modrinth {
     additionalFiles.set(
         listOf(
             project(":addons:SkylliaOre").tasks.named("shadowJar"),
-//            project(":addons:PapiSkyllia").tasks.named("shadowJar"),
             project(":addons:InsightsSkyllia").tasks.named("shadowJar"),
             project(":addons:SkylliaChat").tasks.named("shadowJar"),
             project(":addons:SkylliaBank").tasks.named("shadowJar"),
@@ -174,7 +173,15 @@ modrinth {
 
     loaders.addAll("folia", "paper", "purpur")
 
-    versionType.set("release")
+    versionType.set("beta")
+
+    dependencies {
+        optional.version("essentialsx")
+        optional.version("placeholderapi")
+        optional.version("essentialsx-spawn")
+        optional.version("worldedit")
+        optional.version("fastasyncworldedit")
+    }
 }
 
 tasks.modrinth {

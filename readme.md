@@ -84,9 +84,9 @@ the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-
 
 |                   Software                    |    Version     |
 |:---------------------------------------------:|:--------------:|
-| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.10 |
-|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.10 |
-|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.10  |
+| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.11 |
+|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.11 |
+|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.11  |
 
 ## Island Generation
 
@@ -96,7 +96,6 @@ Each island is generated in a single region file, with configurable region dista
 
 - [SkylliaOre](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaOre) by Euphyllia (Ore Generator)
 - [Insight Skyllia](https://github.com/Euphillya/Skyllia/tree/dev/addons/InsightsSkyllia) by Euphyllia
-- [PAPI Skyllia](https://github.com/Euphillya/Skyllia/tree/dev/addons/PapiSkyllia) by Euphyllia
 - [SkylliaChat](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaChat) by Euphyllia (Chat Integration)
 - [SkylliaBank](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaBank) by Euphyllia (Island Bank System)
 - [SkylliaChallenge](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaChallenge) by Euphyllia (Challenges
