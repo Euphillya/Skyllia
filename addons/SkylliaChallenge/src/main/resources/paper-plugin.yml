@@ -1,7 +1,7 @@
 name: SkylliaChallenge
 main: fr.euphyllia.skylliachallenge.SkylliaChallenge
 loader: fr.euphyllia.skylliachallenge.SkylliaChallengeLoader
-version: '1.0'
+version: ${version}
 api-version: 1.20.1
 folia-supported: true
 

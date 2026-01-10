@@ -36,7 +36,7 @@ public class KillRequirementListener implements Listener {
         final int chunkZ = location.getBlockZ() >> 4;
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(uuid);
+            Island playerIsland = SkylliaAPI.getIslandByPlayerId(uuid);
             if (playerIsland == null) return;
 
             // Si activé en config, on vérifie que le joueur est bien sur SON île

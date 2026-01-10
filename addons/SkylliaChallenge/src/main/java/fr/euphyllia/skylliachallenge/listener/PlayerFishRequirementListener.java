@@ -42,7 +42,7 @@ public class PlayerFishRequirementListener implements Listener {
         final UUID uuid = player.getUniqueId();
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(uuid);
+            Island playerIsland = SkylliaAPI.getIslandByPlayerId(uuid);
             if (playerIsland == null) return;
 
             // Vérif optionnelle selon la config

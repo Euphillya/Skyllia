@@ -20,7 +20,7 @@ public record ChallengeCommand(SkylliaChallenge plugin) implements SubCommandInt
             ConfigLoader.language.sendMessage(sender, "addons.challenge.player.player-only");
             return true;
         }
-        Island island = SkylliaAPI.getCacheIslandByPlayerId(p.getUniqueId());
+        Island island = SkylliaAPI.getIslandByPlayerId(p.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(sender, "addons.challenge.player.no-island");
             return true;

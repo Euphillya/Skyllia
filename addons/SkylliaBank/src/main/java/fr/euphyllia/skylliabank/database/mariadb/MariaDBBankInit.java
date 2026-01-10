@@ -24,7 +24,9 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
     private static MariaDBBankGenerator mariaDbBankGenerator;
 
     public MariaDBBankInit() {
-        initializeDatabase();
+        MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
+        database = new MariaDBLoader(mariaDB);
+        mariaDbBankGenerator = new MariaDBBankGenerator(database);
     }
 
     public static DatabaseLoader getPool() {
@@ -33,12 +35,6 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
 
     public static MariaDBBankGenerator getMariaDbBankGenerator() {
         return mariaDbBankGenerator;
-    }
-
-    private void initializeDatabase() {
-        MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
-        database = new MariaDBLoader(mariaDB);
-        mariaDbBankGenerator = new MariaDBBankGenerator(database);
     }
 
     @Override

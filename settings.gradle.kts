@@ -18,10 +18,10 @@ include("nms:v1_21_R7")
 // Addons
 include("addons:SkylliaOre")
 //include("addons:PapiSkyllia")
-//include("addons:InsightsSkyllia")
+include("addons:InsightsSkyllia")
 include("addons:SkylliaChat")
 include("addons:SkylliaBank")
-//include("addons:SkylliaChallenge")
+include("addons:SkylliaChallenge")
 // Hook
 include("hook:worldedit")
 include("hook:fastasyncworldedit")

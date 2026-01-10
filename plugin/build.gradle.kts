@@ -3,7 +3,6 @@ plugins {
     id("maven-publish")
 }
 group = "fr.euphyllia.skyllia"
-version = "2.3"
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT") { isTransitive = false }

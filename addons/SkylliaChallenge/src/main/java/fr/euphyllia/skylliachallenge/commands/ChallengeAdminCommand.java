@@ -1,6 +1,5 @@
 package fr.euphyllia.skylliachallenge.commands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
@@ -15,7 +14,7 @@ public record ChallengeAdminCommand(SkylliaChallenge plugin) implements SubComma
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin0, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!(sender.hasPermission(permission()) || PermissionImp.hasPermission(sender, permission()))) {
+        if (!(sender.hasPermission(permission()) || sender.hasPermission(permission()))) {
             ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.no-permission");
             return true;
         }

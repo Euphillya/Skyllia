@@ -2,13 +2,16 @@ package fr.euphyllia.skylliachallenge;
 
 import dev.triumphteam.gui.TriumphGui;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skylliachallenge.api.database.ProgressBackend;
 import fr.euphyllia.skylliachallenge.commands.ChallengeAdminCommand;
 import fr.euphyllia.skylliachallenge.commands.ChallengeCommand;
+import fr.euphyllia.skylliachallenge.database.mariadb.MariaDBChallengeInit;
+import fr.euphyllia.skylliachallenge.database.postgre.PostgresChallengeInit;
+import fr.euphyllia.skylliachallenge.database.sqlite.SQLiteChallengeInit;
 import fr.euphyllia.skylliachallenge.gui.GuiSettings;
 import fr.euphyllia.skylliachallenge.listener.*;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
-import fr.euphyllia.skylliachallenge.storage.InitMariaDB;
-import fr.euphyllia.skylliachallenge.storage.InitSQLite;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
@@ -28,9 +31,14 @@ public class SkylliaChallenge extends JavaPlugin {
     private ChallengeManagers challengeManager;
     private GuiSettings guiSettings;
     private boolean mustBeOnPlayerIsland;
+    private ProgressBackend progressBackend;
 
     public static SkylliaChallenge getInstance() {
         return instance;
+    }
+
+    public static ProgressBackend backend() {
+        return getInstance().getProgressBackend();
     }
 
     public ChallengeManagers getChallengeManager() {
@@ -72,16 +80,38 @@ public class SkylliaChallenge extends JavaPlugin {
         getDataFolder().mkdirs();
         getDataFolder().toPath().resolve("challenges").toFile().mkdirs();
 
-        boolean usingMaria;
-        try {
-            usingMaria = InitMariaDB.initIfConfigured();
-            if (!usingMaria) InitSQLite.initIfConfigured();
-        } catch (Exception exception) {
-            log.error("Error during database initialization: {}", exception.getMessage(), exception);
-            Bukkit.getPluginManager().disablePlugin(this);
+        if (ConfigLoader.database.getMariaDBConfig() != null) {
+            MariaDBChallengeInit dbInit = new MariaDBChallengeInit();
+            if (!dbInit.init()) {
+                getLogger().severe("Unable to initialize the MariaDB challenge database! The plugin will stop.");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+            progressBackend = MariaDBChallengeInit.getProgressBackend();
+            logs.add(gray + " » " + white + "Database: " + violet + "MariaDB");
+        } else if (ConfigLoader.database.getPostgreConfig() != null) {
+            PostgresChallengeInit dbInit = new PostgresChallengeInit();
+            if (!dbInit.init()) {
+                getLogger().severe("Unable to initialize the PostgreSQL challenge database! The plugin will stop.");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+            progressBackend = PostgresChallengeInit.getProgressBackend();
+            logs.add(gray + " » " + white + "Database: " + violet + "PostgreSQL");
+        } else if (ConfigLoader.database.getSqLiteConfig() != null) {
+            SQLiteChallengeInit dbInit = new SQLiteChallengeInit();
+            if (!dbInit.init()) {
+                getLogger().severe("Unable to initialize the SQLite challenge database! The plugin will stop.");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+            progressBackend = SQLiteChallengeInit.getProgressBackend();
+            logs.add(gray + " » " + white + "Database: " + violet + "SQLite");
+        } else {
+            getLogger().severe("No database configuration found! The plugin will stop.");
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        logs.add(gray + " » " + white + "Database: " + (usingMaria ? violet + "MariaDB" : violet + "SQLite"));
 
         // ─────────────────────────────────────────────
         this.guiSettings = GuiSettings.load(getConfig());
@@ -114,7 +144,6 @@ public class SkylliaChallenge extends JavaPlugin {
         pm.registerEvents(new PlayerFishRequirementListener(), this);
     }
 
-
     @Override
     public void onDisable() {
         Bukkit.getAsyncScheduler().cancelTasks(this);
@@ -132,4 +161,9 @@ public class SkylliaChallenge extends JavaPlugin {
     public boolean isMustBeOnPlayerIsland() {
         return mustBeOnPlayerIsland;
     }
+
+    public ProgressBackend getProgressBackend() {
+        return progressBackend;
+    }
+
 }
