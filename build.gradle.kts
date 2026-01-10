@@ -175,13 +175,13 @@ modrinth {
 
     versionType.set("beta")
 
-    dependencies {
-        optional.version("essentialsx")
-        optional.version("placeholderapi")
-        optional.version("essentialsx-spawn")
-        optional.version("worldedit")
-        optional.version("fastasyncworldedit")
-    }
+//    dependencies {
+//        optional.version("essentialsx")
+//        optional.version("placeholderapi")
+//        optional.version("essentialsx-spawn")
+//        optional.version("worldedit")
+//        optional.version("fastasyncworldedit")
+//    }
 }
 
 tasks.modrinth {
