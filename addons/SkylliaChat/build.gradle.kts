@@ -2,8 +2,7 @@ plugins {
     id("java")
 }
 
-group = "fr.euphyllia.skyllia";
-version = "2.0";
+group = "fr.euphyllia.skylliachat";
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")

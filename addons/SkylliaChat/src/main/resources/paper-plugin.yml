@@ -1,5 +1,5 @@
 name: SkylliaChat
-version: '1.1'
+version: ${version}
 main: fr.euphyllia.skylliachat.SkylliaChat
 api-version: 1.20.1
 folia-supported: true

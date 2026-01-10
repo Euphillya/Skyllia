@@ -1,12 +1,12 @@
 package fr.euphyllia.skylliabank.commands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliabank.EconomyManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
+import fr.euphyllia.skylliabank.api.BankAccount;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.logging.log4j.LogManager;
@@ -17,13 +17,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class BankAdminCommand implements SubCommandInterface {
@@ -52,16 +50,7 @@ public class BankAdminCommand implements SubCommandInterface {
             return;
         }
 
-        CompletableFuture<@Nullable Island> islandFuture =
-                SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
-
-
-        if (islandFuture == null) {
-            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
-            return;
-        }
-
-        Island island = islandFuture.join();
+        Island island = SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
         if (island == null) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
@@ -70,24 +59,18 @@ public class BankAdminCommand implements SubCommandInterface {
 
         UUID islandId = island.getId();
 
-        SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
-            if (bankAccount != null) {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.island-balance", Map.of(
-                        "{player_name}", offlinePlayer.getName(),
-                        "{amount}", economy.format(bankAccount.balance())
-                ));
-            } else {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.island-error-balance", Map.of(
-                        "{player_name}", offlinePlayer.getName()
-                ));
-            }
-        }).exceptionally(ex -> {
-            log.error("Error retrieving balance for {}: {}", offlinePlayer.getName(), ex.getMessage());
+        BankAccount bankAccount = SkylliaBank.getBankManager().getBankAccount(islandId);
+
+        if (bankAccount != null) {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.island-balance", Map.of(
+                    "{player_name}", offlinePlayer.getName(),
+                    "{amount}", economy.format(bankAccount.balance())
+            ));
+        } else {
             ConfigLoader.language.sendMessage(sender, "addons.bank.admin.island-error-balance", Map.of(
                     "{player_name}", offlinePlayer.getName()
             ));
-            return null;
-        });
+        }
     }
 
     private void handleDeposit(CommandSender sender, String[] args) {
@@ -104,16 +87,8 @@ public class BankAdminCommand implements SubCommandInterface {
             return;
         }
 
-        CompletableFuture<@Nullable Island> islandFuture =
-                SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
+        Island island = SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
-
-        if (islandFuture == null) {
-            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
-            return;
-        }
-
-        Island island = islandFuture.join();
 
         if (island == null) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
@@ -133,22 +108,18 @@ public class BankAdminCommand implements SubCommandInterface {
         }
 
         UUID islandId = island.getId();
-        SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(success -> {
-            if (success) {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.deposit-success", Map.of(
-                        "%amount%", economy.format(amount),
-                        "{player_name}", offlinePlayer.getName()
-                ));
-            } else {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.deposit-error", Map.of(
-                        "{player_name}", offlinePlayer.getName()
-                ));
-            }
-        }).exceptionally(ex -> {
-            log.error("Error depositing for {}: {}", offlinePlayer.getName(), ex.getMessage());
-            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
-            return null;
-        });
+        boolean success = SkylliaBank.getBankManager().deposit(islandId, amount);
+
+        if (success) {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.deposit-success", Map.of(
+                    "%amount%", economy.format(amount),
+                    "{player_name}", offlinePlayer.getName()
+            ));
+        } else {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.deposit-error", Map.of(
+                    "{player_name}", offlinePlayer.getName()
+            ));
+        }
     }
 
     private void handleWithdraw(CommandSender sender, String[] args) {
@@ -165,15 +136,8 @@ public class BankAdminCommand implements SubCommandInterface {
             return;
         }
 
-        CompletableFuture<@Nullable Island> islandFuture =
-                SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
+        Island island = SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
-        if (islandFuture == null) {
-            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
-            return;
-        }
-
-        Island island = islandFuture.join();
 
         if (island == null) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
@@ -193,22 +157,18 @@ public class BankAdminCommand implements SubCommandInterface {
         }
 
         UUID islandId = island.getId();
-        SkylliaBank.getBankManager().withdraw(islandId, amount).thenAcceptAsync(success -> {
-            if (success) {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.success-withdraw", Map.of(
-                        "%amount%", economy.format(amount),
-                        "{player_name}", offlinePlayer.getName()
-                ));
-            } else {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.error-withdraw", Map.of(
-                        "{player_name}", offlinePlayer.getName()
-                ));
-            }
-        }).exceptionally(ex -> {
-            log.error("Error withdrawing for {}: {}", offlinePlayer.getName(), ex.getMessage());
-            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
-            return null;
-        });
+        boolean success = SkylliaBank.getBankManager().withdraw(islandId, amount);
+
+        if (success) {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.success-withdraw", Map.of(
+                    "%amount%", economy.format(amount),
+                    "{player_name}", offlinePlayer.getName()
+            ));
+        } else {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.error-withdraw", Map.of(
+                    "{player_name}", offlinePlayer.getName()
+            ));
+        }
     }
 
     private void handleSetBalance(CommandSender sender, String[] args) {
@@ -225,15 +185,8 @@ public class BankAdminCommand implements SubCommandInterface {
             return;
         }
 
-        CompletableFuture<@Nullable Island> islandFuture =
-                SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
+        Island island = SkylliaAPI.getIslandByPlayerId(offlinePlayer.getUniqueId());
 
-        if (islandFuture == null) {
-            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
-            return;
-        }
-
-        Island island = islandFuture.join();
         if (island == null) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.admin.player-not-island");
             return;
@@ -252,27 +205,23 @@ public class BankAdminCommand implements SubCommandInterface {
         }
 
         UUID islandId = island.getId();
-        SkylliaBank.getBankManager().setBalance(islandId, amount).thenAcceptAsync(success -> {
-            if (success) {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.set-balance-success", Map.of(
-                        "{player_name}", offlinePlayer.getName(),
-                        "%amount%", economy.format(amount)
-                ));
-            } else {
-                ConfigLoader.language.sendMessage(sender, "addons.bank.admin.set-balance-error", Map.of(
-                        "{player_name}", offlinePlayer.getName()
-                ));
-            }
-        }).exceptionally(ex -> {
-            log.error("Error setting balance for {}: {}", offlinePlayer.getName(), ex.getMessage());
-            ConfigLoader.language.sendMessage(sender, "addons.bank.error");
-            return null;
-        });
+        boolean success = SkylliaBank.getBankManager().setBalance(islandId, amount);
+
+        if (success) {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.set-balance-success", Map.of(
+                    "{player_name}", offlinePlayer.getName(),
+                    "%amount%", economy.format(amount)
+            ));
+        } else {
+            ConfigLoader.language.sendMessage(sender, "addons.bank.admin.set-balance-error", Map.of(
+                    "{player_name}", offlinePlayer.getName()
+            ));
+        }
     }
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.bank.admin")) {
+        if (!sender.hasPermission("skyllia.bank.admin")) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.no-permissions");
             return true;
         }

@@ -10,6 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/addons" />
+            <option value="$PROJECT_DIR$/addons/SkylliaBank" />
+            <option value="$PROJECT_DIR$/addons/SkylliaChat" />
             <option value="$PROJECT_DIR$/addons/SkylliaOre" />
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/database" />
