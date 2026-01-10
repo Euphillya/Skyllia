@@ -1,24 +1,18 @@
-name: Build Skyllia (Beta)
+name: Build Skyllia
 on:
   push:
     branches:
-      - ver/3.x
+      - ver/2.x
 
 permissions: write-all
 
-env:
-  project_id_b: Skyllia
-  commit_id: ${{ github.sha }}
-  commit_msg: ${{ github.event.head_commit.message }}
-  MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-
 jobs:
-  build:
+  skyllia-dev:
     runs-on: ubuntu-22.04
     if: "!contains(github.event.commits[0].message, '[ci-skip]')"
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Git Repository
+        uses: actions/checkout@v4
 
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -33,7 +27,7 @@ jobs:
       - name: Permission gradlew
         run: chmod +x gradlew
 
-      - name: Build
+      - name: Build Skyllia jar
         run: ./gradlew shadowJar
 
       - name: Collect jars
@@ -43,27 +37,38 @@ jobs:
           cp addons/*/build/libs/*.jar release/ || true
           rm -f release/addons-*.jar
 
-      - name: Upload artifacts
+      - name: Upload Snapshot jar
         uses: actions/upload-artifact@v4
         with:
-          name: Skyllia-Beta
+          name: Skyllia-Build
           path: release/*.jar
 
-      - name: Publish to Modrinth
+      - name: Publish to Modrinth (Gradle Minotaur)
+        if: github.event_name != 'pull_request'
         run: ./gradlew modrinth
 
-      - name: Create GitHub Pre-Release
+      - name: Create Release
+        if: github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          tag: build-${{ github.ref_name }}-${{ github.run_number }}
-          name: Skyllia - ${{ github.ref_name }} - ${{ github.run_number }}
+          tag: ${{ env.tag }}
+          name: ${{ env.project_id_b }} - ${{ github.run_number }}
           body: |
-            This prerelease is automatically compiled by GitHub Actions
+            This release is automatically compiled by GitHub Actions
             ### Commit Message
             ${{ env.commit_msg }}
           artifacts: release/*.jar
           generateReleaseNotes: true
-          prerelease: true
-          makeLatest: false
+          prerelease: ${{ env.pre }}
+          makeLatest: ${{ env.make_latest }}
           token: ${{ secrets.GITHUB_TOKEN }}
           replacesArtifacts: false
+
+env:
+  tag: build-ver3.x-${{ github.ref_name }}-${{ github.run_number }}
+  project_id_b: Skyllia
+  commit_id: ${{ github.sha }}
+  commit_msg: ${{ github.event.head_commit.message }}
+  MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+  pre: true
+  make_latest: false
