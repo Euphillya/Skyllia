@@ -2,8 +2,11 @@ package fr.euphyllia.skyllia.cache;
 
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.ExpiringValue;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -19,6 +22,8 @@ public class SkyblockCache {
     private static final long TTL_WARPS_SEC = 5;
     private static final long TTL_ISLAND_SEC = 60;
     private static final long TTL_PLAYER_LINK_SEC = 10;
+    private static final long TTL_ROLE_SEC = 5;
+    private static final long TTL_NAME_ROLE_SEC = 5;
 
     private final ConcurrentHashMap<UUID, ExpiringValue<Island>> islandById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, ExpiringValue<UUID>> islandIdByPlayer = new ConcurrentHashMap<>();
@@ -26,6 +31,8 @@ public class SkyblockCache {
     private final ConcurrentHashMap<UUID, ExpiringValue<Players>> ownerByIsland = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, ExpiringValue<List<Players>>> membersByIsland = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, ExpiringValue<List<Players>>> bannedByIsland = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<MemberKey, ExpiringValue<RoleType>> roleByMember = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<MemberNameKey, ExpiringValue<RoleType>> roleByMemberName = new ConcurrentHashMap<>();
 
     private final ConcurrentHashMap<UUID, ExpiringValue<List<WarpIsland>>> warpsByIsland = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<WarpKey, ExpiringValue<WarpIsland>> warpByKey = new ConcurrentHashMap<>();
@@ -68,6 +75,7 @@ public class SkyblockCache {
 
     public void putOwner(UUID islandId, Players owner) {
         put(ownerByIsland, islandId, owner, TTL_MEMBERS_SEC);
+        putRole(islandId, owner.getMojangId(), RoleType.OWNER);
     }
 
     public @Nullable List<Players> getMembers(UUID islandId) {
@@ -75,15 +83,42 @@ public class SkyblockCache {
     }
 
     public void putMembers(UUID islandId, List<Players> members) {
-        put(membersByIsland, islandId, List.copyOf(members), TTL_MEMBERS_SEC);
+        List<Players> copy = List.copyOf(members);
+        put(membersByIsland, islandId, copy, TTL_MEMBERS_SEC);
+        for (Players p : copy) {
+            putRole(islandId, p.getMojangId(), p.getRoleType());
+            if (p.getLastKnowName() != null) {
+                putRoleByName(islandId, p.getLastKnowName(), p.getRoleType());
+            }
+        }
     }
 
     public @Nullable List<Players> getBanned(UUID islandId) {
         return getIfValid(bannedByIsland, islandId);
     }
 
-    public void putBanned(UUID islandId, List<Players> members) {
-        put(bannedByIsland, islandId, List.copyOf(members), TTL_MEMBERS_SEC);
+    public void putBanned(UUID islandId, List<Players> banned) {
+        List<Players> copy = List.copyOf(banned);
+        put(bannedByIsland, islandId, copy, TTL_MEMBERS_SEC);
+        for (Players p : copy) {
+            putRole(islandId, p.getMojangId(), RoleType.BAN);
+        }
+    }
+
+    public @Nullable RoleType getRole(UUID islandId, UUID playerId) {
+        return getIfValid(roleByMember, new MemberKey(islandId, playerId));
+    }
+
+    public void putRole(UUID islandId, UUID playerId, RoleType role) {
+        put(roleByMember, new MemberKey(islandId, playerId), role, TTL_ROLE_SEC);
+    }
+
+    public @Nullable RoleType getRoleByName(UUID islandId, String nameLower) {
+        return getIfValid(roleByMemberName, new MemberNameKey(islandId, nameLower));
+    }
+
+    public void putRoleByName(UUID islandId, String nameLower, RoleType role) {
+        put(roleByMemberName, new MemberNameKey(islandId, nameLower), role, TTL_NAME_ROLE_SEC);
     }
 
     public @Nullable List<WarpIsland> getWarps(UUID islandId) {
@@ -128,6 +163,8 @@ public class SkyblockCache {
         ownerByIsland.remove(islandId);
         membersByIsland.remove(islandId);
         bannedByIsland.remove(islandId);
+        roleByMember.keySet().removeIf(k -> k.islandId.equals(islandId));
+        roleByMemberName.keySet().removeIf(k -> k.islandId().equals(islandId));
     }
 
     public void invalidateWarps(UUID islandId) {
@@ -143,6 +180,9 @@ public class SkyblockCache {
         stateByIsland.remove(islandId);
     }
 
+    private record MemberKey(UUID islandId, UUID playerId) {}
+
+    private record MemberNameKey(UUID islandId, String nameLower) {}
 
     private record WarpKey(UUID islandId, String nameLower) {
     }

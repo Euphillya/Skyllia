@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.cache.SkyblockCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -18,6 +19,7 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -372,7 +374,6 @@ public class SkyblockManager {
      * @param islandId       The UUID of the island.
      * @param name           The name of the warp.
      * @param playerLocation The warp location.
-     * @return A {@link CompletableFuture} with {@code true} if successfully added, {@code false} otherwise.
      */
     public Boolean addWarpsIsland(UUID islandId, String name, Location playerLocation) {
         boolean ok = plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().updateWarp(islandId, name, playerLocation);
@@ -387,7 +388,6 @@ public class SkyblockManager {
      *
      * @param islandId The UUID of the island.
      * @param name     The warp name.
-     * @return A {@link CompletableFuture} with {@code true} if deleted, {@code false} otherwise.
      */
     public Boolean delWarpsIsland(UUID islandId, String name) {
         boolean ok = plugin.getInterneAPI().getIslandQuery().getIslandWarpQuery().deleteWarp(islandId, name);
@@ -402,7 +402,6 @@ public class SkyblockManager {
      *
      * @param islandId The UUID of the island.
      * @param name     The warp name.
-     * @return A {@link CompletableFuture} with the {@link WarpIsland}, or {@code null} if not found.
      */
     public @Nullable WarpIsland getWarpIslandByName(UUID islandId, String name) {
         WarpIsland cached = cache.getWarp(islandId, name);
@@ -417,7 +416,6 @@ public class SkyblockManager {
      * Retrieves all warps for an island.
      *
      * @param islandId The UUID of the island.
-     * @return A {@link CompletableFuture} containing a list of {@link WarpIsland} objects.
      */
     public @Nullable List<WarpIsland> getWarpsIsland(UUID islandId) {
         List<WarpIsland> cached = cache.getWarps(islandId);
@@ -433,7 +431,6 @@ public class SkyblockManager {
      *
      * @param island  The {@link Island}.
      * @param players The {@link Players} object representing the member.
-     * @return A {@link CompletableFuture} with {@code true} if successfully updated, {@code false} otherwise.
      */
     public Boolean updateMember(Island island, Players players) {
         boolean ok = plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().updateMember(island, players);
@@ -449,7 +446,6 @@ public class SkyblockManager {
      * Retrieves all members on the specified island.
      *
      * @param island The {@link Island}.
-     * @return A {@link CompletableFuture} with a list of members in a {@link CopyOnWriteArrayList}.
      */
     public List<Players> getMembersInIsland(Island island) {
         List<Players> cached = cache.getMembers(island.getId());
@@ -474,10 +470,42 @@ public class SkyblockManager {
      *
      * @param island   The {@link Island}.
      * @param playerId The player's UUID.
-     * @return A {@link CompletableFuture} with the member {@link Players} object.
      */
     public Players getMemberInIsland(Island island, UUID playerId) {
-        return plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerId);
+        UUID islandId = island.getId();
+        var cachedRole = cache.getRole(islandId, playerId);
+        if (cachedRole != null) {
+            if (cachedRole == RoleType.VISITOR) return null;
+            List<Players> members = cache.getMembers(islandId);
+            if (members != null) {
+                for (Players p : members) {
+                    if (p.getMojangId().equals(playerId)) return p;
+                }
+            }
+            return new Players(playerId, "", islandId, cachedRole);
+        }
+
+        List<Players> members = cache.getMembers(islandId);
+        if (members != null) {
+            for (Players p : members) {
+                if (p.getMojangId().equals(playerId)) {
+                    cache.putRole(islandId, playerId, p.getRoleType());
+                    return p;
+                }
+            }
+            cache.putRole(islandId, playerId, RoleType.VISITOR);
+            return null;
+        }
+        Players fromDb = plugin.getInterneAPI()
+                .getIslandQuery()
+                .getIslandMemberQuery()
+                .getPlayersIsland(island, playerId);
+        if (fromDb != null) {
+            cache.putRole(islandId, playerId, fromDb.getRoleType());
+            return fromDb;
+        }
+        cache.putRole(islandId, playerId, RoleType.VISITOR);
+        return null;
     }
 
     /**
@@ -485,10 +513,56 @@ public class SkyblockManager {
      *
      * @param island     The {@link Island}.
      * @param playerName The player's name.
-     * @return A {@link CompletableFuture} with the member {@link Players} object or {@code null} if not found.
      */
     public @Nullable Players getMemberInIsland(Island island, String playerName) {
-        return plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().getPlayersIsland(island, playerName);
+        if (playerName == null || playerName.isBlank()) return null;
+
+        UUID islandId = island.getId();
+        RoleType cached = cache.getRoleByName(islandId, playerName);
+        if (cached != null) {
+            if (cached == RoleType.VISITOR) return null;
+
+            List<Players> members = cache.getMembers(islandId);
+            if (members != null) {
+                for (Players p : members) {
+                    if (p.getLastKnowName() != null
+                            && p.getLastKnowName().equalsIgnoreCase(playerName)) {
+                        return p;
+                    }
+                }
+            }
+
+            return new Players(null, playerName, islandId, cached);
+        }
+
+        List<Players> members = cache.getMembers(islandId);
+        if (members != null) {
+            for (Players p : members) {
+                if (p.getLastKnowName() != null && p.getLastKnowName().equalsIgnoreCase(playerName)) {
+                    cache.putRole(islandId, p.getMojangId(), p.getRoleType());
+                    cache.putRoleByName(islandId, playerName, p.getRoleType());
+                    return p;
+                }
+            }
+            cache.putRoleByName(islandId, playerName, RoleType.VISITOR);
+            return null;
+        }
+
+        Players fromDb = plugin.getInterneAPI()
+                .getIslandQuery()
+                .getIslandMemberQuery()
+                .getPlayersIsland(island, playerName);
+
+        if (fromDb != null) {
+            cache.putRole(islandId, fromDb.getMojangId(), fromDb.getRoleType());
+            if (fromDb.getLastKnowName() != null) {
+                cache.putRoleByName(islandId, fromDb.getLastKnowName().toLowerCase(java.util.Locale.ROOT), fromDb.getRoleType());
+            }
+            return fromDb;
+        }
+
+        cache.putRoleByName(islandId, playerName, RoleType.VISITOR);
+        return null;
     }
 
     /**
