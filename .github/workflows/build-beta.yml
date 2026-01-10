@@ -1,8 +1,11 @@
-name: Build Skyllia
+name: Build Skyllia - Beta
 on:
   push:
     branches:
-      - ver/2.x
+      - ver/3.x
+  pull_request:
+    branches:
+      - ver/3.x
 
 permissions: write-all
 
@@ -44,11 +47,11 @@ jobs:
           path: release/*.jar
 
       - name: Publish to Modrinth (Gradle Minotaur)
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' || (github.event.pull_request.number == 94 && github.event.pull_request.head.repo.full_name == github.repository)
         run: ./gradlew modrinth
 
       - name: Create Release
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' || (github.event.pull_request.number == 94 && github.event.pull_request.head.repo.full_name == github.repository)
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ env.tag }}
@@ -65,10 +68,10 @@ jobs:
           replacesArtifacts: false
 
 env:
-  tag: build-ver2.x-${{ github.ref_name }}-${{ github.run_number }}
+  tag: build-ver3.x-${{ github.ref_name }}-${{ github.run_number }}
   project_id_b: Skyllia
   commit_id: ${{ github.sha }}
   commit_msg: ${{ github.event.head_commit.message }}
   MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-  pre: false
-  make_latest: true
+  pre: true
+  make_latest: false
