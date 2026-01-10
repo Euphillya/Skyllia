@@ -5,8 +5,8 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.utils.sql.MariaDBExecute;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
 import fr.euphyllia.skylliaore.api.OreGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ public class MariaDBInit extends DatabaseInitializeQuery {
 
     private static final Logger log = LoggerFactory.getLogger(MariaDBInit.class);
     private static final String CREATE_GENERATOR = """
-            CREATE TABLE IF NOT EXISTS `%s`.`generators` (
+            CREATE TABLE IF NOT EXISTS `generators` (
             `island_id` CHAR(36) NOT NULL,
             `generator_id` VARCHAR(255) NOT NULL,
             PRIMARY KEY (`island_id`)
@@ -26,7 +26,6 @@ public class MariaDBInit extends DatabaseInitializeQuery {
 
     public MariaDBInit() {
         initializeDatabase();
-        initializeGenerator();
     }
 
     public static DatabaseLoader getPool() {
@@ -40,25 +39,27 @@ public class MariaDBInit extends DatabaseInitializeQuery {
     private void initializeDatabase() {
         MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
         database = new MariaDBLoader(mariaDB);
-    }
-
-    private void initializeGenerator() {
-        mariaDbGenerator = new MariaDBGenerator();
+        mariaDbGenerator = new MariaDBGenerator(database);
     }
 
     @Override
-    public boolean init() throws DatabaseException {
-        if (!database.loadDatabase()) {
+    public Boolean init() {
+        try {
+            if (!database.loadDatabase()) {
+                return false;
+            }
+            createGeneratorTable();
+            return true;
+        } catch (DatabaseException e) {
+            log.error("Database initialization error: {}", e.getMessage(), e);
             return false;
         }
-        createGeneratorTable();
-        return true;
     }
 
     private void createGeneratorTable() {
         try {
-            MariaDBExecute.executeQuery(database,
-                    CREATE_GENERATOR.formatted(ConfigLoader.database.getMariaDBConfig().database()));
+            SQLExecute.update(database,
+                    CREATE_GENERATOR, null);
         } catch (Exception exception) {
             log.error("Error creating generator table: {}", exception.getMessage(), exception);
         }

@@ -14,13 +14,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class OreCommands implements SubCommandInterface {
@@ -54,21 +52,18 @@ public class OreCommands implements SubCommandInterface {
             return true;
         }
 
-        SkylliaOre.getGeneratorManager().updateGenerator(island.getId(), generator.name()).thenAccept(success -> {
-            if (success) {
-                SkylliaOre.updateGeneratorCache(island.getId(), generator);
-                sender.sendMessage(Component.text("Generator changed to '" + generator.name() + "'.").color(NamedTextColor.GREEN));
-            } else {
-                sender.sendMessage(Component.text("An error occurred while changing the generator.").color(NamedTextColor.RED));
-            }
-        });
+        boolean success = SkylliaOre.getGeneratorManager().updateGenerator(island.getId(), generator.name());
+        if (success) {
+            sender.sendMessage(Component.text("Generator changed to '" + generator.name() + "'.").color(NamedTextColor.GREEN));
+        } else {
+            sender.sendMessage(Component.text("An error occurred while changing the generator.").color(NamedTextColor.RED));
+        }
 
         return true;
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        // ---------- ARG #1 : Noms de joueurs ----------
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();
 
@@ -77,10 +72,7 @@ public class OreCommands implements SubCommandInterface {
                     .filter(name -> name.toLowerCase().startsWith(partial))
                     .sorted()
                     .collect(Collectors.toList());
-        }
-
-        // ---------- ARG #2 : Liste de générateurs ----------
-        else if (args.length == 2) {
+        } else if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
             DefaultConfig config = SkylliaOre.getDefaultConfig();
             Map<String, Generator> generators = config.getGenerators();

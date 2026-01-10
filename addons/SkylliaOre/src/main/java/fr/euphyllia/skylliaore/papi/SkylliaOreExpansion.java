@@ -1,5 +1,6 @@
 package fr.euphyllia.skylliaore.papi;
 
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skylliaore.SkylliaOre;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -34,10 +35,9 @@ public class SkylliaOreExpansion extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, @NotNull String params) {
         if (player == null || !player.hasPlayedBefore()) return "";
         UUID playerId = player.getUniqueId();
-        var island = fr.euphyllia.skyllia.api.SkylliaAPI.getCacheIslandByPlayerId(playerId);
+        var island = SkylliaAPI.getIslandByPlayerId(playerId);
         if (island == null) return "";
-        var generator = SkylliaOre.getInstance().getOreGenerator().getGenIsland(island.getId())
-                .getNow(SkylliaOre.getDefaultConfig().getDefaultGenerator());
+        var generator = SkylliaOre.getCachedGenerator(island.getId());
         return switch (params.toLowerCase()) {
             case "name" -> generator.name();
             default -> null;

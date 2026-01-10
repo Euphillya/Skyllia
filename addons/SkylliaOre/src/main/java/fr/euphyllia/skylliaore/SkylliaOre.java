@@ -6,12 +6,15 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.api.OreGenerator;
+import fr.euphyllia.skylliaore.cache.OreCache;
 import fr.euphyllia.skylliaore.commands.OreCommands;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
 import fr.euphyllia.skylliaore.database.mariadb.MariaDBInit;
+import fr.euphyllia.skylliaore.database.postgresql.PostgreSQLInit;
 import fr.euphyllia.skylliaore.database.sqlite.SQLiteOreInit;
 import fr.euphyllia.skylliaore.listeners.InfoListener;
 import fr.euphyllia.skylliaore.listeners.OreEvent;
+import fr.euphyllia.skylliaore.papi.SkylliaOreExpansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -19,18 +22,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public final class SkylliaOre extends JavaPlugin {
 
     private static final Logger logger = LogManager.getLogger(SkylliaOre.class);
-    private static final ConcurrentHashMap<UUID, Generator> generatorCache = new ConcurrentHashMap<>();
-    private static DefaultConfig config;
-    private static GeneratorManager generatorManager;
+
     private static boolean oraxenLoaded = false;
     private static boolean nexoLoaded = false;
     private static SkylliaOre instance;
+    private static DefaultConfig config;
+    private static GeneratorManager generatorManager;
+    private final OreCache oreCache = new OreCache();
     private OreGenerator generator;
 
     @NotNull
@@ -55,34 +58,30 @@ public final class SkylliaOre extends JavaPlugin {
     }
 
     public static Generator getCachedGenerator(UUID islandId) {
-        return generatorCache.getOrDefault(islandId, getDefaultConfig().getDefaultGenerator());
+        return getInstance()
+                .getOreCache()
+                .getGeneratorOrDefaultAndRefresh(
+                        getInstance(),
+                        islandId,
+                        () -> getInstance().getOreGenerator().getGenIsland(islandId),
+                        getDefaultConfig().getDefaultGenerator()
+                );
     }
 
-    public static void updateGeneratorCache(UUID islandId, Generator generator) {
-        generatorCache.put(islandId, generator);
-    }
-
-    public static void reloadGeneratorCache(UUID islandId) {
-        // Recharge depuis la DB de manière asynchrone
-        getInstance().getOreGenerator().getGenIsland(islandId).thenAccept(generator ->
-                generatorCache.put(islandId, generator)
-        );
-    }
-
-    public static void clearGeneratorCache() {
-        generatorCache.clear();
+    public static void invalidateIslandCache(UUID islandId) {
+        getInstance().getOreCache().invalidateIsland(islandId);
     }
 
     private static void startPeriodicGeneratorCacheRefresh() {
-        Bukkit.getAsyncScheduler().runAtFixedRate(instance, scheduledTask -> {
-            SkylliaAPI.getAllIslandsValid().thenAccept(islands -> {
-                for (Island island : islands) {
-                    reloadGeneratorCache(island.getId());
-                }
-            }).exceptionally(e -> {
-                logger.error("Error while preloading generator cache", e);
-                return null;
-            });
+        Bukkit.getAsyncScheduler().runAtFixedRate(instance, task -> {
+            for (Island island : SkylliaAPI.getAllIslandsValid()) {
+                UUID islandId = island.getId();
+                instance.getOreCache().refreshGeneratorAsync(
+                        instance,
+                        islandId,
+                        () -> instance.getOreGenerator().getGenIsland(islandId)
+                );
+            }
         }, 1, 60, TimeUnit.SECONDS);
     }
 
@@ -104,17 +103,16 @@ public final class SkylliaOre extends JavaPlugin {
         SkylliaAPI.registerAdminCommands(new OreCommands(this), "generator");
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new fr.euphyllia.skylliaore.papi.SkylliaOreExpansion().register();
+            new SkylliaOreExpansion().register();
         }
         startPeriodicGeneratorCacheRefresh();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         Bukkit.getAsyncScheduler().cancelTasks(instance);
         Bukkit.getGlobalRegionScheduler().cancelTasks(instance);
-        clearGeneratorCache();
+        oreCache.clearAll();
     }
 
     private void initializeConfig() {
@@ -133,6 +131,14 @@ public final class SkylliaOre extends JavaPlugin {
                     return null;
                 }
                 return MariaDBInit.getMariaDbGenerator();
+            } else if (ConfigLoader.database.getPostgreConfig() != null) {
+                PostgreSQLInit dbInit = new PostgreSQLInit();
+                if (!dbInit.init()) {
+                    getLogger().severe("Unable to initialize the PostgreSQL database! The plugin will stop.");
+                    getServer().getPluginManager().disablePlugin(this);
+                    return null;
+                }
+                return PostgreSQLInit.getPostgresGenerator();
             } else if (ConfigLoader.database.getSqLiteConfig() != null) {
                 SQLiteOreInit dbInit = new SQLiteOreInit();
                 if (!dbInit.init()) {
@@ -155,5 +161,9 @@ public final class SkylliaOre extends JavaPlugin {
 
     public OreGenerator getOreGenerator() {
         return generator;
+    }
+
+    public OreCache getOreCache() {
+        return oreCache;
     }
 }
