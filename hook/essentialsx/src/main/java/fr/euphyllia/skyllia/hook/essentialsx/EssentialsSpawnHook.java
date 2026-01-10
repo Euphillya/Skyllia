@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.hook.essentialsx;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.spawn.EssentialsSpawn;
-
 import fr.euphyllia.skyllia.api.hooks.SpawnHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,6 +25,6 @@ public class EssentialsSpawnHook implements SpawnHook {
         if (essentialsSpawn.isEnabled() && essentials.isEnabled()) {
             return essentialsSpawn.getSpawn(essentials.getUser(player.getUniqueId()).getGroup());
         }
-        return  null;
+        return null;
     }
 }

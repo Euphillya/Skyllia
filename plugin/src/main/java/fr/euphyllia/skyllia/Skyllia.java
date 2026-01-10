@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.hook.HookBootstrap;
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
+import fr.euphyllia.skyllia.papi.SkylliaExpansion;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.logging.log4j.Level;
@@ -85,6 +86,10 @@ public class Skyllia extends JavaPlugin {
         new Metrics(this, 20874);
 
         ConfigLoader.permissionsV2.compileNow();
+
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new SkylliaExpansion(this).register();
+        }
     }
 
     @Override

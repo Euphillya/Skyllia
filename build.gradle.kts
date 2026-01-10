@@ -15,6 +15,7 @@ val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
 val engineHubRepo = "https://maven.enginehub.org/repo/";
 val jitpack = "https://jitpack.io"
 val mojang = "https://libraries.minecraft.net";
+var extendedclip = "https://repo.extendedclip.com/content/repositories/placeholderapi/";
 
 dependencies {
     implementation(project(":database"))
@@ -58,6 +59,7 @@ allprojects {
         maven(engineHubRepo)
         maven(mojang)
         maven(jitpack)
+        maven(extendedclip)
     }
 
     dependencies {
@@ -72,8 +74,6 @@ allprojects {
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
-        compileOnly("org.mongodb:mongodb-driver-sync:5.4.0")
-        compileOnly("org.mongodb:bson:5.4.0")
     }
 
     tasks {
