@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/database" />
             <option value="$PROJECT_DIR$/hook" />
             <option value="$PROJECT_DIR$/hook/canvas" />
+            <option value="$PROJECT_DIR$/hook/essentialsx" />
             <option value="$PROJECT_DIR$/hook/fastasyncworldedit" />
             <option value="$PROJECT_DIR$/hook/internalworld" />
             <option value="$PROJECT_DIR$/hook/luminol" />

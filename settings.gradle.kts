@@ -1,8 +1,6 @@
 rootProject.name = "Skyllia"
 
 include("api")
-include("hook:canvas")
-include("hook:luminol")
 include("database")
 include("plugin")
 // NMS Version
@@ -28,3 +26,6 @@ include("nms:v1_21_R7")
 include("hook:worldedit")
 include("hook:fastasyncworldedit")
 include("hook:internalworld")
+include("hook:canvas")
+include("hook:luminol")
+include("hook:essentialsx")

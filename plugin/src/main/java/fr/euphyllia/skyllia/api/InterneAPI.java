@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.hooks.SpawnHook;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.ExplosionEntityImpl;
@@ -12,6 +13,7 @@ import fr.euphyllia.skyllia.cache.SkyblockCache;
 import fr.euphyllia.skyllia.cache.TrustService;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
+import fr.euphyllia.skyllia.hook.essentialsx.EssentialsSpawnHook;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -63,6 +65,9 @@ public class InterneAPI {
     private @Nullable DatabaseLoader database;
     private Managers managers;
 
+    // Hook brigdes
+    private SpawnHook spawnHook;
+
     public InterneAPI(Skyllia plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
 
@@ -80,6 +85,10 @@ public class InterneAPI {
                 Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null,
                 Bukkit.getPluginManager().getPlugin("WorldEdit") != null
         );
+
+        this.spawnHook = Bukkit.getPluginManager().getPlugin("Essentials") != null &&
+                Bukkit.getPluginManager().getPlugin("EssentialsSpawn") != null ?
+                new EssentialsSpawnHook() : null;
 
         loadAPI();
     }
@@ -285,5 +294,9 @@ public class InterneAPI {
 
     public @NotNull WorldModifier getWorldModifier(SchematicPlugin requested) {
         return this.worldSelector.resolve(requested);
+    }
+
+    public @Nullable SpawnHook getSpawnHook() {
+        return this.spawnHook;
     }
 }

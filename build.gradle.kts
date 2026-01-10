@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":hook:internalworld"))
     implementation(project(":hook:canvas"))
     implementation(project(":hook:luminol"))
+    implementation(project(":hook:essentialsx"))
 
     // NMS Version
     implementation(project(":nms:v1_20_R1"))

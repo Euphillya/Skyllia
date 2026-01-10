@@ -15,6 +15,7 @@ dependencies {
     compileOnly(project(":hook:internalworld"))
     compileOnly(project(":hook:canvas"))
     compileOnly(project(":hook:luminol"))
+    compileOnly(project(":hook:essentialsx"))
 
     // NMS Version
     compileOnly(project(":nms:v1_20_R1"))
