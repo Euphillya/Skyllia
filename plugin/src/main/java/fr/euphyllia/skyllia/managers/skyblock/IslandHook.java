@@ -1,25 +1,24 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.event.*;
-import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.event.SkyblockChangeSizeEvent;
+import fr.euphyllia.skyllia.api.event.SkyblockCreateWarpEvent;
+import fr.euphyllia.skyllia.api.event.SkyblockDeleteEvent;
+import fr.euphyllia.skyllia.api.event.SkyblockDeleteWarpEvent;
+import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
-import fr.euphyllia.skyllia.cache.island.IslandClosedCache;
-import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
-import fr.euphyllia.skyllia.cache.island.WarpsInIslandCache;
-import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * An implementation of {@link Island} for managing island data and operations.
@@ -32,35 +31,27 @@ public class IslandHook extends Island {
     private final Position position;
     private final int maxMemberInIsland;
     private double islandSize;
+    private transient volatile CompiledPermissions compiledPermissions;
 
     /**
      * Constructs a new {@code IslandHook} instance.
      *
-     * @param Skyllia    The {@link Skyllia} plugin instance.
      * @param islandId   The UUID of the island.
      * @param maxMembers The maximum number of members allowed on the island.
      * @param position   The region-based position of the island (X/Z).
      * @param size       The radius (size) of the island.
      * @param date       The creation date, or {@code null} if unknown.
-     * @throws MaxIslandSizeExceedException If the specified size is out of the allowed range.
      */
-    public IslandHook(Skyllia Skyllia,
-                      UUID islandId,
+    public IslandHook(UUID islandId,
                       int maxMembers,
                       Position position,
                       double size,
-                      Timestamp date) throws MaxIslandSizeExceedException {
-        this.plugin = Skyllia;
+                      Timestamp date) {
+        this.plugin = Skyllia.getInstance();
         this.islandId = islandId;
         this.createDate = date;
         this.position = position;
         this.maxMemberInIsland = maxMembers;
-
-        // Validate the island size
-        if (size >= (255 * ConfigLoader.general.getRegionDistance()) || size <= 1) {
-            throw new MaxIslandSizeExceedException("The size of the island exceeds the permitted limit! "
-                    + "Must be between 2 and " + (255 * ConfigLoader.general.getRegionDistance()) + ".");
-        }
         this.islandSize = size;
     }
 
@@ -69,7 +60,7 @@ public class IslandHook extends Island {
      */
     @Override
     public Players getOwner() {
-        return this.plugin.getInterneAPI().getSkyblockManager().getOwnerByIslandId(this.islandId).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().getOwnerByIslandId(this.islandId);
     }
 
     /**
@@ -100,25 +91,16 @@ public class IslandHook extends Island {
      * {@inheritDoc}
      */
     @Override
-    public boolean setSize(double newSize) throws MaxIslandSizeExceedException {
-        if (newSize >= (255 * ConfigLoader.general.getRegionDistance()) || newSize <= 1) {
-            throw new MaxIslandSizeExceedException(
-                    "The size of the island exceeds the permitted limit! Must be between 2 and "
-                            + (255 * ConfigLoader.general.getRegionDistance()) + ".");
-        }
-
+    public boolean setSize(double newSize) {
+        double oldSize = this.islandSize;
         this.islandSize = newSize;
         // Update in database
         boolean isUpdated = this.plugin.getInterneAPI()
                 .getSkyblockManager()
-                .setSizeIsland(this, newSize)
-                .join();
+                .setSizeIsland(this, newSize);
 
         if (isUpdated) {
-            // Fire event asynchronously
-            Bukkit.getAsyncScheduler().runNow(plugin, task ->
-                    Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, newSize))
-            );
+            Bukkit.getPluginManager().callEvent(new SkyblockChangeSizeEvent(this, oldSize, newSize));
             return true;
         }
         return false;
@@ -128,8 +110,8 @@ public class IslandHook extends Island {
      * {@inheritDoc}
      */
     @Override
-    public @Nullable CopyOnWriteArrayList<WarpIsland> getWarps() {
-        return WarpsInIslandCache.getWarpsCached(this.islandId);
+    public @Nullable List<WarpIsland> getWarps() {
+        return this.plugin.getInterneAPI().getSkyblockManager().getWarpsIsland(this.islandId);
     }
 
     /**
@@ -137,7 +119,7 @@ public class IslandHook extends Island {
      */
     @Override
     public @Nullable WarpIsland getWarpByName(String name) {
-        return this.plugin.getInterneAPI().getSkyblockManager().getWarpIslandByName(this.islandId, name).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().getWarpIslandByName(this.islandId, name);
     }
 
     /**
@@ -152,12 +134,8 @@ public class IslandHook extends Island {
                 return false;
             }
         }
-        boolean success = this.plugin.getInterneAPI().getSkyblockManager()
-                .addWarpsIsland(this.islandId, event.getWarpName(), event.getWarpLocation()).join();
-        if (success) {
-            WarpsInIslandCache.invalidate(this.islandId);
-        }
-        return success;
+        return this.plugin.getInterneAPI().getSkyblockManager()
+                .addWarpsIsland(this.islandId, event.getWarpName(), event.getWarpLocation());
     }
 
     /**
@@ -170,12 +148,8 @@ public class IslandHook extends Island {
         if (event.isCancelled()) {
             return false;
         }
-        boolean success = this.plugin.getInterneAPI().getSkyblockManager()
-                .delWarpsIsland(this.islandId, event.getWarpName()).join();
-        if (success) {
-            WarpsInIslandCache.invalidate(this.islandId);
-        }
-        return success;
+        return this.plugin.getInterneAPI().getSkyblockManager()
+                .delWarpsIsland(this.islandId, event.getWarpName());
     }
 
     /**
@@ -183,7 +157,7 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean isDisable() {
-        return this.plugin.getInterneAPI().getSkyblockManager().isDisabledIsland(this).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().isDisabledIsland(this);
     }
 
     /**
@@ -196,7 +170,7 @@ public class IslandHook extends Island {
         if (event.isCancelled()) {
             return false;
         }
-        return this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this, disable).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().disableIsland(this, disable);
     }
 
     /**
@@ -204,7 +178,7 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean isPrivateIsland() {
-        return this.plugin.getInterneAPI().getSkyblockManager().isPrivateIsland(this).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().isPrivateIsland(this);
     }
 
     /**
@@ -212,34 +186,20 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean setPrivateIsland(boolean privateIsland) {
-        SkyblockChangeAccessEvent event = new SkyblockChangeAccessEvent(this);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return false;
-        }
-        IslandClosedCache.invalidateIsland(this.getId());
-        return this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().setPrivateIsland(this, privateIsland);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public CopyOnWriteArrayList<Players> getMembers() {
-        return this.plugin.getInterneAPI().getSkyblockManager().getMembersInIsland(this).join();
+    public List<Players> getMembers() {
+        return this.plugin.getInterneAPI().getSkyblockManager().getMembersInIsland(this);
     }
 
     @Override
-    public CopyOnWriteArrayList<Players> getBannedMembers() {
-        return this.plugin.getInterneAPI().getSkyblockManager().getBannedMembersInIsland(this).join();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CopyOnWriteArrayList<Players> getMembersCached() {
-        return PlayersInIslandCache.getPlayersCached(this.islandId);
+    public List<Players> getBannedMembers() {
+        return this.plugin.getInterneAPI().getSkyblockManager().getBannedMembersInIsland(this);
     }
 
     /**
@@ -247,7 +207,7 @@ public class IslandHook extends Island {
      */
     @Override
     public Players getMember(UUID mojangId) {
-        return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, mojangId).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, mojangId);
     }
 
     /**
@@ -255,7 +215,7 @@ public class IslandHook extends Island {
      */
     @Override
     public @Nullable Players getMember(String playerName) {
-        return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, playerName).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().getMemberInIsland(this, playerName);
     }
 
     /**
@@ -263,7 +223,7 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean removeMember(Players oldMember) {
-        return this.plugin.getInterneAPI().getSkyblockManager().deleteMember(this, oldMember).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().deleteMember(this, oldMember);
     }
 
     /**
@@ -271,23 +231,7 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean updateMember(Players member) {
-        return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member).join();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions) {
-        boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager()
-                .updatePermissionIsland(this, permissionsType, roleType, permissions).join();
-        if (isUpdated) {
-            Bukkit.getAsyncScheduler().runNow(plugin, task ->
-                    Bukkit.getPluginManager().callEvent(new SkyblockChangePermissionEvent(this, permissionsType, roleType, permissions))
-            );
-            return true;
-        }
-        return false;
+        return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member);
     }
 
     /**
@@ -303,7 +247,7 @@ public class IslandHook extends Island {
      */
     @Override
     public int getMaxMembers() {
-        int value = this.plugin.getInterneAPI().getSkyblockManager().getMaxMemberInIsland(this).join();
+        int value = this.plugin.getInterneAPI().getSkyblockManager().getMaxMemberInIsland(this);
         return (value == -1) ? this.maxMemberInIsland : value;
     }
 
@@ -312,41 +256,37 @@ public class IslandHook extends Island {
      */
     @Override
     public boolean setMaxMembers(int newMax) {
-        return this.plugin.getInterneAPI().getSkyblockManager().setMaxMemberInIsland(this, newMax).join();
+        return this.plugin.getInterneAPI().getSkyblockManager().setMaxMemberInIsland(this, newMax);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean updateGamerule(long gameRuleValue) {
-        boolean isUpdated = this.plugin.getInterneAPI().getSkyblockManager().updateGamerule(this, gameRuleValue).join();
-        if (isUpdated) {
-            Bukkit.getAsyncScheduler().runNow(plugin, task ->
-                    Bukkit.getPluginManager().callEvent(new SkyblockChangeGameRuleEvent(this, gameRuleValue))
-            );
-            return true;
+    public final CompiledPermissions getCompiledPermissions() {
+        CompiledPermissions local = this.compiledPermissions;
+        if (local != null) return local;
+
+        synchronized (this) {
+            local = this.compiledPermissions;
+            if (local != null) return local;
+
+            PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
+
+            var query = Skyllia.getInstance()
+                    .getInterneAPI()
+                    .getIslandQuery()
+                    .getIslandPermissionQuery();
+
+            CompiledPermissions loaded = null;
+            if (query != null) {
+                loaded = query.loadCompiled(getId(), registry);
+            }
+
+            local = (loaded != null) ? loaded : new CompiledPermissions(registry);
+            this.compiledPermissions = local;
+            return local;
         }
-        return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getGameRulePermission() {
-        return this.plugin.getInterneAPI().getSkyblockManager().getGameRulePermission(this).join();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getPermission(PermissionsType permissionsType, RoleType roleType) {
-        return this.plugin.getInterneAPI()
-                .getSkyblockManager()
-                .getPermissionIsland(this.islandId, permissionsType, roleType)
-                .join()
-                .permission();
+    public final void invalidateCompiledPermissions() {
+        this.compiledPermissions = null;
     }
 }

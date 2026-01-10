@@ -5,8 +5,8 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.mariadb.execute.MariaDBExecute;
-import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
 
     private static final Logger log = LoggerFactory.getLogger(MariaDBBankInit.class);
     private static final String CREATE_BANK_TABLE = """
-            CREATE TABLE IF NOT EXISTS `%s`.`island_bank` (
+            CREATE TABLE IF NOT EXISTS `island_bank` (
                 `island_id` CHAR(36) NOT NULL,
                 `balance` DOUBLE NOT NULL DEFAULT 0,
                 PRIMARY KEY (`island_id`)
@@ -24,8 +24,9 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
     private static MariaDBBankGenerator mariaDbBankGenerator;
 
     public MariaDBBankInit() {
-        initializeDatabase();
-        initializeGenerator();
+        MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
+        database = new MariaDBLoader(mariaDB);
+        mariaDbBankGenerator = new MariaDBBankGenerator(database);
     }
 
     public static DatabaseLoader getPool() {
@@ -36,28 +37,23 @@ public class MariaDBBankInit extends DatabaseInitializeQuery {
         return mariaDbBankGenerator;
     }
 
-    private void initializeDatabase() {
-        MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
-        database = new MariaDBLoader(mariaDB);
-    }
-
-    private void initializeGenerator() {
-        mariaDbBankGenerator = new MariaDBBankGenerator();
-    }
-
     @Override
-    public boolean init() throws DatabaseException {
-        if (!database.loadDatabase()) {
+    public Boolean init() {
+        try {
+            if (!database.loadDatabase()) {
+                return false;
+            }
+            createBankTable();
+        } catch (DatabaseException e) {
+            log.error("Database initialization error: {}", e.getMessage(), e);
             return false;
         }
-        createBankTable();
         return true;
     }
 
     private void createBankTable() {
         try {
-            MariaDBExecute.executeQuery(database,
-                    CREATE_BANK_TABLE.formatted(ConfigLoader.database.getMariaDBConfig().database()));
+            SQLExecute.update(database, CREATE_BANK_TABLE, null);
         } catch (Exception exception) {
             log.error("Error creating island_bank table: {}", exception.getMessage(), exception);
         }

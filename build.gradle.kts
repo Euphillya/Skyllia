@@ -15,6 +15,7 @@ val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
 val engineHubRepo = "https://maven.enginehub.org/repo/";
 val jitpack = "https://jitpack.io"
 val mojang = "https://libraries.minecraft.net";
+var extendedclip = "https://repo.extendedclip.com/content/repositories/placeholderapi/";
 
 dependencies {
     implementation(project(":database"))
@@ -23,6 +24,9 @@ dependencies {
     implementation(project(":hook:worldedit"))
     implementation(project(":hook:fastasyncworldedit"))
     implementation(project(":hook:internalworld"))
+    implementation(project(":hook:canvas"))
+    implementation(project(":hook:luminol"))
+    implementation(project(":hook:essentialsx"))
 
     // NMS Version
     implementation(project(":nms:v1_20_R1"))
@@ -40,7 +44,7 @@ dependencies {
 
 allprojects {
     group = "fr.euphyllia";
-    version = "2.1-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
+    version = "3.0-BETA-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
     description = "Plugin Skyblock on Folia";
 
     apply(plugin = "java-library")
@@ -55,6 +59,7 @@ allprojects {
         maven(engineHubRepo)
         maven(mojang)
         maven(jitpack)
+        maven(extendedclip)
     }
 
     dependencies {
@@ -69,8 +74,6 @@ allprojects {
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
-        compileOnly("org.mongodb:mongodb-driver-sync:5.4.0")
-        compileOnly("org.mongodb:bson:5.4.0")
     }
 
     tasks {
@@ -139,13 +142,13 @@ modrinth {
     additionalFiles.set(
         listOf(
             project(":addons:SkylliaOre").tasks.named("shadowJar"),
-            project(":addons:PapiSkyllia").tasks.named("shadowJar"),
+//            project(":addons:PapiSkyllia").tasks.named("shadowJar"),
             project(":addons:InsightsSkyllia").tasks.named("shadowJar"),
             project(":addons:SkylliaChat").tasks.named("shadowJar"),
             project(":addons:SkylliaBank").tasks.named("shadowJar"),
             project(":addons:SkylliaChallenge").tasks.named("shadowJar"),
         )
-     )
+    )
 
     gameVersions.addAll(
         "1.20",

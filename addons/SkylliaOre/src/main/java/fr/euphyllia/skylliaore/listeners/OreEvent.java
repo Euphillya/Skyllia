@@ -29,7 +29,6 @@ public class OreEvent implements Listener {
     private static final boolean isOraxenLoaded = SkylliaOre.isOraxenLoaded();
     private static final boolean isNexoLoaded = SkylliaOre.isNexoLoaded();
     private static final ConcurrentHashMap<String, BlockData> blockDataCache = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, OptimizedGenerator> optimizedGeneratorCache = new ConcurrentHashMap<>();
 
     @EventHandler
     public void onBlockForm(final BlockFormEvent event) {
@@ -48,17 +47,15 @@ public class OreEvent implements Listener {
         String worldName = world.getName().toLowerCase();
         Material blockType = event.getNewState().getType();
 
-        Generator generator = getGeneratorSync(island.getId());
+        Generator generator = SkylliaOre.getCachedGenerator(island.getId());
         if (generator == null) return;
 
+        OptimizedGenerator optimized = SkylliaOre.getInstance().getOreCache().getOrBuildOptimized(generator);
 
-        OptimizedGenerator optimizedGenerator = optimizedGeneratorCache.computeIfAbsent(generator.name(),
-                name -> new OptimizedGenerator(generator));
-
-        if (optimizedGenerator.getGenerator().worlds().contains(worldName)) {
+        if (optimized.getGenerator().worlds().contains(worldName)) {
             String blockName = blockType.name().toLowerCase();
-            if (optimizedGenerator.getGenerator().replaceBlocks().contains(blockName)) {
-                BlockData blockByChance = getBlockByChance(optimizedGenerator);
+            if (optimized.getGenerator().replaceBlocks().contains(blockName)) {
+                BlockData blockByChance = getBlockByChance(optimized);
                 event.getNewState().setBlockData(blockByChance);
             }
         }

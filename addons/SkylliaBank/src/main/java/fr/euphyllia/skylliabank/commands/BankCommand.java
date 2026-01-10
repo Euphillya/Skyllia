@@ -1,6 +1,5 @@
 package fr.euphyllia.skylliabank.commands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -8,6 +7,7 @@ import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliabank.EconomyManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
+import fr.euphyllia.skylliabank.api.BankAccount;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -50,7 +50,7 @@ public class BankCommand implements SubCommandInterface {
         CommandCacheExecution.addCommandExecute(playerId, "bank");
 
         // Récupérer l'île du joueur
-        @Nullable Island island = SkylliaAPI.getCacheIslandByPlayerId(playerId);
+        @Nullable Island island = SkylliaAPI.getIslandByPlayerId(playerId);
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-island");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
@@ -85,7 +85,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleDeposit(Player player, UUID islandId, String[] args) {
         UUID playerId = player.getUniqueId();
-        if (!PermissionImp.hasPermission(player, "skyllia.bank.deposit")) {
+        if (!player.hasPermission("skyllia.bank.deposit")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-deposit");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
             return;
@@ -119,24 +119,18 @@ public class BankCommand implements SubCommandInterface {
 
         EconomyResponse withdrawResponse = economy.withdrawPlayer(player, amount);
         if (withdrawResponse.transactionSuccess()) {
-            SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(success -> {
-                if (success) {
-                    ConfigLoader.language.sendMessage(player, "addons.bank.player.success-deposit", Map.of("%amount%", economy.format(amount)));
+            boolean success = SkylliaBank.getBankManager().deposit(islandId, amount);
+            if (success) {
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.success-deposit", Map.of("%amount%", economy.format(amount)));
+            } else {
+                EconomyResponse refundResponse = economy.depositPlayer(player, amount);
+                if (refundResponse.transactionSuccess()) {
+                    ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-refunded");
                 } else {
-                    EconomyResponse refundResponse = economy.depositPlayer(player, amount);
-                    if (refundResponse.transactionSuccess()) {
-                        ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-refunded");
-                    } else {
-                        ConfigLoader.language.sendMessage(player, "addons.bank.player.critical-error-deposit");
-                    }
+                    ConfigLoader.language.sendMessage(player, "addons.bank.player.critical-error-deposit");
                 }
-                CommandCacheExecution.removeCommandExec(playerId, "bank");
-            }).exceptionally(ex -> {
-                economy.depositPlayer(player, amount);
-                ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-refunded");
-                CommandCacheExecution.removeCommandExec(playerId, "bank");
-                return null;
-            });
+            }
+            CommandCacheExecution.removeCommandExec(playerId, "bank");
         } else {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.error-withdraw-player", Map.of("%errorMessage%", withdrawResponse.errorMessage));
             CommandCacheExecution.removeCommandExec(playerId, "bank");
@@ -148,7 +142,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleWithdraw(Player player, UUID islandId, String[] args) {
         UUID playerId = player.getUniqueId();
-        if (!PermissionImp.hasPermission(player, "skyllia.bank.withdraw")) {
+        if (!player.hasPermission("skyllia.bank.withdraw")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-withdraw");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
             return;
@@ -176,39 +170,33 @@ public class BankCommand implements SubCommandInterface {
         }
 
         // Vérifier le solde de l'île
-        SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
-            if (bankAccount.balance() < amount) {
-                ConfigLoader.language.sendMessage(player, "addons.bank.player.not-enough-money-island");
-                CommandCacheExecution.removeCommandExec(playerId, "bank");
-                return;
-            }
-
-            SkylliaBank.getBankManager().withdraw(islandId, amount).thenAcceptAsync(success -> {
-                if (success) {
-                    EconomyResponse depositResponse = economy.depositPlayer(player, amount);
-                    if (depositResponse.transactionSuccess()) {
-                        ConfigLoader.language.sendMessage(player, "addons.bank.player.success-withdraw", Map.of("%amount%", economy.format(amount)));
-                        CommandCacheExecution.removeCommandExec(playerId, "bank");
-                    } else {
-                        SkylliaBank.getBankManager().deposit(islandId, amount).thenAcceptAsync(refund -> {
-                            if (refund) {
-                                ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-player-refund-island");
-                            } else {
-                                ConfigLoader.language.sendMessage(player, "addons.bank.player.critical-error-withdraw");
-                            }
-                            CommandCacheExecution.removeCommandExec(playerId, "bank");
-                        });
-                    }
-                } else {
-                    ConfigLoader.language.sendMessage(player, "addons.bank.player.error-withdraw-island");
-                    CommandCacheExecution.removeCommandExec(playerId, "bank");
-                }
-            });
-        }).exceptionally(ex -> {
-            ConfigLoader.language.sendMessage(player, "addons.bank.player.error-generic-withdraw");
+        BankAccount bankAccount = SkylliaBank.getBankManager().getBankAccount(islandId);
+        if (bankAccount.balance() < amount) {
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.not-enough-money-island");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
-            return null;
-        });
+            return;
+        }
+
+        boolean success = SkylliaBank.getBankManager().withdraw(islandId, amount);
+
+        if (success) {
+            EconomyResponse depositResponse = economy.depositPlayer(player, amount);
+            if (depositResponse.transactionSuccess()) {
+                ConfigLoader.language.sendMessage(player, "addons.bank.player.success-withdraw", Map.of("%amount%", economy.format(amount)));
+                CommandCacheExecution.removeCommandExec(playerId, "bank");
+            } else {
+                boolean refund = SkylliaBank.getBankManager().deposit(islandId, amount);
+                if (refund) {
+                    ConfigLoader.language.sendMessage(player, "addons.bank.player.error-deposit-player-refund-island");
+                } else {
+                    ConfigLoader.language.sendMessage(player, "addons.bank.player.critical-error-withdraw");
+                }
+                CommandCacheExecution.removeCommandExec(playerId, "bank");
+            }
+        } else {
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.error-withdraw-island");
+            CommandCacheExecution.removeCommandExec(playerId, "bank");
+        }
     }
 
     /**
@@ -216,40 +204,34 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleBalance(Player player, UUID islandId) {
         UUID playerId = player.getUniqueId();
-        if (!PermissionImp.hasPermission(player, "skyllia.bank.balance")) {
+        if (!player.hasPermission("skyllia.bank.balance")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-balance");
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "bank");
             return;
         }
 
-        SkylliaBank.getBankManager().getBankAccount(islandId).thenAcceptAsync(bankAccount -> {
-            if (bankAccount != null) {
-                ConfigLoader.language.sendMessage(player, "addons.bank.player.balance", Map.of("%amount%", economy.format(bankAccount.balance())));
-            } else {
-                ConfigLoader.language.sendMessage(player, "addons.bank.player.error-get-balance");
-            }
-            CommandCacheExecution.removeCommandExec(playerId, "bank");
-        }).exceptionally(ex -> {
-            ConfigLoader.language.sendMessage(player, "addons.bank.error");
-            CommandCacheExecution.removeCommandExec(playerId, "bank");
-            return null;
-        });
+        BankAccount bankAccount = SkylliaBank.getBankManager().getBankAccount(islandId);
+
+        if (bankAccount != null) {
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.balance", Map.of("%amount%", economy.format(bankAccount.balance())));
+        } else {
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.error-get-balance");
+        }
+        CommandCacheExecution.removeCommandExec(playerId, "bank");
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin,
                                                @NotNull CommandSender sender,
                                                @NotNull String[] args) {
-        // ARG 1 : "deposit", "withdraw", "balance"
+
         if (args.length == 1) {
             String partial = args[0].toLowerCase();
             List<String> commands = Arrays.asList("deposit", "withdraw", "balance");
             return commands.stream()
                     .filter(cmd -> cmd.startsWith(partial))
                     .collect(Collectors.toList());
-        }
-        // ARG 2 : on propose des montants
-        else if (args.length == 2) {
+        } else if (args.length == 2) {
             String partial = args[1].trim().toLowerCase();
             List<String> amounts = Arrays.asList("1", "10", "100", "1000");
             return amounts.stream()

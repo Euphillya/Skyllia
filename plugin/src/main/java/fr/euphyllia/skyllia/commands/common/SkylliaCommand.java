@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +43,7 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new InviteSubCommand(), "invite", "add");
         registry.registerSubCommand(new KickSubCommand(), "kick");
         registry.registerSubCommand(new LeaveSubCommand(), "leave");
-        registry.registerSubCommand(new PermissionSubCommand(), "permission");
+        registry.registerSubCommand(new PermissionSubCommand(), "permission"); // Todo : Implement permission management commands
         registry.registerSubCommand(new PromoteSubCommand(), "promote");
         registry.registerSubCommand(new TPSSubCommand(), "tps", "lag", "mspt");
         registry.registerSubCommand(new TransferSubCommand(), "transfer");
@@ -53,11 +54,10 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new UntrustSubCommand(), "untrust");
         registry.registerSubCommand(new VisitSubCommand(), "visit");
         registry.registerSubCommand(new WarpSubCommand(), "warp");
-        registry.registerSubCommand(new DebugSubCommand(), "debug");
     }
 
     @Override
-    public void execute(CommandSourceStack sender, String[] args) {
+    public void execute(@NonNull CommandSourceStack sender, String[] args) {
         if (args.length != 0) {
             String subCommand = args[0].trim().toLowerCase();
             String[] listArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -70,15 +70,13 @@ public class SkylliaCommand implements SkylliaCommandInterface {
                     subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs));
         } else {
             // If no subcommand is provided, we can default to the "create" command
-            Bukkit.getAsyncScheduler().runNow(this.plugin, scheduledTask -> {
-                Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                        registry.getSubCommandByName("create").onCommand(this.plugin, sender.getSender(), args));
-            });
+            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
+                    registry.getSubCommandByName("create").onCommand(this.plugin, sender.getSender(), args));
         }
     }
 
     @Override
-    public Collection<String> suggest(CommandSourceStack sender, String[] args) {
+    public @NonNull Collection<String> suggest(@NonNull CommandSourceStack sender, String[] args) {
         Set<String> commands = registry.getCommandMap().keySet();
         if (args.length == 0) {
             return commands;

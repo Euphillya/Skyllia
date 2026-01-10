@@ -3,16 +3,19 @@ plugins {
     id("maven-publish")
 }
 group = "fr.euphyllia.skyllia"
-version = "2.3"
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT") { isTransitive = false }
     compileOnly("net.kyori:adventure-text-minimessage:4.25.0")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly(project(":api"))
     compileOnly(project(":database"))
     compileOnly(project(":hook:worldedit"))
     compileOnly(project(":hook:fastasyncworldedit"))
     compileOnly(project(":hook:internalworld"))
+    compileOnly(project(":hook:canvas"))
+    compileOnly(project(":hook:luminol"))
+    compileOnly(project(":hook:essentialsx"))
 
     // NMS Version
     compileOnly(project(":nms:v1_20_R1"))

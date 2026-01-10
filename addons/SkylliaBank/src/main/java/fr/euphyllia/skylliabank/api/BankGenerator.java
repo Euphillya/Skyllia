@@ -19,7 +19,7 @@ public interface BankGenerator {
      * @return A {@link CompletableFuture} containing the {@link BankAccount}.
      * If the account does not exist, it is usually returned with a balance of 0.
      */
-    CompletableFuture<BankAccount> getBankAccount(UUID islandId);
+    BankAccount getBankAccount(UUID islandId);
 
     /**
      * Deposits a given amount of money into the specified island's bank account.
@@ -28,7 +28,7 @@ public interface BankGenerator {
      * @param amount   The amount to deposit (must be positive).
      * @return A {@link CompletableFuture} containing {@code true} if the operation succeeded, {@code false} otherwise.
      */
-    CompletableFuture<Boolean> deposit(UUID islandId, double amount);
+    Boolean deposit(UUID islandId, double amount);
 
     /**
      * Withdraws a given amount of money from the specified island's bank account.
@@ -38,7 +38,7 @@ public interface BankGenerator {
      * @param amount   The amount to withdraw (must be positive).
      * @return A {@link CompletableFuture} containing {@code true} if the operation succeeded, {@code false} otherwise.
      */
-    CompletableFuture<Boolean> withdraw(UUID islandId, double amount);
+    Boolean withdraw(UUID islandId, double amount);
 
     /**
      * Sets the exact balance of the specified island's bank account.
@@ -48,5 +48,5 @@ public interface BankGenerator {
      * @param balance  The new balance to set (can be zero or positive).
      * @return A {@link CompletableFuture} containing {@code true} if the balance was updated successfully, {@code false} otherwise.
      */
-    CompletableFuture<Boolean> setBalance(UUID islandId, double balance);
+    Boolean setBalance(UUID islandId, double balance);
 }

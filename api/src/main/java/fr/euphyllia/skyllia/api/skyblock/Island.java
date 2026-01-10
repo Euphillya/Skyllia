@@ -1,21 +1,24 @@
 package fr.euphyllia.skyllia.api.skyblock;
 
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
+import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents a Skyblock island and provides methods to manage its properties and members.
  */
 public abstract class Island {
+
+    private static final Logger log = LoggerFactory.getLogger(Island.class);
 
     /**
      * Gets the owner of the island.
@@ -59,7 +62,7 @@ public abstract class Island {
      *
      * @return A list of {@link WarpIsland} objects, or {@code null} if none.
      */
-    public abstract @Nullable CopyOnWriteArrayList<WarpIsland> getWarps();
+    public abstract @Nullable List<WarpIsland> getWarps();
 
     /**
      * Gets a warp by its name.
@@ -120,23 +123,16 @@ public abstract class Island {
     /**
      * Gets the list of all members in the island (from the database).
      *
-     * @return A {@link CopyOnWriteArrayList} of {@link Players}.
+     * @return A {@link List} of {@link Players}.
      */
-    public abstract CopyOnWriteArrayList<Players> getMembers();
+    public abstract List<Players> getMembers();
 
     /**
      * Gets the list of all banned members in the island.
      *
-     * @return A {@link CopyOnWriteArrayList} of {@link Players} who are banned.
+     * @return A {@link List} of {@link Players} who are banned.
      */
-    public abstract CopyOnWriteArrayList<Players> getBannedMembers();
-
-    /**
-     * Gets the cached list of all members on the island (from memory/cache).
-     *
-     * @return A {@link CopyOnWriteArrayList} of {@link Players}.
-     */
-    public abstract CopyOnWriteArrayList<Players> getMembersCached();
+    public abstract List<Players> getBannedMembers();
 
     /**
      * Gets a specific member by their UUID.
@@ -171,16 +167,6 @@ public abstract class Island {
     public abstract boolean updateMember(Players member);
 
     /**
-     * Updates the permission value for a given role and permission type.
-     *
-     * @param permissionsType The {@link PermissionsType}.
-     * @param roleType        The {@link RoleType}.
-     * @param permissions     The new permission value.
-     * @return {@code true} if successfully updated, {@code false} otherwise.
-     */
-    public abstract boolean updatePermission(PermissionsType permissionsType, RoleType roleType, long permissions);
-
-    /**
      * Gets the position (region-based) of the island.
      *
      * @return A {@link Position} object representing the island's coordinates.
@@ -202,27 +188,8 @@ public abstract class Island {
      */
     public abstract boolean setMaxMembers(int maxMembers);
 
-    /**
-     * Updates the game rules for the island.
-     *
-     * @param gamerules The new game rule value.
-     * @return {@code true} if successfully updated, {@code false} otherwise.
-     */
-    public abstract boolean updateGamerule(long gamerules);
+    public abstract CompiledPermissions getCompiledPermissions();
 
-    /**
-     * Retrieves the current game rule permission value for the island.
-     *
-     * @return The game rule permission value as a {@code long}.
-     */
-    public abstract long getGameRulePermission();
+    public abstract void invalidateCompiledPermissions();
 
-    /**
-     * Retrieves the permission value for the specified permissions type and role.
-     *
-     * @param permissionsType The {@link PermissionsType}.
-     * @param roleType        The {@link RoleType}.
-     * @return The permission value as a {@code long}.
-     */
-    public abstract long getPermission(PermissionsType permissionsType, RoleType roleType);
 }

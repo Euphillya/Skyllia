@@ -3,12 +3,12 @@ package fr.euphyllia.skyllia.database;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.database.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.database.mariadb.MariaDBDatabaseInitialize;
-import fr.euphyllia.skyllia.database.mariadb.exec.*;
-import fr.euphyllia.skyllia.database.sqlite.SQLiteDatabaseInitialize;
-import fr.euphyllia.skyllia.database.sqlite.exec.*;
+import fr.euphyllia.skyllia.database.mariadb.*;
+import fr.euphyllia.skyllia.database.postgresql.*;
+import fr.euphyllia.skyllia.database.sqlite.*;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +17,7 @@ public class IslandQuery {
 
     private final Logger logger = LogManager.getLogger(IslandQuery.class);
     private final InterneAPI api;
-    private final String databaseName;
+
     private DatabaseInitializeQuery databaseInitializeQuery;
     private IslandDataQuery islandDataQuery;
     private IslandUpdateQuery islandUpdateQuery;
@@ -25,9 +25,8 @@ public class IslandQuery {
     private IslandMemberQuery islandMemberQuery;
     private IslandPermissionQuery islandPermissionQuery;
 
-    public IslandQuery(InterneAPI api, String databaseName) {
+    public IslandQuery(InterneAPI api) {
         this.api = api;
-        this.databaseName = databaseName;
         try {
             this.init();
         } catch (DatabaseException exception) {
@@ -36,25 +35,49 @@ public class IslandQuery {
     }
 
     private void init() throws DatabaseException {
-        // Todo future support database
+        final DatabaseLoader loader = this.api.getDatabaseLoader();
+        if (loader == null) throw new DatabaseException("Database loader is not initialized.");
+
+        // --- MariaDB ---
         if (ConfigLoader.database.getMariaDBConfig() != null) {
-            this.databaseInitializeQuery = new MariaDBDatabaseInitialize(this.api);
-            this.islandDataQuery = new MariaDBIslandData(api, databaseName);
-            this.islandUpdateQuery = new MariaDBIslandUpdate(api, databaseName);
-            this.islandWarpQuery = new MariaDBIslandWarp(api, databaseName);
-            this.islandMemberQuery = new MariaDBIslandMember(api, databaseName);
-            this.islandPermissionQuery = new MariaDBIslandPermission(api, databaseName);
+
+            this.databaseInitializeQuery = new MariaDBDatabaseInitialize(loader);
+            this.islandDataQuery = new MariaDBIslandData(loader);
+            this.islandUpdateQuery = new MariaDBIslandUpdate(loader);
+            this.islandWarpQuery = new MariaDBIslandWarp(loader);
+            this.islandMemberQuery = new MariaDBIslandMember(loader);
+            this.islandPermissionQuery = new MariaDBIslandPermission(loader);
+
             return;
         }
-        if (ConfigLoader.database.getSqLiteConfig() != null) {
-            SQLiteDatabaseLoader loader = (SQLiteDatabaseLoader) this.api.getDatabaseLoader();
 
-            this.databaseInitializeQuery = new SQLiteDatabaseInitialize(this.api, loader);
-            this.islandDataQuery = new SQLiteIslandData(this.api, loader);
-            this.islandUpdateQuery = new SQLiteIslandUpdate(this.api, loader);
-            this.islandWarpQuery = new SQLiteIslandWarp(this.api, loader);
-            this.islandMemberQuery = new SQLiteIslandMember(this.api, loader);
-            this.islandPermissionQuery = new SQLiteIslandPermission(this.api, loader);
+        // --- PostgreSQL ---
+        if (ConfigLoader.database.getPostgreConfig() != null) {
+            this.databaseInitializeQuery = new PostgreSQLDatabaseInitialize(loader);
+            this.islandDataQuery = new PostgreSQLIslandData(loader);
+            this.islandUpdateQuery = new PostgreSQLIslandUpdate(loader);
+            this.islandWarpQuery = new PostgreSQLIslandWarp(loader);
+            this.islandMemberQuery = new PostgreSQLIslandMember(loader);
+            this.islandPermissionQuery = new PostgreSQLIslandPermission(loader);
+
+            return;
+        }
+
+        // --- SQLite ---
+        if (ConfigLoader.database.getSqLiteConfig() != null) {
+            if (!(loader instanceof SQLiteDatabaseLoader sqliteLoader)) {
+                throw new DatabaseException(
+                        "SQLite config is set but DatabaseLoader is not SQLiteDatabaseLoader (got: " + loader.getClass().getName() + ")"
+                );
+            }
+
+            this.databaseInitializeQuery = new SQLiteDatabaseInitialize(sqliteLoader);
+            this.islandDataQuery = new SQLiteIslandData(sqliteLoader);
+            this.islandUpdateQuery = new SQLiteIslandUpdate(sqliteLoader);
+            this.islandWarpQuery = new SQLiteIslandWarp(sqliteLoader);
+            this.islandMemberQuery = new SQLiteIslandMember(sqliteLoader);
+            this.islandPermissionQuery = new SQLiteIslandPermission(sqliteLoader);
+
             return;
         }
 

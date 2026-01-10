@@ -2,11 +2,12 @@ package fr.euphyllia.skylliabank;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skylliabank.api.BankGenerator;
+import fr.euphyllia.skylliabank.cache.BankPapiCache;
 import fr.euphyllia.skylliabank.commands.BankAdminCommand;
 import fr.euphyllia.skylliabank.commands.BankCommand;
 import fr.euphyllia.skylliabank.database.mariadb.MariaDBBankInit;
+import fr.euphyllia.skylliabank.database.postgresql.PostgreSQLBankInit;
 import fr.euphyllia.skylliabank.database.sqlite.SQLiteBankInit;
 import fr.euphyllia.skylliabank.listeners.InfoListener;
 import fr.euphyllia.skylliabank.papi.SkylliaBankExpansion;
@@ -17,6 +18,7 @@ public final class SkylliaBank extends JavaPlugin {
 
     private static BankManager bankManager;
     private static SkylliaBank instance;
+    private BankPapiCache papiCache;
 
     public static BankManager getBankManager() {
         return bankManager;
@@ -43,32 +45,36 @@ public final class SkylliaBank extends JavaPlugin {
         }
 
         BankGenerator generator;
-        try {
-            if (ConfigLoader.database.getMariaDBConfig() != null) {
-                MariaDBBankInit dbInit = new MariaDBBankInit();
-                if (!dbInit.init()) {
-                    getLogger().severe("Unable to initialize the MariaDB bank database! The plugin will stop.");
-                    getServer().getPluginManager().disablePlugin(this);
-                    return;
-                }
-                generator = MariaDBBankInit.getMariaDbBankGenerator();
-            } else if (ConfigLoader.database.getSqLiteConfig() != null) {
-                SQLiteBankInit dbInit = new SQLiteBankInit();
-                if (!dbInit.init()) {
-                    getLogger().severe("Unable to initialize the SQLite bank database! The plugin will stop.");
-                    getServer().getPluginManager().disablePlugin(this);
-                    return;
-                }
-                generator = SQLiteBankInit.getGenerator();
-            } else {
-                getLogger().severe("No database configuration found! The plugin will stop.");
+        papiCache = new BankPapiCache();
+        if (ConfigLoader.database.getMariaDBConfig() != null) {
+            MariaDBBankInit dbInit = new MariaDBBankInit();
+            if (!dbInit.init()) {
+                getLogger().severe("Unable to initialize the MariaDB bank database! The plugin will stop.");
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
-        } catch (DatabaseException exception) {
-            getLogger().severe("Unable to initialize the MariaDB bank database! The plugin will stop.");
+            generator = MariaDBBankInit.getMariaDbBankGenerator();
+        } else if (ConfigLoader.database.getPostgreConfig() != null) {
+            PostgreSQLBankInit dbInit = new PostgreSQLBankInit();
+            if (!dbInit.init()) {
+                getLogger().severe("Unable to initialize the PostgreSQL bank database! The plugin will stop.");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+            generator = PostgreSQLBankInit.getPostgresBankGenerator();
+
+        } else if (ConfigLoader.database.getSqLiteConfig() != null) {
+            SQLiteBankInit dbInit = new SQLiteBankInit();
+            if (!dbInit.init()) {
+                getLogger().severe("Unable to initialize the SQLite bank database! The plugin will stop.");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+            generator = SQLiteBankInit.getGenerator();
+        } else {
+            getLogger().severe("No database configuration found! The plugin will stop.");
             getServer().getPluginManager().disablePlugin(this);
-            throw new RuntimeException(exception);
+            return;
         }
 
         bankManager = new BankManager(generator);
@@ -80,10 +86,20 @@ public final class SkylliaBank extends JavaPlugin {
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             SkylliaBankExpansion expansion = new SkylliaBankExpansion();
-            expansion.init(this);
             expansion.register();
         }
 
         getLogger().info("SkylliaBank has been successfully activated!");
+    }
+
+    @Override
+    public void onDisable() {
+        Bukkit.getAsyncScheduler().cancelTasks(this);
+        Bukkit.getGlobalRegionScheduler().cancelTasks(this);
+        papiCache.clear();
+    }
+
+    public BankPapiCache getPapiCache() {
+        return papiCache;
     }
 }

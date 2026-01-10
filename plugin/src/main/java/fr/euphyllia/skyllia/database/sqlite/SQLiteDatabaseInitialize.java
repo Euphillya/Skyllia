@@ -1,12 +1,12 @@
 package fr.euphyllia.skyllia.database.sqlite;
 
-import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +34,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 UNIQUE(island_id)
             );
             """;
+
     private static final String CREATE_ISLANDS_GAMERULE_TABLE = """
             CREATE TABLE IF NOT EXISTS islands_gamerule (
                 island_id TEXT NOT NULL,
@@ -41,6 +42,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 PRIMARY KEY (island_id)
             );
             """;
+
     private static final String CREATE_ISLANDS_MEMBERS_TABLE = """
             CREATE TABLE IF NOT EXISTS members_in_islands (
                 island_id   TEXT NOT NULL,
@@ -52,6 +54,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 FOREIGN KEY(island_id) REFERENCES islands(island_id)
             );
             """;
+
     private static final String CREATE_ISLANDS_WARP_TABLE = """
             CREATE TABLE IF NOT EXISTS islands_warp (
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -66,6 +69,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 UNIQUE(island_id, warp_name)
             );
             """;
+
     private static final String CREATE_SPIRAL_TABLE = """
             CREATE TABLE IF NOT EXISTS spiral (
                 id INTEGER NOT NULL,
@@ -74,15 +78,16 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 PRIMARY KEY (id)
             );
             """;
+
     private static final String CREATE_ISLANDS_PERMISSIONS_TABLE = """
-            CREATE TABLE IF NOT EXISTS islands_permissions (
-                island_id TEXT NOT NULL,
-                type TEXT NOT NULL,
-                role TEXT NOT NULL,
-                flags INTEGER NOT NULL DEFAULT 0,
-                PRIMARY KEY (island_id, type, role)
+            CREATE TABLE IF NOT EXISTS islands_permissions_v2 (
+                  island_id TEXT NOT NULL,
+                  role TEXT NOT NULL,
+                  words BLOB NOT NULL,
+                  PRIMARY KEY (island_id, role)
             );
             """;
+
     private static final String CREATE_PLAYER_CLEAR_TABLE = """
             CREATE TABLE IF NOT EXISTS player_clear (
                 uuid_player TEXT NOT NULL,
@@ -90,71 +95,67 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 PRIMARY KEY (uuid_player, cause)
             );
             """;
-    // Remplacement de INSERT IGNORE par INSERT OR IGNORE
+
     private static final String INSERT_SPIRAL = """
             INSERT OR IGNORE INTO spiral (id, region_x, region_z) VALUES (?, ?, ?);
             """;
 
-    // Pour créer des index en SQLite :
     private static final String CREATE_ISLANDS_INDEX = """
             CREATE INDEX IF NOT EXISTS region_xz_disabled
                 ON islands (region_x, region_z, disable);
             """;
+
     private static final String CREATE_SPIRAL_INDEX = """
             CREATE INDEX IF NOT EXISTS region_xz
                 ON spiral (region_x, region_z);
             """;
 
-    private final InterneAPI api;
-    private final SQLiteDatabaseLoader databaseLoader;
+    private static final String CREATE_PERMISSION_REGISTRY_TABLE = """
+            CREATE TABLE IF NOT EXISTS permission_registry (
+                idx INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                node TEXT NOT NULL UNIQUE,
+                created_at TEXT NOT NULL DEFAULT (datetime('now'))
+              );
+            
+            """;
 
-    public SQLiteDatabaseInitialize(InterneAPI api, SQLiteDatabaseLoader databaseLoader) {
-        this.api = api;
+    private final DatabaseLoader databaseLoader;
+
+    public SQLiteDatabaseInitialize(DatabaseLoader databaseLoader) {
         this.databaseLoader = databaseLoader;
     }
 
     @Override
-    public boolean init() throws DatabaseException {
-        // Création des tables
+    public Boolean init() {
         createDatabaseAndTables();
-
-        // Migrations éventuelles (adaptez si besoin)
         applyMigrations();
-
-        // Initialisation de la table "spiral"
         initializeSpiralTable();
-
         return true;
     }
 
-    private void createDatabaseAndTables() throws DatabaseException {
-        executeQuery(CREATE_ISLANDS_TABLE);
-        executeQuery(CREATE_ISLANDS_MEMBERS_TABLE);
-        executeQuery(CREATE_ISLANDS_WARP_TABLE);
-        executeQuery(CREATE_SPIRAL_TABLE);
-        executeQuery(CREATE_ISLANDS_PERMISSIONS_TABLE);
-        executeQuery(CREATE_PLAYER_CLEAR_TABLE);
-        executeQuery(CREATE_ISLANDS_GAMERULE_TABLE);
+    private void createDatabaseAndTables() {
+        exec(CREATE_ISLANDS_TABLE);
+        exec(CREATE_ISLANDS_MEMBERS_TABLE);
+        exec(CREATE_ISLANDS_WARP_TABLE);
+        exec(CREATE_SPIRAL_TABLE);
+        exec(CREATE_ISLANDS_PERMISSIONS_TABLE);
+        exec(CREATE_PLAYER_CLEAR_TABLE);
+        exec(CREATE_ISLANDS_GAMERULE_TABLE);
 
-        executeQuery(CREATE_ISLANDS_INDEX);
-        executeQuery(CREATE_SPIRAL_INDEX);
+        exec(CREATE_ISLANDS_INDEX);
+        exec(CREATE_SPIRAL_INDEX);
     }
 
-    private void applyMigrations() throws DatabaseException {
-        try {
-            executeQuery("ALTER TABLE islands ADD COLUMN locked INTEGER DEFAULT 0;");
-        } catch (DatabaseException e) {
-            if (e.getMessage() == null || !e.getMessage().toLowerCase().contains("duplicate column name")) {
-                throw e;
-            }
-        }
+    private void applyMigrations() {
+        exec("ALTER TABLE islands ADD COLUMN locked INTEGER DEFAULT 0;");
     }
 
     private void initializeSpiralTable() {
         int distancePerIsland = ConfigLoader.general.getRegionDistance();
         if (distancePerIsland <= 0) {
-            logger.log(Level.FATAL, "You must set a value greater than 1 for region distance per island (config/config.toml -> settings.island.region-distance). " +
-                    "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
+            logger.log(Level.FATAL,
+                    "You must set a value greater than 1 for region distance per island (config/config.toml -> settings.island.region-distance). " +
+                            "If you're using an earlier version of the plugin, set the value to 1 to avoid any bugs, otherwise increase the distance.");
             return;
         }
 
@@ -169,21 +170,15 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                 ));
             }
 
-            SQLiteSpiralBatchInserter batchInserter = new SQLiteSpiralBatchInserter(
-                    INSERT_SPIRAL,
-                    islandDataList
-            );
-            try {
-                databaseLoader.executeQuery(INSERT_SPIRAL, null, null, batchInserter);
-            } catch (DatabaseException e) {
-                logger.log(Level.ERROR, "Error inserting into spiral table (SQLite)", e);
-            }
+            SQLiteSpiralBatchInserter batchInserter = new SQLiteSpiralBatchInserter(INSERT_SPIRAL, islandDataList);
+
+            SQLExecute.work(databaseLoader, batchInserter::run);
         };
 
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), task1 -> spiralTask.run());
+        Bukkit.getAsyncScheduler().runNow(SkylliaAPI.getPlugin(), task -> spiralTask.run());
     }
 
-    private void executeQuery(String query) throws DatabaseException {
-        databaseLoader.executeUpdate(query, null, null, null);
+    private void exec(String sql) {
+        SQLExecute.update(databaseLoader, sql, null);
     }
 }

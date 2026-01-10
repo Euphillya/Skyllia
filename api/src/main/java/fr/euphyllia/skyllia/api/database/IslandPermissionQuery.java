@@ -1,71 +1,54 @@
 package fr.euphyllia.skyllia.api.database;
 
-import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
+import fr.euphyllia.skyllia.api.permissions.*;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsType;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
-/**
- * The {@code IslandPermissionQuery} class defines an abstract set of methods
- * for managing island permissions in a SkyBlock context.
- * <p>
- * Implementations should handle permission updates and retrieval for different
- * roles and game rule configurations.
- */
 public abstract class IslandPermissionQuery {
 
-    /**
-     * Updates the permissions for a specific {@link PermissionsType} and {@link RoleType}
-     * on the given island.
-     *
-     * @param island          the {@link Island} whose permissions are to be updated
-     * @param permissionsType the type of permission to update
-     * @param roleType        the role type (e.g., OWNER, MEMBER) for which permissions are updated
-     * @param permissions     the new permission flags as a {@code long} value
-     * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     * or {@code false} otherwise
-     */
-    public abstract CompletableFuture<Boolean> updateIslandsPermission(
-            Island island,
-            PermissionsType permissionsType,
-            RoleType roleType,
-            long permissions
-    );
+    public abstract CompiledPermissions loadCompiled(UUID islandId, PermissionRegistry registry);
 
     /**
-     * Retrieves the {@link PermissionRoleIsland} object representing permissions
-     * for the specified {@link PermissionsType} and {@link RoleType} on the given island.
-     *
-     * @param islandId        the UUID of the island
-     * @param permissionsType the type of permission to retrieve
-     * @param roleType        the role type (e.g., OWNER, MEMBER)
-     * @return a {@link CompletableFuture} that completes with the corresponding
-     * {@link PermissionRoleIsland} object
+     * DB write only (impl can override if it wants, but default is fine)
      */
-    public abstract CompletableFuture<PermissionRoleIsland> getIslandPermission(
-            UUID islandId,
-            PermissionsType permissionsType,
-            RoleType roleType
-    );
+    public boolean set(UUID islandId, RoleType role, PermissionId id, boolean value) {
+        return set(islandId, PermissionRegistryHolder.registry(), role, id, value);
+    }
+
+    public abstract boolean saveRole(UUID islandId, RoleType role, byte[] wordsBlob);
+
+    public abstract boolean deleteRole(UUID islandId, RoleType role);
 
     /**
-     * Retrieves the game rule value (usually represented as a long) for the specified island.
-     *
-     * @param island the {@link Island} whose game rule is to be retrieved
-     * @return a {@link CompletableFuture} that completes with the game rule value
+     * Shared logic: load -> flip bit -> save blob
+     * (DB-only; no runtime cache update here)
      */
-    public abstract CompletableFuture<Long> getIslandGameRule(Island island);
+    public final boolean set(UUID islandId, PermissionRegistry registry, RoleType role, PermissionId id, boolean value) {
+        CompiledPermissions compiled = loadCompiled(islandId, registry);
+        if (compiled == null) return false;
 
-    /**
-     * Updates the game rule value for the specified island.
-     *
-     * @param island the {@link Island} whose game rule is to be updated
-     * @param value  the new game rule value as a {@code long}
-     * @return a {@link CompletableFuture} that completes with {@code true} if the update succeeds,
-     * or {@code false} otherwise
-     */
-    public abstract CompletableFuture<Boolean> updateIslandGameRule(Island island, long value);
+        PermissionSet set = compiled.setFor(role);
+        if (set == null) return false;
+
+        set.set(id, value);
+        byte[] blob = PermissionSetCodec.encodeLongs(set.snapshotWords());
+        return saveRole(islandId, role, blob);
+    }
+
+    private static final class PermissionRegistryHolder {
+        private static PermissionRegistry registry;
+
+        private PermissionRegistryHolder() {
+        }
+
+        static PermissionRegistry registry() {
+            if (registry == null) throw new IllegalStateException("PermissionRegistry not set");
+            return registry;
+        }
+
+        static void set(PermissionRegistry r) {
+            registry = r;
+        }
+    }
 }

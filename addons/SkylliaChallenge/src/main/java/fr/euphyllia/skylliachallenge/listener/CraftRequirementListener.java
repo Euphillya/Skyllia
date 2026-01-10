@@ -52,7 +52,7 @@ public class CraftRequirementListener implements Listener {
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
             // On travaille toujours sur l'île du joueur
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+            Island playerIsland = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (playerIsland == null) return;
 
             // Si activé en config, on vérifie que le joueur est bien sur SON île

@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.SchematicUtils;
@@ -35,7 +34,7 @@ public class SchematicSubCommands implements SubCommandInterface {
      */
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, "skyllia.admins.commands.island.schematic")) {
+        if (!sender.hasPermission("skyllia.admins.commands.island.schematic")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return true;
         }

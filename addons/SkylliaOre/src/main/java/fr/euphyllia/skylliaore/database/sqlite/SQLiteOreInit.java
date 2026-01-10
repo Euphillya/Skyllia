@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
 import fr.euphyllia.skylliaore.api.OreGenerator;
 
 public class SQLiteOreInit {
@@ -27,12 +28,12 @@ public class SQLiteOreInit {
         }
 
         // Créer la table si elle n'existe pas
-        database.executeUpdate("""
+        SQLExecute.update(database, """
                     CREATE TABLE IF NOT EXISTS generators (
                         island_id TEXT PRIMARY KEY,
                         generator_id TEXT NOT NULL
                     );
-                """, null, null, null);
+                """, null);
 
         sqliteGenerator = new SQLiteOreGenerator(database);
         return true;

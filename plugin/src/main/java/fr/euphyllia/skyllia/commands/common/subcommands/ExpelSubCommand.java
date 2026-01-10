@@ -1,16 +1,15 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionId;
+import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.PermissionsCommandIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
@@ -18,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -33,9 +33,20 @@ public class ExpelSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(ExpelSubCommand.class);
 
+    private final PermissionId ISLAND_EXPEL_PERMISSION;
+
+    public ExpelSubCommand() {
+        this.ISLAND_EXPEL_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
+                new NamespacedKey(Skyllia.getInstance(), "command.island.expel"),
+                "Expulser un joueur",
+                "Autorise à expulser un joueur de l'île"
+        ));
+    }
+
+
     public static void expelPlayer(Skyllia plugin, Island island, Player bPlayerToExpel, Player executor, boolean silent) {
         Location bPlayerExpelLocation = bPlayerToExpel.getLocation();
-        if (Boolean.FALSE.equals(WorldUtils.isWorldSkyblock(bPlayerExpelLocation.getWorld().getName()))) {
+        if (!WorldUtils.isWorldSkyblock(bPlayerExpelLocation.getWorld().getName())) {
             if (!silent) ConfigLoader.language.sendMessage(executor, "island.expel.player-not-in-island");
             return;
         }
@@ -63,7 +74,7 @@ public class ExpelSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.expel")) {
+        if (!player.hasPermission("skyllia.island.command.expel")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -72,8 +83,7 @@ public class ExpelSubCommand implements SubCommandInterface {
             return true;
         }
         try {
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
 
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
@@ -82,7 +92,9 @@ public class ExpelSubCommand implements SubCommandInterface {
 
             Players executorPlayer = island.getMember(player.getUniqueId());
 
-            if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.EXPEL, false)) {
+            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_EXPEL_PERMISSION);
+            if (!allowed) {
+                ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 return true;
             }
 
@@ -96,7 +108,7 @@ public class ExpelSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.player.not-connected");
                 return true;
             }
-            if (PermissionImp.hasPermission(bPlayerToExpel, "skyllia.island.command.expel.bypass")) {
+            if (bPlayerToExpel.hasPermission("skyllia.island.command.expel.bypass")) {
                 ConfigLoader.language.sendMessage(player, "island.kick.failed");
                 return true;
             }

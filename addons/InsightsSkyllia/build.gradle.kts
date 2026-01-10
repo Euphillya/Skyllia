@@ -2,8 +2,7 @@ plugins {
     id("java")
 }
 
-group = "fr.euphyllia.skyllia";
-version = "1.1";
+group = "fr.euphyllia.skyllia_insight_addon";
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")

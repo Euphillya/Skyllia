@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.event.IslandInfoEvent;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class InfoSubCommand implements SubCommandInterface {
@@ -39,7 +36,7 @@ public class InfoSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!PermissionImp.hasPermission(player, permission())) {
+        if (!player.hasPermission(permission())) {
             ConfigLoader.language.sendMessage(player, "island.info.no-permission");
             return true;
         }
@@ -50,69 +47,67 @@ public class InfoSubCommand implements SubCommandInterface {
             playerId = player.getUniqueId();
         }
 
-        CompletableFuture<Island> futureIsland = SkylliaAPI.getIslandByPlayerId(playerId);
+        Island island = SkylliaAPI.getIslandByPlayerId(playerId);
 
-        futureIsland.thenAcceptAsync(island -> {
-            if (island == null) {
-                ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                return;
+        if (island == null) {
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
+            return true;
+        }
+
+        UUID islandId = island.getId();
+        Optional<Players> found = island.getMembers().stream().filter(p -> p.getRoleType() == RoleType.OWNER).findFirst();
+        Players leader = found.orElse(null);
+        if (leader == null) {
+            ConfigLoader.language.sendMessage(player, "island.info.no-owner");
+            return true;
+        }
+
+        Location center = RegionHelper.getCenterRegion(null, island.getPosition().x(), island.getPosition().z());
+        Timestamp createdAt = island.getCreateDate();
+        double size = island.getSize();
+        int maxMembers = island.getMaxMembers();
+        List<Players> members = island.getMembers();
+
+        Component infoComponent = Component.text("")
+                .append(ConfigLoader.language.translate(player, "island.info.display.title")).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.id", Map.of("%id%", islandId.toString()))).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.owner", Map.of("%owner%", leader.getLastKnowName()))).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.size", Map.of("%size%", String.valueOf(size)))).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.private", Map.of("%private%", island.isPrivateIsland() ? "Yes" : "No"))).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.max-members", Map.of("%max%", String.valueOf(maxMembers)))).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.created", Map.of("%created%", createdAt.toString()))).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.online-members", Map.of(
+                        "%online%", String.valueOf(members.stream().filter(p -> Bukkit.getOfflinePlayer(p.getMojangId()).isOnline()).count()),
+                        "%total%", String.valueOf(members.size())
+                ))).append(Component.newline())
+                .append(ConfigLoader.language.translate(player, "island.info.display.location", Map.of(
+                        "%x%", String.valueOf(center.getBlockX()),
+                        "%z%", String.valueOf(center.getBlockZ())
+                )));
+
+
+        IslandInfoEvent infoEvent = new IslandInfoEvent(player, island);
+        infoEvent.callEvent();
+        for (Component extra : infoEvent.getExtraMessages()) {
+            infoComponent = infoComponent.append(Component.newline()).append(extra);
+        }
+
+        if (!members.isEmpty()) {
+            infoComponent = infoComponent.append(Component.newline()).append(ConfigLoader.language.translate(player, "island.info.display.members-title"));
+            for (Players member : members) {
+                boolean online = Bukkit.getOfflinePlayer(member.getMojangId()).isOnline();
+                String color = online ? "<green>" : "<red>";
+                infoComponent = infoComponent.append(Component.newline()).append(
+                        ConfigLoader.language.translate(player, "island.info.display.member-line", Map.of(
+                                "%color%", color,
+                                "%role%", member.getRoleType().name(),
+                                "%name%", member.getLastKnowName()
+                        ))
+                );
             }
+        }
 
-            UUID islandId = island.getId();
-            Optional<Players> found = island.getMembers().stream().filter(p -> p.getRoleType() == RoleType.OWNER).findFirst();
-            Players leader = found.orElse(null);
-            if (leader == null) {
-                ConfigLoader.language.sendMessage(player, "island.info.no-owner");
-                return;
-            }
-
-            Location center = RegionHelper.getCenterRegion(null, island.getPosition().x(), island.getPosition().z());
-            Timestamp createdAt = island.getCreateDate();
-            double size = island.getSize();
-            int maxMembers = island.getMaxMembers();
-            CopyOnWriteArrayList<Players> members = island.getMembers();
-
-            Component infoComponent = Component.text("")
-                    .append(ConfigLoader.language.translate(player, "island.info.display.title")).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.id", Map.of("%id%", islandId.toString()))).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.owner", Map.of("%owner%", leader.getLastKnowName()))).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.size", Map.of("%size%", String.valueOf(size)))).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.private", Map.of("%private%", island.isPrivateIsland() ? "Yes" : "No"))).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.max-members", Map.of("%max%", String.valueOf(maxMembers)))).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.created", Map.of("%created%", createdAt.toString()))).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.online-members", Map.of(
-                            "%online%", String.valueOf(members.stream().filter(p -> Bukkit.getOfflinePlayer(p.getMojangId()).isOnline()).count()),
-                            "%total%", String.valueOf(members.size())
-                    ))).append(Component.newline())
-                    .append(ConfigLoader.language.translate(player, "island.info.display.location", Map.of(
-                            "%x%", String.valueOf(center.getBlockX()),
-                            "%z%", String.valueOf(center.getBlockZ())
-                    )));
-
-
-            IslandInfoEvent infoEvent = new IslandInfoEvent(player, island);
-            infoEvent.callEvent();
-            for (Component extra : infoEvent.getExtraMessages()) {
-                infoComponent = infoComponent.append(Component.newline()).append(extra);
-            }
-
-            if (!members.isEmpty()) {
-                infoComponent = infoComponent.append(Component.newline()).append(ConfigLoader.language.translate(player, "island.info.display.members-title"));
-                for (Players member : members) {
-                    boolean online = Bukkit.getOfflinePlayer(member.getMojangId()).isOnline();
-                    String color = online ? "<green>" : "<red>";
-                    infoComponent = infoComponent.append(Component.newline()).append(
-                            ConfigLoader.language.translate(player, "island.info.display.member-line", Map.of(
-                                    "%color%", color,
-                                    "%role%", member.getRoleType().name(),
-                                    "%name%", member.getLastKnowName()
-                            ))
-                    );
-                }
-            }
-
-            player.sendMessage(infoComponent);
-        });
+        player.sendMessage(infoComponent);
 
         return true;
     }

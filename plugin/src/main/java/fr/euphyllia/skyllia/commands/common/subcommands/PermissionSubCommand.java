@@ -1,35 +1,68 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.database.IslandPermissionQuery;
+import fr.euphyllia.skyllia.api.permissions.*;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.PermissionManager;
-import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.PermissionRoleIsland;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.permissions.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.managers.PermissionsManagers;
-import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PermissionSubCommand implements SubCommandInterface {
 
+    private static final List<String> ACTIONS = List.of("list", "get", "set", "toggle");
+    private static final List<String> BOOLS = List.of("true", "false", "on", "off");
+
     private final Logger logger = LogManager.getLogger(PermissionSubCommand.class);
+    private final PermissionId PERMISSION_COMMAND_PERMISSION;
+
+    public PermissionSubCommand() {
+        this.PERMISSION_COMMAND_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
+                new NamespacedKey(SkylliaAPI.getPlugin(), "command.island.permission"),
+                "Permissions île: gérer les permissions",
+                "Autorise à gérer les permissions des rôles de l'île"
+        ));
+    }
+
+    private static boolean isAction(String s) {
+        if (s == null) return false;
+        String v = s.toLowerCase(Locale.ROOT);
+        return ACTIONS.stream().anyMatch(a -> a.equals(v));
+    }
+
+    private static RoleType parseRole(String input) {
+        if (input == null) return null;
+        try {
+            return RoleType.valueOf(input.toUpperCase(Locale.ROOT));
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private static Boolean parseBool(String input) {
+        if (input == null) return null;
+        String v = input.toLowerCase(Locale.ROOT);
+        return switch (v) {
+            case "true", "on", "1", "yes" -> true;
+            case "false", "off", "0", "no" -> false;
+            default -> null;
+        };
+    }
+
+    private static String toKeyString(NamespacedKey key) {
+        return key.getNamespace() + ":" + key.getKey();
+    }
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
@@ -37,174 +70,232 @@ public class PermissionSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.permission")) {
+
+        if (!player.hasPermission("skyllia.island.command.permission")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
-        if (args.length < 4) {
-            ConfigLoader.language.sendMessage(player, "island.permission.args-missing");
+
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        if (island == null) {
+            ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
         }
-        String permissionsTypeRaw = args[0]; // ISLAND / COMMANDS / INVENTORY
-        String roleTypeRaw = args[1]; // ROLE TYPE
-        String permissionRaw = args[2]; // Permission
-        String valueRaw = args[3]; // true / false
 
-        try {
-            PermissionFormat permissionFormat = this.getPermissionFormat(Skyllia.getPlugin(Skyllia.class), player, permissionsTypeRaw, roleTypeRaw, permissionRaw, valueRaw);
-            if (permissionFormat == null) return true;
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByPlayerId(player.getUniqueId()).join();
-            if (island == null) {
-                ConfigLoader.language.sendMessage(player, "island.player.no-island");
+        if (!canEdit(player, island)) {
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
+            return true;
+        }
+
+        if (args.length == 0) {
+            ConfigLoader.language.sendMessage(player, "island.permission.usage");
+            return true;
+        }
+
+        PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
+
+        // /is permission list [filter]
+        if (args[0].equalsIgnoreCase("list")) {
+            String filter = (args.length >= 2) ? args[1].toLowerCase(Locale.ROOT) : "";
+            List<String> all = registry.keys().stream()
+                    .map(PermissionSubCommand::toKeyString)
+                    .filter(k -> filter.isEmpty() || k.toLowerCase(Locale.ROOT).contains(filter))
+                    .sorted()
+                    .toList();
+
+            if (all.isEmpty()) {
+                ConfigLoader.language.sendMessage(player, "island.permission.list.empty");
                 return true;
             }
 
-            Players executorPlayer = island.getMember(player.getUniqueId());
-            if (permissionFormat.permissions != null) {
+            // header
+            ConfigLoader.language.sendMessage(player, "island.permission.list.header", Map.of(
+                    "%count%", String.valueOf(all.size())
+            ));
 
-                if (!PermissionsManagers.testPermissions(executorPlayer, player, island, PermissionsCommandIsland.MANAGE_PERMISSION, false)) {
-                    return true;
-                }
-                if (executorPlayer.getRoleType().getValue() <= permissionFormat.roleType.getValue()) {
-                    ConfigLoader.language.sendMessage(player, "island.permission.fail-high-equals-status");
-                    return true;
-                }
-
-                if (updatePermissions(skyblockManager, island, permissionFormat)) {
-                    ConfigLoader.language.sendMessage(player, "island.permission.update.success");
-                } else {
-                    ConfigLoader.language.sendMessage(player, "island.permission.update.failed");
-                }
-            } else {
-                // RESET !
-                if (!executorPlayer.getRoleType().equals(RoleType.OWNER)) {
-                    ConfigLoader.language.sendMessage(player, "island.only-owner");
-                }
-                if (resetPermission(island, permissionFormat)) {
-                    ConfigLoader.language.sendMessage(player, "island.permission.update.success");
-                } else {
-                    ConfigLoader.language.sendMessage(player, "island.permission.update.failed");
-                }
+            // limite anti-spam (tu peux ajuster / paginer plus tard)
+            int limit = Math.min(all.size(), 80);
+            for (int i = 0; i < limit; i++) {
+                ConfigLoader.language.sendMessage(player, "island.permission.list.entry", Map.of(
+                        "%perm%", all.get(i)
+                ));
             }
-        } catch (Exception e) {
-            logger.log(Level.FATAL, e.getMessage(), e);
-            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            if (all.size() > limit) {
+                ConfigLoader.language.sendMessage(player, "island.permission.list.more", Map.of(
+                        "%more%", String.valueOf(all.size() - limit)
+                ));
+            }
+            return true;
         }
+
+        // Mode actionnel OU forme courte:
+        // actionnel:
+        //   /is permission get <role> <perm>
+        //   /is permission set <role> <perm> <bool>
+        //   /is permission toggle <role> <perm>
+        //
+        // forme courte:
+        //   /is permission <role> <perm> [bool]
+        int offset = 0;
+        String action;
+
+        if (isAction(args[0])) {
+            action = args[0].toLowerCase(Locale.ROOT);
+            offset = 1;
+        } else {
+            action = "auto";
+        }
+
+        if (args.length - offset < 2) {
+            ConfigLoader.language.sendMessage(player, "island.permission.usage");
+            return true;
+        }
+
+        RoleType role = parseRole(args[offset]);
+        if (role == null) {
+            ConfigLoader.language.sendMessage(player, "island.permission.role.invalid", Map.of(
+                    "%role%", args[offset]
+            ));
+            return true;
+        }
+
+        NamespacedKey key = NamespacedKey.fromString(args[offset + 1]);
+        if (key == null) {
+            ConfigLoader.language.sendMessage(player, "island.permission.perm.invalid-format", Map.of(
+                    "%perm%", args[offset + 1]
+            ));
+            return true;
+        }
+
+        PermissionId pid = registry.getIfPresent(key);
+        if (pid == null) {
+            ConfigLoader.language.sendMessage(player, "island.permission.perm.unknown", Map.of(
+                    "%perm%", toKeyString(key)
+            ));
+            return true;
+        }
+
+        Boolean explicitBool = (args.length - offset >= 3) ? parseBool(args[offset + 2]) : null;
+
+        boolean current = island.getCompiledPermissions().has(registry, role, pid);
+
+        // GET explicite, ou auto sans bool
+        if (action.equals("get") || (action.equals("auto") && explicitBool == null)) {
+            ConfigLoader.language.sendMessage(player, "island.permission.value", Map.of(
+                    "%role%", role.name(),
+                    "%perm%", toKeyString(key),
+                    "%value%", String.valueOf(current)
+            ));
+            return true;
+        }
+
+        // TOGGLE
+        boolean next;
+        if (action.equals("toggle")) {
+            next = !current;
+        } else {
+            // SET (explicite ou auto avec bool)
+            if (explicitBool == null) {
+                ConfigLoader.language.sendMessage(player, "island.permission.bool.invalid", Map.of(
+                        "%value%", (args.length - offset >= 3 ? args[offset + 2] : "")
+                ));
+                return true;
+            }
+            next = explicitBool;
+        }
+
+        boolean updated = setDbAndRuntime(island, role, pid, next);
+        if (!updated) {
+            ConfigLoader.language.sendMessage(player, "island.permission.update.failed");
+            return true;
+        }
+
+        boolean finalValue = island.getCompiledPermissions().has(registry, role, pid);
+        ConfigLoader.language.sendMessage(player, "island.permission.update.success", Map.of(
+                "%role%", role.name(),
+                "%perm%", toKeyString(key),
+                "%old%", String.valueOf(current),
+                "%new%", String.valueOf(finalValue)
+        ));
         return true;
+    }
+
+    private boolean setDbAndRuntime(Island island, RoleType role, PermissionId pid, boolean value) {
+        IslandPermissionQuery query = Skyllia.getInstance()
+                .getInterneAPI()
+                .getIslandQuery()
+                .getIslandPermissionQuery();
+        if (query == null) return false;
+
+        boolean success = query.set(island.getId(), role, pid, value);
+        if (!success) return false;
+
+        PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
+        CompiledPermissions compiled = island.getCompiledPermissions();
+        compiled.ensureUpToDate(registry);
+
+        PermissionSet set = compiled.setFor(role);
+        if (set == null) return false;
+
+        set.set(pid, value);
+        return true;
+    }
+
+    private boolean canEdit(Player player, Island island) {
+        return SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, PERMISSION_COMMAND_PERMISSION);
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        // ---------- ARG #1 (PermissionsType) ----------
-        if (args.length == 1) {
-            String partial = args[0].trim().toLowerCase();
+        if (!(sender instanceof Player player)) return Collections.emptyList();
+        if (!player.hasPermission("skyllia.island.command.permission")) return Collections.emptyList();
 
-            return Arrays.stream(PermissionsType.values())
-                    .map(Enum::name)
-                    .filter(name -> name.toLowerCase().startsWith(partial))
-                    .toList();
+        PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
+
+        if (args.length == 1) {
+            String partial = args[0].trim().toLowerCase(Locale.ROOT);
+            return ACTIONS.stream()
+                    .filter(a -> a.startsWith(partial))
+                    .collect(Collectors.toList());
         }
 
-        // ---------- ARG #2 (RoleType) ----------
-        if (args.length == 2) {
-            String partial = args[1].trim().toLowerCase();
+        int offset = isAction(args[0]) ? 1 : 0;
 
+        // rôle
+        if (args.length == offset + 1) {
+            String partial = args[offset].trim().toLowerCase(Locale.ROOT);
             return Arrays.stream(RoleType.values())
                     .map(Enum::name)
-                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .filter(r -> r.toLowerCase(Locale.ROOT).startsWith(partial))
+                    .sorted()
                     .toList();
         }
 
-        // ---------- ARG #3 (PermissionsCommandIsland / PermissionsIsland / PermissionsInventory) ----------
-        if (args.length == 3) {
-            PermissionsType permissionsType;
-            try {
-                permissionsType = PermissionsType.valueOf(args[0].toUpperCase());
-            } catch (IllegalArgumentException e) {
-                return Collections.emptyList();
-            }
-
-            List<String> permissionValues = switch (permissionsType) {
-                case COMMANDS -> Arrays.stream(PermissionsCommandIsland.values()).map(Enum::name).toList();
-                case ISLAND -> Arrays.stream(PermissionsIsland.values()).map(Enum::name).toList();
-                case INVENTORY -> Arrays.stream(PermissionsInventory.values()).map(Enum::name).toList();
-            };
-
-            List<String> finalValues = new ArrayList<>();
-            finalValues.add("RESET");
-            finalValues.addAll(permissionValues);
-
-            String partial = args[2].trim().toLowerCase();
-            return finalValues.stream()
-                    .filter(val -> val.toLowerCase().startsWith(partial))
+        // permission key
+        if (args.length == offset + 2) {
+            String partial = args[offset + 1].trim().toLowerCase(Locale.ROOT);
+            return registry.keys().stream()
+                    .map(PermissionSubCommand::toKeyString)
+                    .filter(k -> k.toLowerCase(Locale.ROOT).startsWith(partial))
+                    .sorted()
+                    .limit(50)
                     .toList();
         }
 
-        // ---------- ARG #4 (true/false) ----------
-        if (args.length == 4) {
-            String partial = args[3].trim().toLowerCase();
+        // bool uniquement si action != get/list (ou forme courte auto)
+        String action = isAction(args[0]) ? args[0].toLowerCase(Locale.ROOT) : "auto";
+        if (args.length == offset + 3 && !action.equals("get") && !action.equals("list") && !action.equals("toggle")) {
+            String partial = args[offset + 2].trim().toLowerCase(Locale.ROOT);
+            return BOOLS.stream().filter(b -> b.startsWith(partial)).toList();
+        }
 
-            return Stream.of("true", "false")
-                    .filter(val -> val.startsWith(partial))
-                    .toList();
+        // si forme courte auto: autoriser le bool en 3e arg
+        if (action.equals("auto") && args.length == 3) {
+            String partial = args[2].trim().toLowerCase(Locale.ROOT);
+            return BOOLS.stream().filter(b -> b.startsWith(partial)).toList();
         }
 
         return Collections.emptyList();
-    }
-
-    private PermissionFormat getPermissionFormat(Skyllia Skyllia, Entity entity, String permissionsTypeRaw, String roleTypeRaw, String permissionRaw, String valueRaw) {
-        PermissionsType permissionsType;
-        try {
-            permissionsType = PermissionsType.valueOf(permissionsTypeRaw.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            ConfigLoader.language.sendMessage(entity, "island.permission.permission-type-invalid");
-            return null;
-        }
-        RoleType roleType;
-        try {
-            roleType = RoleType.valueOf(roleTypeRaw.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            ConfigLoader.language.sendMessage(entity, "island.permission.role-invalid");
-            return null;
-        }
-        Permissions permissions = null;
-        try {
-            if (!permissionRaw.equalsIgnoreCase("RESET")) {
-                permissions = switch (permissionsType) {
-                    case COMMANDS -> PermissionsCommandIsland.valueOf(permissionRaw.toUpperCase());
-                    case ISLAND -> PermissionsIsland.valueOf(permissionRaw.toUpperCase());
-                    case INVENTORY -> PermissionsInventory.valueOf(permissionRaw.toUpperCase());
-                };
-            }
-        } catch (IllegalArgumentException e) {
-            ConfigLoader.language.sendMessage(entity, "island.permission.permissions-invalid");
-            return null;
-        }
-        boolean value = Boolean.parseBoolean(valueRaw);
-        return new PermissionFormat(permissionsType, roleType, permissions, value);
-    }
-
-    private boolean updatePermissions(SkyblockManager skyblockManager, Island island, PermissionFormat permissionFormat) {
-        PermissionRoleIsland permissionsIsland = skyblockManager.getPermissionIsland(island.getId(), permissionFormat.permissionsType, permissionFormat.roleType).join();
-        long flags = permissionsIsland.permission();
-        PermissionManager permissionManager = new PermissionManager(flags);
-        permissionManager.definePermission(permissionFormat.permissions.getPermissionValue(), permissionFormat.value);
-        return island.updatePermission(permissionFormat.permissionsType, permissionFormat.roleType, permissionManager.getPermissions());
-    }
-
-    private boolean resetPermission(Island island, PermissionFormat permissionFormat) {
-        PermissionsType permissionsType = permissionFormat.permissionsType;
-        RoleType roleType = permissionFormat.roleType;
-        long value = switch (permissionsType) {
-            case INVENTORY -> ConfigLoader.permissions.getPermissionInventory().getOrDefault(roleType, 0L);
-            case COMMANDS -> ConfigLoader.permissions.getPermissionsCommands().getOrDefault(roleType, 0L);
-            case ISLAND -> ConfigLoader.permissions.getPermissionIsland().getOrDefault(roleType, 0L);
-        };
-        return island.updatePermission(permissionsType, roleType, value);
-    }
-
-    private record PermissionFormat(PermissionsType permissionsType, RoleType roleType, Permissions permissions,
-                                    boolean value) {
     }
 }

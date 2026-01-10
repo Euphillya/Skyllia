@@ -108,6 +108,15 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         return Bukkit.getRegionTPS(chunk);
     }
 
+    public static void initWorld(ServerLevel serverLevel, DedicatedServer console, PrimaryLevelData primaryLevelData) {
+        var x = serverLevel.randomSpawnSelection.x;
+        var z = serverLevel.randomSpawnSelection.z;
+
+        Bukkit.getRegionScheduler().run(SkylliaAPI.getPlugin(), serverLevel.getWorld(), x, z, task -> {
+            console.initWorld(serverLevel, primaryLevelData, primaryLevelData, primaryLevelData.worldGenOptions());
+        });
+    }
+
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
@@ -300,15 +309,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         new WorldLoadEvent(serverLevel.getWorld()).callEvent();
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(serverLevel.getWorld());
-    }
-
-    public static void initWorld(ServerLevel serverLevel, DedicatedServer console, PrimaryLevelData primaryLevelData) {
-        var x = serverLevel.randomSpawnSelection.x;
-        var z = serverLevel.randomSpawnSelection.z;
-
-        Bukkit.getRegionScheduler().run(SkylliaAPI.getPlugin(), serverLevel.getWorld(), x, z, task -> {
-            console.initWorld(serverLevel, primaryLevelData, primaryLevelData, primaryLevelData.worldGenOptions());
-        });
     }
 
     @Override

@@ -43,7 +43,7 @@ public class ChallengeGui {
 
     public void open(Player player, int page) {
         this.currentPage = page;
-        Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "addons.challenge.player.no-island");
             return;

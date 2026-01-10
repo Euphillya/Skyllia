@@ -1,13 +1,13 @@
 package fr.euphyllia.skylliabank.database.sqlite;
 
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
 import fr.euphyllia.skylliabank.api.BankAccount;
 import fr.euphyllia.skylliabank.api.BankGenerator;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class SQLiteBankGenerator implements BankGenerator {
 
@@ -21,51 +21,57 @@ public class SQLiteBankGenerator implements BankGenerator {
             ON CONFLICT(island_id) DO UPDATE SET balance = excluded.balance;
             """;
 
+    private static final String DEPOSIT = """
+            INSERT INTO island_bank (island_id, balance)
+            VALUES (?, ?)
+            ON CONFLICT(island_id) DO UPDATE SET balance = island_bank.balance + excluded.balance;
+            """;
+
+    private static final String WITHDRAW = """
+            UPDATE island_bank
+            SET balance = balance - ?
+            WHERE island_id = ?
+              AND balance >= ?;
+            """;
+
+    private final DatabaseLoader loader;
+
+    public SQLiteBankGenerator(DatabaseLoader loader) {
+        this.loader = loader;
+    }
+
     @Override
-    public CompletableFuture<BankAccount> getBankAccount(UUID islandId) {
-        CompletableFuture<BankAccount> future = new CompletableFuture<>();
-        try {
-            SQLiteBankInit.getPool().executeQuery(SELECT_BALANCE, List.of(islandId.toString()), rs -> {
-                try {
-                    if (rs.next()) {
-                        double balance = rs.getDouble("balance");
-                        future.complete(new BankAccount(islandId, balance));
-                    } else {
-                        future.complete(new BankAccount(islandId, 0.0));
-                    }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+    public BankAccount getBankAccount(UUID islandId) {
+        return SQLExecute.queryMap(loader, SELECT_BALANCE, List.of(islandId.toString()), rs -> {
+            try {
+                if (rs.next()) {
+                    return new BankAccount(islandId, rs.getDouble("balance"));
                 }
-            }, null);
-        } catch (DatabaseException e) {
-            future.completeExceptionally(e);
-        }
-        return future;
-    }
-
-    @Override
-    public CompletableFuture<Boolean> setBalance(UUID islandId, double balance) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        try {
-            SQLiteBankInit.getPool().executeUpdate(UPSERT_BALANCE, List.of(islandId.toString(), balance), rows -> future.complete(rows > 0), null);
-        } catch (DatabaseException e) {
-            future.completeExceptionally(e);
-        }
-        return future;
-    }
-
-    @Override
-    public CompletableFuture<Boolean> deposit(UUID islandId, double amount) {
-        return getBankAccount(islandId).thenCompose(account -> setBalance(islandId, account.balance() + amount));
-    }
-
-    @Override
-    public CompletableFuture<Boolean> withdraw(UUID islandId, double amount) {
-        return getBankAccount(islandId).thenCompose(account -> {
-            if (account.balance() < amount) {
-                return CompletableFuture.completedFuture(false);
+                return new BankAccount(islandId, 0.0);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            return setBalance(islandId, account.balance() - amount);
         });
+    }
+
+    @Override
+    public Boolean setBalance(UUID islandId, double balance) {
+        int affected = SQLExecute.update(loader, UPSERT_BALANCE, List.of(islandId.toString(), balance));
+        return affected > 0;
+    }
+
+    @Override
+    public Boolean deposit(UUID islandId, double amount) {
+        if (amount <= 0) return false;
+        int affected = SQLExecute.update(loader, DEPOSIT, List.of(islandId.toString(), amount));
+        return affected > 0;
+    }
+
+    @Override
+    public Boolean withdraw(UUID islandId, double amount) {
+        if (amount <= 0) return false;
+
+        int affected = SQLExecute.update(loader, WITHDRAW, List.of(amount, islandId.toString(), amount));
+        return affected > 0;
     }
 }

@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.cache.commands;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -31,19 +32,18 @@ public class CacheCommands {
     }
 
     public static void refreshFor(UUID playerId) {
-        SkylliaAPI.getIslandByPlayerId(playerId).thenAccept(island -> {
-            if (island == null) {
-                warpTabCache.remove(playerId);
-                return;
-            }
-            List<WarpIsland> warps = island.getWarps();
-            if (warps == null) {
-                warpTabCache.remove(playerId);
-                return;
-            }
-            List<String> names = warps.stream().map(WarpIsland::warpName).toList();
-            warpTabCache.put(playerId, names);
-        });
+        Island island = SkylliaAPI.getIslandByPlayerId(playerId);
+        if (island == null) {
+            warpTabCache.remove(playerId);
+            return;
+        }
+        List<WarpIsland> warps = island.getWarps();
+        if (warps == null) {
+            warpTabCache.remove(playerId);
+            return;
+        }
+        List<String> names = warps.stream().map(WarpIsland::warpName).toList();
+        warpTabCache.put(playerId, names);
     }
 
     public static void invalidateAll() {

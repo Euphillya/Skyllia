@@ -34,13 +34,13 @@ public record BankRequirement(int requirementId, NamespacedKey challengeKey,
         long needed = target - already;
 
         BankManager bank = SkylliaBank.getBankManager();
-        double current = bank.getBankAccount(island.getId()).join().balance();
+        double current = bank.getBankAccount(island.getId()).balance();
         long available = (long) Math.floor(current);
 
         long toMove = Math.min(needed, available);
         if (toMove <= 0) return false;
 
-        boolean ok = bank.withdraw(island.getId(), toMove).join();
+        boolean ok = bank.withdraw(island.getId(), toMove);
         if (!ok) return false;
 
         ProgressStoragePartial.addPartial(island.getId(), challengeKey, requirementId, toMove);

@@ -9,17 +9,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class InfoListener implements Listener {
 
     @EventHandler
     public void onIslandInfoEvent(final IslandInfoEvent event) {
-        CompletableFuture<BankAccount> future = SkylliaBank.getBankManager().getOrLoadBankAccount(event.getIsland().getId());
-        if (future == null) {
-            return;
-        }
-        BankAccount account = future.getNow(new BankAccount(event.getIsland().getId(), -1.0));
+        BankAccount account = SkylliaBank.getBankManager().getOrLoadBankAccount(event.getIsland().getId());
 
         if (account.balance() < 0) {
             return;

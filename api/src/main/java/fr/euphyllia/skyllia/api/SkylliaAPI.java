@@ -1,6 +1,9 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
+import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
+import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
@@ -13,9 +16,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The SkylliaAPI class provides various methods to interact with Skyblock islands and check the server environment.
@@ -48,7 +50,7 @@ public final class SkylliaAPI {
      * @param playerUniqueId The UUID of the player.
      * @return A CompletableFuture that will contain the island associated with the player's UUID.
      */
-    public static CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerUniqueId) {
+    public static @Nullable Island getIslandByPlayerId(UUID playerUniqueId) {
         return implementation.getIslandByPlayerId(playerUniqueId);
     }
 
@@ -58,8 +60,12 @@ public final class SkylliaAPI {
      * @param islandId The UUID of the island.
      * @return A CompletableFuture that will contain the island associated with the island ID.
      */
-    public static CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
+    public static @Nullable Island getIslandByIslandId(UUID islandId) {
         return implementation.getIslandByIslandId(islandId);
+    }
+
+    public static @Nullable Island getIslandByOwner(UUID playerUniqueId) {
+        return implementation.getIslandByOwner(playerUniqueId);
     }
 
     /**
@@ -192,28 +198,8 @@ public final class SkylliaAPI {
      *
      * @return A CompletableFuture containing a thread-safe list of active islands.
      */
-    public static CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+    public static List<Island> getAllIslandsValid() {
         return implementation.getAllIslandsValid();
-    }
-
-    /**
-     * Retrieves the island associated with a player's UUID.
-     *
-     * @param playerUniqueId The UUID of the player.
-     * @return An island associated with the player's UUID.
-     */
-    public static @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
-        return implementation.getCacheIslandByPlayerId(playerUniqueId);
-    }
-
-    /**
-     * Retrieves the island associated with an island ID.
-     *
-     * @param islandId The UUID of the island.
-     * @return An island associated with the island ID.
-     */
-    public static @Nullable Island getCacheIslandByIslandId(UUID islandId) {
-        return implementation.getCacheIslandByIslandId(islandId);
     }
 
     /**
@@ -253,4 +239,17 @@ public final class SkylliaAPI {
     public static WorldNMS getWorldNMS() {
         return implementation.getWorldNMS();
     }
+
+    public static PermissionsManagers getPermissionsManager() {
+        return implementation.getPermissionsManager();
+    }
+
+    public static PermissionModuleManager getPermissionModuleManager() {
+        return implementation.getPermissionModuleManager();
+    }
+
+    public static PermissionRegistry getPermissionRegistry() {
+        return implementation.getPermissionRegistry();
+    }
+
 }

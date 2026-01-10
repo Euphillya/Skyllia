@@ -30,7 +30,7 @@ public class ChatListeners implements Listener {
             event.setCancelled(true);
 
             Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                Island island = SkylliaAPI.getCacheIslandByPlayerId(player.getUniqueId());
+                Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
                 if (island == null) {
                     ConfigLoader.language.sendMessage(player, "island.player.no-island");
                     return;
@@ -67,7 +67,7 @@ public class ChatListeners implements Listener {
                         .replace("§o", "<italic>");
 
 
-                for (Players islandMember : island.getMembersCached()) {
+                for (Players islandMember : island.getMembers()) {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(islandMember.getMojangId());
                     if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
                         offlinePlayer.getPlayer().sendMessage(miniMessage.deserialize(format));

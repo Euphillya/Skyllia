@@ -5,10 +5,11 @@ import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
 import fr.euphyllia.skyllia.api.utils.Metrics;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
-import fr.euphyllia.skyllia.cache.CacheScheduler;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.hook.HookBootstrap;
 import fr.euphyllia.skyllia.listeners.ListenersRegistrar;
+import fr.euphyllia.skyllia.papi.SkylliaExpansion;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.logging.log4j.Level;
@@ -53,11 +54,13 @@ public class Skyllia extends JavaPlugin {
         }
 
         if (!initializeInterneAPI()) {
+            logger.error("Incompatible Minecraft version detected. Disabling plugin.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
         if (!loadConfigurations()) {
+            logger.error("Configuration loading failed.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -76,12 +79,17 @@ public class Skyllia extends JavaPlugin {
         // Register listeners
         new ListenersRegistrar(this, interneAPI).registerListeners();
 
-        // Schedule cache updates
-        new CacheScheduler(this, interneAPI).scheduleCacheUpdate();
+        HookBootstrap.registerAll(this);
 
         checkDisabledConfig();
 
         new Metrics(this, 20874);
+
+        ConfigLoader.permissionsV2.compileNow();
+
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new SkylliaExpansion(this).register();
+        }
     }
 
     @Override
@@ -89,7 +97,6 @@ public class Skyllia extends JavaPlugin {
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
         if (this.interneAPI != null) {
-            this.interneAPI.getCacheManager().invalidateAll();
             if (this.interneAPI.getDatabaseLoader() != null) {
                 this.interneAPI.getDatabaseLoader().closeDatabase();
             }
@@ -116,7 +123,11 @@ public class Skyllia extends JavaPlugin {
 
             ConfigLoader.init(getDataFolder());
 
-            return this.interneAPI.setupSGBD();
+            boolean ok = this.interneAPI.setupSGBD();
+            if (!ok) {
+                logger.error("[SGBD] setupSGBD() returned false (no exception). Check DB config/credentials/driver/reachability.");
+            }
+            return ok;
         } catch (DatabaseException exception) {
             logger.log(Level.FATAL, exception, exception);
             return false;

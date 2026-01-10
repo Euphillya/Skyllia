@@ -6,6 +6,11 @@ package fr.euphyllia.skyllia.api.skyblock.model;
 public enum RoleType {
 
     /**
+     * Special role for island flags management, not a real player role.
+     */
+    ISLAND_FLAGS(Integer.MAX_VALUE),
+
+    /**
      * Role with the highest level of authority, typically the owner of the island.
      */
     OWNER(4),

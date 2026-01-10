@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.commands.admin.subcommands;
 
-import fr.euphyllia.skyllia.api.PermissionImp;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -20,7 +19,7 @@ public class CurrentSubCommands implements SubCommandInterface {
 
     @Override
     public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
-        if (!PermissionImp.hasPermission(sender, permission())) {
+        if (!sender.hasPermission(permission())) {
             ConfigLoader.language.sendMessage(sender, "island.admin.current.no-permission");
             return true;
         }
@@ -41,13 +40,13 @@ public class CurrentSubCommands implements SubCommandInterface {
         Players owner = island.getOwner();
 
         if (owner == null) { // Normalement impossible
-            ConfigLoader.language.sendMessage(player, "island.admin.current.no-owner",  Map.of(
+            ConfigLoader.language.sendMessage(player, "island.admin.current.no-owner", Map.of(
                     "%island_id%", String.valueOf(island.getId())
             ));
             return true;
         }
 
-        ConfigLoader.language.sendMessage(player, "island.admin.current.info",  Map.of(
+        ConfigLoader.language.sendMessage(player, "island.admin.current.info", Map.of(
                 "%island_id%", String.valueOf(island.getId()),
                 "%owner_name%", owner.getLastKnowName(),
                 "%owner_uuid%", String.valueOf(owner.getMojangId())

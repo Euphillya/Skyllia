@@ -2,6 +2,7 @@ package fr.euphyllia.skylliachat;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skylliachat.commands.IslandChatCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,7 +14,6 @@ public final class SkylliaChat extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         SkylliaAPI.registerCommands(new IslandChatCommand(this), "chat");
 
         getServer().getPluginManager().registerEvents(new ChatListeners(this), this);
@@ -21,7 +21,8 @@ public final class SkylliaChat extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        Bukkit.getAsyncScheduler().cancelTasks(this);
+        Bukkit.getGlobalRegionScheduler().cancelTasks(this);
     }
 
     public ConcurrentHashMap<Player, Boolean> getIslandChatEnabled() {

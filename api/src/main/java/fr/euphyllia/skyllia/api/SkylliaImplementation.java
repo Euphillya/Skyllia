@@ -1,6 +1,9 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
+import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
+import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
@@ -12,9 +15,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The SkylliaImplementation interface defines the methods that must be implemented
@@ -28,15 +30,7 @@ public interface SkylliaImplementation {
      * @param playerUniqueId The UUID of the player.
      * @return A CompletableFuture that will contain the island associated with the player's UUID.
      */
-    public CompletableFuture<@NotNull Island> getIslandByPlayerId(UUID playerUniqueId);
-
-    /**
-     * Retrieves the island associated with a player's UUID.
-     *
-     * @param playerUniqueId The UUID of the player.
-     * @return An island associated with the player's UUID.
-     */
-    public @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId);
+    public @Nullable Island getIslandByPlayerId(UUID playerUniqueId);
 
     /**
      * Retrieves the island associated with an island ID.
@@ -44,15 +38,15 @@ public interface SkylliaImplementation {
      * @param islandId The UUID of the island.
      * @return A CompletableFuture that will contain the island associated with the island ID.
      */
-    public CompletableFuture<@NotNull Island> getIslandByIslandId(UUID islandId);
+    public @Nullable Island getIslandByIslandId(UUID islandId);
 
     /**
-     * Retrieves the island associated with an island ID.
+     * Retrieves the island owned by a specific owner.
      *
-     * @param islandId The UUID of the island.
-     * @return An island associated with the island ID.
+     * @param ownerId The UUID of the island owner.
+     * @return The island owned by the specified owner, or null if none is found.
      */
-    public @Nullable Island getCacheIslandByIslandId(UUID islandId);
+    public @Nullable Island getIslandByOwner(UUID ownerId);
 
     /**
      * Retrieves the island at a specific position.
@@ -84,7 +78,7 @@ public interface SkylliaImplementation {
      *
      * @return A CompletableFuture containing a thread-safe list of active islands.
      */
-    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid();
+    public List<Island> getAllIslandsValid();
 
     /**
      * Checks if a world with the given name is a Skyblock world.
@@ -163,4 +157,11 @@ public interface SkylliaImplementation {
      */
     @ApiStatus.Internal
     WorldNMS getWorldNMS();
+
+    PermissionsManagers getPermissionsManager();
+
+    PermissionModuleManager getPermissionModuleManager();
+
+    PermissionRegistry getPermissionRegistry();
+
 }

@@ -4,14 +4,13 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.SkylliaImplementation;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
+import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
+import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
-import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
-import fr.euphyllia.skyllia.cache.island.IslandCache;
-import fr.euphyllia.skyllia.cache.island.PlayersInIslandCache;
-import fr.euphyllia.skyllia.cache.island.PositionIslandCache;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -22,9 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class APISkyllia implements SkylliaImplementation {
 
@@ -36,56 +34,33 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
-    public CompletableFuture<@Nullable Island> getIslandByPlayerId(UUID playerUniqueId) {
+    public @Nullable Island getIslandByPlayerId(UUID playerUniqueId) {
         return this.interneAPI.getSkyblockManager().getIslandByPlayerId(playerUniqueId);
     }
 
-    /**
-     * Retrieves the island associated with a player's UUID.
-     *
-     * @param playerUniqueId The UUID of the player.
-     * @return A CompletableFuture that will contain the island associated with the player's UUID.
-     */
     @Override
-    public @Nullable Island getCacheIslandByPlayerId(UUID playerUniqueId) {
-        UUID islandId = PlayersInIslandCache.getIslandIdByPlayer(playerUniqueId);
-        if (islandId == null) {
-            return null;
-        }
-        return IslandCache.getIsland(islandId);
-    }
-
-    @Override
-    public CompletableFuture<@Nullable Island> getIslandByIslandId(UUID islandId) {
+    public @Nullable Island getIslandByIslandId(UUID islandId) {
         return this.interneAPI.getSkyblockManager().getIslandByIslandId(islandId);
     }
 
-    /**
-     * Retrieves the island associated with an island ID.
-     *
-     * @param islandId The UUID of the island.
-     * @return An island associated with the island ID.
-     */
     @Override
-    public @Nullable Island getCacheIslandByIslandId(UUID islandId) {
-        return IslandCache.getIsland(islandId);
+    public @Nullable Island getIslandByOwner(UUID ownerId) {
+        return this.interneAPI.getSkyblockManager().getIslandByOwner(ownerId);
     }
 
     @Override
     public @Nullable Island getIslandByPosition(Position position) {
-        return PositionIslandCache.getIsland(position);
+        return this.interneAPI.getSkyblockManager().getIslandByPosition(position);
     }
 
     @Override
     public @Nullable Island getIslandByChunk(Chunk chunk) {
-        Position position = RegionHelper.getRegionFromChunk(chunk.getX(), chunk.getZ());
-        return PositionIslandCache.getIsland(position);
+        return this.interneAPI.getSkyblockManager().getIslandByChunk(chunk);
     }
 
     @Override
     public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
-        Position position = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
-        return PositionIslandCache.getIsland(position);
+        return this.interneAPI.getSkyblockManager().getIslandByChunk(chunkX, chunkZ);
     }
 
     /**
@@ -94,7 +69,7 @@ public final class APISkyllia implements SkylliaImplementation {
      * @return A CompletableFuture containing a thread-safe list of active islands.
      */
     @Override
-    public CompletableFuture<CopyOnWriteArrayList<Island>> getAllIslandsValid() {
+    public List<Island> getAllIslandsValid() {
         return this.interneAPI.getSkyblockManager().getAllIslandsValid();
     }
 
@@ -209,6 +184,22 @@ public final class APISkyllia implements SkylliaImplementation {
     public WorldNMS getWorldNMS() {
         return this.interneAPI.getWorldNMS();
     }
+
+    @Override
+    public PermissionsManagers getPermissionsManager() {
+        return this.interneAPI.getManagers().getPermissionsManagers();
+    }
+
+    @Override
+    public PermissionModuleManager getPermissionModuleManager() {
+        return this.interneAPI.getManagers().getPermissionModuleManager();
+    }
+
+    @Override
+    public PermissionRegistry getPermissionRegistry() {
+        return this.interneAPI.getManagers().getPermissionRegistry();
+    }
+
 
     private double[] append(double[] arr, double element) {
         double[] newArr = new double[arr.length + 1];

@@ -47,7 +47,7 @@ public class BlockRequirementListener implements Listener {
             if (islandAtLocation == null) return;
 
             if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
-                Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(playerId);
+                Island playerIsland = SkylliaAPI.getIslandByPlayerId(playerId);
                 if (playerIsland == null) return;
                 if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
             }
@@ -81,7 +81,7 @@ public class BlockRequirementListener implements Listener {
             if (islandAtLocation == null) return;
 
             if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {
-                Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(playerId);
+                Island playerIsland = SkylliaAPI.getIslandByPlayerId(playerId);
                 if (playerIsland == null) return;
                 if (!islandAtLocation.getId().equals(playerIsland.getId())) return;
             }

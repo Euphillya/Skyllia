@@ -2,15 +2,18 @@ package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.hooks.SpawnHook;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.ExplosionEntityImpl;
 import fr.euphyllia.skyllia.api.utils.nms.PlayerNMS;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import fr.euphyllia.skyllia.api.world.WorldModifier;
-import fr.euphyllia.skyllia.cache.CacheManager;
+import fr.euphyllia.skyllia.cache.SkyblockCache;
+import fr.euphyllia.skyllia.cache.TrustService;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
+import fr.euphyllia.skyllia.hook.essentialsx.EssentialsSpawnHook;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -18,14 +21,15 @@ import fr.euphyllia.skyllia.managers.world.WorldModifierSelector;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDB;
 import fr.euphyllia.skyllia.sgbd.mariadb.MariaDBLoader;
-import fr.euphyllia.skyllia.sgbd.model.DatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.postgre.Postgres;
+import fr.euphyllia.skyllia.sgbd.postgre.PostgresLoader;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLite;
 import fr.euphyllia.skyllia.sgbd.sqlite.SQLiteDatabaseLoader;
+import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,34 +46,53 @@ public class InterneAPI {
     private final Logger logger = LogManager.getLogger(this);
 
     private final Skyllia plugin;
+
+    // Core services
+    private final SkyblockCache skyblockCache;
+    private final TrustService trustService;
     private final SkyblockManager skyblockManager;
-    private final CacheManager cacheManager;
+    // World tools
     private final WorldModifierSelector worldSelector;
+    // IslandQuery : lazy (DB must be initialized first)
+    private volatile @Nullable IslandQuery islandQuery;
+    // NMS bridges
     private WorldNMS worldNMS;
     private PlayerNMS playerNMS;
     private BiomesImpl biomesImpl;
     private ExplosionEntityImpl explosionEntityImpl;
+
+    // DB + managers
     private @Nullable DatabaseLoader database;
     private Managers managers;
 
+    // Hook brigdes
+    private SpawnHook spawnHook;
+
     public InterneAPI(Skyllia plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
+
         this.setVersionNMS();
-        this.skyblockManager = new SkyblockManager(this.plugin);
-        this.cacheManager = new CacheManager(this.skyblockManager, this);
+
+        // Must be available immediately (no DB dependency)
+        this.skyblockCache = new SkyblockCache();
+        this.trustService = new TrustService();
+
+        // Inject cache to avoid plugin.getInterneAPI() during boot
+        this.skyblockManager = new SkyblockManager(this.plugin, this.skyblockCache);
+
         this.worldSelector = new WorldModifierSelector(
                 this.plugin,
                 Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null,
                 Bukkit.getPluginManager().getPlugin("WorldEdit") != null
         );
+
+        this.spawnHook = Bukkit.getPluginManager().getPlugin("Essentials") != null &&
+                Bukkit.getPluginManager().getPlugin("EssentialsSpawn") != null ?
+                new EssentialsSpawnHook() : null;
+
         loadAPI();
     }
 
-    /**
-     * Determines the version of NMS to use based on the Bukkit server version.
-     *
-     * @throws UnsupportedMinecraftVersionException if the version is not supported
-     */
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
         final String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
         switch (minecraftVersion) {
@@ -134,24 +157,19 @@ public class InterneAPI {
                 this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R6.ExplosionEntityImpl();
             }
             case "1.21.11" -> {
-                // Notifier que cette version 1.21.11 n'est pas encore stable
-                logger.info("Warning: version 1.21.11 could not be verified ! Always make a backup when you update!");
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.BiomeNMS();
                 this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.ExplosionEntityImpl();
             }
-            default -> {
-                throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
-            }
+            default ->
+                    throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
         }
     }
 
     public void createAndCopyResources(File pluginFile, String folderName) {
         File targetDir = new File(plugin.getDataFolder(), folderName);
-        if (!targetDir.exists()) {
-            targetDir.mkdirs();
-        }
+        if (!targetDir.exists()) targetDir.mkdirs();
         copyFilesFromJarResources(pluginFile, folderName, targetDir);
     }
 
@@ -162,24 +180,18 @@ public class InterneAPI {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
 
-                // Vérifie que le fichier commence par le dossier spécifié et ignore paper-plugin.yml
                 if (entryName.startsWith(resourceFolder + "/")
                         && !entry.isDirectory()
                         && !entryName.endsWith("paper-plugin.yml")) {
 
                     File outFile = new File(targetFolder, entryName.substring(resourceFolder.length() + 1));
-
-                    // Si le fichier existe déjà, on ignore
                     if (!outFile.exists()) {
                         outFile.getParentFile().mkdirs();
-
                         try (InputStream in = plugin.getResource(entryName);
                              FileOutputStream out = new FileOutputStream(outFile)) {
                             byte[] buffer = new byte[1024];
                             int len;
-                            while ((len = in.read(buffer)) > 0) {
-                                out.write(buffer, 0, len);
-                            }
+                            while ((len = in.read(buffer)) > 0) out.write(buffer, 0, len);
                         }
                     }
                 }
@@ -189,30 +201,33 @@ public class InterneAPI {
         }
     }
 
-    /**
-     * Initializes the SGBD (e.g., MariaDB) from the config, creating the database schema if necessary.
-     *
-     * @return true if successful, false otherwise
-     * @throws DatabaseException if database initialization fails
-     */
     public boolean setupSGBD() throws DatabaseException {
         if (ConfigLoader.database.getMariaDBConfig() != null) {
             MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
             this.database = new MariaDBLoader(mariaDB);
-            if (!this.database.loadDatabase()) {
-                return false;
-            }
+            if (!this.database.loadDatabase()) return false;
             return getIslandQuery().getDatabaseInitializeQuery().init();
-        } else if (ConfigLoader.database.getSqLiteConfig() != null) {
+        }
+
+        if (ConfigLoader.database.getPostgreConfig() != null) {
+            Postgres postgres = new Postgres(ConfigLoader.database.getPostgreConfig());
+            this.database = new PostgresLoader(postgres);
+            if (!this.database.loadDatabase()) return false;
+            return getIslandQuery().getDatabaseInitializeQuery().init();
+        }
+
+        if (ConfigLoader.database.getSqLiteConfig() != null) {
             SQLite sqlite = new SQLite(ConfigLoader.database.getSqLiteConfig());
             this.database = new SQLiteDatabaseLoader(sqlite);
-            if (!this.database.loadDatabase()) {
-                return false;
-            }
+            if (!this.database.loadDatabase()) return false;
             return getIslandQuery().getDatabaseInitializeQuery().init();
-        } else {
-            return false;
         }
+
+        return false;
+    }
+
+    private void loadAPI() {
+        SkylliaAPI.setImplementation(this.plugin, new APISkyllia(this));
     }
 
     public Managers getManagers() {
@@ -223,34 +238,18 @@ public class InterneAPI {
         this.managers = managers;
     }
 
-    /**
-     * Loads the public API implementation.
-     */
-    private void loadAPI() {
-        fr.euphyllia.skyllia.api.SkylliaAPI.setImplementation(this.plugin, new APISkyllia(this));
-    }
-
-    /**
-     * Periodically updates the cache for a given player.
-     *
-     * @param player The player whose cache is updated
-     */
-    public void updateCache(Player player) {
-        this.cacheManager.updateCache(player);
-    }
-
-    /**
-     * Returns an IslandQuery instance to access or modify island data.
-     *
-     * @return A new IslandQuery instance
-     */
     public IslandQuery getIslandQuery() {
-        if (ConfigLoader.database.getMariaDBConfig() != null) {
-            return new IslandQuery(this, ConfigLoader.database.getMariaDBConfig().database());
-        } else if (ConfigLoader.database.getSqLiteConfig() != null) {
-            return new IslandQuery(this, ConfigLoader.database.getSqLiteConfig().filePath());
+        IslandQuery local = this.islandQuery;
+        if (local != null) return local;
+
+        // DB must exist before we build IslandQuery
+        if (this.database == null) {
+            throw new IllegalStateException("Database loader is not initialized yet. Call setupSGBD() after ConfigLoader.init().");
         }
-        return null;
+
+        local = new IslandQuery(this);
+        this.islandQuery = local;
+        return local;
     }
 
     public Skyllia getPlugin() {
@@ -261,16 +260,20 @@ public class InterneAPI {
         return this.database;
     }
 
+    public SkyblockCache getSkyblockCache() {
+        return this.skyblockCache;
+    }
+
     public SkyblockManager getSkyblockManager() {
         return this.skyblockManager;
     }
 
-    public @NotNull MiniMessage getMiniMessage() {
-        return MiniMessage.miniMessage();
+    public TrustService getTrustService() {
+        return this.trustService;
     }
 
-    public CacheManager getCacheManager() {
-        return this.cacheManager;
+    public @NotNull MiniMessage getMiniMessage() {
+        return MiniMessage.miniMessage();
     }
 
     public WorldNMS getWorldNMS() {
@@ -291,5 +294,9 @@ public class InterneAPI {
 
     public @NotNull WorldModifier getWorldModifier(SchematicPlugin requested) {
         return this.worldSelector.resolve(requested);
+    }
+
+    public @Nullable SpawnHook getSpawnHook() {
+        return this.spawnHook;
     }
 }

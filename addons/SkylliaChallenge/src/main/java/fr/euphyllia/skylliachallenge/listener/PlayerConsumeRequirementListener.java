@@ -58,7 +58,7 @@ public class PlayerConsumeRequirementListener implements Listener {
         List<String> potionsConsumed = getPotionsConsumed(itemStack);
 
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            Island playerIsland = SkylliaAPI.getCacheIslandByPlayerId(uuid);
+            Island playerIsland = SkylliaAPI.getIslandByPlayerId(uuid);
             if (playerIsland == null) return;
 
             if (SkylliaChallenge.getInstance().isMustBeOnPlayerIsland()) {

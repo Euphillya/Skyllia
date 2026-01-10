@@ -2,8 +2,7 @@ plugins {
     id("java")
 }
 
-group = "fr.euphyllia.skyllia";
-version = "2.0";
+group = "fr.euphyllia.skylliaore";
 
 repositories {
     maven("https://repo.oraxen.com/releases")
@@ -16,7 +15,6 @@ dependencies {
 
     compileOnly("io.th0rgal:oraxen:1.180.0")
     compileOnly("com.nexomc:nexo:1.1.0")
-    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
     compileOnly("me.clip:placeholderapi:2.11.6")
 
     compileOnly(project(":database"))

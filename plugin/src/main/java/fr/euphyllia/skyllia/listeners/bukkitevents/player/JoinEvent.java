@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.player;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
@@ -20,7 +21,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.util.UUID;
 
@@ -34,70 +34,73 @@ public class JoinEvent implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         final UUID playerId = player.getUniqueId();
         final String worldName = player.getWorld().getName();
 
-        Runnable task = () -> {
-            CacheCommands.refreshFor(playerId);
-            SkyblockManager skyblockManager = api.getSkyblockManager();
+        executeAsync(() -> {
+            try {
+                CacheCommands.refreshFor(playerId);
 
-            Island island = skyblockManager.getIslandByPlayerId(playerId).join();
+                final SkyblockManager skyblockManager = api.getSkyblockManager();
+                final Island island = SkylliaAPI.getIslandByPlayerId(playerId);
 
-            if (island != null) {
-                Players member = skyblockManager.getMemberInIsland(island, playerId).join();
-                if (member != null) {
-                    String currentName = player.getName();
-                    if (!member.getLastKnowName().equals(currentName)) {
-                        member.setLastKnowName(currentName);
-                        skyblockManager.updateMember(island, member).join();
+                if (island != null) {
+                    Players member = island.getMember(playerId);
+                    if (member != null) {
+                        String currentName = player.getName();
+                        String last = member.getLastKnowName();
+                        if (last == null || !last.equals(currentName)) {
+                            member.setLastKnowName(currentName);
+                            skyblockManager.updateMember(island, member);
+                        }
                     }
                 }
-            }
 
-            boolean shouldTeleportSpawn = island == null ||
-                    (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && !WorldUtils.isWorldSkyblock(worldName));
+                boolean shouldTeleportSpawn = island == null ||
+                        (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && !WorldUtils.isWorldSkyblock(worldName));
 
-            if (shouldTeleportSpawn) {
-                if (ConfigLoader.playerManager.isTeleportSpawnIfNoIsland()) {
-                    PlayerUtils.teleportPlayerSpawn(player);
+                if (shouldTeleportSpawn) {
+                    if (ConfigLoader.playerManager.isTeleportSpawnIfNoIsland()) {
+                        player.getScheduler().execute(api.getPlugin(), () -> PlayerUtils.teleportPlayerSpawn(player), null, 1L);
+                    }
+                } else {
+                    if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(worldName)) {
+                        player.getScheduler().execute(api.getPlugin(), () -> {
+                            Location centerIsland = RegionHelper.getCenterRegion(
+                                    player.getWorld(),
+                                    island.getPosition().x(),
+                                    island.getPosition().z()
+                            );
+                            api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+                        }, null, 1L);
+                    }
                 }
-            } else {
-                api.updateCache(player);
-                if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(worldName)) {
-                    Location centerIsland = RegionHelper.getCenterRegion(
-                            player.getWorld(), island.getPosition().x(), island.getPosition().z());
-                    api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
-                }
-            }
-        };
 
-        executeAsync(task);
+                checkAndClearPlayerStuffOnJoin(player);
+
+            } catch (Exception e) {
+                logger.error("Error during JoinEvent async task for {}", playerId, e);
+            }
+        });
     }
 
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onCheckPlayerClearStuffLogin(PlayerLoginEvent playerLoginEvent) {
-        Player player = playerLoginEvent.getPlayer();
+    private void checkAndClearPlayerStuffOnJoin(Player player) {
+        UUID uuid = player.getUniqueId();
 
-        Runnable task = () -> {
-            for (RemovalCause cause : RemovalCause.values()) {
-                boolean exist = api.getSkyblockManager().checkClearMemberExist(player.getUniqueId(), cause).join();
-                if (!exist) continue;
+        for (RemovalCause cause : RemovalCause.values()) {
+            boolean exist = api.getSkyblockManager().checkClearMemberExist(uuid, cause);
+            if (!exist) continue;
 
-                api.getSkyblockManager().deleteClearMember(player.getUniqueId(), cause);
+            api.getSkyblockManager().deleteClearMember(uuid, cause);
 
-                Runnable playerTask = () -> {
-                    clearPlayerData(player, cause);
-                    player.setGameMode(GameMode.SURVIVAL);
-                };
-
-                player.getScheduler().execute(api.getPlugin(), playerTask, null, 1L);
-            }
-        };
-
-        executeAsync(task);
+            player.getScheduler().execute(api.getPlugin(), () -> {
+                clearPlayerData(player, cause);
+                player.setGameMode(GameMode.SURVIVAL);
+            }, null, 1L);
+        }
     }
 
     private void executeAsync(Runnable task) {

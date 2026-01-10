@@ -1,7 +1,7 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.PermissionImp;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -94,7 +94,7 @@ public class DeleteSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!PermissionImp.hasPermission(sender, "skyllia.island.command.delete")) {
+        if (!sender.hasPermission("skyllia.island.command.delete")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -109,7 +109,7 @@ public class DeleteSubCommand implements SubCommandInterface {
         }
         try {
             SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
-            Island island = skyblockManager.getIslandByOwner(player.getUniqueId()).join();
+            Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
                 return true;
@@ -133,51 +133,36 @@ public class DeleteSubCommand implements SubCommandInterface {
                 }
             }
 
-            skyblockManager.setLockedIsland(island, true).whenCompleteAsync((aBoolean, throwable) -> {
-                if (throwable != null) {
-                    logger.log(Level.FATAL, "Failed to lock island {}: {}", island.getId(), throwable.getMessage());
-                    ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
-                    return;
-                }
-                boolean isDisabled = island.setDisable(true);
-                if (isDisabled) {
-                    this.updatePlayer(skyblockManager, island);
-                    this.kickAllPlayerOnIsland(island);
+            skyblockManager.setLockedIsland(island, true);
 
-                    AtomicInteger worldsLeft = new AtomicInteger(ConfigLoader.worldManager.getWorldConfigs().size());
-                    AtomicBoolean failed = new AtomicBoolean(false);
+            boolean isDisabled = island.setDisable(true);
+            if (isDisabled) {
+                this.updatePlayer(skyblockManager, island);
+                this.kickAllPlayerOnIsland(island);
 
-                    if (worldsLeft.get() == 0) {
-                        skyblockManager.setLockedIsland(island, false).whenCompleteAsync((value, throwable1) -> {
-                            if (throwable1 != null) {
-                                logger.log(Level.FATAL, "Failed to unlock island {}: {}", island.getId(), throwable1.getMessage());
-                            }
-                            ConfigLoader.language.sendMessage(player, "island.delete-success");
-                        });
-                        return;
+                AtomicInteger worldsLeft = new AtomicInteger(ConfigLoader.worldManager.getWorldConfigs().size());
+                AtomicBoolean failed = new AtomicBoolean(false);
+
+                if (worldsLeft.get() == 0) {
+                    boolean lockResult = skyblockManager.setLockedIsland(island, false);
+                    if (!lockResult) {
+                        logger.log(Level.FATAL, "Failed to unlock island {} after deletion: unknown reason", island.getId());
                     }
-
-                    ConfigLoader.worldManager.getWorldConfigs().forEach((s, envs) -> {
-                        Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
-                            if (!success) failed.set(true);
-                            if (worldsLeft.decrementAndGet() == 0) {
-                                skyblockManager.setLockedIsland(island, failed.get()).whenCompleteAsync((value, throwable1) -> {
-                                    if (throwable1 != null) {
-                                        logger.log(Level.FATAL, "Failed to unlock/lock island {}: {}", island.getId(), throwable1.getMessage());
-                                    }
-                                    if (!failed.get()) {
-                                        ConfigLoader.language.sendMessage(player, "island.delete-success");
-                                    } else {
-                                        ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
-                                    }
-                                });
-                            }
-                        });
-                    });
-                } else {
-                    ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+                    ConfigLoader.language.sendMessage(player, "island.delete-success");
+                    return true;
                 }
-            });
+
+                ConfigLoader.worldManager.getWorldConfigs().forEach((s, envs) -> {
+                    Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
+                        if (!success) failed.set(true);
+                        if (worldsLeft.decrementAndGet() == 0) {
+                            skyblockManager.setLockedIsland(island, failed.get());
+                        }
+                    });
+                });
+            } else {
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            }
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
@@ -208,7 +193,7 @@ public class DeleteSubCommand implements SubCommandInterface {
         ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
             RegionUtils.getEntitiesInRegion(Skyllia.getPlugin(Skyllia.class), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(s), island.getPosition(), island.getSize(), entity -> {
                 Player playerInIsland = (Player) entity;
-                if (PermissionImp.hasPermission(entity, "skyllia.island.command.access.bypass")) return;
+                if (entity.hasPermission("skyllia.island.command.access.bypass")) return;
                 PlayerUtils.teleportPlayerSpawn(playerInIsland);
             });
         });

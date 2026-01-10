@@ -2,8 +2,7 @@ plugins {
     id("java")
 }
 
-group = "fr.euphyllia.skyllia";
-version = "2.0";
+group = "fr.euphyllia.skylliabank";
 
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
