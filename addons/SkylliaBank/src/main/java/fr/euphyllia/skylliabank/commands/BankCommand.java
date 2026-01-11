@@ -2,6 +2,8 @@ package fr.euphyllia.skylliabank.commands;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.permissions.PermissionId;
+import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -11,6 +13,7 @@ import fr.euphyllia.skylliabank.api.BankAccount;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -28,10 +31,22 @@ public class BankCommand implements SubCommandInterface {
     private final Plugin plugin;
     private final Economy economy;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private final PermissionId BANK_DEPOSIT_PERMISSION;
+    private final PermissionId BANK_WITHDRAW_PERMISSION;
 
     public BankCommand(Plugin plugin) {
         this.plugin = plugin;
         this.economy = EconomyManager.getEconomy();
+        this.BANK_DEPOSIT_PERMISSION = SkylliaAPI.getPermissionRegistry().idOrRegister(new PermissionNode(
+                new NamespacedKey(plugin, "command.bank.deposit"),
+                "Banque: déposer de l'argent",
+                "Autorise à déposer de l'argent sur le compte banque de l'île"
+        ));
+        this.BANK_WITHDRAW_PERMISSION = SkylliaAPI.getPermissionRegistry().idOrRegister(new PermissionNode(
+                new NamespacedKey(plugin, "command.bank.withdraw"),
+                "Banque: retirer de l'argent",
+                "Autorise à retirer de l'argent du compte banque de l'île"
+        ));
     }
 
     @Override
@@ -57,19 +72,17 @@ public class BankCommand implements SubCommandInterface {
             return true;
         }
 
-        UUID islandId = island.getId();
-
         if (args.length == 0) {
             // Commande sans argument => afficher le solde
-            handleBalance(player, islandId);
+            handleBalance(player, island);
             return true;
         }
 
         String subCommand = args[0].toLowerCase();
         switch (subCommand) {
-            case "deposit" -> handleDeposit(player, islandId, args);
-            case "withdraw" -> handleWithdraw(player, islandId, args);
-            case "balance" -> handleBalance(player, islandId);
+            case "deposit" -> handleDeposit(player, island, args);
+            case "withdraw" -> handleWithdraw(player, island, args);
+            case "balance" -> handleBalance(player, island);
             default -> {
                 ConfigLoader.language.sendMessage(player, "addons.bank.player.unknown-command");
                 CommandCacheExecution.removeCommandExec(playerId, "bank");
@@ -83,9 +96,17 @@ public class BankCommand implements SubCommandInterface {
     /**
      * /is bank deposit <amount>
      */
-    private void handleDeposit(Player player, UUID islandId, String[] args) {
+    private void handleDeposit(Player player, Island island, String[] args) {
         UUID playerId = player.getUniqueId();
         if (!player.hasPermission("skyllia.bank.deposit")) {
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-deposit");
+            CommandCacheExecution.removeCommandExec(playerId, "bank");
+            return;
+        }
+
+        boolean isAllowed = SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, BANK_DEPOSIT_PERMISSION);
+        if (!isAllowed) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-deposit");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
             return;
@@ -119,7 +140,7 @@ public class BankCommand implements SubCommandInterface {
 
         EconomyResponse withdrawResponse = economy.withdrawPlayer(player, amount);
         if (withdrawResponse.transactionSuccess()) {
-            boolean success = SkylliaBank.getBankManager().deposit(islandId, amount);
+            boolean success = SkylliaBank.getBankManager().deposit(island.getId(), amount);
             if (success) {
                 ConfigLoader.language.sendMessage(player, "addons.bank.player.success-deposit", Map.of("%amount%", economy.format(amount)));
             } else {
@@ -140,7 +161,7 @@ public class BankCommand implements SubCommandInterface {
     /**
      * /is bank withdraw <amount>
      */
-    private void handleWithdraw(Player player, UUID islandId, String[] args) {
+    private void handleWithdraw(Player player, Island island, String[] args) {
         UUID playerId = player.getUniqueId();
         if (!player.hasPermission("skyllia.bank.withdraw")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-withdraw");
@@ -148,6 +169,13 @@ public class BankCommand implements SubCommandInterface {
             return;
         }
 
+        boolean isAllowed = SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, BANK_WITHDRAW_PERMISSION);
+        if (!isAllowed) {
+            ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-withdraw");
+            CommandCacheExecution.removeCommandExec(playerId, "bank");
+            return;
+        }
 
         if (args.length < 2) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.usage-withdraw");
@@ -170,6 +198,7 @@ public class BankCommand implements SubCommandInterface {
         }
 
         // Vérifier le solde de l'île
+        UUID islandId = island.getId();
         BankAccount bankAccount = SkylliaBank.getBankManager().getBankAccount(islandId);
         if (bankAccount.balance() < amount) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.not-enough-money-island");
@@ -202,7 +231,7 @@ public class BankCommand implements SubCommandInterface {
     /**
      * /is bank balance
      */
-    private void handleBalance(Player player, UUID islandId) {
+    private void handleBalance(Player player, Island island) {
         UUID playerId = player.getUniqueId();
         if (!player.hasPermission("skyllia.bank.balance")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-balance");
@@ -210,7 +239,7 @@ public class BankCommand implements SubCommandInterface {
             return;
         }
 
-        BankAccount bankAccount = SkylliaBank.getBankManager().getBankAccount(islandId);
+        BankAccount bankAccount = SkylliaBank.getBankManager().getBankAccount(island.getId());
 
         if (bankAccount != null) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.balance", Map.of("%amount%", economy.format(bankAccount.balance())));

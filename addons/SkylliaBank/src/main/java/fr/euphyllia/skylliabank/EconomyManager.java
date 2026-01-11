@@ -8,10 +8,6 @@ public class EconomyManager {
     private static Economy econ = null;
 
     public static boolean setupEconomy(JavaPlugin plugin) {
-        if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
-            plugin.getLogger().severe("Vault is not installed!");
-            return false;
-        }
         RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;

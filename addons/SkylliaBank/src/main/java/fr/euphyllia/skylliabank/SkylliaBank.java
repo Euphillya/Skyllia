@@ -32,6 +32,12 @@ public final class SkylliaBank extends JavaPlugin {
     public void onEnable() {
         instance = this;
         // Initialiser l'intégration avec Vault
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            getLogger().severe("Vault is not installed!");
+            getLogger().severe("No economy plugin found. The plugin will stop.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         if (!EconomyManager.setupEconomy(this)) {
             getLogger().severe("No economy plugin found. The plugin will stop.");
             getServer().getPluginManager().disablePlugin(this);
