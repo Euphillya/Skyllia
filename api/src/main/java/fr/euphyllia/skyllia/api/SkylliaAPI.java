@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
@@ -252,4 +253,7 @@ public final class SkylliaAPI {
         return implementation.getPermissionRegistry();
     }
 
+    public static Boolean createIsland(UUID islandId, IslandSettings settings) {
+        return implementation.createIsland(islandId, settings);
+    }
 }

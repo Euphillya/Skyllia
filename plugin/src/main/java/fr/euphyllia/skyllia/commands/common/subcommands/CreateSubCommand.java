@@ -84,8 +84,9 @@ public class CreateSubCommand implements SubCommandInterface {
 
                     ConfigLoader.language.sendMessage(player, "island.create-in-progress");
                     UUID idIsland = UUID.randomUUID();
-                    SkyblockManager skyblockManager = plugin.getInterneAPI().getSkyblockManager();
-                    boolean isCreate = Boolean.TRUE.equals(skyblockManager.createIsland(idIsland, islandSettings));
+
+                    boolean isCreate = SkylliaAPI.createIsland(idIsland, islandSettings);
+
                     if (!isCreate) {
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         ConfigLoader.language.sendMessage(player, "island.generic-error");
@@ -108,7 +109,6 @@ public class CreateSubCommand implements SubCommandInterface {
                         this.pasteSchematic(island.get(), centerPaste, schematicSetting);
                         if (isFirstIteration) {
                             this.setFirstHome(island.get(), centerPaste);
-                            this.setPermissionsRole(island.get());
                             Location loc = centerPaste.clone();
                             loc.add(0, 0.5, 0);
                             this.addOwnerIslandInMember(island.get(), player);
@@ -206,13 +206,5 @@ public class CreateSubCommand implements SubCommandInterface {
     private void addOwnerIslandInMember(Island island, Player player) {
         Players owners = new Players(player.getUniqueId(), player.getName(), island.getId(), RoleType.OWNER);
         island.updateMember(owners);
-    }
-
-    private void setPermissionsRole(Island island) {
-        for (RoleType roleType : RoleType.values()) {
-//            island.updatePermission(PermissionsType.ISLAND, roleType, ConfigLoader.permissions.getPermissionIsland().get(roleType));
-//            island.updatePermission(PermissionsType.COMMANDS, roleType, ConfigLoader.permissions.getPermissionsCommands().get(roleType));
-//            island.updatePermission(PermissionsType.INVENTORY, roleType, ConfigLoader.permissions.getPermissionInventory().get(roleType));
-        }
     }
 }
