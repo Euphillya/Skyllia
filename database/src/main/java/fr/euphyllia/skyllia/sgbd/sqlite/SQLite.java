@@ -31,6 +31,12 @@ public class SQLite implements DBConnect, DBInterface {
             return connected;
         }
 
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new DatabaseException("SQLite JDBC driver not found in classpath", e);
+        }
+
         pool = new HikariDataSource();
         pool.setPoolName("skyllia-sqlite");
         pool.setDriverClassName("org.sqlite.JDBC");

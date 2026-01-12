@@ -128,6 +128,13 @@ public class MariaDB implements DBConnect, DBInterface {
     }
 
     private void ensureDatabaseExists() throws DatabaseException {
+
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new DatabaseException("MariaDB JDBC driver not found in classpath", e);
+        }
+
         String bootstrapUrl = "jdbc:mariadb://%s:%s/"
                 .formatted(mariaDBConfig.hostname(), mariaDBConfig.port());
 

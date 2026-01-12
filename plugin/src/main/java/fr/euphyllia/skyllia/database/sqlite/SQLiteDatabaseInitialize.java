@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,13 +142,33 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_ISLANDS_PERMISSIONS_TABLE);
         exec(CREATE_PLAYER_CLEAR_TABLE);
         exec(CREATE_ISLANDS_GAMERULE_TABLE);
+        exec(CREATE_PERMISSION_REGISTRY_TABLE);
 
         exec(CREATE_ISLANDS_INDEX);
         exec(CREATE_SPIRAL_INDEX);
     }
 
     private void applyMigrations() {
-        exec("ALTER TABLE islands ADD COLUMN locked INTEGER DEFAULT 0;");
+        if (!hasColumn("islands", "locked")) {
+            exec("ALTER TABLE islands ADD COLUMN locked INTEGER DEFAULT 0;");
+        }
+    }
+
+    private boolean hasColumn(String table, String column) {
+        Boolean exists = SQLExecute.queryMap(
+                databaseLoader,
+                "PRAGMA table_info(" + table + ");",
+                null,
+                rs -> {
+                    try {
+                        while (rs.next()) {
+                            if (column.equalsIgnoreCase(rs.getString("name"))) return true;
+                        }
+                    } catch (SQLException ignored) {}
+                    return false;
+                }
+        );
+        return exists != null && exists;
     }
 
     private void initializeSpiralTable() {
