@@ -1,122 +1,194 @@
-# Skyllia - Skyblock Plugin for Minecraft
+<div align="center">
 
-Skyllia is a Skyblock plugin designed primarily for Folia but also compatible with Paper (1.20.1+). The plugin has an
-API that you can use to add feature extensions to customize your server. The plugin will have very little innovative
-functionality, and it's not my intention at all that there should be external features (like quests, for example).
+# 🏝️ Skyllia
 
-## bStats
+### Le premier plugin Skyblock entièrement compatible Folia
+
+[![Folia](https://img.shields.io/badge/Folia-Compatible-green.svg)](https://papermc.io/software/folia)
+[![Paper](https://img.shields.io/badge/Paper-1.21+-blue.svg)](https://papermc.io/)
+[![Java](https://img.shields.io/badge/Java-21+-orange.svg)](https://www.oracle.com/java/)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](https://github.com/Euphillya/Skyllia)
+
+[Documentation](https://skyllia.eupyllia.moe) • [GitHub](https://github.com/Euphillya/Skyllia) • [Modrinth](https://modrinth.com/plugin/skyllia) • [Discord](https://discord.gg/uUJQEB7XNN)
 
 [![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
+</div>
 
-## Contact
+---
 
-[![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
+## 📖 À propos
 
-## Prerequisites
+**Skyllia** est un plugin Skyblock moderne et performant, conçu dès le départ pour tirer pleinement parti de l'architecture multi-threadée de **Folia**. Premier du genre à offrir une compatibilité native avec Folia, Skyllia garantit des performances exceptionnelles même avec des centaines de joueurs simultanés.
 
-- A MariaDB database (recommended) or SQLite for local storage (not recommended for production use).
-- Folia or Paper server running Minecraft version 1.20.1 or higher, but Paper is not recommended for production use.
-- Java 21
-- [WorldEdit-Folia](https://github.com/Euphillya/WorldEdit-Folia/actions)
-  or [FAWE](https://ci.athion.net/job/FastAsyncWorldEdit/)
-  or [WorldEdit](https://modrinth.com/plugin/worldedit/versions?l=bukkit)) (recommended for island generation).
+## ✨ Fonctionnalités principales
 
-## Installation
+### 🚀 Performance & Architecture
+- **Premier plugin Skyblock compatible Folia** - Architecture multi-threadée native
+- **Système asynchrone** - Pas de freeze, pas de lag (tant que votre configuration serveur le permet)
 
-1. Ensure you have the required prerequisites installed.
-2. Download the latest version of Skyllia from the [Releases](https://modrinth.com/plugin/skyllia) page.
-3. Place the downloaded `.jar` file into your server's `plugins` directory.
-4. Start your server to generate the default configuration files.
-5. Configure the plugin to your liking by editing the configuration files in the `plugins/Skyllia` directory.
-6. Restart your server to apply the changes.
+### 💾 Gestion des données
+- **Base de données** - SQLite, MariaDB, PostgreSQL
+- **Pool de connexions HikariCP** - Performances optimales
+- **Sauvegarde asynchrone** - Aucun impact sur les performances
 
-## Download Plugin
+### 🏝️ Gestion des îles
+- **Création instantanée** - File d'attente optimisée
+- **Schématiques personnalisables** - WorldEdit/FAWE ou système interne
+- **Multi-mondes** - Overworld, Nether, End configurables
+- **Portails automatiques** - Navigation fluide entre dimensions
+- **Espacement configurable** - Distance entre les îles ajustable
 
-- [Release Versions on Modrinth](https://modrinth.com/plugin/skyllia)
-- [Release Versions on GitHub](https://github.com/Euphillya/Skyllia/releases)
+### 👥 Système de permissions
+- **6 rôles prédéfinis** - Owner, Co-Owner, Moderator, Member, Visitor, Ban
+- **50+ permissions granulaires** - Contrôle total par rôle
+- **Trust temporaire** - Accès invités configurables
+- **Système modulaire** - Créez vos propres rôles
 
-## Configuration (Need update)
+### 🎯 Fonctionnalités avancées
+- **Warps d'île** - Téléportation rapide sur votre île
+- **Biomes personnalisables** - Changez l'ambiance de votre île
+- **Game rules par île** - PvP, mobs, explosions, etc.
+- **Système de ban** - Bannissez les griefers de votre île
+- **Invitations** - Système d'invitation avec expiration
 
-Configuration files are located in the `plugins/Skyllia` directory. Customize settings to fit your server's needs.
-Detailed configuration instructions can be found in the [Wiki](https://github.com/Euphillya/Skyllia/wiki/Configuration).
+### 🔌 Intégrations
+- **PlaceholderAPI** - Variables pour scoreboard, tab, etc.
+- **Vault** - Support économie (via SkylliaBank)
+- **WorldEdit/FAWE** - Schématiques haute performance
+- **Insights** - Limites de blocs (via InsightsSkyllia)
 
-## API
+## 🎮 Addons officiels
 
-### Gradle Groovy
+Étendez Skyllia avec 5 addons officiels gratuits :
 
-To add Skyllia API to your project, use the following configuration:
+| Addon                | Description                                      |
+|----------------------|--------------------------------------------------|
+| **SkylliaBank**      | Système bancaire partagé par île avec historique |
+| **SkylliaOre**       | Générateur automatique de minerais configurable  |
+| **SkylliaChallenge** | Défis quotidiens/hebdomadaires avec récompenses  |
+| **SkylliaChat**      | Chat séparé par île avec canaux multiples        |
+| **InsightsSkyllia**  | Limites de blocs et entités par île              |
 
-```groovy
-repositories {
-    maven {
-        url = uri("https://repo.euphyllia.moe/repository/maven-public/")
-    }
-}
+## 📋 Prérequis
 
-dependencies {
-    compileOnly("fr.euphyllia.skyllia:api:[VERSION]")
-    compileOnly("fr.euphyllia.skyllia:plugin:[VERSION]")
-    compileOnly("fr.euphyllia.skyllia:database:[VERSION]")
-}
+- **Serveur** : Folia 1.20+ ou Paper 1.20.1+
+- **Java** : 21 ou supérieur
+- **RAM** : 4GB minimum, 8GB+ recommandé
+- **Base de données** (optionnel) : MariaDB 10.5+ ou PostgreSQL 12+ (privilégiez PostgreSQL pour les gros serveurs)
+
+### Plugins compatibles (optionnels)
+- WorldEdit ou FastAsyncWorldEdit (recommandé)
+- Vault (pour SkylliaBank)
+- PlaceholderAPI (pour placeholders)
+- LuckPerms (pour permissions serveur)
+
+## 🚀 Installation rapide
+
+1. **Téléchargez** Skyllia sur [Modrinth](https://modrinth.com/plugin/skyllia) ou [GitHub Releases](https://github.com/Euphillya/Skyllia/releases)
+2. **Placez** le .jar dans `plugins/`
+3. **Démarrez** le serveur (première initialisation)
+4. **Configurez** dans `plugins/Skyllia/config/`
+5. **Redémarrez** et c'est prêt !
+
+### Configuration minimale
+
+```toml
+# config.toml
+[settings.island]
+region-distance = 10  # 5120 blocs entre îles, 1 region = 512x512
+max-islands = 500_000
+
+# database.toml - SQLite par défaut
+[sqlite]
+enabled = true
 ```
 
-### Example Usage
+Pour une installation complète, consultez la [documentation]().
 
-Here is a simple example of how to use the Skyllia API:
+## 📚 Documentation
+
+La documentation complète est disponible sur GitBook :
+
+**🔗 [skyllia.eupyllia.moe](#)**
+
+### Sections principales
+
+- **[Démarrage rapide](#)** - Installation en 5 minutes
+- **[Configuration](#)** - Guide complet de configuration
+- **[Commandes](#)** - 26 commandes joueur + commandes admin
+- **[Addons](#)** - Documentation des addons officiels
+- **[API](#)** - Développez vos propres addons
+- **[FAQ](#)** - Questions fréquentes
+
+## 💻 Pour les développeurs
+
+Skyllia fournit une API complète pour créer vos propres addons :
+
+```xml
+<!-- Maven -->
+<repository>
+    <id>euphyllia-repo</id>
+    <url>https://repo.euphyllia.moe/repository/maven-public/</url>
+</repository>
+
+<dependency>
+    <groupId>fr.euphyllia.skyllia</groupId>
+    <artifactId>api</artifactId>
+    <version>3.x</version>
+    <scope>provided</scope>
+</dependency>
+```
 
 ```java
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.island.Island;
+import org.bukkit.entity.Player;
 
-import java.util.UUID;
-
-Island playerIsland = SkylliaAPI.getIslandByPlayerId(player.getUniqueId()).join();
-UUID islandId = playerIsland.getId();
+Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId()).join();
+if (island != null) {
+    player.sendMessage("Votre île : " + island.getId());
+}
 ```
 
-## Commands & Permissions
+Consultez la [documentation API](#) pour plus d'informations.
 
-Skyllia comes with a set of commands and permissions to manage the plugin effectively. For a full list of commands and
-their permissions, refer to
-the [Commands & Permissions](https://github.com/Euphillya/Skyllia/wiki/Commands-and-Permissions) section in the Wiki.
+## 🎯 Commandes principales
 
-## Compatible Software
+### Joueurs
+```
+/island create <type> - Créer une île
+/island home - Se téléporter à son île
+/island invite <joueur> - Inviter un joueur
+/island delete - Supprimer son île
+/island biome <biome> - Changer le biome
+/island expel <joueur> - Expulser un visiteur
+```
 
-|                   Software                    |    Version     |
-|:---------------------------------------------:|:--------------:|
-| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1-1.21.11 |
-|        [Purpur](https://purpurmc.org)         | 1.20.1-1.21.11 |
-|  [Folia](https://papermc.io/software/folia)   |  1.20-1.21.11  |
+### Administrateurs
+```
+/isadmin reload - Recharger les configs
+/isadmin database - Gestion base de données
+/isadmin purge <jours> - Nettoyer îles inactives
+/isadmin setsize <joueur> <taille> - Modifier taille
+/isadmin teleport <joueur> - TP vers île d'un joueur
+```
 
-## Island Generation
+Liste complète : [Commandes joueur](#) • [Commandes admin](#)
 
-Each island is generated in a single region file, with configurable region distances to suit your server's needs.
+## 🤝 Contribution
 
-## Addons
+Skyllia est open source, vous pouvez contribuer via :
 
-- [SkylliaOre](https://github.com/Euphillya/Skyllia/tree/dev/addons/SkylliaOre) by Euphyllia (Ore Generator)
-- [Insight Skyllia](https://github.com/Euphillya/Skyllia/tree/dev/addons/InsightsSkyllia) by Euphyllia
-- [SkylliaChat](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaChat) by Euphyllia (Chat Integration)
-- [SkylliaBank](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaBank) by Euphyllia (Island Bank System)
-- [SkylliaChallenge](https://github.com/Euphillya/Skyllia/tree/master/addons/SkylliaChallenge) by Euphyllia (Challenges
-  System)
+- **Rapports de bugs** - [Issues GitHub](https://github.com/Euphillya/Skyllia/issues)
+- **Suggestions** - Discord ou GitHub Discussions
+- **Addons communautaires** - Partagez vos créations !
 
-## Contribution
+## 📞 Support
 
-We welcome contributions from the community! If you'd like to contribute, please follow these steps:
+- **GitHub** : [Euphillya/Skyllia](https://github.com/Euphillya/Skyllia)
+- **Issues** : [Signaler un bug](https://github.com/Euphillya/Skyllia/issues)
+- **Discord** : [Serveur Euphyllia](https://discord.gg/uUJQEB7XNN)
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -m 'Add new feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a Pull Request.
+## 📜 Licence
 
-For more detailed guidelines, refer to the [Contributing Guide](CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the MIT License. See the [LICENCE](LICENSE) file for details.
-
-For more information and detailed documentation, please refer to the [Wiki](https://github.com/Euphillya/Skyllia/wiki).
-
-Feel free to contribute, open issues, or join us on Discord for support and discussions!
+Skyllia est sous licence MIT. Pour plus de détails, consultez le fichier [LICENSE](LICENSE) dans le dépôt GitHub.
