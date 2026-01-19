@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.utils.nms.v1_21_R5;
 
+import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
@@ -13,6 +14,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtException;
 import net.minecraft.nbt.ReportedNbtException;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -28,6 +30,9 @@ import net.minecraft.world.entity.npc.CatSpawner;
 import net.minecraft.world.entity.npc.WanderingTraderSpawner;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.PatrolSpawner;
 import net.minecraft.world.level.levelgen.PhantomSpawner;
@@ -39,7 +44,6 @@ import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.validation.ContentValidationException;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.generator.CraftWorldInfo;
@@ -52,6 +56,8 @@ import org.bukkit.generator.WorldInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +66,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
+
+    private static final Logger log = LoggerFactory.getLogger(WorldNMS.class);
 
     static GameType getGameType(GameMode gameMode) {
         return switch (gameMode) {
@@ -313,34 +321,94 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
     @Override
     public void resetChunk(World craftWorld, Position position) {
-        boolean hasAnyPlayerInChunk = false;
-        final ServerLevel serverLevel = ((CraftWorld) craftWorld).getHandle();
-        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(serverLevel, position.x(), position.z(), "Cannot regenerate chunk asynchronously");
-        final net.minecraft.server.level.ServerChunkCache serverChunkCache = serverLevel.getChunkSource();
-        final ChunkPos chunkPos = new ChunkPos(position.x(), position.z());
-        final net.minecraft.world.level.chunk.LevelChunk levelChunk = serverChunkCache.getChunk(chunkPos.x, chunkPos.z, true);
-        final Iterable<BlockPos> blockPosIterable = BlockPos.betweenClosed(chunkPos.getMinBlockX(), serverLevel.getMinY(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX(), serverLevel.getMaxY() - 1, chunkPos.getMaxBlockZ());
-        for (Entity entity : serverLevel.getChunkEntities(position.x(), position.z())) {
+        final ServerLevel nms = ((CraftWorld) craftWorld).getHandle();
+        final int chunkX = position.x();
+        final int chunkZ = position.z();
+
+        TickThread.ensureTickThread(nms, chunkX, chunkZ, "Cannot reset chunk asynchronously");
+
+        LevelChunk chunk = nms.getChunkSource().getChunkNow(chunkX, chunkZ);
+        if (chunk == null) {
+            chunk = nms.getChunkSource().getChunk(chunkX, chunkZ, true);
+        }
+        if (chunk == null) {
+            log.error("Cannot reset chunk asynchronously");
+            return;
+        }
+
+        boolean hasAnyPlayer = false;
+        for (Entity entity : nms.getChunkEntities(chunkX, chunkZ)) {
             if (entity instanceof Player) {
-                hasAnyPlayerInChunk = true;
+                hasAnyPlayer = true;
+            } else {
+                entity.remove();
+            }
+        }
+
+        final LevelChunkSection[] sections = chunk.getSections();
+        if (sections == null || sections.length == 0) {
+            return;
+        }
+
+        final int baseX = chunkX << 4;
+        final int baseZ = chunkZ << 4;
+        final net.minecraft.world.level.block.state.BlockState airState = Blocks.AIR.defaultBlockState();
+
+        for (int sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+            final LevelChunkSection section = sections[sectionIndex];
+            if (section == null || section.hasOnlyAir()) {
                 continue;
             }
-            entity.remove();
-        }
-        for (final BlockPos blockPos : blockPosIterable) {
-            levelChunk.removeBlockEntity(blockPos);
-            serverLevel.setBlock(blockPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 16);
-            Block block = craftWorld.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-            BlockState state = block.getState();
-            if (state instanceof PersistentDataHolder) {
-                PersistentDataContainer container = ((PersistentDataHolder) state).getPersistentDataContainer();
-                for (NamespacedKey key : container.getKeys()) container.remove(key);
+
+            final int sectionY = chunk.getSectionYFromSectionIndex(sectionIndex);
+            final int baseY = sectionY << 4;
+
+            for (int ly = 0; ly < 16; ly++) {
+                final int worldY = baseY + ly;
+                for (int lz = 0; lz < 16; lz++) {
+                    final int worldZ = baseZ + lz;
+                    for (int lx = 0; lx < 16; lx++) {
+                        final int worldX = baseX + lx;
+
+                        final net.minecraft.world.level.block.state.BlockState state = section.getBlockState(lx, ly, lz);
+                        if (state.isAir()) {
+                            continue;
+                        }
+                        final BlockPos blockPos = new BlockPos(worldX, worldY, worldZ);
+
+                        Block block = craftWorld.getBlockAt(worldX, worldY, worldZ);
+                        org.bukkit.block.BlockState bukkitState = block.getState(false);
+                        if (bukkitState instanceof PersistentDataHolder) {
+                            PersistentDataContainer container = ((PersistentDataHolder) bukkitState).getPersistentDataContainer();
+                            for (NamespacedKey key : container.getKeys()) {
+                                container.remove(key);
+                            }
+                        }
+                        chunk.removeBlockEntity(blockPos);
+                        section.setBlockState(lx, ly, lz, airState, false);
+                    }
+                }
             }
+
+            section.recalcBlockCounts();
         }
-        if (!hasAnyPlayerInChunk) return;
-        for (final BlockPos blockPos : blockPosIterable) {
-            serverChunkCache.blockChanged(blockPos);
+
+        if (hasAnyPlayer) {
+            LevelChunk finalChunk = chunk;
+            nms.getChunkSource().chunkMap.getPlayers(new ChunkPos(chunkX, chunkZ), false)
+                    .forEach(player -> {
+                        player.connection.send(
+                                new ClientboundLevelChunkWithLightPacket(
+                                        finalChunk,
+                                        nms.getLightEngine(),
+                                        null,
+                                        null
+                                )
+                        );
+                    });
         }
+
+        chunk.markUnsaved();
     }
 
     /**

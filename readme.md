@@ -18,20 +18,25 @@
 
 ## 📖 À propos
 
-**Skyllia** est un plugin Skyblock moderne et performant, conçu dès le départ pour tirer pleinement parti de l'architecture multi-threadée de **Folia**. Premier du genre à offrir une compatibilité native avec Folia, Skyllia garantit des performances exceptionnelles même avec des centaines de joueurs simultanés.
+**Skyllia** est un plugin Skyblock moderne et performant, conçu dès le départ pour tirer pleinement parti de
+l'architecture multi-threadée de **Folia**. Premier du genre à offrir une compatibilité native avec Folia, Skyllia
+garantit des performances exceptionnelles même avec des centaines de joueurs simultanés.
 
 ## ✨ Fonctionnalités principales
 
 ### 🚀 Performance & Architecture
+
 - **Premier plugin Skyblock compatible Folia** - Architecture multi-threadée native
 - **Système asynchrone** - Pas de freeze, pas de lag (tant que votre configuration serveur le permet)
 
 ### 💾 Gestion des données
+
 - **Base de données** - SQLite, MariaDB, PostgreSQL
 - **Pool de connexions HikariCP** - Performances optimales
 - **Sauvegarde asynchrone** - Aucun impact sur les performances
 
 ### 🏝️ Gestion des îles
+
 - **Création instantanée** - File d'attente optimisée
 - **Schématiques personnalisables** - WorldEdit/FAWE ou système interne
 - **Multi-mondes** - Overworld, Nether, End configurables
@@ -39,12 +44,14 @@
 - **Espacement configurable** - Distance entre les îles ajustable
 
 ### 👥 Système de permissions
+
 - **6 rôles prédéfinis** - Owner, Co-Owner, Moderator, Member, Visitor, Ban
 - **50+ permissions granulaires** - Contrôle total par rôle
 - **Trust temporaire** - Accès invités configurables
 - **Système modulaire** - Créez vos propres rôles
 
 ### 🎯 Fonctionnalités avancées
+
 - **Warps d'île** - Téléportation rapide sur votre île
 - **Biomes personnalisables** - Changez l'ambiance de votre île
 - **Game rules par île** - PvP, mobs, explosions, etc.
@@ -52,6 +59,7 @@
 - **Invitations** - Système d'invitation avec expiration
 
 ### 🔌 Intégrations
+
 - **PlaceholderAPI** - Variables pour scoreboard, tab, etc.
 - **Vault** - Support économie (via SkylliaBank)
 - **WorldEdit/FAWE** - Schématiques haute performance
@@ -77,6 +85,7 @@
 - **Base de données** (optionnel) : MariaDB 10.5+ ou PostgreSQL 12+ (privilégiez PostgreSQL pour les gros serveurs)
 
 ### Plugins compatibles (optionnels)
+
 - WorldEdit ou FastAsyncWorldEdit (recommandé)
 - Vault (pour SkylliaBank)
 - PlaceholderAPI (pour placeholders)
@@ -84,7 +93,8 @@
 
 ## 🚀 Installation rapide
 
-1. **Téléchargez** Skyllia sur [Modrinth](https://modrinth.com/plugin/skyllia) ou [GitHub Releases](https://github.com/Euphillya/Skyllia/releases)
+1. **Téléchargez** Skyllia sur [Modrinth](https://modrinth.com/plugin/skyllia)
+   ou [GitHub Releases](https://github.com/Euphillya/Skyllia/releases)
 2. **Placez** le .jar dans `plugins/`
 3. **Démarrez** le serveur (première initialisation)
 4. **Configurez** dans `plugins/Skyllia/config/`
@@ -132,10 +142,10 @@ Skyllia fournit une API complète pour créer vos propres addons :
 </repository>
 
 <dependency>
-    <groupId>fr.euphyllia.skyllia</groupId>
-    <artifactId>api</artifactId>
-    <version>3.x</version>
-    <scope>provided</scope>
+<groupId>fr.euphyllia.skyllia</groupId>
+<artifactId>api</artifactId>
+<version>3.x</version>
+<scope>provided</scope>
 </dependency>
 ```
 
@@ -145,9 +155,11 @@ import fr.euphyllia.skyllia.api.island.Island;
 import org.bukkit.entity.Player;
 
 Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
-if (island != null) {
-    player.sendMessage("Votre île : " + island.getId());
-}
+if(island !=null){
+        player.
+
+sendMessage("Votre île : "+island.getId());
+        }
 ```
 
 Consultez la [documentation API](#) pour plus d'informations.
@@ -155,6 +167,7 @@ Consultez la [documentation API](#) pour plus d'informations.
 ## 🎯 Commandes principales
 
 ### Joueurs
+
 ```
 /island create <type> - Créer une île
 /island home - Se téléporter à son île
@@ -165,6 +178,7 @@ Consultez la [documentation API](#) pour plus d'informations.
 ```
 
 ### Administrateurs
+
 ```
 /isadmin reload - Recharger les configs
 /isadmin database - Gestion base de données

@@ -164,7 +164,8 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
                         while (rs.next()) {
                             if (column.equalsIgnoreCase(rs.getString("name"))) return true;
                         }
-                    } catch (SQLException ignored) {}
+                    } catch (SQLException ignored) {
+                    }
                     return false;
                 }
         );

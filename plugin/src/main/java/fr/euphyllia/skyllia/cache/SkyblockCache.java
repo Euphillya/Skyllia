@@ -5,8 +5,6 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.ExpiringValue;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -180,9 +178,11 @@ public class SkyblockCache {
         stateByIsland.remove(islandId);
     }
 
-    private record MemberKey(UUID islandId, UUID playerId) {}
+    private record MemberKey(UUID islandId, UUID playerId) {
+    }
 
-    private record MemberNameKey(UUID islandId, String nameLower) {}
+    private record MemberNameKey(UUID islandId, String nameLower) {
+    }
 
     private record WarpKey(UUID islandId, String nameLower) {
     }
