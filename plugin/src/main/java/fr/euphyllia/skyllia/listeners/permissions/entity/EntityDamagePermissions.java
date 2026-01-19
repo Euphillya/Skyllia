@@ -28,8 +28,9 @@ public class EntityDamagePermissions implements PermissionModule {
 
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
-        final Chunk chunk = location.getChunk();
-        final Island island = SkylliaAPI.getIslandByChunk(chunk);
+        final int chunkX = location.getBlockX() >> 4;
+        final int chunkZ = location.getBlockZ() >> 4;
+        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
         final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ENTITY_DAMAGE);

@@ -144,7 +144,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.island.Island;
 import org.bukkit.entity.Player;
 
-Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId()).join();
+Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
 if (island != null) {
     player.sendMessage("Votre île : " + island.getId());
 }

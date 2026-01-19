@@ -1,28 +1,23 @@
 package fr.euphyllia.skyllia.cache.commands;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InviteCacheExecution {
 
-    private static final Cache<UUID, Set<UUID>> INVITE_CACHE = Caffeine.newBuilder()
-            .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build();
+    private static final Map<UUID, Set<UUID>> INVITE_CACHE = new ConcurrentHashMap<>();
 
     public static boolean isInvitedCache(UUID islandId, UUID playerId) {
-        Set<UUID> invitedPlayers = INVITE_CACHE.getIfPresent(islandId);
+        Set<UUID> invitedPlayers = INVITE_CACHE.getOrDefault(islandId, null);
         return (invitedPlayers != null && invitedPlayers.contains(playerId));
     }
 
     public static void addInviteCache(UUID islandId, UUID playerId) {
-        INVITE_CACHE.asMap().compute(islandId, (key, oldSet) -> {
+        INVITE_CACHE.compute(islandId, (key, oldSet) -> {
             if (oldSet == null) {
-                oldSet = new HashSet<>();
+                oldSet = ConcurrentHashMap.newKeySet();
             }
             oldSet.add(playerId);
             return oldSet;
@@ -30,14 +25,10 @@ public class InviteCacheExecution {
     }
 
     public static void removeInviteCache(UUID islandId, UUID playerId) {
-        INVITE_CACHE.asMap().computeIfPresent(islandId, (key, oldSet) -> {
+        INVITE_CACHE.computeIfPresent(islandId, (key, oldSet) -> {
             oldSet.remove(playerId);
             if (oldSet.isEmpty()) return null;
             return oldSet;
         });
-    }
-
-    public static void invalidateAll() {
-        INVITE_CACHE.invalidateAll();
     }
 }

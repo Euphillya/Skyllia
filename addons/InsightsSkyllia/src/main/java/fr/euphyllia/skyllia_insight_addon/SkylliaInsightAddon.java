@@ -35,7 +35,9 @@ public class SkylliaInsightAddon implements InsightsAddon {
     @Override
     public Optional<Region> getRegion(org.bukkit.Location location) {
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return Optional.empty();
-        Island island = SkylliaAPI.getIslandByChunk(location.getChunk());
+        final int chunkX = location.getBlockX() >> 4;
+        final int chunkZ = location.getBlockZ() >> 4;
+        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return Optional.empty();
         return Optional.of(new SkylliaRegion(island, location.getWorld()));
     }

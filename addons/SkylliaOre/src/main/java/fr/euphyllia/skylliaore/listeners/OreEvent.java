@@ -7,8 +7,10 @@ import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.hook.NexoHook;
 import fr.euphyllia.skylliaore.hook.OraxenHook;
 import fr.euphyllia.skylliaore.utils.OptimizedGenerator;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,11 +35,14 @@ public class OreEvent implements Listener {
     @EventHandler
     public void onBlockForm(final BlockFormEvent event) {
         if (event.isCancelled()) return;
-
-        World world = event.getBlock().getWorld();
+        Block block = event.getBlock();
+        Location location = block.getLocation();
+        World world = location.getWorld();
         if (!SkylliaAPI.isWorldSkyblock(world)) return;
 
-        Island island = SkylliaAPI.getIslandByChunk(event.getBlock().getChunk());
+        final int chunkX = location.getBlockX() >> 4;
+        final int chunkZ = location.getBlockZ() >> 4;
+        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
         handleBlockFormation(event, world, island);

@@ -23,8 +23,9 @@ public class IslandAllowFluidsPermissions implements PermissionModule {
         final Location to = event.getToBlock().getLocation();
         if (!SkylliaAPI.isWorldSkyblock(to.getWorld())) return;
 
-        final Chunk chunk = to.getChunk();
-        final Island island = SkylliaAPI.getIslandByChunk(chunk);
+        final int chunkX = to.getBlockX() >> 4;
+        final int chunkZ = to.getBlockZ() >> 4;
+        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
         final boolean allowed = island.getCompiledPermissions()

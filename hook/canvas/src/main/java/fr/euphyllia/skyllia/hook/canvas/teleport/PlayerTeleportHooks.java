@@ -18,7 +18,9 @@ public class PlayerTeleportHooks implements Listener {
         Location to = event.getTo();
         if (!SkylliaAPI.isWorldSkyblock(to.getWorld())) return;
 
-        Island island = SkylliaAPI.getIslandByChunk(to.getChunk());
+        final int chunkX = to.getBlockX() >> 4;
+        final int chunkZ = to.getBlockZ() >> 4;
+        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
         new PlayerTeleportIslandEvent(
