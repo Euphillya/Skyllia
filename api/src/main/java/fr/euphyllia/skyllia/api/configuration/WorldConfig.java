@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api.configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 
 public class WorldConfig {
     private static final Logger log = LogManager.getLogger(WorldConfig.class);
@@ -11,8 +12,9 @@ public class WorldConfig {
     private final String portalNether;
     private final String portalEnd;
     private final String generator;
+    private final @Nullable String biomeId;
 
-    public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd, String generator) {
+    public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd, String generator, String biomeId) {
         World.Environment env;
         try {
             env = World.Environment.valueOf(environmentStr.toUpperCase());
@@ -25,6 +27,7 @@ public class WorldConfig {
         this.portalNether = portalNether;
         this.portalEnd = portalEnd;
         this.generator = generator;
+        this.biomeId = (biomeId == null || biomeId.isBlank()) ? null : biomeId;
     }
 
     public World.Environment getEnvironment() {
@@ -47,8 +50,13 @@ public class WorldConfig {
         return generator;
     }
 
+
+    public @Nullable String getBiomeId() {
+        return biomeId;
+    }
+
     @Override
     public String toString() {
-        return "{class=WorldConfig, worldName=" + getWorldName() + ", environnement" + environment.name() + ", portalNether=" + getPortalNether() + ", portalEnd=" + getPortalEnd() + "}";
+        return "{class=WorldConfig, worldName=" + getWorldName() + ", environnement" + environment.name() + ", portalNether=" + getPortalNether() + ", portalEnd=" + getPortalEnd() + ", generator=" + getGenerator() + ", biome=" + getBiomeId() + "}";
     }
 }

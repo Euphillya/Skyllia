@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
+import fr.euphyllia.skyllia.utils.generators.FixedBiomeProvider;
 import fr.euphyllia.skyllia.utils.generators.VoidWorldGen;
 import net.kyori.adventure.util.TriState;
 import org.apache.logging.log4j.Level;
@@ -57,6 +58,15 @@ public class WorldsManager {
             worldCreator.type(WorldType.FLAT);
             worldCreator.seed(new Random(System.currentTimeMillis()).nextLong());
             worldCreator.environment(worldConfig.getEnvironment());
+
+            worldCreator.biomeProvider(
+                    FixedBiomeProvider.fromConfig(
+                            worldConfig.getEnvironment(),
+                            this.api.getBiomesImpl(),
+                            worldConfig.getBiomeId()
+                    )
+            );
+
             World w;
             try {
                 w = worldCreator.createWorld(); // Work with Paper, not Folia
