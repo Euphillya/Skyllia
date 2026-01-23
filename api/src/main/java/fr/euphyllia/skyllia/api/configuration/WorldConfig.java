@@ -60,6 +60,6 @@ public class WorldConfig {
 
     @Override
     public String toString() {
-        return "{class=WorldConfig, worldName=" + getWorldName() + ", environnement" + environment.name() + ", portalNether=" + getPortalNether() + ", portalEnd=" + getPortalEnd() + ", generator=" + getGenerator() + ", biome=" + getBiome().name() + "}";
+        return "{class=WorldConfig, worldName=" + getWorldName() + ", environnement" + environment.name() + ", portalNether=" + getPortalNether() + ", portalEnd=" + getPortalEnd() + ", generator=" + getGenerator() + ", biome=" + getBiomeId() + "}";
     }
 }
