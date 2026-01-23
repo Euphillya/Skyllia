@@ -47,8 +47,9 @@ public class WorldConfigManager implements ConfigManager {
                 String portalNether = getOrSetDefault(basePath + "portal-nether", "sky-nether", String.class);
                 String portalEnd = getOrSetDefault(basePath + "portal-end", "sky-end", String.class);
                 String generator = getOrSetDefault(basePath + "generator", "default", String.class);
+                String biomeId = getOrSetDefault(basePath + "biome-id", "minecraft:plains", String.class);
 
-                WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd, generator);
+                WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd, generator, biomeId);
                 worldConfigs.put(worldName, wc);
             }
         }

@@ -17,15 +17,19 @@ portal-nether = "sky-nether"
 portal-end = "sky-end"
 # Terrain generator used (default: "default", can be a plugin or a custom generator).
 generator = "default"
+# Set the default biome for the world.
+biome-id = "minecraft:plains"
 
 [worlds.sky-nether]
 environment = "NETHER"
 portal-nether = "sky-overworld"
 portal-end = "sky-end"
 generator = "default"
+biome-id = "minecraft:basalt_deltas"
 
 [worlds.sky-end]
 environment = "THE_END"
 portal-nether = "sky-nether"
 portal-end = "sky-overworld"
 generator = "default"
+biome-id = "minecraft:end_highlands"
