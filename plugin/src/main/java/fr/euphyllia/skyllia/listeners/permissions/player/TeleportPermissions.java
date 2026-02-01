@@ -42,7 +42,7 @@ public class TeleportPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        new PlayerTeleportIslandEvent(
+        PlayerTeleportIslandEvent playerTeleportIslandEvent = new PlayerTeleportIslandEvent(
                 player,
                 event.getFrom(),
                 to,
@@ -50,7 +50,11 @@ public class TeleportPermissions implements PermissionModule {
                 event.getCause(),
                 event.isCancelled(),
                 false
-        ).callEvent();
+        );
+        playerTeleportIslandEvent.callEvent();
+        if (playerTeleportIslandEvent.isCancelled()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -23,7 +23,7 @@ public class PlayerTeleportHooks implements Listener {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        new PlayerTeleportIslandEvent(
+        PlayerTeleportIslandEvent playerTeleportIslandEvent = new PlayerTeleportIslandEvent(
                 player,
                 event.getFrom(),
                 to,
@@ -31,7 +31,11 @@ public class PlayerTeleportHooks implements Listener {
                 event.getCause(),
                 event.isCancelled(),
                 true
-        ).callEvent();
+        );
+        playerTeleportIslandEvent.callEvent();
+        if (playerTeleportIslandEvent.isCancelled()) {
+            event.setCancelled(true);
+        }
     }
 
 }
