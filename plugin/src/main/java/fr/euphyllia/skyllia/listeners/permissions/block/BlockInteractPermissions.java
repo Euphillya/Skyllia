@@ -36,7 +36,7 @@ public class BlockInteractPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_INTERACT);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_INTERACT, "skyllia.player.interact.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }

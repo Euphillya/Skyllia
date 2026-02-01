@@ -31,7 +31,7 @@ public class InventoryOpenPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, INVENTORY_OPEN);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, INVENTORY_OPEN, "skyllia.player.inventory.open.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }

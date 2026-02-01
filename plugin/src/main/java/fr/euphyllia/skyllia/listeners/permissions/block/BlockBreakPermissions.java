@@ -29,7 +29,7 @@ public class BlockBreakPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_BREAK);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_BREAK, "skyllia.player.break.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }

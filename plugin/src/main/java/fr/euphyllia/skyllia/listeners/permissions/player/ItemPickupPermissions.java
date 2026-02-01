@@ -31,7 +31,7 @@ public class ItemPickupPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ITEM_PICKUP);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ITEM_PICKUP, "skyllia.player.item.pickup.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }

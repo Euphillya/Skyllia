@@ -31,7 +31,7 @@ public class DecorHangingBreakPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, DECOR_HANGING_BREAK);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, DECOR_HANGING_BREAK, "skyllia.player.decor.hanging.break.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }

@@ -32,7 +32,7 @@ public class EntityDamagePermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ENTITY_DAMAGE);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ENTITY_DAMAGE, "skyllia.player.entity.damage.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }

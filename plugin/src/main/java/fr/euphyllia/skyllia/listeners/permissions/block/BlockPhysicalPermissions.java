@@ -36,7 +36,7 @@ public class BlockPhysicalPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_PHYSICAL);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_PHYSICAL, "skyllia.player.physical.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }

@@ -4,11 +4,18 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class PermissionsManagers {
 
 
     public boolean hasPermission(Player player, Island island, PermissionId permission) {
+        return hasPermission(player, island, permission, null);
+    }
+    public boolean hasPermission(Player player, Island island, PermissionId permission, @Nullable String bukkitPermission) {
+        if (bukkitPermission != null && player.hasPermission(bukkitPermission)) {
+            return true;
+        }
         var member = island.getMember(player.getUniqueId());
         RoleType role = member != null ? member.getRoleType() : RoleType.VISITOR;
         if (role == null) role = RoleType.VISITOR;

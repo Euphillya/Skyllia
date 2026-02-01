@@ -29,7 +29,7 @@ public class InventoryModifyDragPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, INVENTORY_MODIFY);
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, INVENTORY_MODIFY, "skyllia.player.inventory.modify.bypass");
         if (!hasPermission) {
             event.setCancelled(true);
         }
