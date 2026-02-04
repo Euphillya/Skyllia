@@ -12,6 +12,7 @@ public class PermissionsManagers {
     public boolean hasPermission(Player player, Island island, PermissionId permission) {
         return hasPermission(player, island, permission, null);
     }
+
     public boolean hasPermission(Player player, Island island, PermissionId permission, @Nullable String bukkitPermission) {
         if (bukkitPermission != null && player.hasPermission(bukkitPermission)) {
             return true;

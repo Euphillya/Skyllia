@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
@@ -159,11 +160,41 @@ public interface SkylliaImplementation {
     @ApiStatus.Internal
     WorldNMS getWorldNMS();
 
+    /**
+     * Retrieves the Permissions Manager.
+     *
+     * @return The PermissionsManagers instance.
+     */
     PermissionsManagers getPermissionsManager();
 
+    /**
+     * Retrieves the Permission Module Manager.
+     *
+     * @return The PermissionModuleManager instance.
+     */
     PermissionModuleManager getPermissionModuleManager();
 
+    /**
+     * Retrieves the Permission Registry.
+     *
+     * @return The PermissionRegistry instance.
+     */
     PermissionRegistry getPermissionRegistry();
 
+    /**
+     * Creates a new island with the specified ID and settings.
+     *
+     * @param islandId The UUID of the island to create.
+     * @param settings The settings for the new island.
+     * @return True if the island was successfully created, false otherwise.
+     */
     Boolean createIsland(UUID islandId, IslandSettings settings);
+
+    /**
+     * Retrieves the Island Custom Data Query manager.
+     * This allows addons to store custom persistent data associated with islands.
+     *
+     * @return The IslandCustomDataQuery implementation for database operations.
+     */
+    IslandCustomDataQuery getIslandCustomDataQuery();
 }

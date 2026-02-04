@@ -19,17 +19,6 @@ public class FixedBiomeProvider extends BiomeProvider {
         this.biomes = List.of(biome);
     }
 
-
-    @Override
-    public @NotNull Biome getBiome(@NotNull WorldInfo worldInfo, int x, int y, int z) {
-        return biome;
-    }
-
-    @Override
-    public @NotNull List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
-        return biomes;
-    }
-
     public static @NotNull FixedBiomeProvider fromConfig(
             @NotNull World.Environment env,
             @NotNull BiomesImpl biomesImpl,
@@ -47,5 +36,15 @@ public class FixedBiomeProvider extends BiomeProvider {
 
         Biome parsed = biomesImpl.getBiome(biomeIdOrName);
         return new FixedBiomeProvider(parsed != null ? parsed : fallback);
+    }
+
+    @Override
+    public @NotNull Biome getBiome(@NotNull WorldInfo worldInfo, int x, int y, int z) {
+        return biome;
+    }
+
+    @Override
+    public @NotNull List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
+        return biomes;
     }
 }

@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.SkylliaImplementation;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
@@ -204,6 +205,11 @@ public final class APISkyllia implements SkylliaImplementation {
     @Override
     public Boolean createIsland(UUID islandId, IslandSettings settings) {
         return this.interneAPI.getSkyblockManager().createIsland(islandId, settings);
+    }
+
+    @Override
+    public IslandCustomDataQuery getIslandCustomDataQuery() {
+        return this.interneAPI.getIslandQuery().getIslandCustomDataQuery();
     }
 
 

@@ -24,6 +24,7 @@ public class IslandQuery {
     private IslandWarpQuery islandWarpQuery;
     private IslandMemberQuery islandMemberQuery;
     private IslandPermissionQuery islandPermissionQuery;
+    private IslandCustomDataQuery islandCustomDataQuery;
 
     public IslandQuery(InterneAPI api) {
         this.api = api;
@@ -47,6 +48,7 @@ public class IslandQuery {
             this.islandWarpQuery = new MariaDBIslandWarp(loader);
             this.islandMemberQuery = new MariaDBIslandMember(loader);
             this.islandPermissionQuery = new MariaDBIslandPermission(loader);
+            this.islandCustomDataQuery = new MariaDBIslandCustomData(loader);
 
             return;
         }
@@ -59,6 +61,7 @@ public class IslandQuery {
             this.islandWarpQuery = new PostgreSQLIslandWarp(loader);
             this.islandMemberQuery = new PostgreSQLIslandMember(loader);
             this.islandPermissionQuery = new PostgreSQLIslandPermission(loader);
+            this.islandCustomDataQuery = new PostgreSQLIslandCustomData(loader);
 
             return;
         }
@@ -77,6 +80,7 @@ public class IslandQuery {
             this.islandWarpQuery = new SQLiteIslandWarp(sqliteLoader);
             this.islandMemberQuery = new SQLiteIslandMember(sqliteLoader);
             this.islandPermissionQuery = new SQLiteIslandPermission(sqliteLoader);
+            this.islandCustomDataQuery = new SQLiteIslandCustomData(sqliteLoader);
 
             return;
         }
@@ -90,6 +94,10 @@ public class IslandQuery {
 
     public IslandDataQuery getIslandDataQuery() {
         return this.islandDataQuery;
+    }
+
+    public IslandCustomDataQuery getIslandCustomDataQuery() {
+        return this.islandCustomDataQuery;
     }
 
     public IslandUpdateQuery getIslandUpdateQuery() {

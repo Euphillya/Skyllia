@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
@@ -241,19 +242,51 @@ public final class SkylliaAPI {
         return implementation.getWorldNMS();
     }
 
+    /**
+     * Retrieves the Permissions Manager.
+     *
+     * @return The PermissionsManagers instance.
+     */
     public static PermissionsManagers getPermissionsManager() {
         return implementation.getPermissionsManager();
     }
 
+    /**
+     * Retrieves the Permission Module Manager.
+     *
+     * @return The PermissionModuleManager instance.
+     */
     public static PermissionModuleManager getPermissionModuleManager() {
         return implementation.getPermissionModuleManager();
     }
 
+    /**
+     * Retrieves the Permission Registry.
+     *
+     * @return The PermissionRegistry instance.
+     */
     public static PermissionRegistry getPermissionRegistry() {
         return implementation.getPermissionRegistry();
     }
 
+    /**
+     * Creates a new island with the specified ID and settings.
+     *
+     * @param islandId The UUID of the island to create.
+     * @param settings The settings for the new island.
+     * @return True if the island was successfully created, false otherwise.
+     */
     public static Boolean createIsland(UUID islandId, IslandSettings settings) {
         return implementation.createIsland(islandId, settings);
+    }
+
+    /**
+     * Retrieves the Island Custom Data Query manager.
+     * This allows addons to store custom persistent data associated with islands.
+     *
+     * @return The IslandCustomDataQuery implementation for database operations.
+     */
+    public static IslandCustomDataQuery getIslandCustomDataQuery() {
+        return implementation.getIslandCustomDataQuery();
     }
 }
