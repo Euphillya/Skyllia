@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏝️ Skyllia
+# <img src="https://cdn.modrinth.com/data/fGbtispn/d3a18500b1a981a2207407035798e918437d0f94_96.webp" height="25"> Skyllia
 
 ### Le premier plugin Skyblock entièrement compatible Folia
 
