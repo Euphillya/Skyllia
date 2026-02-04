@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class IslandChatCommand implements SubCommandInterface {
 
@@ -29,10 +30,11 @@ public class IslandChatCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "addons.chat.no-permission");
             return true;
         }
+        final UUID uuid = player.getUniqueId();
 
         // Toggle island chat mode
-        boolean isEnabled = this.plugin.getIslandChatEnabled().getOrDefault(player, false);
-        this.plugin.getIslandChatEnabled().put(player, !isEnabled);
+        boolean isEnabled = this.plugin.getIslandChatEnabled().getOrDefault(uuid, false);
+        this.plugin.getIslandChatEnabled().put(uuid, !isEnabled);
 
         if (isEnabled) {
             ConfigLoader.language.sendMessage(player, "addons.chat.disabled");

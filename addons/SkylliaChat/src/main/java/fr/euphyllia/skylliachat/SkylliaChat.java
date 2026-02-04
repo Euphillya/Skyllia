@@ -3,14 +3,14 @@ package fr.euphyllia.skylliachat;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skylliachat.commands.IslandChatCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SkylliaChat extends JavaPlugin {
 
-    private final ConcurrentHashMap<Player, Boolean> islandChatEnabled = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Boolean> islandChatEnabled = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
@@ -25,7 +25,7 @@ public final class SkylliaChat extends JavaPlugin {
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
     }
 
-    public ConcurrentHashMap<Player, Boolean> getIslandChatEnabled() {
+    public ConcurrentHashMap<UUID, Boolean> getIslandChatEnabled() {
         return islandChatEnabled;
     }
 }

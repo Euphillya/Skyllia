@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.UUID;
 
 public class ChatListeners implements Listener {
 
@@ -23,14 +26,23 @@ public class ChatListeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChat(final AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
+    public void onPlayerQuit(final PlayerQuitEvent event) {
+        final Player player = event.getPlayer();
+        final UUID uuid = player.getUniqueId();
+        plugin.getIslandChatEnabled().remove(uuid);
+    }
 
-        if (plugin.getIslandChatEnabled().getOrDefault(player, false)) {
+    @EventHandler
+    public void onPlayerChat(final AsyncPlayerChatEvent event) {
+        final Player player = event.getPlayer();
+        final UUID uuid = player.getUniqueId();
+        final String playerName = player.getName();
+
+        if (plugin.getIslandChatEnabled().getOrDefault(uuid, false)) {
             event.setCancelled(true);
 
             Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+                Island island = SkylliaAPI.getIslandByPlayerId(uuid);
                 if (island == null) {
                     ConfigLoader.language.sendMessage(player, "island.player.no-island");
                     return;
@@ -38,7 +50,7 @@ public class ChatListeners implements Listener {
 
                 String message = event.getMessage();
                 String format = this.plugin.getConfig().getString("chat.format", "<red>[Messaging Island] %player_name%: <gray>%message%")
-                        .replace("%player_name%", player.getName())
+                        .replace("%player_name%", playerName)
                         .replace("%message%", message);
 
                 // MiniMessage doesn't like legacy formatting codes...
