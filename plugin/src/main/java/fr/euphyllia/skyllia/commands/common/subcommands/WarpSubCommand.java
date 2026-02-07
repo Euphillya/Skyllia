@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +49,7 @@ public class WarpSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.warp")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.warp")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -90,7 +91,7 @@ public class WarpSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return Collections.emptyList();
-        if (!player.hasPermission("skyllia.island.command.warp")) return Collections.emptyList();
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.warp")) return Collections.emptyList();
         if (args.length != 1) return Collections.emptyList();
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());

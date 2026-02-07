@@ -94,7 +94,7 @@ public class DeleteSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!sender.hasPermission("skyllia.island.command.delete")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.delete")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

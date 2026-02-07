@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.command.CommandSender;
@@ -30,7 +31,7 @@ public class LeaveSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.leave")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.leave")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

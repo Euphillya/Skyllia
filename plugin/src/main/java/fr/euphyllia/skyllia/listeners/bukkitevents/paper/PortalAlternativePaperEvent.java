@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import io.papermc.paper.event.entity.EntityInsideBlockEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,14 +35,14 @@ public class PortalAlternativePaperEvent implements Listener {
             WorldConfig worldConfig = ConfigLoader.worldManager.getWorldConfig(world.getName());
             if (blockType.equals(Material.NETHER_PORTAL)) {
                 if (worldConfig.getPortalEnd().equalsIgnoreCase(world.getName())) return;
-                if (!player.hasPermission("skyllia.use.portal.nether")) return;
+                if (!PlayerUtils.hasPermission(player, "skyllia.use.portal.nether")) return;
                 ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(
                         player, worldConfig, PlayerPrepareChangeWorldSkyblockEvent.PortalType.NETHER, event
                 );
             }
             if (blockType.equals(Material.END_PORTAL)) {
                 if (worldConfig.getPortalEnd().equalsIgnoreCase(world.getName())) return;
-                if (!player.hasPermission("skyllia.use.portal.end")) return;
+                if (!PlayerUtils.hasPermission(player, "skyllia.use.portal.end")) return;
                 ListenersUtils.callPlayerPrepareChangeWorldSkyblockEvent(
                         player, worldConfig, PlayerPrepareChangeWorldSkyblockEvent.PortalType.END, event
                 );

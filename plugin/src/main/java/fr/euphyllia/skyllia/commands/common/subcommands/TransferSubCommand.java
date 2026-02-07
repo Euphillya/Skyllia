@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -37,7 +38,7 @@ public class TransferSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.transfer")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.transfer")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

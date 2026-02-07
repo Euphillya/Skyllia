@@ -16,6 +16,7 @@ import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.island.IslandCreationQueue;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.IslandUtils;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +46,7 @@ public class CreateSubCommand implements SubCommandInterface {
                 return;
             }
             CommandCacheExecution.addCommandExecute(playerId, "create");
-            if (!player.hasPermission("skyllia.island.command.create")) {
+            if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create")) {
                 CommandCacheExecution.removeCommandExec(playerId, "create");
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 return;
@@ -75,7 +76,7 @@ public class CreateSubCommand implements SubCommandInterface {
                         return;
                     }
 
-                    if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
+                    if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create.%s".formatted(schemKey))) {
                         ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         return;
@@ -148,13 +149,13 @@ public class CreateSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!sender.hasPermission("skyllia.island.command.create")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
 
         boolean bypass = ConfigLoader.general.isAllowBypassIslandQueue()
-                && player.hasPermission("skyllia.island.bypass.queue");
+                && PlayerUtils.hasPermission(player, "skyllia.island.bypass.queue");
 
         if (bypass) {
             runCreateIsland(Skyllia.getInstance(), player, args);

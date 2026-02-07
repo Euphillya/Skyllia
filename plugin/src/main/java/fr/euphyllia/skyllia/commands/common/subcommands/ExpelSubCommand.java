@@ -74,7 +74,7 @@ public class ExpelSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.expel")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.expel")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
