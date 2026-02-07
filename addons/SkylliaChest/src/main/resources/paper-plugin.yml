@@ -1,0 +1,12 @@
+name: SkylliaChat
+version: ${version}
+main: fr.euphyllia.skylliachest.SkylliaChest
+api-version: 1.20.1
+folia-supported: true
+
+dependencies:
+  server:
+    Skyllia:
+      load: BEFORE
+      required: true
+      join-classpath: true
