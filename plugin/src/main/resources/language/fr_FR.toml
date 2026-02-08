@@ -371,3 +371,8 @@ display = "<!italic><gray>- Avoir crafté %amount% de %item_name%</gray>"
 [addons.challenge.reward.bank]
 success = "<green>Vous avez reçu %amount% dans le compte de l'île en récompense du défi %challenge_name%.</green>"
 failure = "<red>Une erreur s'est produite lors de l'ajout de %amount% dans le compte de l'île en récompense du défi %challenge_name%.</red>"
+
+[addons.island-chest]
+no-permission = "<red>Votre rang ne vous permet pas d'utiliser ce coffre."
+inventory-title = "<gold>=== Coffre de l'île de %island_name% ===</gold>"
+open = "<green>Vous avez ouvert le coffre de l'île.</green>"
