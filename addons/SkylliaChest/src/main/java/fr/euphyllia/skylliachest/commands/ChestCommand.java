@@ -46,7 +46,9 @@ public class ChestCommand implements SubCommandInterface {
             return true;
         }
 
-        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        UUID playerId = player.getUniqueId();
+
+        Island island = SkylliaAPI.getIslandByPlayerId(playerId);
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
             return true;
@@ -69,6 +71,7 @@ public class ChestCommand implements SubCommandInterface {
 
     private void openChest(@NotNull Player player, @NotNull Island island, int size) {
         UUID islandId = island.getId();
+        UUID playerId = player.getUniqueId();
         ChestIslandCache cache = SkylliaChest.getInstance().getChestCache();
 
         Component title = ConfigLoader.language.translate(
@@ -88,7 +91,7 @@ public class ChestCommand implements SubCommandInterface {
 
         IslandChestInventory inventory = new IslandChestInventory(chestIsland);
 
-        cache.registerOpenChest(player, chestIsland);
+        cache.registerOpenChest(playerId, chestIsland);
 
         player.getScheduler().run(plugin, scheduledTask -> {
             player.openInventory(inventory.getInventory());

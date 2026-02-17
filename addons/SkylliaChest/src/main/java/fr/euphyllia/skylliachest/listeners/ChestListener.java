@@ -17,6 +17,8 @@ import org.bukkit.inventory.Inventory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 public record ChestListener(SkylliaChest plugin) implements Listener {
 
     private static final Logger log = LoggerFactory.getLogger(ChestListener.class);
@@ -26,6 +28,7 @@ public record ChestListener(SkylliaChest plugin) implements Listener {
         if (!(event.getPlayer() instanceof Player player)) {
             return;
         }
+        final UUID playerId = player.getUniqueId();
 
         Inventory inventory = event.getInventory();
 
@@ -38,12 +41,12 @@ public record ChestListener(SkylliaChest plugin) implements Listener {
         Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
             ChestIslandCache cache = plugin.getChestCache();
 
-            ChestIsland chestIsland = cache.unregisterPlayer(player);
+            ChestIsland chestIsland = cache.unregisterPlayer(playerId);
 
             if (chestIsland != null && chestIsland.isDirty()) {
                 boolean success = SkylliaChest.getInstance().getChestManager().saveChest(chestIsland);
                 if (!success) {
-                    log.error("Failed to save chest for island {} when player {} closed the inventory", chestIsland.getIsland().getId(), player.getUniqueId());
+                    log.error("Failed to save chest for island {} when player {} closed the inventory", chestIsland.getIsland().getId(), playerId);
                 }
             }
         });
@@ -84,28 +87,29 @@ public record ChestListener(SkylliaChest plugin) implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(final PlayerQuitEvent event) {
         final Player player = event.getPlayer();
+        final UUID playerId = player.getUniqueId();
 
         ChestIslandCache cache = plugin.getChestCache();
 
-        if (!cache.hasOpenChest(player)) {
+        if (!cache.hasOpenChest(playerId)) {
             return;
         }
 
         Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-            ChestIsland chestIsland = cache.getPlayerChest(player);
+            ChestIsland chestIsland = cache.getPlayerChest(playerId);
 
-            ChestIsland removedChest = cache.unregisterPlayer(player);
+            ChestIsland removedChest = cache.unregisterPlayer(playerId);
 
             if (removedChest != null && removedChest.isDirty()) {
                 boolean success = SkylliaChest.getInstance().getChestManager().saveChest(removedChest);
                 if (!success) {
-                    log.error("Failed to save chest for island {} when player {} quit", removedChest.getIsland().getId(), player.getUniqueId());
+                    log.error("Failed to save chest for island {} when player {} quit", removedChest.getIsland().getId(), playerId);
                 }
             } else if (chestIsland != null) {
                 if (chestIsland.isDirty()) {
                     boolean success = SkylliaChest.getInstance().getChestManager().saveChest(chestIsland);
                     if (!success) {
-                        log.error("Failed to save chest for island {} when player {} quit", chestIsland.getIsland().getId(), player.getUniqueId());
+                        log.error("Failed to save chest for island {} when player {} quit", chestIsland.getIsland().getId(), playerId);
                     }
                 }
             }

@@ -134,10 +134,6 @@ public class ChestManager {
         );
     }
 
-    public boolean clearChest(@NotNull Island island) {
-        return customDataQuery.remove(namespaceKey, island, CHEST_DATA_KEY);
-    }
-
     private int normalizeChestSize(int size) {
         if (size <= 9) return 9;
         if (size <= 18) return 18;

@@ -14,12 +14,12 @@ public class ChestIslandCache {
     private final Map<UUID, ChestIsland> cachedChests = new ConcurrentHashMap<>();
     private final Map<UUID, UUID> playerOpenChests = new ConcurrentHashMap<>();
 
-    public void registerOpenChest(@NotNull Player player, @NotNull ChestIsland chestIsland) {
+    public void registerOpenChest(@NotNull UUID playerId, @NotNull ChestIsland chestIsland) {
         UUID islandId = chestIsland.getIsland().getId();
 
         cachedChests.putIfAbsent(islandId, chestIsland);
 
-        playerOpenChests.put(player.getUniqueId(), islandId);
+        playerOpenChests.put(playerId, islandId);
     }
 
     @Nullable
@@ -28,19 +28,19 @@ public class ChestIslandCache {
     }
 
     @Nullable
-    public ChestIsland getPlayerChest(@NotNull Player player) {
-        UUID islandId = playerOpenChests.get(player.getUniqueId());
+    public ChestIsland getPlayerChest(@NotNull UUID playerId) {
+        UUID islandId = playerOpenChests.get(playerId);
         return islandId != null ? cachedChests.get(islandId) : null;
     }
 
     @Nullable
-    public UUID getPlayerOpenChestIsland(@NotNull Player player) {
-        return playerOpenChests.get(player.getUniqueId());
+    public UUID getPlayerOpenChestIsland(@NotNull UUID playerId) {
+        return playerOpenChests.get(playerId);
     }
 
     @Nullable
-    public ChestIsland unregisterPlayer(@NotNull Player player) {
-        UUID islandId = playerOpenChests.remove(player.getUniqueId());
+    public ChestIsland unregisterPlayer(@NotNull UUID playerId) {
+        UUID islandId = playerOpenChests.remove(playerId);
         if (islandId == null) {
             return null;
         }
@@ -52,8 +52,8 @@ public class ChestIslandCache {
         return null;
     }
 
-    public boolean hasOpenChest(@NotNull Player player) {
-        return playerOpenChests.containsKey(player.getUniqueId());
+    public boolean hasOpenChest(@NotNull UUID playerId) {
+        return playerOpenChests.containsKey(playerId);
     }
 
     public long countPlayersWithChest(@NotNull UUID islandId) {
