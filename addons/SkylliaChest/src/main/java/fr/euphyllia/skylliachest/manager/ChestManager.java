@@ -29,6 +29,18 @@ public class ChestManager {
         this.customDataQuery = SkylliaAPI.getIslandCustomDataQuery();
     }
 
+    public void initIsland(@NotNull Island island) {
+        Integer size = customDataQuery.get(namespaceKey, island, CHEST_SIZE_KEY, PersistentDataType.INTEGER);
+        if (size == null) {
+            customDataQuery.set(namespaceKey, island, CHEST_SIZE_KEY, PersistentDataType.INTEGER, 27);
+        }
+
+        ItemStack[] contents = customDataQuery.get(namespaceKey, island, CHEST_DATA_KEY, InventoryDataType.INSTANCE);
+        if (contents == null) {
+            customDataQuery.set(namespaceKey, island, CHEST_DATA_KEY, InventoryDataType.INSTANCE, new ItemStack[27]);
+        }
+    }
+
     @NotNull
     public ChestIsland loadChest(@NotNull Island island, int size, @NotNull Component title) {
         ItemStack[] contents = customDataQuery.get(
@@ -37,6 +49,17 @@ public class ChestManager {
                 CHEST_DATA_KEY,
                 InventoryDataType.INSTANCE
         );
+
+        if (contents == null) {
+            contents = new ItemStack[size];
+            customDataQuery.set(
+                    namespaceKey,
+                    island,
+                    CHEST_DATA_KEY,
+                    InventoryDataType.INSTANCE,
+                    contents
+            );
+        }
 
         Map<Integer, ItemStack> items = new HashMap<>();
 
@@ -81,6 +104,18 @@ public class ChestManager {
                 CHEST_SIZE_KEY,
                 PersistentDataType.INTEGER
         );
+
+        if (savedSize == null) {
+            int defaultSize = 27;
+            customDataQuery.set(
+                    namespaceKey,
+                    island,
+                    CHEST_SIZE_KEY,
+                    PersistentDataType.INTEGER,
+                    defaultSize
+            );
+            return defaultSize;
+        }
 
         if (savedSize != null) {
             return normalizeChestSize(savedSize);

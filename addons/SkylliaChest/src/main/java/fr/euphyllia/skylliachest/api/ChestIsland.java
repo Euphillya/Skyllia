@@ -68,7 +68,7 @@ public class ChestIsland {
         itemsIndexed.clear();
         for (int i = 0; i < Math.min(contents.length, size); i++) {
             ItemStack item = contents[i];
-            if (!item.getType().isAir()) {
+            if (item != null && !item.getType().isAir()) {
                 itemsIndexed.put(i, item.clone());
             }
         }

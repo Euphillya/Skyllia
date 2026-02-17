@@ -59,6 +59,8 @@ public class ChestCommand implements SubCommandInterface {
         }
 
         ChestManager chestManager = SkylliaChest.getInstance().getChestManager();
+        chestManager.initIsland(island);
+
         int size = chestManager.getChestSize(island);
 
         openChest(player, island, size);
@@ -88,9 +90,10 @@ public class ChestCommand implements SubCommandInterface {
 
         cache.registerOpenChest(player, chestIsland);
 
-        player.openInventory(inventory.getInventory());
-
-        ConfigLoader.language.sendMessage(player, "addons.island-chest.open");
+        player.getScheduler().run(plugin, scheduledTask -> {
+            player.openInventory(inventory.getInventory());
+            ConfigLoader.language.sendMessage(player, "addons.island-chest.open");
+        }, null);
     }
 
     @Override
