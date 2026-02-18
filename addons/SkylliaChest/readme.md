@@ -11,16 +11,14 @@ Ce module permet à chaque île de disposer d’un inventaire partagé, accessib
 ## 📦 Fonctionnalités
 
 * 🔒 **Coffre d’île partagé**
-  Un inventaire propre à chaque île, disponible pour tous les membres (s'ils ont la permission donnée par le OWNER).
+<p> Un inventaire propre à chaque île, disponible pour tous les membres (s'ils ont la permission donnée par le OWNER).
 
 * 💾 **Persistance des données**
-  Les données des coffres sont stockées dans la base de données de Skyllia, avec un système de cache pour optimiser les performances.
+<p> Les données des coffres sont stockées dans la base de données de Skyllia, avec un système de cache pour optimiser les performances.
 
 * ⚡ **Chargement asynchrone**
-  Les données sont chargées et sauvegardées de manière asynchrone pour éviter les blocages du serveur.
+<p> Les données sont chargées et sauvegardées de manière asynchrone pour éviter les blocages du serveur.
 
-* 🧩 **Intégration Paper moderne**
-  Utilise un `paper-plugin.yml` propre et conforme aux standards Paper 1.21+.
 
 ---
 
