@@ -1,5 +1,5 @@
 name: SkylliaChest
-version: ${version}
+version: ${version}-BETA
 main: fr.euphyllia.skylliachest.SkylliaChest
 api-version: 1.20.1
 folia-supported: true

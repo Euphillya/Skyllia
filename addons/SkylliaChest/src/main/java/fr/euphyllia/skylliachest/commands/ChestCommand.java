@@ -85,16 +85,20 @@ public class ChestCommand implements SubCommandInterface {
         if (chestIsland == null) {
             ChestManager chestManager = SkylliaChest.getInstance().getChestManager();
             chestIsland = chestManager.loadChest(island, size, title);
-
             cache.putChest(chestIsland);
         }
 
-        IslandChestInventory inventory = new IslandChestInventory(chestIsland);
+        IslandChestInventory inventory = cache.getCachedInventory(islandId);
+        if (inventory == null) {
+            inventory = new IslandChestInventory(chestIsland);
+            cache.putInventory(islandId, inventory);
+        }
 
         cache.registerOpenChest(playerId, chestIsland);
 
+        final IslandChestInventory finalInventory = inventory;
         player.getScheduler().run(plugin, scheduledTask -> {
-            player.openInventory(inventory.getInventory());
+            player.openInventory(finalInventory.getInventory());
             ConfigLoader.language.sendMessage(player, "addons.island-chest.open");
         }, null);
     }

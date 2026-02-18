@@ -36,6 +36,9 @@ public class SkylliaChest extends JavaPlugin {
         SkylliaAPI.registerCommands(new ChestCommand(this), "chest", "echest", "islandchest");
 
         getServer().getPluginManager().registerEvents(new ChestListener(this), this);
+
+        // Annoncer que c'est en beta
+        log.warn("SkylliaChest is currently in beta. Please report any issues you encounter to the developer.");
     }
 
     @Override

@@ -117,10 +117,7 @@ public class ChestManager {
             return defaultSize;
         }
 
-        if (savedSize != null) {
-            return normalizeChestSize(savedSize);
-        }
-        return 27;
+        return normalizeChestSize(savedSize);
     }
 
     public boolean setChestSize(@NotNull Island island, int size) {

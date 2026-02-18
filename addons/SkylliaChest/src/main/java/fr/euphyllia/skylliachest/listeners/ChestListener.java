@@ -50,7 +50,6 @@ public record ChestListener(SkylliaChest plugin) implements Listener {
                 }
             }
         });
-
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
