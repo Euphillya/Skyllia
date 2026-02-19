@@ -100,7 +100,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
 
     @Override
     public @Nullable Players getOwnerByIslandId(UUID islandId) {
-        return SQLExecute.queryMap(databaseLoader, OWNERS_ISLAND, List.of(islandId.toString()), rs -> {
+        return SQLExecute.queryMap(databaseLoader, OWNER_ISLAND, List.of(islandId.toString()), rs -> {
             try {
                 if (rs.next()) {
                     UUID playerId = UUID.fromString(rs.getString("uuid_player"));
