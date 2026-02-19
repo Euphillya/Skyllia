@@ -203,19 +203,38 @@ public class PlaceholderProcessor {
      * @return the placeholder value as a string
      */
     private static String processPermissionsPlaceholder(Island island, UUID playerId, String placeholder) {
-        String[] split = placeholder.split("_", 4);
+        String[] split = placeholder.split("_");
         if (split.length < 4) {
             return "Invalid placeholder format";
         }
 
-        String roleTypeRaw = split[1];
-        String permissionTypeRaw = split[2];
-        String permissionNameRaw = split[3];
+        StringBuilder roleTypeRaw = new StringBuilder();
+        int permissionTypeIndex = -1;
+
+        for (int i = 1; i < split.length; i++) {
+            try {
+                PermissionsType.valueOf(split[i].toUpperCase());
+                permissionTypeIndex = i;
+                break;
+            } catch (IllegalArgumentException ignored) {
+                if (!roleTypeRaw.isEmpty()) {
+                    roleTypeRaw.append("_");
+                }
+                roleTypeRaw.append(split[i]);
+            }
+        }
+
+        if (permissionTypeIndex == -1 || permissionTypeIndex >= split.length - 1) {
+            return "Invalid placeholder format";
+        }
+
+        String permissionTypeRaw = split[permissionTypeIndex];
+        String permissionNameRaw = String.join("_", java.util.Arrays.copyOfRange(split, permissionTypeIndex + 1, split.length));
 
         RoleType roleType;
         PermissionsType permissionsType;
         try {
-            roleType = RoleType.valueOf(roleTypeRaw.toUpperCase());
+            roleType = RoleType.valueOf(roleTypeRaw.toString().toUpperCase());
             permissionsType = PermissionsType.valueOf(permissionTypeRaw.toUpperCase());
         } catch (IllegalArgumentException e) {
             return "Invalid role or permission type";
