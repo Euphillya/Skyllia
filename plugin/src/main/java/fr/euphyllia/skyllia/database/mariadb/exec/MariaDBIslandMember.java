@@ -66,8 +66,8 @@ public class MariaDBIslandMember extends IslandMemberQuery {
 
     private static final String OWNER_ISLAND = """
         SELECT mi.island_id, mi.uuid_player, mi.player_name, mi.role, mi.joined
-        FROM members_in_islands mi
-        JOIN islands i ON mi.island_id = i.island_id
+        FROM `%s`.members_in_islands mi
+        JOIN `%s`.islands i ON mi.island_id = i.island_id
         WHERE mi.island_id = ?
           AND mi.role = 'OWNER'
           AND i.disable = 0
@@ -100,7 +100,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<@Nullable Players> getOwnerByIslandId(UUID islandId) {
         CompletableFuture<Players> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), OWNER_ISLAND,
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(),  OWNER_ISLAND.formatted(this.databaseName, this.databaseName),
                     List.of(islandId),
                     resultSet -> {
                         try {
@@ -251,7 +251,7 @@ public class MariaDBIslandMember extends IslandMemberQuery {
     public CompletableFuture<@Nullable Players> getOwnerInIslandId(Island island) {
         CompletableFuture<Players> completableFuture = new CompletableFuture<>();
         try {
-            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), OWNER_ISLAND, List.of(island.getId()), resultSet -> {
+            MariaDBExecute.executeQuery(this.api.getDatabaseLoader(), OWNER_ISLAND.formatted(this.databaseName, this.databaseName), List.of(island.getId()), resultSet -> {
                 try {
                     if (resultSet.next()) {
                         String ownerId = resultSet.getString("mi.uuid_player");
