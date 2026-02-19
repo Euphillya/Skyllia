@@ -103,7 +103,7 @@ public class SQLiteIslandMember extends IslandMemberQuery {
         CompletableFuture<Players> future = new CompletableFuture<>();
         try {
             databaseLoader.executeQuery(
-                    OWNERS_ISLAND,
+                    OWNER_ISLAND,
                     List.of(islandId.toString()),
                     rs -> {
                         try {
