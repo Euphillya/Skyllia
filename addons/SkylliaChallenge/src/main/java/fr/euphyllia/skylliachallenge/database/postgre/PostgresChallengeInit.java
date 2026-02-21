@@ -6,16 +6,17 @@ import fr.euphyllia.skyllia.sgbd.postgre.Postgres;
 import fr.euphyllia.skyllia.sgbd.postgre.PostgresLoader;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PostgresChallengeInit extends DatabaseInitializeQuery {
 
     private static DatabaseLoader pool;
     private static PostgresProgressBackend progressBackend;
+    private static final Logger log = LoggerFactory.getLogger(PostgresChallengeInit.class);
 
     public PostgresChallengeInit() {
-        Postgres pg = new Postgres(
-                ConfigLoader.database.getPostgreConfig()
-        );
+        var pg = new Postgres(ConfigLoader.database.getPostgreConfig());
         pool = new PostgresLoader(pg);
         progressBackend = new PostgresProgressBackend(pool);
     }
@@ -31,6 +32,11 @@ public final class PostgresChallengeInit extends DatabaseInitializeQuery {
     @Override
     public Boolean init() {
         try {
+            if (!pool.loadDatabase()) {
+                log.error("Failed to load PostgreSQL database for SkylliaChallenge");
+                return false;
+            }
+
             SQLExecute.update(pool, """
                         CREATE TABLE IF NOT EXISTS island_challenge_progress(
                           island_id uuid NOT NULL,
