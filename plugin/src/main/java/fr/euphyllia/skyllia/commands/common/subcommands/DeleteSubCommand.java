@@ -153,12 +153,15 @@ public class DeleteSubCommand implements SubCommandInterface {
                 }
 
                 ConfigLoader.worldManager.getWorldConfigs().forEach((s, envs) -> {
-                    Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
-                        if (!success) failed.set(true);
-                        if (worldsLeft.decrementAndGet() == 0) {
-                            skyblockManager.setLockedIsland(island, failed.get());
-                        }
-                    });
+                    if (envs.shouldDeleteIsland()) {
+                        Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
+                            if (!success) failed.set(true);
+                            if (worldsLeft.decrementAndGet() == 0) {
+                                skyblockManager.setLockedIsland(island, failed.get());
+                            }
+                        });
+                    }
+
                 });
             } else {
                 ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");

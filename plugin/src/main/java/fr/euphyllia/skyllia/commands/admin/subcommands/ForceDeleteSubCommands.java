@@ -86,22 +86,24 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                     return true;
                 } else {
                     ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
-                        Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN)
-                                .deleteIsland(island, Bukkit.getWorld(name), ConfigLoader.general.getRegionDistance(), (success) -> {
-                                    if (!success) failed.set(true);
-                                    if (worldsLeft.decrementAndGet() == 0) {
-                                        boolean value = skyblockManager.setLockedIsland(island, failed.get());
-                                        if (value) {
-                                            if (!failed.get()) {
-                                                ConfigLoader.language.sendMessage(sender, "island.delete-success");
+                        if (environnements.shouldDeleteIsland()) {
+                            Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN)
+                                    .deleteIsland(island, Bukkit.getWorld(name), ConfigLoader.general.getRegionDistance(), (success) -> {
+                                        if (!success) failed.set(true);
+                                        if (worldsLeft.decrementAndGet() == 0) {
+                                            boolean value = skyblockManager.setLockedIsland(island, failed.get());
+                                            if (value) {
+                                                if (!failed.get()) {
+                                                    ConfigLoader.language.sendMessage(sender, "island.delete-success");
+                                                } else {
+                                                    ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
+                                                }
                                             } else {
-                                                ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
+                                                logger.error("Failed to unlock island {} after deletion.", island.getId());
                                             }
-                                        } else {
-                                            logger.error("Failed to unlock island {} after deletion.", island.getId());
                                         }
-                                    }
-                                });
+                                    });
+                        }
                     });
                 }
             }
