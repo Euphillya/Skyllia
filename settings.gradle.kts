@@ -16,7 +16,7 @@ include("nms:v1_21_R5")
 include("nms:v1_21_R6")
 include("nms:v1_21_R7")
 // Addons
-include("addons:SkylliaOre")
+include("addons:SkylliaOre-Legacy")
 include("addons:InsightsSkyllia")
 include("addons:SkylliaChat")
 include("addons:SkylliaBank")

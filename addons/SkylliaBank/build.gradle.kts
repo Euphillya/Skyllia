@@ -16,7 +16,7 @@ dependencies {
     compileOnly(project(":api"))
     compileOnly(project(":plugin"))
     compileOnly(project(":database"))
-    compileOnly(project(":addons:SkylliaOre"))
+    compileOnly(project(":addons:SkylliaOre-Legacy"))
 }
 
 java {

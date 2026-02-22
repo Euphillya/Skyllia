@@ -140,7 +140,7 @@ modrinth {
 
     additionalFiles.set(
         listOf(
-            project(":addons:SkylliaOre").tasks.named("shadowJar"),
+            project(":addons:SkylliaOre-Legacy").tasks.named("shadowJar"),
             project(":addons:InsightsSkyllia").tasks.named("shadowJar"),
             project(":addons:SkylliaChat").tasks.named("shadowJar"),
             project(":addons:SkylliaBank").tasks.named("shadowJar"),
