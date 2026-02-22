@@ -170,7 +170,7 @@ public class Skyllia extends JavaPlugin {
         String description = getPluginMeta().getDescription();
         String serverType = Bukkit.getName();
         String serverVersion = Bukkit.getVersion();
-        String threadModel = (VersionUtils.IS_FOLIA ? "Multi" : "Single") ;
+        String threadModel = (VersionUtils.IS_FOLIA ? "Multi" : "Single");
         int cpuCores = Runtime.getRuntime().availableProcessors();
 
         String violet = "§d";

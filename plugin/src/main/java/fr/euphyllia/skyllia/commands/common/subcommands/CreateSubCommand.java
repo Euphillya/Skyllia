@@ -3,33 +3,24 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
-import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
-import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
-import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
-import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.island.IslandCreationQueue;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
-import fr.euphyllia.skyllia.utils.IslandUtils;
-import org.apache.logging.log4j.Level;
+import fr.euphyllia.skyllia.managers.skyblock.IslandCreationManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateSubCommand implements SubCommandInterface {
 
@@ -37,120 +28,50 @@ public class CreateSubCommand implements SubCommandInterface {
 
     public CompletableFuture<Void> runCreateIsland(Skyllia plugin, Player player, String[] args) {
         return CompletableFuture.runAsync(() -> {
-
             final UUID playerId = player.getUniqueId();
 
-            if (CommandCacheExecution.isAlreadyExecute(playerId, "create")) {
-                ConfigLoader.language.sendMessage(player, "island.generic.command-in-progress");
-                return;
-            }
-            CommandCacheExecution.addCommandExecute(playerId, "create");
-            if (!player.hasPermission("skyllia.island.command.create")) {
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                return;
-            }
+            if (!acquireCommandLock(player, playerId)) return;
 
             try {
-                AtomicReference<Island> island = new AtomicReference<>(SkylliaAPI.getIslandByPlayerId(playerId));
-                if (island.get() == null) {
-                    List<String> schematicsKeys = ConfigLoader.schematicManager.getIslandTypes();
-                    if (schematicsKeys.isEmpty()) {
-                        ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
-                        CommandCacheExecution.removeCommandExec(playerId, "create");
-                        return;
-                    }
-                    String schemKey = (args.length > 0 && schematicsKeys.contains(args[0])) ? args[0] : schematicsKeys.getFirst();
-                    Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
-                    if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
-                        ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
-                        CommandCacheExecution.removeCommandExec(playerId, "create");
-                        return;
-                    }
-                    IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
-
-                    if (islandSettings == null) {
-                        ConfigLoader.language.sendMessage(player, "island.type-not-exist");
-                        CommandCacheExecution.removeCommandExec(playerId, "create");
-                        return;
-                    }
-
-                    if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
-                        ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                        CommandCacheExecution.removeCommandExec(playerId, "create");
-                        return;
-                    }
-
-                    ConfigLoader.language.sendMessage(player, "island.create-in-progress");
-                    UUID idIsland = UUID.randomUUID();
-
-                    boolean isCreate = SkylliaAPI.createIsland(idIsland, islandSettings);
-
-                    if (!isCreate) {
-                        CommandCacheExecution.removeCommandExec(playerId, "create");
-                        ConfigLoader.language.sendMessage(player, "island.generic-error");
-                        return;
-                    }
-                    island.set(SkylliaAPI.getIslandByIslandId(idIsland));
-                    if (island.get() == null) {
-                        CommandCacheExecution.removeCommandExec(playerId, "create");
-                        ConfigLoader.language.sendMessage(player, "island.generic-error");
-                        return;
-                    }
-                    new SkyblockCreateEvent(island.get(), playerId).callEvent();
-
-                    boolean isFirstIteration = true;
-                    for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
-                        String worldName = entry.getKey();
-                        SchematicSetting schematicSetting = entry.getValue();
-                        Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.get().getPosition().x(), island.get().getPosition().z());
-                        centerPaste.setY(schematicSetting.height());
-                        this.pasteSchematic(island.get(), centerPaste, schematicSetting);
-                        if (isFirstIteration) {
-                            this.setFirstHome(island.get(), centerPaste);
-                            Location loc = centerPaste.clone();
-                            loc.add(0, 0.5, 0);
-                            this.addOwnerIslandInMember(island.get(), player);
-                            player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                                    .thenRun(() -> {
-                                        player.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
-                                        player.setFallDistance(0);
-                                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.get().getSize(), 0, 0);
-                                    });
-                            new SkyblockLoadEvent(island.get()).callEvent();
-                            isFirstIteration = false;
-                        }
-                    }
-                    ConfigLoader.language.sendMessage(player, "island.create-finish");
-                } else {
-                    CommandCacheExecution.removeCommandExec(playerId, "create");
+                if (SkylliaAPI.getIslandByPlayerId(playerId) != null) {
                     new HomeSubCommand().onCommand(plugin, player, args);
+                    return;
                 }
+
+                String schemKey = resolveSchematicKey(player, playerId, args);
+                if (schemKey == null) return;
+
+                ConfigLoader.language.sendMessage(player, "island.create-in-progress");
+
+                IslandCreationManager service = new IslandCreationManager(plugin);
+                Island result = service.createIslandForPlayer(player, schemKey);
+                if (result == null) {
+                    fail(player, playerId, "island.create-failed");
+                    return;
+                }
+                ConfigLoader.language.sendMessage(player, "island.create-finish");
             } catch (Exception e) {
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                logger.log(Level.WARN, e.getMessage(), e);
                 ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            } finally {
+                CommandCacheExecution.removeCommandExec(playerId, "create");
             }
-            CommandCacheExecution.removeCommandExec(playerId, "create");
-        });
+        }, command -> Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> command.run()));
     }
 
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
-
         if (IslandCreationQueue.isQueued(player.getUniqueId())) {
             ConfigLoader.language.sendMessage(player, "island.create.already-in-queue");
-            return true;
+            return;
         }
-
         if (!sender.hasPermission("skyllia.island.command.create")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         boolean bypass = ConfigLoader.general.isAllowBypassIslandQueue()
@@ -161,8 +82,6 @@ public class CreateSubCommand implements SubCommandInterface {
         } else {
             IslandCreationQueue.queuePlayer(player, args);
         }
-
-        return true;
     }
 
 
@@ -189,21 +108,42 @@ public class CreateSubCommand implements SubCommandInterface {
         return Collections.emptyList();
     }
 
-    private void pasteSchematic(Island island, Location center, SchematicSetting schematicWorld) {
-        try {
-            Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.fromString(schematicWorld.plugin())).pasteSchematicWE(center, schematicWorld);
-        } catch (Exception e) {
-            logger.error("An error occurred while pasting schematic for island {}: {}", island.getId(), e.getMessage());
-            island.setDisable(true);
+    private boolean acquireCommandLock(Player player, UUID playerId) {
+        if (CommandCacheExecution.isAlreadyExecute(playerId, "create")) {
+            ConfigLoader.language.sendMessage(player, "island.generic.command-in-progress");
+            return false;
         }
+
+        CommandCacheExecution.addCommandExecute(playerId, "create");
+
+        if (!player.hasPermission("skyllia.island.command.create")) {
+            CommandCacheExecution.removeCommandExec(playerId, "create");
+            ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
+            return false;
+        }
+        return true;
     }
 
-    private boolean setFirstHome(Island island, Location center) {
-        return island.addWarps("home", center, true);
+    private String resolveSchematicKey(Player player, UUID playerId, String[] args) {
+        List<String> schematicsKeys = ConfigLoader.schematicManager.getIslandTypes();
+        if (schematicsKeys.isEmpty()) {
+            fail(player, playerId, "island.schematic-not-exist");
+            return null;
+        }
+
+        String schemKey = (args.length > 0 && schematicsKeys.contains(args[0]))
+                ? args[0]
+                : schematicsKeys.getFirst();
+
+        if (!player.hasPermission("skyllia.island.command.create.%s".formatted(schemKey))) {
+            fail(player, playerId, "island.player.permission-denied");
+            return null;
+        }
+        return schemKey;
     }
 
-    private void addOwnerIslandInMember(Island island, Player player) {
-        Players owners = new Players(player.getUniqueId(), player.getName(), island.getId(), RoleType.OWNER);
-        island.updateMember(owners);
+    private void fail(Player player, UUID playerId, String messageKey) {
+        CommandCacheExecution.removeCommandExec(playerId, "create");
+        ConfigLoader.language.sendMessage(player, messageKey);
     }
 }

@@ -1,0 +1,26 @@
+name: SkylliaGenerator
+version: ${version}
+main: fr.euphyllia.skylliagenerator.SkylliaGenerator
+api-version: 1.20.1
+authors: [ Euphyllia ]
+folia-supported: true
+loader: fr.euphyllia.skylliagenerator.SkylliaGeneratorLoader
+
+dependencies:
+  server:
+    Skyllia:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    Oraxen:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    Nexo:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true

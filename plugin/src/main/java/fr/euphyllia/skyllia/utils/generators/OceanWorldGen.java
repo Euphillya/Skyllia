@@ -19,6 +19,18 @@ public class OceanWorldGen extends ChunkGenerator {
         this.seaBlock = (seaBlock != null) ? seaBlock : Material.WATER;
     }
 
+    public static Material parseMaterial(String name) {
+        if (name == null || name.isBlank()) {
+            return Material.WATER;
+        }
+
+        try {
+            return Material.valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Material.WATER;
+        }
+    }
+
     @Override
     public void generateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull ChunkData chunkData) {
         if (seaHeight <= worldInfo.getMinHeight()) return;
@@ -77,22 +89,9 @@ public class OceanWorldGen extends ChunkGenerator {
         return false;
     }
 
-
     @Override
     public Location getFixedSpawnLocation(@NotNull World world, @NotNull Random random) {
         return new Location(world, 0.5, 64, 0.5);
-    }
-
-    public static Material parseMaterial(String name) {
-        if (name == null || name.isBlank()) {
-            return Material.WATER;
-        }
-
-        try {
-            return Material.valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return Material.WATER;
-        }
     }
 
 }
