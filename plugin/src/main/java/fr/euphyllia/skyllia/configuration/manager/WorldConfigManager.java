@@ -48,6 +48,8 @@ public class WorldConfigManager implements ConfigManager {
                 String portalEnd = getOrSetDefault(basePath + "portal-end", "sky-end", String.class);
                 String generator = getOrSetDefault(basePath + "generator", "default", String.class);
                 String biomeId = getOrSetDefault(basePath + "biome-id", "minecraft:plains", String.class);
+                int seaHeight = getOrSetDefault(basePath + "sea-height", 54, Integer.class); // Seulement avec le generator "ocean"
+                String seaBlock = getOrSetDefault(basePath + "sea-block", "WATER", String.class); // Seulement avec le generator "ocean"
 
                 WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd, generator, biomeId);
                 worldConfigs.put(worldName, wc);

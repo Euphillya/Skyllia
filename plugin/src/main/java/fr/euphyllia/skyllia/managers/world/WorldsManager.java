@@ -2,10 +2,12 @@ package fr.euphyllia.skyllia.managers.world;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.world.GeneratorFactory;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import fr.euphyllia.skyllia.utils.generators.FixedBiomeProvider;
+import fr.euphyllia.skyllia.utils.generators.OceanWorldGen;
 import fr.euphyllia.skyllia.utils.generators.VoidWorldGen;
 import net.kyori.adventure.util.TriState;
 import org.apache.logging.log4j.Level;
@@ -17,16 +19,45 @@ import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class WorldsManager {
+
     private final Logger logger;
     private final InterneAPI api;
+    private final Map<String, GeneratorFactory> generators = new HashMap<>();
 
     public WorldsManager(InterneAPI interneAPI) {
         this.api = interneAPI;
         this.logger = LogManager.getLogger(this);
+        registerGenerators();
+    }
+
+    private void registerGenerators() {
+        generators.put("default", (name, config) -> new VoidWorldGen());
+        generators.put("ocean", (name, config) -> {
+            Integer seaHeight = config.getSeaHeight();
+            String seaBlockStr = config.getSeaBlock();
+
+            if (seaHeight == null) {
+                throw new IllegalArgumentException(
+                        String.format("Invalid sea height for world \"%s\": seaHeight must be defined for ocean generator.", name)
+                );
+            }
+            if (seaBlockStr == null) {
+                throw new IllegalArgumentException(
+                        String.format("Invalid sea block for world \"%s\": seaBlock must be defined for ocean generator.", name)
+                );
+            }
+
+            return new OceanWorldGen(seaHeight, OceanWorldGen.parseMaterial(seaBlockStr));
+        });
+    }
+
+    public void registerGenerator(String id, GeneratorFactory factory) {
+        generators.put(id.toLowerCase(), factory);
     }
 
     public void initWorld() {
@@ -34,25 +65,18 @@ public class WorldsManager {
         for (Map.Entry<String, WorldConfig> entry : ConfigLoader.worldManager.getWorldConfigs().entrySet()) {
             String name = entry.getKey();
             WorldConfig worldConfig = entry.getValue();
-            // Vérifier si le monde existe déjà
+
             if (Bukkit.getWorld(name) != null) {
                 continue;
             }
+
             WorldCreator worldCreator = new WorldCreator(name);
 
-            String generatorId = worldConfig.getGenerator();
-            if (generatorId.equalsIgnoreCase("default")) {
-                worldCreator.generator(new VoidWorldGen());
-            } else {
-                Plugin plugin = Bukkit.getPluginManager().getPlugin(generatorId);
-                if (plugin == null) {
-                    String message = String.format(
-                            "[WorldInit] Failed to load world \"%s\": generator plugin \"%s\" not found. " +
-                                    "Please ensure the plugin providing this generator is installed.",
-                            name, generatorId
-                    );
-                    throw new IllegalArgumentException(message);
-                }
+            try {
+                applyGenerator(name, worldConfig, worldCreator);
+            } catch (IllegalArgumentException e) {
+                logger.log(Level.FATAL, e.getMessage());
+                continue;
             }
 
             worldCreator.type(WorldType.FLAT);
@@ -84,6 +108,25 @@ public class WorldsManager {
             if (w != null) {
                 w.setAutoSave(true);
                 w.setSpawnLocation(0, 62, 0);
+            }
+        }
+    }
+
+    private void applyGenerator(String name, WorldConfig config, WorldCreator worldCreator) {
+        String generatorId = config.getGenerator().toLowerCase();
+        GeneratorFactory factory = generators.get(generatorId);
+        if (factory != null) {
+            worldCreator.generator(factory.create(name, config));
+        } else {
+            Plugin plugin = Bukkit.getPluginManager().getPlugin(config.getGenerator());
+            if (plugin == null) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "[WorldInit] Failed to load world \"%s\": generator plugin \"%s\" not found. " +
+                                        "Please ensure the plugin providing this generator is installed.",
+                                name, config.getGenerator()
+                        )
+                );
             }
         }
     }

@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api.configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WorldConfig {
@@ -13,6 +14,8 @@ public class WorldConfig {
     private final String portalNether;
     private final String portalEnd;
     private final String generator;
+    private @Nullable Integer seaHeight;
+    private @Nullable String seaBlock;
 
     private final @Nullable String biomeId;
 
@@ -56,6 +59,22 @@ public class WorldConfig {
 
     public @Nullable String getBiomeId() {
         return biomeId;
+    }
+
+    public @Nullable Integer getSeaHeight() {
+        return seaHeight;
+    }
+
+    public void setSeaHeight(@NotNull Integer seaHeight) {
+        this.seaHeight = seaHeight;
+    }
+
+    public @Nullable String getSeaBlock() {
+        return seaBlock;
+    }
+
+    public void setSeaBlock(@NotNull String seaBlock) {
+        this.seaBlock = seaBlock;
     }
 
     @Override
