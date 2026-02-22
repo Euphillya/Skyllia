@@ -128,6 +128,8 @@ public class WorldsManager {
                         )
                 );
             }
+            // Apply the plugin-based generator to the WorldCreator using the configured generator ID
+            worldCreator.generator(config.getGenerator());
         }
     }
 }
