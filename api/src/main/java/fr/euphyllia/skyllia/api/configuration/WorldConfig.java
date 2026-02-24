@@ -14,11 +14,10 @@ public class WorldConfig {
     private final String portalNether;
     private final String portalEnd;
     private final String generator;
+    private final @Nullable String biomeId;
     private @Nullable Integer seaHeight;
     private @Nullable String seaBlock;
     private boolean deleteIsland = false;
-
-    private final @Nullable String biomeId;
 
     public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd, String generator, String biomeId, boolean deleteIsland) {
         World.Environment env;

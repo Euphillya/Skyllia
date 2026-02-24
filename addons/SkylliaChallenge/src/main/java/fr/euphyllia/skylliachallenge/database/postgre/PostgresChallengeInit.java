@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 public final class PostgresChallengeInit extends DatabaseInitializeQuery {
 
+    private static final Logger log = LoggerFactory.getLogger(PostgresChallengeInit.class);
     private static DatabaseLoader pool;
     private static PostgresProgressBackend progressBackend;
-    private static final Logger log = LoggerFactory.getLogger(PostgresChallengeInit.class);
 
     public PostgresChallengeInit() {
         var pg = new Postgres(ConfigLoader.database.getPostgreConfig());

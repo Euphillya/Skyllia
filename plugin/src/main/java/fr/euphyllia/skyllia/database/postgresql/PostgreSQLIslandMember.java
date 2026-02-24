@@ -101,7 +101,7 @@ public class PostgreSQLIslandMember extends IslandMemberQuery {
 
     @Override
     public @Nullable Players getOwnerByIslandId(UUID islandId) {
-        return SQLExecute.queryMap(databaseLoader, OWNER_ISLAND , List.of(islandId), rs -> {
+        return SQLExecute.queryMap(databaseLoader, OWNER_ISLAND, List.of(islandId), rs -> {
             try {
                 if (rs.next()) {
                     UUID playerId = (UUID) rs.getObject("uuid_player");
