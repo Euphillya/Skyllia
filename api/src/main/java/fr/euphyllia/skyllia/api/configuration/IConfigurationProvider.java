@@ -1,14 +1,12 @@
-package fr.euphyllia.skyllia.managers;
+package fr.euphyllia.skyllia.api.configuration;
 
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
-
-public interface ConfigManager {
+public interface IConfigurationProvider {
     /**
      * Load and validate the configuration from the file.
      * Missing keys are added with default values.
      */
 
-    void loadConfig() throws DatabaseException;
+    void loadConfig() throws Exception;
 
     /**
      * Get the value from the configuration file or set a default value if it doesn't exist.

@@ -6,12 +6,12 @@ import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionSet;
 import fr.euphyllia.skyllia.api.permissions.PermissionSetCodec;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.managers.ConfigManager;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class PermissionsV2ConfigManager implements ConfigManager {
+public class PermissionsV2ConfigManager implements IConfigurationProvider {
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsV2ConfigManager.class);
 

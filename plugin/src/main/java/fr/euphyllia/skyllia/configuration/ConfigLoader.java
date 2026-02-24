@@ -1,9 +1,8 @@
 package fr.euphyllia.skyllia.configuration;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.configuration.manager.*;
-import fr.euphyllia.skyllia.managers.ConfigManager;
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +14,7 @@ import java.util.List;
 public class ConfigLoader {
 
     private static final Logger logger = LogManager.getLogger(ConfigLoader.class);
-    private static final List<ConfigManager> configManagers = new ArrayList<>();
+    private static final List<IConfigurationProvider> configManagers = new ArrayList<>();
 
     public static GeneralConfigManager general;
     public static DatabaseConfigManager database;
@@ -45,7 +44,6 @@ public class ConfigLoader {
         playerConfig = loadFile(new File(configDir, "players.toml"));
         schematicConfig = loadFile(new File(configDir, "schematics.toml"));
         permissionsV2Config = loadFile(new File(configDir, "permissions-v2.toml"));
-
 
         general = new GeneralConfigManager(generalConfig);
         database = new DatabaseConfigManager(databaseConfig);
@@ -78,13 +76,13 @@ public class ConfigLoader {
     public static void reloadConfigs() {
         logger.log(Level.INFO, "[Config] Reloading configurations...");
         try {
-            for (ConfigManager manager : configManagers) {
+            for (IConfigurationProvider manager : configManagers) {
                 if (manager instanceof DatabaseConfigManager) continue;
                 manager.reloadFromDisk();
                 manager.loadConfig();
             }
             logger.log(Level.INFO, "[Config] Reload complete.");
-        } catch (DatabaseException exception) {
+        } catch (Exception exception) {
             logger.error(exception);
         }
     }

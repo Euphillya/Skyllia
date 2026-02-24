@@ -7,7 +7,7 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.managers.ConfigManager;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class LanguageConfigManager implements ConfigManager {
+public class LanguageConfigManager implements IConfigurationProvider {
 
     private static final Logger log = LogManager.getLogger(LanguageConfigManager.class);
     private final MiniMessage miniMessage = MiniMessage.miniMessage();

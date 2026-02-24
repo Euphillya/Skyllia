@@ -4,9 +4,9 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
-import fr.euphyllia.skyllia.managers.ConfigManager;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 
-public class PlayerConfigManager implements ConfigManager {
+public class PlayerConfigManager implements IConfigurationProvider {
     private final CommentedFileConfig config;
 
     private boolean clearInventoryWhenLeave;

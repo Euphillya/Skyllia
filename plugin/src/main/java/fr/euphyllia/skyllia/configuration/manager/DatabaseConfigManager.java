@@ -4,14 +4,14 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
-import fr.euphyllia.skyllia.managers.ConfigManager;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.sgbd.DatabaseConfig;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DatabaseConfigManager implements ConfigManager {
+public class DatabaseConfigManager implements IConfigurationProvider {
 
     private static final Logger log = LogManager.getLogger(DatabaseConfigManager.class);
     private final CommentedFileConfig config;
