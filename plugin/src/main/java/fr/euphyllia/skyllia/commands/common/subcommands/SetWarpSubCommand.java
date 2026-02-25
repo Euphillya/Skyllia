@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +51,7 @@ public class SetWarpSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.setwarp")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.setwarp")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

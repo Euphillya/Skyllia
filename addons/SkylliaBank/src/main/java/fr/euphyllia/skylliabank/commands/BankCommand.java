@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skylliabank.EconomyManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
 import fr.euphyllia.skylliabank.api.BankAccount;
@@ -98,7 +99,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleDeposit(Player player, Island island, String[] args) {
         UUID playerId = player.getUniqueId();
-        if (!player.hasPermission("skyllia.bank.deposit")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.bank.deposit")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-deposit");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
             return;
@@ -163,7 +164,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleWithdraw(Player player, Island island, String[] args) {
         UUID playerId = player.getUniqueId();
-        if (!player.hasPermission("skyllia.bank.withdraw")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.bank.withdraw")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-withdraw");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
             return;
@@ -233,7 +234,7 @@ public class BankCommand implements SubCommandInterface {
      */
     private void handleBalance(Player player, Island island) {
         UUID playerId = player.getUniqueId();
-        if (!player.hasPermission("skyllia.bank.balance")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.bank.balance")) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-balance");
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "bank");
             return;

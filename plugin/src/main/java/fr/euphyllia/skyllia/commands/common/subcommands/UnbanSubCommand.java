@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.NamespacedKey;
@@ -40,7 +41,7 @@ public class UnbanSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.unban")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.unban")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

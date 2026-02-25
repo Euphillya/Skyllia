@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.utils.TPSFormatter;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,7 +25,7 @@ public class TPSSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.tps")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.tps")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

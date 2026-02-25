@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +35,7 @@ public class HomeSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.home")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.home")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

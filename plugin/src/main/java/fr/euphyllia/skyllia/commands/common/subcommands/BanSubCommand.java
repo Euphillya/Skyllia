@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -39,7 +40,7 @@ public class BanSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.ban")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.ban")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }

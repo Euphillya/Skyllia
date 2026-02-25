@@ -41,7 +41,7 @@ public class AccessSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!player.hasPermission("skyllia.island.command.access")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.access")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -79,7 +79,7 @@ public class AccessSubCommand implements SubCommandInterface {
 
                                 // NOTE: ton code d'origine check la permission sur "player" (le sender),
                                 // pas sur "playerInIsland". Je garde le même comportement.
-                                if (!player.hasPermission("skyllia.island.command.access.bypass")) return;
+                                if (!PlayerUtils.hasPermission(player, "skyllia.island.command.access.bypass")) return;
 
                                 Bukkit.getAsyncScheduler().runNow(Skyllia.getPlugin(Skyllia.class), t -> {
                                     Players players = island.getMember(playerInIsland.getUniqueId());

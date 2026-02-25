@@ -13,6 +13,7 @@ import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -51,7 +52,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.biome")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.biome")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -76,7 +77,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         String biomeName = biomesImpl.getNameBiome(biome);
         String biomeRaw = biomeName.split(":")[1];
 
-        if (!player.hasPermission("skyllia.island.command.biome.%s".formatted(biomeRaw))) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.biome.%s".formatted(biomeRaw))) {
             ConfigLoader.language.sendMessage(player, "island.biome.permission-denied", Map.of("%s", selectBiome));
             return true;
         }
@@ -129,7 +130,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             String messageToSend;
 
             if (args.length >= 2 && args[1].equalsIgnoreCase("island")
-                    && player.hasPermission("skyllia.island.command.biome_island")) {
+                    && PlayerUtils.hasPermission(player, "skyllia.island.command.biome_island")) {
 
                 changeBiomeFuture = Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).changeBiomeIsland(world, biome, island, ConfigLoader.general.getRegionDistance());
                 messageToSend = "island.biome.island-success";

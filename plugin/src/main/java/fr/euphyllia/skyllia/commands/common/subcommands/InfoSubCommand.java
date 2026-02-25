@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,7 +36,7 @@ public class InfoSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission(permission())) {
+        if (!PlayerUtils.hasPermission(player, permission())) {
             ConfigLoader.language.sendMessage(player, "island.info.no-permission");
             return true;
         }

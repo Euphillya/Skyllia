@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.NamespacedKey;
@@ -42,7 +43,7 @@ public class KickSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return true;
         }
-        if (!sender.hasPermission("skyllia.island.command.kick")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.kick")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -91,7 +92,7 @@ public class KickSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return Collections.emptyList();
-        if (!sender.hasPermission("skyllia.island.command.kick")) return Collections.emptyList();
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.kick")) return Collections.emptyList();
 
         if (args.length == 1) {
             String partial = args[0].trim().toLowerCase();

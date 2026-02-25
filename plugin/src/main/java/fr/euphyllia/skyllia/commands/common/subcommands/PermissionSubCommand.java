@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.permissions.*;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.NamespacedKey;
@@ -71,7 +72,7 @@ public class PermissionSubCommand implements SubCommandInterface {
             return true;
         }
 
-        if (!player.hasPermission("skyllia.island.command.permission")) {
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.permission")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return true;
         }
@@ -249,7 +250,7 @@ public class PermissionSubCommand implements SubCommandInterface {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return Collections.emptyList();
-        if (!player.hasPermission("skyllia.island.command.permission")) return Collections.emptyList();
+        if (!PlayerUtils.hasPermission(player, "skyllia.island.command.permission")) return Collections.emptyList();
 
         PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
 
