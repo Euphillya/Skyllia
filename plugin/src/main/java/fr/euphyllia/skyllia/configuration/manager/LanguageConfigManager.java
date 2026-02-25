@@ -32,7 +32,7 @@ public class LanguageConfigManager implements IConfigurationProvider {
     private final Map<Locale, CommentedFileConfig> localeFiles = new HashMap<>();
 
     @Override
-    public void loadConfig() throws DatabaseException {
+    public void loadConfig() {
         File langDir = new File(plugin.getDataFolder(), "language");
         if (!langDir.exists()) langDir.mkdirs();
         File[] files = langDir.listFiles((dir, name) -> name.endsWith(".toml"));
@@ -67,11 +67,12 @@ public class LanguageConfigManager implements IConfigurationProvider {
 
     @Override
     public void reloadFromDisk() {
-        try {
-            loadConfig();
-        } catch (DatabaseException e) {
-            log.error("Failed to reload language files", e);
-        }
+        return;
+    }
+
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
     }
 
 

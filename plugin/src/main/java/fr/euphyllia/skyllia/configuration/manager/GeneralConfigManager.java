@@ -89,6 +89,11 @@ public class GeneralConfigManager implements IConfigurationProvider {
     }
 
     @Override
+    public boolean canReloadFromDisk() {
+        return true;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expectedClass) {
         Object value = config.get(path);

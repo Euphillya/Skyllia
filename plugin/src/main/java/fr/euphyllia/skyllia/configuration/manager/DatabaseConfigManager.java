@@ -177,6 +177,11 @@ public class DatabaseConfigManager implements IConfigurationProvider {
                 value.getClass().getSimpleName() + " to " + expectedClass.getSimpleName());
     }
 
+    @Override
+    public boolean canReloadFromDisk() {
+        return false;
+    }
+
     public @Nullable DatabaseConfig getMariaDBConfig() {
         return mariaDBConfig;
     }

@@ -85,6 +85,11 @@ public class PlayerConfigManager implements IConfigurationProvider {
         config.load();
     }
 
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
+    }
+
     public boolean isClearInventoryWhenLeave() {
         return clearInventoryWhenLeave;
     }

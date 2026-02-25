@@ -288,6 +288,11 @@ public class PermissionsV2ConfigManager implements IConfigurationProvider {
     }
 
     @Override
+    public boolean canReloadFromDisk() {
+        return true;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getOrSetDefault(String path, T defaultValue, Class<T> expected) {
         Object value = config.get(path);

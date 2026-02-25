@@ -77,7 +77,7 @@ public class ConfigLoader {
         logger.log(Level.INFO, "[Config] Reloading configurations...");
         try {
             for (IConfigurationProvider manager : configManagers) {
-                if (manager instanceof DatabaseConfigManager) continue;
+                if (!manager.canReloadFromDisk()) continue;
                 manager.reloadFromDisk();
                 manager.loadConfig();
             }

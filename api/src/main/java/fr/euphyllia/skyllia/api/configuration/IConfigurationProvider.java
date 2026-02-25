@@ -20,4 +20,6 @@ public interface IConfigurationProvider {
 
     default void reloadFromDisk() {
     }
+
+    boolean canReloadFromDisk();
 }

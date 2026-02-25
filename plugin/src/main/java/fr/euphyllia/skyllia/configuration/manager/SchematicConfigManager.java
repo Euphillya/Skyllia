@@ -77,6 +77,11 @@ public class SchematicConfigManager implements IConfigurationProvider {
         config.load();
     }
 
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getOrSetDefault(CommentedConfig node, String path, T defaultValue, Class<T> expectedClass) {
         Object value = node.get(path);
