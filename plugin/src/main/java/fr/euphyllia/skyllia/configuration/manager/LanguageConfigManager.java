@@ -7,7 +7,7 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.managers.ConfigManager;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class LanguageConfigManager implements ConfigManager {
+public class LanguageConfigManager implements IConfigurationProvider {
 
     private static final Logger log = LogManager.getLogger(LanguageConfigManager.class);
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -32,7 +32,7 @@ public class LanguageConfigManager implements ConfigManager {
     private final Map<Locale, CommentedFileConfig> localeFiles = new HashMap<>();
 
     @Override
-    public void loadConfig() throws DatabaseException {
+    public void loadConfig() {
         File langDir = new File(plugin.getDataFolder(), "language");
         if (!langDir.exists()) langDir.mkdirs();
         File[] files = langDir.listFiles((dir, name) -> name.endsWith(".toml"));
@@ -67,11 +67,12 @@ public class LanguageConfigManager implements ConfigManager {
 
     @Override
     public void reloadFromDisk() {
-        try {
-            loadConfig();
-        } catch (DatabaseException e) {
-            log.error("Failed to reload language files", e);
-        }
+        return;
+    }
+
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
     }
 
 

@@ -4,11 +4,11 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
-import fr.euphyllia.skyllia.managers.ConfigManager;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-public class GeneralConfigManager implements ConfigManager {
+public class GeneralConfigManager implements IConfigurationProvider {
 
     private final CommentedFileConfig config;
     // Configuration basic
@@ -86,6 +86,11 @@ public class GeneralConfigManager implements ConfigManager {
     @Override
     public void reloadFromDisk() {
         config.load();
+    }
+
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
     }
 
     @Override

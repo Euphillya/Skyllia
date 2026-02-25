@@ -16,14 +16,35 @@ import java.util.List;
 public interface SubCommandInterface {
 
     /**
-     * Handles the execution of a sub-command.
+     * Legacy method to handle the execution of a sub-command.
+     * <p>
+     * Delegates to {@link #onExecute(Plugin, CommandSender, String[])} and always returns {@code true}.
+     * This method is kept for backwards compatibility and is marked {@link Deprecated} for future removal.
      *
      * @param plugin the {@link Plugin} instance that is executing the command
      * @param sender the {@link CommandSender} who issued the command
      * @param args   the arguments provided with the command
-     * @return {@code true} if the command was successfully handled, {@code false} otherwise
+     * @return {@code true} always
+     * @deprecated Use {@link #onExecute(Plugin, CommandSender, String[])} instead.
      */
-    boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args);
+    @Deprecated(forRemoval = true)
+    default boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        onExecute(plugin, sender, args);
+        return true;
+    }
+
+    /**
+     * Preferred method to handle the execution of a sub-command.
+     * <p>
+     * Default implementation does nothing. Override this method to implement
+     * custom command behavior.
+     *
+     * @param plugin the {@link Plugin} instance that is executing the command
+     * @param sender the {@link CommandSender} who issued the command
+     * @param args   the arguments provided with the command
+     */
+    default void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    }
 
     /**
      * Provides tab completion suggestions for the sub-command.
@@ -36,6 +57,13 @@ public interface SubCommandInterface {
     @NotNull
     List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args);
 
+    /**
+     * Returns the permission required to execute this sub-command.
+     * <p>
+     * Default implementation returns an empty string (no permission required).
+     *
+     * @return the permission node as a {@link String}, or empty if none
+     */
     default String permission() {
         return "";
     }

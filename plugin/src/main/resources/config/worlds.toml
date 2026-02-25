@@ -19,6 +19,9 @@ portal-end = "sky-end"
 generator = "default"
 # Set the default biome for the world.
 biome-id = "minecraft:plains"
+# When generator is "ocean", you must specify the sea level and the block used for the ocean floor.
+# sea-height = 63.0
+# sea-block = "WATER"
 
 [worlds.sky-nether]
 environment = "NETHER"

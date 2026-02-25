@@ -43,7 +43,6 @@ dependencies {
 }
 
 allprojects {
-    group = "fr.euphyllia";
     version = "3.0-BETA-" + (System.getenv("GITHUB_RUN_NUMBER") ?: getGitCommitHash())
     description = "Plugin Skyblock on Folia";
 
@@ -146,6 +145,7 @@ modrinth {
             project(":addons:SkylliaChat").tasks.named("shadowJar"),
             project(":addons:SkylliaBank").tasks.named("shadowJar"),
             project(":addons:SkylliaChallenge").tasks.named("shadowJar"),
+            project(":addons:SkylliaChest").tasks.named("shadowJar"),
         )
     )
 

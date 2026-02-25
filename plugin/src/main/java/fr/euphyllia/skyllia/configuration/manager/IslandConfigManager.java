@@ -5,13 +5,13 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
-import fr.euphyllia.skyllia.managers.ConfigManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class IslandConfigManager implements ConfigManager {
+public class IslandConfigManager implements IConfigurationProvider {
 
     private final Map<String, IslandSettings> islandSettingsMap = new HashMap<>();
     private final CommentedFileConfig config;
@@ -57,6 +57,11 @@ public class IslandConfigManager implements ConfigManager {
     @Override
     public void reloadFromDisk() {
         config.load();
+    }
+
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
     }
 
     @Override

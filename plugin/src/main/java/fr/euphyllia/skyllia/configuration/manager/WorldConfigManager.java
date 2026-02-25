@@ -5,13 +5,13 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
-import fr.euphyllia.skyllia.managers.ConfigManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class WorldConfigManager implements ConfigManager {
+public class WorldConfigManager implements IConfigurationProvider {
 
     /**
      * Map<nomDuMonde, WorldConfig>
@@ -48,8 +48,16 @@ public class WorldConfigManager implements ConfigManager {
                 String portalEnd = getOrSetDefault(basePath + "portal-end", "sky-end", String.class);
                 String generator = getOrSetDefault(basePath + "generator", "default", String.class);
                 String biomeId = getOrSetDefault(basePath + "biome-id", "minecraft:plains", String.class);
+                boolean deleteIslandChunks = getOrSetDefault(basePath + "delete-island-chunks", true, Boolean.class);
 
-                WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd, generator, biomeId);
+                WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd, generator, biomeId, deleteIslandChunks);
+                if (generator.equalsIgnoreCase("ocean")) {
+                    int seaHeight = getOrSetDefault(basePath + "sea-height", 54, Integer.class); // Seulement avec le generator "ocean"
+                    String seaBlock = getOrSetDefault(basePath + "sea-block", "WATER", String.class); // Seulement avec le generator "ocean"
+                    wc.setSeaBlock(seaBlock);
+                    wc.setSeaHeight(seaHeight);
+                    wc.setDeleteIsland(false); // Si le generator est "ocean", on ne supprime pas les chunks de l'île pour éviter les problèmes de génération. Ce qui se passera, c'est qu'on mettra l'ile en locked
+                }
                 worldConfigs.put(worldName, wc);
             }
         }
@@ -63,6 +71,11 @@ public class WorldConfigManager implements ConfigManager {
     @Override
     public void reloadFromDisk() {
         config.load();
+    }
+
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
     }
 
     @Override

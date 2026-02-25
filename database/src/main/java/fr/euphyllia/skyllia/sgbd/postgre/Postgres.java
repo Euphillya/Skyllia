@@ -149,7 +149,7 @@ public class Postgres implements DBConnect, DBInterface {
 
         } catch (SQLException e) {
             throw new DatabaseException(
-                    "Failed to ensure PostgreSQL database exists (needs CREATEDB privilege)",
+                    e.getMessage(),
                     e
             );
         }

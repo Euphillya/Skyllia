@@ -5,8 +5,8 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
+import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
-import fr.euphyllia.skyllia.managers.ConfigManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SchematicConfigManager implements ConfigManager {
+public class SchematicConfigManager implements IConfigurationProvider {
 
     private static final Logger log = LogManager.getLogger(SchematicConfigManager.class);
     /**
@@ -75,6 +75,11 @@ public class SchematicConfigManager implements ConfigManager {
     @Override
     public void reloadFromDisk() {
         config.load();
+    }
+
+    @Override
+    public boolean canReloadFromDisk() {
+        return true;
     }
 
     @SuppressWarnings("unchecked")
