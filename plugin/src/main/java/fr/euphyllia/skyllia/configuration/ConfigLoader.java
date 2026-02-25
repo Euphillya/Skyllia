@@ -84,6 +84,15 @@ public class ConfigLoader {
                 manager.loadConfig();
             }
             logger.log(Level.INFO, "[Config] Reload complete.");
+
+            if (general.isDebugPermission()) {
+                logger.log(Level.WARN, "!!! Warning !!!\n" +
+                        "Verbose permission debugging is active.\n" +
+                        "Although single hasPermission checks are very fast,\n" +
+                        "too many checks will cause massive permission log spamming in the console,\n" +
+                        "leading to high I/O load and potential server slowdown \n" +
+                        "during heavy Skyllia command usage.");
+            }
         } catch (DatabaseException exception) {
             logger.error(exception);
         }
