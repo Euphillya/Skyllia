@@ -1,4 +1,4 @@
-name: Build Skyllia - Beta
+name: Build Skyllia 3.x
 on:
   push:
     branches:
@@ -70,5 +70,5 @@ env:
   commit_id: ${{ github.sha }}
   commit_msg: ${{ github.event.head_commit.message }}
   MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-  pre: true
-  make_latest: false
+  pre: false
+  make_latest: true

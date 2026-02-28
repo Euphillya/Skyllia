@@ -71,4 +71,4 @@ env:
   commit_msg: ${{ github.event.head_commit.message }}
   MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
   pre: false
-  make_latest: true
+  make_latest: false
