@@ -152,6 +152,11 @@ public class SkyblockManager {
                     for (var entry : blobs.entrySet()) {
                         permQuery.saveRole(event.getIslandId(), entry.getKey(), entry.getValue());
                     }
+
+                    if (ConfigLoader.islandFlags != null) {
+                        byte[] flagsBlob = ConfigLoader.islandFlags.buildDefaultFlagBlob(typeKey);
+                        permQuery.saveIslandFlags(event.getIslandId(), flagsBlob);
+                    }
                 }
 
                 invalidateIsland(event.getIslandId());
