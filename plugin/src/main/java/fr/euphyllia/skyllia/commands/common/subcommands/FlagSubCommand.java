@@ -16,13 +16,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FlagSubCommand implements SubCommandInterface {
 
     private static final List<String> ACTIONS = List.of("list", "get", "set", "toggle");
-    private static final List<String> BOOLS   = List.of("true", "false", "on", "off");
+    private static final List<String> BOOLS = List.of("true", "false", "on", "off");
 
     private final Logger logger = LogManager.getLogger(FlagSubCommand.class);
     private final PermissionId PERMISSION_COMMAND_FLAG;
@@ -44,8 +47,8 @@ public class FlagSubCommand implements SubCommandInterface {
     private static Boolean parseBool(String input) {
         if (input == null) return null;
         return switch (input.toLowerCase(Locale.ROOT)) {
-            case "true",  "on",  "1", "yes" -> true;
-            case "false", "off", "0", "no"  -> false;
+            case "true", "on", "1", "yes" -> true;
+            case "false", "off", "0", "no" -> false;
             default -> null;
         };
     }
@@ -152,7 +155,7 @@ public class FlagSubCommand implements SubCommandInterface {
 
         if (action.equals("get") || (action.equals("auto") && explicitBool == null)) {
             ConfigLoader.language.sendMessage(player, "island.flag.value", Map.of(
-                    "%flag%",  toKeyString(key),
+                    "%flag%", toKeyString(key),
                     "%value%", String.valueOf(current)
             ));
             return;
@@ -180,8 +183,8 @@ public class FlagSubCommand implements SubCommandInterface {
         boolean finalValue = island.getIslandFlags().has(registry, fid);
         ConfigLoader.language.sendMessage(player, "island.flag.update.success", Map.of(
                 "%flag%", toKeyString(key),
-                "%old%",  String.valueOf(current),
-                "%new%",  String.valueOf(finalValue)
+                "%old%", String.valueOf(current),
+                "%new%", String.valueOf(finalValue)
         ));
         return;
     }

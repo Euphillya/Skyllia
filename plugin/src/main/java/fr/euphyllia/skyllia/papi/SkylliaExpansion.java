@@ -2,6 +2,8 @@ package fr.euphyllia.skyllia.papi;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -95,6 +97,14 @@ public class SkylliaExpansion extends PlaceholderExpansion {
             return processPermissions(island, offlinePlayerUUID, placeholderLower);
         }
 
+        if (placeholderLower.startsWith("flags_")) {
+            return processFlags(island, placeholder.substring("flags_".length()));
+        }
+
+        if (placeholderLower.startsWith("gamerule_")) { // ancien nom
+            return processFlags(island, placeholder.substring("gamerule_".length()));
+        }
+
         return null;
     }
 
@@ -140,5 +150,17 @@ public class SkylliaExpansion extends PlaceholderExpansion {
 
         boolean allowed = island.getCompiledPermissions().has(registry, role, pid);
         return String.valueOf(allowed);
+    }
+
+    private String processFlags(Island island, String keyPart) {
+        IslandFlagRegistry registry = SkylliaAPI.getFlagRegistry();
+
+        NamespacedKey key = parseKeyLenient(keyPart);
+        if (key == null) return null;
+
+        FlagId fid = registry.getIfPresent(key);
+        if (fid == null) return null;
+
+        return String.valueOf(island.getIslandFlags().has(registry, fid));
     }
 }
