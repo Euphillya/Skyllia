@@ -76,6 +76,31 @@ more = "<gray>... and</gray> <white>%more%</white> <gray>more (use filter)</gray
 success = "<green>Updated:</green> <light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>:</gray> <yellow>%old%</yellow> <gray>-></gray> <aqua>%new%</aqua>"
 failed = "<red>Database update failed.</red>"
 
+[island.flag]
+usage = """<gray>Usage:</gray> <light_purple>/is flag list [filter]</light_purple>
+<gray> - </gray><light_purple>/is flag <namespace:key> [true|false]</light_purple>
+<gray> - </gray><light_purple>/is flag toggle <namespace:key></light_purple>
+<gray> - </gray><light_purple>/is flag set <namespace:key> <true|false></light_purple>""""
+value = "<white>%flag%</white> <gray>=</gray> <aqua>%value%</aqua>"
+
+[island.flag.flag]
+invalid-format = "<red>Invalid flag format:</red> <white>%flag%</white> <gray>(expected namespace:key)</gray>"
+unknown = "<red>Unknown flag:</red> <white>%flag%</white>"
+
+[island.flag.bool]
+invalid = "<red>Invalid boolean value:</red> <white>%value%</white> <gray>(use true/false or on/off)</gray>"
+
+[island.flag.list]
+empty = "<red>No flags found.</red>"
+header = "<light_purple>Registered flags</light_purple> <gray>(</gray><white>%count%</white><gray>)</gray>:"
+entry = "<gray>-</gray> <white>%flag%</white>"
+more = "<gray>... and</gray> <white>%more%</white> <gray>more (use filter)</gray>"
+
+[island.flag.update]
+success = "<green>Updated:</green> <white>%flag%</white> <gray>:</gray> <yellow>%old%</yellow> <gray>-></gray> <aqua>%new%</aqua>"
+failed = "<red>Database update failed.</red>"
+
+
 [island.debug]
 args-missing = "The command is incomplete: /skyllia debug <gamerule/commands/inventory/island"
 unknown-debug = "The specified debug %s does not exist."

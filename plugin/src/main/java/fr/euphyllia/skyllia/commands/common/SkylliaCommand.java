@@ -44,6 +44,7 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new KickSubCommand(), "kick");
         registry.registerSubCommand(new LeaveSubCommand(), "leave");
         registry.registerSubCommand(new PermissionSubCommand(), "permission"); // Todo : Implement permission management commands
+        registry.registerSubCommand(new FlagSubCommand(), "flag");
         registry.registerSubCommand(new PromoteSubCommand(), "promote");
         registry.registerSubCommand(new TPSSubCommand(), "tps", "lag", "mspt");
         registry.registerSubCommand(new TransferSubCommand(), "transfer");
