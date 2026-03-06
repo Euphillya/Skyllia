@@ -119,7 +119,7 @@ Pour une installation complète, consultez la [documentation]().
 
 La documentation complète est disponible sur GitBook :
 
-**🔗 [skyllia.eupyllia.moe](#)**
+**🔗 [skyllia.euphyllia.moe](https://skyllia.euphyllia.moe)**
 
 ### Sections principales
 
