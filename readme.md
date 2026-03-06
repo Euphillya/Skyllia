@@ -121,15 +121,6 @@ La documentation complète est disponible sur GitBook :
 
 **🔗 [skyllia.euphyllia.moe](https://skyllia.euphyllia.moe)**
 
-### Sections principales
-
-- **[Démarrage rapide](#)** - Installation en 5 minutes
-- **[Configuration](#)** - Guide complet de configuration
-- **[Commandes](#)** - 26 commandes joueur + commandes admin
-- **[Addons](#)** - Documentation des addons officiels
-- **[API](#)** - Développez vos propres addons
-- **[FAQ](#)** - Questions fréquentes
-
 ## 💻 Pour les développeurs
 
 Skyllia fournit une API complète pour créer vos propres addons :
@@ -155,11 +146,9 @@ import fr.euphyllia.skyllia.api.island.Island;
 import org.bukkit.entity.Player;
 
 Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
-if(island !=null){
-        player.
-
-sendMessage("Votre île : "+island.getId());
-        }
+if(island != null){
+   player.sendMessage("Votre île : "+ island.getId());
+}
 ```
 
 Consultez la [documentation API](#) pour plus d'informations.
