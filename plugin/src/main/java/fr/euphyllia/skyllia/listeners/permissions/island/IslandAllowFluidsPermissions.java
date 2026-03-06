@@ -1,21 +1,20 @@
 package fr.euphyllia.skyllia.listeners.permissions.island;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionNode;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
+import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.FlagNode;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowFluidsPermissions implements PermissionModule {
+public class IslandAllowFluidsPermissions implements FlagModule {
 
-    private PermissionId ISLAND_ALLOW_FLUIDS;
+    private FlagId ISLAND_ALLOW_FLUIDS;
 
     @EventHandler(ignoreCancelled = true)
     public void onFromTo(final BlockFromToEvent event) {
@@ -27,20 +26,17 @@ public class IslandAllowFluidsPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean allowed = island.getCompiledPermissions()
-                .has(SkylliaAPI.getPermissionRegistry(), RoleType.ISLAND_FLAGS, ISLAND_ALLOW_FLUIDS);
-
-        if (!allowed) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_FLUIDS)) {
             event.setCancelled(true);
         }
     }
 
     @Override
-    public void registerPermissions(PermissionRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_FLUIDS = registry.register(new PermissionNode(
+    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ISLAND_ALLOW_FLUIDS = registry.register(new FlagNode(
                 new NamespacedKey(owner, "island.allow.fluids"),
                 "Autoriser les fluides",
-                "Placeholder"
+                "Contrôle l'écoulement de l'eau et de la lave"
         ));
     }
 }

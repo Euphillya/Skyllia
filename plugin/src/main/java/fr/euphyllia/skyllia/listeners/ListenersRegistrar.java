@@ -93,23 +93,25 @@ public class ListenersRegistrar {
         moduleManager.addModule(plugin, new TeleportPermissions());
 
         // Permissions flags island
-        moduleManager.addModule(plugin, new IslandCreeperGriefFlag());
-        moduleManager.addModule(plugin, new IslandEndermanGriefFlag());
-        moduleManager.addModule(plugin, new IslandGhastGriefFlag());
-        moduleManager.addModule(plugin, new IslandTntGriefFlag());
-        moduleManager.addModule(plugin, new IslandWitherGriefFlag());
-        moduleManager.addModule(plugin, new IslandWitherSkullGriefFlag());
-        moduleManager.addModule(plugin, new IslandAllowEndermanGriefPermissions());
-        moduleManager.addModule(plugin, new IslandAllowExplosionsBlockPermissions());
-        moduleManager.addModule(plugin, new IslandAllowExplosionsEntityPermissions());
-        moduleManager.addModule(plugin, new IslandAllowFireBurnPermissions());
-        moduleManager.addModule(plugin, new IslandAllowFireIgnitePermissions());
-        moduleManager.addModule(plugin, new IslandAllowFireSpreadPermissions());
-        moduleManager.addModule(plugin, new IslandAllowFluidsPermissions());
-        moduleManager.addModule(plugin, new IslandAllowPistonsExtendPermissions());
-        moduleManager.addModule(plugin, new IslandAllowPistonsRetractPermissions());
+        var flagModuleManager = SkylliaAPI.getFlagModuleManager();
+        flagModuleManager.addModule(plugin, new IslandCreeperGriefFlag());
+        flagModuleManager.addModule(plugin, new IslandEndermanGriefFlag());
+        flagModuleManager.addModule(plugin, new IslandGhastGriefFlag());
+        flagModuleManager.addModule(plugin, new IslandTntGriefFlag());
+        flagModuleManager.addModule(plugin, new IslandWitherGriefFlag());
+        flagModuleManager.addModule(plugin, new IslandWitherSkullGriefFlag());
+        flagModuleManager.addModule(plugin, new IslandAllowEndermanGriefPermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowExplosionsBlockPermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowExplosionsEntityPermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowFireBurnPermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowFireIgnitePermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowFireSpreadPermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowFluidsPermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowPistonsExtendPermissions());
+        flagModuleManager.addModule(plugin, new IslandAllowPistonsRetractPermissions());
 
         moduleManager.initAndRegisterAll();
+        flagModuleManager.initAndRegisterAll();
     }
 
     /**

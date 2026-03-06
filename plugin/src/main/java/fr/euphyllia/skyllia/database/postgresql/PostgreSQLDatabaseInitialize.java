@@ -91,6 +91,14 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
             );
             """;
 
+    private static final String CREATE_ISLANDS_FLAGS_TABLE = """
+            CREATE TABLE IF NOT EXISTS %s.islands_flags (
+                island_id UUID NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
+                words BYTEA NOT NULL,
+                PRIMARY KEY (island_id)
+            );
+            """;
+
     private static final String CREATE_PLAYER_CLEAR_TABLE = """
             CREATE TABLE IF NOT EXISTS %s.player_clear (
                 uuid_player UUID NOT NULL,
@@ -189,6 +197,7 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_ISLANDS_WARP_TABLE.formatted(s, s));
         exec(CREATE_SPIRAL_TABLE.formatted(s));
         exec(CREATE_ISLANDS_PERMISSIONS_TABLE.formatted(s, s));
+        exec(CREATE_ISLANDS_FLAGS_TABLE.formatted(s, s));
         exec(CREATE_PLAYER_CLEAR_TABLE.formatted(s));
         exec(CREATE_ISLANDS_GAMERULE_TABLE.formatted(s, s));
 

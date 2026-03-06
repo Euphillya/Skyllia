@@ -10,6 +10,29 @@ public abstract class IslandPermissionQuery {
     public abstract CompiledPermissions loadCompiled(UUID islandId, PermissionRegistry registry);
 
     /**
+     * Load the island-wide flags for a given island.
+     * Returns {@code null} if no flags are stored yet (caller will use an empty {@link IslandFlags}).
+     */
+    public abstract IslandFlags loadIslandFlags(UUID islandId, IslandFlagRegistry registry);
+
+    /**
+     * Persist the full flag bitset for an island.
+     */
+    public abstract boolean saveIslandFlags(UUID islandId, byte[] wordsBlob);
+
+    /**
+     * Convenience: flip a single flag and persist it.
+     */
+    public final boolean setFlag(UUID islandId, IslandFlagRegistry registry, FlagId id, boolean value) {
+        IslandFlags flags = loadIslandFlags(islandId, registry);
+        if (flags == null) flags = new IslandFlags(registry);
+
+        flags.set(registry, id, value);
+        byte[] blob = PermissionSetCodec.encodeLongs(flags.snapshotWords());
+        return saveIslandFlags(islandId, blob);
+    }
+
+    /**
      * DB write only (impl can override if it wants, but default is fine)
      */
     public boolean set(UUID islandId, RoleType role, PermissionId id, boolean value) {

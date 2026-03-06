@@ -89,6 +89,14 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
             );
             """;
 
+    private static final String CREATE_ISLANDS_FLAGS_TABLE = """
+            CREATE TABLE IF NOT EXISTS islands_flags (
+                  island_id TEXT NOT NULL,
+                  words BLOB NOT NULL,
+                  PRIMARY KEY (island_id)
+            );
+            """;
+
     private static final String CREATE_PLAYER_CLEAR_TABLE = """
             CREATE TABLE IF NOT EXISTS player_clear (
                 uuid_player TEXT NOT NULL,
@@ -140,6 +148,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_ISLANDS_WARP_TABLE);
         exec(CREATE_SPIRAL_TABLE);
         exec(CREATE_ISLANDS_PERMISSIONS_TABLE);
+        exec(CREATE_ISLANDS_FLAGS_TABLE);
         exec(CREATE_PLAYER_CLEAR_TABLE);
         exec(CREATE_ISLANDS_GAMERULE_TABLE);
         exec(CREATE_PERMISSION_REGISTRY_TABLE);

@@ -1,10 +1,10 @@
 package fr.euphyllia.skyllia.listeners.permissions.island.flags;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionNode;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
+import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.FlagNode;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -16,22 +16,20 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.ProjectileSource;
 
-public class IslandGhastGriefFlag implements PermissionModule {
+public class IslandGhastGriefFlag implements FlagModule {
 
-    private PermissionId ALLOW_MOB_GRIEF;
-    private PermissionId ALLOW_GHAST_GRIEF;
+    private FlagId ALLOW_MOB_GRIEF;
+    private FlagId ALLOW_GHAST_GRIEF;
 
     @Override
-    public void registerPermissions(PermissionRegistry registry, Plugin owner) {
-        this.ALLOW_MOB_GRIEF = registry.idOrRegister(new PermissionNode(
+    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)",
-                "Placeholder"
+                "Autoriser le grief des mobs (général)", "Placeholder"
         ));
-        this.ALLOW_GHAST_GRIEF = registry.idOrRegister(new PermissionNode(
+        this.ALLOW_GHAST_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.ghast-grief"),
-                "Autoriser les explosions de ghast",
-                "Placeholder"
+                "Autoriser les explosions de ghast", "Placeholder"
         ));
     }
 
@@ -52,10 +50,7 @@ public class IslandGhastGriefFlag implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean allowed = SkylliaAPI.getPermissionsManager()
-                .hasIslandFlag(island, ALLOW_GHAST_GRIEF, ALLOW_MOB_GRIEF);
-
-        if (!allowed) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_GHAST_GRIEF, ALLOW_MOB_GRIEF)) {
             event.setCancelled(true);
         }
     }

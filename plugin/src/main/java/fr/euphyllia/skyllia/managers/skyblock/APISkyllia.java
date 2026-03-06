@@ -5,8 +5,10 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.SkylliaImplementation;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModuleManager;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
@@ -200,6 +202,16 @@ public final class APISkyllia implements SkylliaImplementation {
     @Override
     public PermissionRegistry getPermissionRegistry() {
         return this.interneAPI.getManagers().getPermissionRegistry();
+    }
+
+    @Override
+    public IslandFlagRegistry getFlagRegistry() {
+        return this.interneAPI.getManagers().getFlagRegistry();
+    }
+
+    @Override
+    public FlagModuleManager getFlagModuleManager() {
+        return this.interneAPI.getManagers().getFlagModuleManager();
     }
 
     @Override

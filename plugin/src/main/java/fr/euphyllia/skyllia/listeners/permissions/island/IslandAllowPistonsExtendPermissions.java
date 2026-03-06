@@ -1,21 +1,20 @@
 package fr.euphyllia.skyllia.listeners.permissions.island;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionNode;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
+import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.FlagNode;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowPistonsExtendPermissions implements PermissionModule {
+public class IslandAllowPistonsExtendPermissions implements FlagModule {
 
-    private PermissionId ISLAND_ALLOW_PISTONS;
+    private FlagId ISLAND_ALLOW_PISTONS;
 
     @EventHandler(ignoreCancelled = true)
     public void onExtend(final BlockPistonExtendEvent event) {
@@ -27,20 +26,17 @@ public class IslandAllowPistonsExtendPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean allowed = island.getCompiledPermissions()
-                .has(SkylliaAPI.getPermissionRegistry(), RoleType.ISLAND_FLAGS, ISLAND_ALLOW_PISTONS);
-
-        if (!allowed) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_PISTONS)) {
             event.setCancelled(true);
         }
     }
 
     @Override
-    public void registerPermissions(PermissionRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_PISTONS = registry.register(new PermissionNode(
+    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ISLAND_ALLOW_PISTONS = registry.register(new FlagNode(
                 new NamespacedKey(owner, "island.allow.pistons"),
                 "Autoriser les pistons",
-                "Placeholder"
+                "Contrôle l'extension des pistons"
         ));
     }
 }

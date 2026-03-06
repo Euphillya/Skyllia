@@ -1,10 +1,10 @@
 package fr.euphyllia.skyllia.listeners.permissions.island.flags;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionNode;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
+import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.FlagNode;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -13,22 +13,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandEndermanGriefFlag implements PermissionModule {
+public class IslandEndermanGriefFlag implements FlagModule {
 
-    private PermissionId ALLOW_MOB_GRIEF;
-    private PermissionId ALLOW_ENDERMAN_GRIEF;
+    private FlagId ALLOW_MOB_GRIEF;
+    private FlagId ALLOW_ENDERMAN_GRIEF;
 
     @Override
-    public void registerPermissions(PermissionRegistry registry, Plugin owner) {
-        this.ALLOW_MOB_GRIEF = registry.idOrRegister(new PermissionNode(
+    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)",
-                "Placeholder"
+                "Autoriser le grief des mobs (général)", "Placeholder"
         ));
-        this.ALLOW_ENDERMAN_GRIEF = registry.idOrRegister(new PermissionNode(
+        this.ALLOW_ENDERMAN_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.enderman-grief"),
-                "Autoriser le grief des endermans",
-                "Placeholder"
+                "Autoriser le grief des endermans", "Placeholder"
         ));
     }
 
@@ -42,13 +40,9 @@ public class IslandEndermanGriefFlag implements PermissionModule {
         final int chunkX = location.getBlockX() >> 4;
         final int chunkZ = location.getBlockZ() >> 4;
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
-
         if (island == null) return;
 
-        final boolean allowed = SkylliaAPI.getPermissionsManager()
-                .hasIslandFlag(island, ALLOW_ENDERMAN_GRIEF, ALLOW_MOB_GRIEF);
-
-        if (!allowed) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_ENDERMAN_GRIEF, ALLOW_MOB_GRIEF)) {
             event.setCancelled(true);
         }
     }

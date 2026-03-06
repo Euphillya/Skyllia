@@ -1,0 +1,25 @@
+config-version = 1
+verbose = false
+
+# Island flags — passive toggles that apply to the whole island, with no player context.
+# These are NOT player permissions. They control automatic/environmental behaviour.
+#
+# true  = allowed on all islands by default
+# false = blocked on all islands by default  (owners can toggle per-island via a GUI)
+
+[defaults]
+"skyllia:island.allow.fire" = false   # fire ignition (flint, lava, lightning)
+"skyllia:island.allow.explosions" = false   # block & entity explosion damage
+"skyllia:island.allow.fluids" = true    # water/lava flow between blocks
+"skyllia:island.allow.pistons" = true    # piston extend/retract
+"skyllia:island.allow.mob-grief" = false   # generic mob griefing fallback
+"skyllia:island.allow.creeper-grief" = false   # creeper explosions
+"skyllia:island.allow.enderman-grief" = false   # enderman block pick-up
+"skyllia:island.allow.ghast-grief" = false   # ghast fireball explosions
+"skyllia:island.allow.tnt-grief" = false   # TNT / explosive minecart
+"skyllia:island.allow.wither-grief" = false   # wither explosions
+"skyllia:island.allow.wither-skull-grief" = false   # wither skull explosions
+
+# Per-island-type overrides (uncomment and adapt as needed)
+# [island.default.defaults]
+# "skyllia:island.allow.fluids" = true

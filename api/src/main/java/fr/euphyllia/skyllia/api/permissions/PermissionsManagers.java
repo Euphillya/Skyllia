@@ -28,22 +28,34 @@ public class PermissionsManagers {
         return compiled.has(SkylliaAPI.getPermissionRegistry(), role, permission);
     }
 
-    public boolean hasIslandFlag(Island island, PermissionId flag) {
+    public boolean hasFlag(Island island, FlagId flag) {
         if (flag == null) return false;
-        var compiled = island.getCompiledPermissions();
-        return compiled.has(
-                SkylliaAPI.getPermissionRegistry(),
-                RoleType.ISLAND_FLAGS,
-                flag
-        );
+        return island.getIslandFlags()
+                .has(SkylliaAPI.getFlagRegistry(), flag);
     }
 
-    public boolean hasIslandFlag(Island island, PermissionId specific, PermissionId fallback) {
-        var compiled = island.getCompiledPermissions();
-        var registry = SkylliaAPI.getPermissionRegistry();
+    public boolean hasFlag(Island island, FlagId specific, FlagId fallback) {
+        var flags = island.getIslandFlags();
+        var registry = SkylliaAPI.getFlagRegistry();
+        return flags.has(registry, specific) || flags.has(registry, fallback);
+    }
 
-        return compiled.has(registry, RoleType.ISLAND_FLAGS, specific)
-                || compiled.has(registry, RoleType.ISLAND_FLAGS, fallback);
+    /**
+     * @deprecated Use {@link #hasFlag(Island, FlagId)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public boolean hasIslandFlag(Island island, PermissionId flag) {
+        throw new UnsupportedOperationException(
+                "hasIslandFlag(PermissionId) is removed. Use hasFlag(FlagId) with the FlagRegistry.");
+    }
+
+    /**
+     * @deprecated Use {@link #hasFlag(Island, FlagId, FlagId)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public boolean hasIslandFlag(Island island, PermissionId specific, PermissionId fallback) {
+        throw new UnsupportedOperationException(
+                "hasIslandFlag(PermissionId, PermissionId) is removed. Use hasFlag(FlagId, FlagId) with the FlagRegistry.");
     }
 
 
