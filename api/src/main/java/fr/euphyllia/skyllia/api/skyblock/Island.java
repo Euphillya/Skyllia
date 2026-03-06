@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.api.skyblock;
 
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
+import fr.euphyllia.skyllia.api.permissions.IslandFlags;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
@@ -191,5 +192,9 @@ public abstract class Island {
     public abstract CompiledPermissions getCompiledPermissions();
 
     public abstract void invalidateCompiledPermissions();
+
+    public abstract IslandFlags getIslandFlags();
+
+    public abstract void invalidateIslandFlags();
 
 }

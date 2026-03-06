@@ -46,10 +46,10 @@ public class PlayerUtils {
     }
 
     // TODO: i18n support and optimise the code
-    public static boolean hasPermission(Player player, String key){
+    public static boolean hasPermission(Player player, String key) {
         var result = player.hasPermission(key);
 
-        if(!ConfigLoader.general.isDebugPermission())
+        if (!ConfigLoader.general.isDebugPermission())
             return result;
 
         var text = Component.text()

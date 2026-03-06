@@ -1,21 +1,20 @@
 package fr.euphyllia.skyllia.listeners.permissions.island;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionNode;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
+import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.FlagNode;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowFireIgnitePermissions implements PermissionModule {
+public class IslandAllowFireIgnitePermissions implements FlagModule {
 
-    private PermissionId ISLAND_ALLOW_FIRE;
+    private FlagId ISLAND_ALLOW_FIRE;
 
     @EventHandler(ignoreCancelled = true)
     public void onIgnite(final BlockIgniteEvent event) {
@@ -27,20 +26,19 @@ public class IslandAllowFireIgnitePermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean allowed = island.getCompiledPermissions()
-                .has(SkylliaAPI.getPermissionRegistry(), RoleType.VISITOR, ISLAND_ALLOW_FIRE);
-
-        if (!allowed) {
+        final boolean flagEnabled = SkylliaAPI.getPermissionsManager()
+                .hasFlag(island, ISLAND_ALLOW_FIRE);
+        if (!flagEnabled) {
             event.setCancelled(true);
         }
     }
 
     @Override
-    public void registerPermissions(PermissionRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_FIRE = registry.register(new PermissionNode(
+    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ISLAND_ALLOW_FIRE = registry.register(new FlagNode(
                 new NamespacedKey(owner, "island.allow.fire"),
                 "Autoriser le feu",
-                "Placeholder"
+                "Contrôle l'allumage du feu (briquet, portail, foudre, lave)"
         ));
     }
 }

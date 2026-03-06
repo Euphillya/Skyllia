@@ -4,12 +4,6 @@ package fr.euphyllia.skyllia.api.skyblock.model;
  * Represents different roles that a player can have on a Skyblock island.
  */
 public enum RoleType {
-
-    /**
-     * Special role for island flags management, not a real player role.
-     */
-    ISLAND_FLAGS(Integer.MAX_VALUE),
-
     /**
      * Role with the highest level of authority, typically the owner of the island.
      */

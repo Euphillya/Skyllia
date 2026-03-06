@@ -8,7 +8,6 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
-import fr.euphyllia.skyllia.sgbd.exceptions.DatabaseException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.LogManager;

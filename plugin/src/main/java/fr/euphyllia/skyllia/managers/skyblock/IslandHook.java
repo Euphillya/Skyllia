@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.event.SkyblockCreateWarpEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockDeleteEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockDeleteWarpEvent;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
+import fr.euphyllia.skyllia.api.permissions.IslandFlags;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
@@ -32,6 +33,7 @@ public class IslandHook extends Island {
     private final int maxMemberInIsland;
     private double islandSize;
     private transient volatile CompiledPermissions compiledPermissions;
+    private transient volatile IslandFlags islandFlags;
 
     /**
      * Constructs a new {@code IslandHook} instance.
@@ -288,5 +290,37 @@ public class IslandHook extends Island {
 
     public final void invalidateCompiledPermissions() {
         this.compiledPermissions = null;
+    }
+
+    @Override
+    public final IslandFlags getIslandFlags() {
+        IslandFlags local = this.islandFlags;
+        if (local != null) return local;
+
+        synchronized (this) {
+            local = this.islandFlags;
+            if (local != null) return local;
+
+            var flagRegistry = SkylliaAPI.getFlagRegistry();
+
+            var query = Skyllia.getInstance()
+                    .getInterneAPI()
+                    .getIslandQuery()
+                    .getIslandPermissionQuery();
+
+            IslandFlags loaded = null;
+            if (query != null) {
+                loaded = query.loadIslandFlags(getId(), flagRegistry);
+            }
+
+            local = (loaded != null) ? loaded : new IslandFlags(flagRegistry);
+            this.islandFlags = local;
+            return local;
+        }
+    }
+
+    @Override
+    public final void invalidateIslandFlags() {
+        this.islandFlags = null;
     }
 }

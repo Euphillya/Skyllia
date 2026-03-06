@@ -1,6 +1,7 @@
 # 🌟 SkylliaChest – Addon pour Skyllia
 
 ## **Attention ! L'addon **SkylliaChest** est actuellement en BETA et peut contenir des bugs. Merci de signaler tout
+
 problème rencontré pour nous aider à améliorer l'addon.**
 
 SkylliaChest est un addon destiné à étendre les fonctionnalités du plugin **Skyllia** en ajoutant un système de coffres

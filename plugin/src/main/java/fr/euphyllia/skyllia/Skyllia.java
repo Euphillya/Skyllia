@@ -86,6 +86,7 @@ public class Skyllia extends JavaPlugin {
         new Metrics(this, 20874);
 
         ConfigLoader.permissionsV2.compileNow();
+        ConfigLoader.islandFlags.compileNow();
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new SkylliaExpansion(this).register();

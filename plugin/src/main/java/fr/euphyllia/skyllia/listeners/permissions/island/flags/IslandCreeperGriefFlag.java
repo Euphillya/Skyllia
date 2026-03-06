@@ -1,10 +1,10 @@
 package fr.euphyllia.skyllia.listeners.permissions.island.flags;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionNode;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
+import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.FlagNode;
+import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -13,22 +13,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandCreeperGriefFlag implements PermissionModule {
+public class IslandCreeperGriefFlag implements FlagModule {
 
-    private PermissionId ALLOW_MOB_GRIEF;
-    private PermissionId ALLOW_CREEPER_GRIEF;
+    private FlagId ALLOW_MOB_GRIEF;
+    private FlagId ALLOW_CREEPER_GRIEF;
 
     @Override
-    public void registerPermissions(PermissionRegistry registry, Plugin owner) {
-        this.ALLOW_MOB_GRIEF = registry.idOrRegister(new PermissionNode(
+    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)",
-                "Placeholder"
+                "Autoriser le grief des mobs (général)", "Placeholder"
         ));
-        this.ALLOW_CREEPER_GRIEF = registry.idOrRegister(new PermissionNode(
+        this.ALLOW_CREEPER_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.creeper-grief"),
-                "Autoriser les explosions des creepers",
-                "Placeholder"
+                "Autoriser les explosions des creepers", "Placeholder"
         ));
     }
 
@@ -45,10 +43,7 @@ public class IslandCreeperGriefFlag implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean allowed = SkylliaAPI.getPermissionsManager()
-                .hasIslandFlag(island, ALLOW_CREEPER_GRIEF, ALLOW_MOB_GRIEF);
-
-        if (!allowed) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_CREEPER_GRIEF, ALLOW_MOB_GRIEF)) {
             event.setCancelled(true);
         }
     }

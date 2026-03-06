@@ -36,6 +36,18 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
             WHERE island_id = ? AND role = ?;
             """;
 
+    private static final String SELECT_FLAGS = """
+            SELECT words
+            FROM islands_flags
+            WHERE island_id = ?;
+            """;
+
+    private static final String UPSERT_FLAGS = """
+            INSERT INTO islands_flags (island_id, words)
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE words = VALUES(words);
+            """;
+
     private final DatabaseLoader databaseLoader;
 
     public MariaDBIslandPermission(DatabaseLoader databaseLoader) {
@@ -111,6 +123,32 @@ public class MariaDBIslandPermission extends IslandPermissionQuery {
                 DELETE_ROLE,
                 List.of(islandId.toString(), role.name())
         );
+        return affected != 0;
+    }
+
+    @Override
+    public @Nullable IslandFlags loadIslandFlags(UUID islandId, IslandFlagRegistry registry) {
+        byte[] words = SQLExecute.queryMap(databaseLoader, SELECT_FLAGS, List.of(islandId.toString()), rs -> {
+            try {
+                if (rs.next()) return rs.getBytes("words");
+            } catch (SQLException e) {
+                log.error("SQL error while loading flags for island {}", islandId, e);
+            }
+            return null;
+        });
+
+        if (words == null) return null;
+
+        IslandFlags flags = new IslandFlags(registry);
+        flags.loadWords(PermissionSetCodec.decodeLongs(words));
+        flags.ensureUpToDate(registry);
+        return flags;
+    }
+
+    @Override
+    public boolean saveIslandFlags(UUID islandId, byte[] wordsBlob) {
+        int affected = SQLExecute.update(databaseLoader, UPSERT_FLAGS,
+                List.of(islandId.toString(), wordsBlob));
         return affected != 0;
     }
 

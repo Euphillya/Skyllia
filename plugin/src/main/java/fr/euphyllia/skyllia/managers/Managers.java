@@ -1,10 +1,8 @@
 package fr.euphyllia.skyllia.managers;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
-import fr.euphyllia.skyllia.api.permissions.PermissionIndexStore;
-import fr.euphyllia.skyllia.api.permissions.PermissionIndexStoreFactory;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
-import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
+import fr.euphyllia.skyllia.api.permissions.*;
+import fr.euphyllia.skyllia.api.permissions.modules.FlagModuleManager;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.managers.world.WorldsManager;
 import org.bukkit.Bukkit;
@@ -17,6 +15,10 @@ public class Managers {
     private final PermissionRegistry permissionRegistry;
     private final PermissionModuleManager permissionModuleManager;
     private final PermissionsManagers permissionsManagers;
+
+    private final IslandFlagRegistry flagRegistry;
+    private final FlagModuleManager flagModuleManager;
+
 
     public Managers(InterneAPI interneAPI) {
         this.api = interneAPI;
@@ -32,6 +34,9 @@ public class Managers {
         this.permissionRegistry = new PermissionRegistry(indexStore);
         this.permissionModuleManager = new PermissionModuleManager(api.getPlugin(), this.permissionRegistry);
         this.permissionsManagers = new PermissionsManagers();
+
+        this.flagRegistry = new IslandFlagRegistry(indexStore);
+        this.flagModuleManager = new FlagModuleManager(api.getPlugin(), this.flagRegistry);
     }
 
     public void init() {
@@ -48,5 +53,13 @@ public class Managers {
 
     public PermissionsManagers getPermissionsManagers() {
         return permissionsManagers;
+    }
+
+    public IslandFlagRegistry getFlagRegistry() {
+        return flagRegistry;
+    }
+
+    public FlagModuleManager getFlagModuleManager() {
+        return flagModuleManager;
     }
 }

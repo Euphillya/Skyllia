@@ -92,6 +92,14 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 
+    private static final String CREATE_ISLANDS_FLAGS_TABLE = """
+            CREATE TABLE IF NOT EXISTS islands_flags (
+                island_id CHAR(36) NOT NULL,
+                words LONGBLOB NOT NULL,
+                PRIMARY KEY (`island_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+
     private static final String CREATE_PLAYER_CLEAR_TABLE = """
             CREATE TABLE IF NOT EXISTS player_clear (
                 uuid_player CHAR(36) NOT NULL,
@@ -161,6 +169,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_ISLANDS_WARP_TABLE);
         exec(CREATE_SPIRAL_TABLE);
         exec(CREATE_ISLANDS_PERMISSIONS_TABLE);
+        exec(CREATE_ISLANDS_FLAGS_TABLE);
         exec(CREATE_PLAYER_CLEAR_TABLE);
         exec(CREATE_ISLANDS_GAMERULE_TABLE);
         exec(CREATE_ISLANDS_INDEX);
