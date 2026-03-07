@@ -3,9 +3,9 @@ package fr.euphyllia.skyllia;
 import dev.faststats.bukkit.BukkitMetrics;
 import dev.faststats.core.ErrorTracker;
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
-import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.api.utils.metrics.BStatsMetrics;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -166,7 +166,7 @@ public class Skyllia extends JavaPlugin {
           This makes the configuration possibly useless.
           BUT just in case, I leave the message enabled by default.
          */
-        if (VersionUtils.IS_FOLIA && !ConfigLoader.worldManager.isSuppressWarnNetherEndWorld()) {
+        if (SkylliaAPI.isFolia() && !ConfigLoader.worldManager.isSuppressWarnNetherEndWorld()) {
             if (Bukkit.getAllowNether()) {
                 logger.log(Level.WARN, "Disable nether in server.properties to disable nether portals!");
             }
@@ -182,7 +182,7 @@ public class Skyllia extends JavaPlugin {
         String description = getPluginMeta().getDescription();
         String serverType = Bukkit.getName();
         String serverVersion = Bukkit.getVersion();
-        String threadModel = (VersionUtils.IS_FOLIA ? "Multi" : "Single");
+        String threadModel = (SkylliaAPI.isFolia() ? "Multi" : "Single");
         int cpuCores = Runtime.getRuntime().availableProcessors();
 
         String violet = "§d";

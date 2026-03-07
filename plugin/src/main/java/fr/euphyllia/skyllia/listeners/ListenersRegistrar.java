@@ -3,7 +3,6 @@ package fr.euphyllia.skyllia.listeners;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.utils.VersionUtils;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.folia.PortalAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.paper.PortalAlternativePaperEvent;
@@ -63,12 +62,10 @@ public class ListenersRegistrar {
         registerEvent(pluginManager, new MoveEvent());
 
         // Folia/Paper specifics
-        if (VersionUtils.IS_FOLIA) {
+        if (SkylliaAPI.isFolia()) {
             registerEvent(pluginManager, new PortalAlternativeFoliaEvent(interneAPI));
         }
-        if (VersionUtils.IS_PAPER) {
-            registerEvent(pluginManager, new PortalAlternativePaperEvent());
-        }
+        registerEvent(pluginManager, new PortalAlternativePaperEvent());
 
         // Skyblock Events
         registerEvent(pluginManager, new SkyblockEvent(interneAPI));
