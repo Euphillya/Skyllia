@@ -125,7 +125,7 @@ public class CreateSubCommand implements SubCommandInterface {
                     ConfigLoader.language.sendMessage(player, "island.create-finish");
                 } else {
                     CommandCacheExecution.removeCommandExec(playerId, "create");
-                    new HomeSubCommand().onCommand(plugin, player, args);
+                    new HomeSubCommand().onExecute(plugin, player, args);
                 }
             } catch (Exception e) {
                 CommandCacheExecution.removeCommandExec(playerId, "create");
