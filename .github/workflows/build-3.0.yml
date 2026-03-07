@@ -65,7 +65,7 @@ jobs:
           replacesArtifacts: false
 
 env:
-  tag: build-ver3.x-${{ github.ref_name }}-${{ github.run_number }}
+  tag: build-ver3.x-${{ github.run_number }}
   project_id_b: Skyllia
   commit_id: ${{ github.sha }}
   commit_msg: ${{ github.event.head_commit.message }}
