@@ -43,7 +43,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
                 return;
             }
             Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                    subCommandInterface.onCommand(this.plugin, sender.getSender(), listArgs));
+                    subCommandInterface.onExecute(this.plugin, sender.getSender(), listArgs));
         }
         return;
     }
