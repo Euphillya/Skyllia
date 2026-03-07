@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface SubCommandInterface {
 
-    private Logger log = LoggerFactory.getLogger(SubCommandInterface.class);
+    Logger log = LoggerFactory.getLogger(SubCommandInterface.class);
 
     /**
      * Legacy method to handle the execution of a sub-command.
