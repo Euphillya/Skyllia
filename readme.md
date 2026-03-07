@@ -5,13 +5,13 @@
 ### Le premier plugin Skyblock entièrement compatible Folia
 
 [![Folia](https://img.shields.io/badge/Folia-Compatible-green.svg)](https://papermc.io/software/folia)
-[![Paper](https://img.shields.io/badge/Paper-1.21+-blue.svg)](https://papermc.io/)
+[![Paper](https://img.shields.io/badge/Paper-1.20.1+-blue.svg)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/Java-21+-orange.svg)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Euphillya/Skyllia)
 
 [Documentation](https://skyllia.eupyllia.moe) • [GitHub](https://github.com/Euphillya/Skyllia) • [Modrinth](https://modrinth.com/plugin/skyllia) • [Discord](https://discord.gg/uUJQEB7XNN)
 
-[![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
+[![Servers & Players](https://faststats.dev/embed/26db4d71-4959-449d-a0c9-302ea90f2efc?w=800&h=300)](https://faststats.dev/project/skyllia/skyllia-plugin)
 </div>
 
 ---

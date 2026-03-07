@@ -16,6 +16,7 @@ val engineHubRepo = "https://maven.enginehub.org/repo/";
 val jitpack = "https://jitpack.io"
 val mojang = "https://libraries.minecraft.net";
 var extendedclip = "https://repo.extendedclip.com/content/repositories/placeholderapi/";
+var theNextLvl = "https://repo.thenextlvl.net/releases";
 
 dependencies {
     implementation(project(":database"))
@@ -59,6 +60,7 @@ allprojects {
         maven(mojang)
         maven(jitpack)
         maven(extendedclip)
+        maven(theNextLvl)
     }
 
     dependencies {

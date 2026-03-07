@@ -16,6 +16,7 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo.euphyllia.moe/repository/maven-public/").build());
         resolver.addRepository(new RemoteRepository.Builder("mojang", "default", "https://libraries.minecraft.net").build());
         resolver.addRepository(new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build());
+        resolver.addRepository(new RemoteRepository.Builder("thenextlvl", "default", "https://repo.thenextlvl.net/releases").build());
 
         // Maven Repository Dependencies
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-core:2.25.3"), null));
@@ -39,6 +40,9 @@ public class SkylliaLoader implements PluginLoader {
 
         // Mojang Repo
         resolver.addDependency(new Dependency(new DefaultArtifact("com.mojang:brigadier:1.0.18"), null));
+
+        // thenextlvl Repo
+        resolver.addDependency(new Dependency(new DefaultArtifact("dev.faststats.metrics:bukkit:0.17.2"), null));
 
         classpathBuilder.addLibrary(resolver);
     }

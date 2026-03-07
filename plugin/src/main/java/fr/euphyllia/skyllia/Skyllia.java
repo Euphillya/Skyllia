@@ -1,10 +1,12 @@
 package fr.euphyllia.skyllia;
 
+import dev.faststats.bukkit.BukkitMetrics;
+import dev.faststats.core.ErrorTracker;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
-import fr.euphyllia.skyllia.api.utils.Metrics;
 import fr.euphyllia.skyllia.api.utils.VersionUtils;
+import fr.euphyllia.skyllia.api.utils.metrics.BStatsMetrics;
 import fr.euphyllia.skyllia.commands.CommandRegistrar;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.hook.HookBootstrap;
@@ -29,6 +31,9 @@ public class Skyllia extends JavaPlugin {
     private InterneAPI interneAPI;
     private SubCommandRegistry commandRegistry;
     private SubCommandRegistry adminCommandRegistry;
+
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+    private BukkitMetrics fastStatsMetrics;
 
     public static Skyllia getInstance() {
         return instance;
@@ -83,7 +88,8 @@ public class Skyllia extends JavaPlugin {
 
         checkDisabledConfig();
 
-        new Metrics(this, 20874);
+        new BStatsMetrics(this, 20874);
+        initializeFastStats();
 
         ConfigLoader.permissionsV2.compileNow();
         ConfigLoader.islandFlags.compileNow();
@@ -97,6 +103,11 @@ public class Skyllia extends JavaPlugin {
     public void onDisable() {
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
+
+        if (fastStatsMetrics != null) {
+            fastStatsMetrics.shutdown();
+        }
+
         if (this.interneAPI != null) {
             if (this.interneAPI.getDatabaseLoader() != null) {
                 this.interneAPI.getDatabaseLoader().closeDatabase();
@@ -193,5 +204,19 @@ public class Skyllia extends JavaPlugin {
         int textLength = ChatColor.stripColor(text).length();
         int padding = (lineWidth - textLength) / 2;
         return " ".repeat(Math.max(0, padding)) + text;
+    }
+
+    private void initializeFastStats() {
+        try {
+            this.fastStatsMetrics = BukkitMetrics.factory()
+                    .token("f329c2c0e1c9562dffebed9b6786d4c9")
+                    .errorTracker(ERROR_TRACKER)
+                    .debug(false)
+                    .create(this);
+            this.fastStatsMetrics.ready();
+            logger.info("[FastStats] initialized");
+        } catch (Exception exception) {
+            logger.log(Level.FATAL, exception, exception);
+        }
     }
 }
