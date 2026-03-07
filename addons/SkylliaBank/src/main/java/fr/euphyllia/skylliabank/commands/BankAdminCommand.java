@@ -220,15 +220,15 @@ public class BankAdminCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.bank.admin")) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.no-permissions");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.admin.usage-root");
-            return true;
+            return;
         }
 
         switch (args[0].toLowerCase()) {
@@ -238,7 +238,6 @@ public class BankAdminCommand implements SubCommandInterface {
             case "setbalance" -> handleSetBalance(sender, args);
             default -> ConfigLoader.language.sendMessage(sender, "addons.bank.admin.unknown-command");
         }
-        return true;
     }
 
     @Override

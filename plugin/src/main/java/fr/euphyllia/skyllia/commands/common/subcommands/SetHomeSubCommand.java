@@ -40,31 +40,29 @@ public class SetHomeSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.sethome")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         Position islandPosition = island.getPosition();
 
-        Players executorPlayer = island.getMember(player.getUniqueId());
-
         boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_HOME_PERMISSION);
         if (!allowed) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         player.getScheduler().run(plugin, pScheduler -> {
@@ -92,8 +90,6 @@ public class SetHomeSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
             }
         }, null);
-
-        return true;
     }
 
     @Override

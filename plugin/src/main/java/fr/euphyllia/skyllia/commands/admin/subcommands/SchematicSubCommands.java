@@ -33,32 +33,30 @@ public class SchematicSubCommands implements SubCommandInterface {
      * @return {@code true} if the command was successfully handled, {@code false} otherwise
      */
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.schematic")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
-            return true;
+            return;
         }
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(sender, "island.admin.schematic.args-missing");
-            return true;
+            return;
         }
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.admin.schematic.player-only");
-            return true;
+            return;
         }
 
         if (args[0].equalsIgnoreCase("pos1")) {
             pos1Map.put(player.getUniqueId(), player.getLocation());
             ConfigLoader.language.sendMessage(sender, "island.admin.schematic.pos1-selected");
-            return true;
         } else if (args[0].equalsIgnoreCase("pos2")) {
             pos2Map.put(player.getUniqueId(), player.getLocation());
             ConfigLoader.language.sendMessage(sender, "island.admin.schematic.pos2-selected");
-            return true;
         } else if (args[0].equalsIgnoreCase("save")) {
             if (!pos1Map.containsKey(player.getUniqueId()) || !pos2Map.containsKey(player.getUniqueId())) {
                 ConfigLoader.language.sendMessage(sender, "island.admin.schematic.positions-not-set");
-                return true;
+                return;
             }
 
             Bukkit.getRegionScheduler().run(plugin, pos1Map.get(player.getUniqueId()), task -> {
@@ -75,10 +73,7 @@ public class SchematicSubCommands implements SubCommandInterface {
                 }
             });
 
-
-            return true;
         }
-        return false;
     }
 
     /**

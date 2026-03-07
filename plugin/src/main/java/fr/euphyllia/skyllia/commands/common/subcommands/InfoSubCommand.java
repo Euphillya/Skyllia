@@ -30,22 +30,22 @@ public class InfoSubCommand implements SubCommandInterface {
      * @return {@code true} if the command was successfully handled, {@code false} otherwise
      */
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, permission())) {
             ConfigLoader.language.sendMessage(player, "island.info.no-permission");
-            return true;
+            return;
         }
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
 
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         UUID islandId = island.getId();
@@ -53,7 +53,7 @@ public class InfoSubCommand implements SubCommandInterface {
         Players leader = found.orElse(null);
         if (leader == null) {
             ConfigLoader.language.sendMessage(player, "island.info.no-owner");
-            return true;
+            return;
         }
 
         Location center = RegionHelper.getCenterRegion(null, island.getPosition().x(), island.getPosition().z());
@@ -101,8 +101,6 @@ public class InfoSubCommand implements SubCommandInterface {
         }
 
         player.sendMessage(infoComponent);
-
-        return true;
     }
 
     /**

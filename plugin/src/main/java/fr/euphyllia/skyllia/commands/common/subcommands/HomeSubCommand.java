@@ -29,22 +29,22 @@ public class HomeSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(HomeSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.home")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         try {
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                return true;
+                return;
             }
 
             WarpIsland warpIsland = island.getWarpByName("home");
@@ -69,7 +69,6 @@ public class HomeSubCommand implements SubCommandInterface {
             logger.log(Level.FATAL, exception.getMessage(), exception);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
-        return true;
     }
 
     @Override

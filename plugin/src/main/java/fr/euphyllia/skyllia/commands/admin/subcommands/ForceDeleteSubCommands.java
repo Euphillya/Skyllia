@@ -34,22 +34,22 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
 
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.delete")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 2) {
             ConfigLoader.language.sendMessage(sender, "island.admin.delete-args-missing");
-            return true;
+            return;
         }
 
         String playerName = args[0];
         String confirm = args[1];
         if (!confirm.equalsIgnoreCase("confirm")) {
             ConfigLoader.language.sendMessage(sender, "island.admin.delete-no-confirm");
-            return true;
+            return;
         }
 
         try {
@@ -63,7 +63,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             Island island = skyblockManager.getIslandByPlayerId(playerId);
             if (island == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.no-island");
-                return true;
+                return;
             }
 
             boolean locked = skyblockManager.setLockedIsland(island, true);
@@ -83,7 +83,7 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
                         logger.error("Failed to unlock island {} after deletion.", island.getId());
                     }
 
-                    return true;
+                    return;
                 } else {
                     ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
                         if (environnements.shouldDeleteIsland()) {
@@ -111,8 +111,6 @@ public class ForceDeleteSubCommands implements SubCommandInterface {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
         }
-
-        return true;
     }
 
     @Override

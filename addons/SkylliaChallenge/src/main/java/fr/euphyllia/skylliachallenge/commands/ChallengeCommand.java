@@ -15,18 +15,17 @@ import java.util.List;
 public record ChallengeCommand(SkylliaChallenge plugin) implements SubCommandInterface {
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin0, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin0, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player p)) {
             ConfigLoader.language.sendMessage(sender, "addons.challenge.player.player-only");
-            return true;
+            return;
         }
         Island island = SkylliaAPI.getIslandByPlayerId(p.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(sender, "addons.challenge.player.no-island");
-            return true;
+            return;
         }
         plugin.getChallengeManager().openGui(p);
-        return true;
     }
 
     @Override

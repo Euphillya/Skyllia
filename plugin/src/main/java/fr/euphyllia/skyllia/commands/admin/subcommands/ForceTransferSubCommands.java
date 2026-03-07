@@ -26,14 +26,14 @@ public class ForceTransferSubCommands implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(ForceTransferSubCommands.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
-            return true;
+            return;
         }
         if (args.length < 2) {
             ConfigLoader.language.sendMessage(sender, "island.admin.transfer-args-missing");
-            return true;
+            return;
         }
 
         String previousOwnerName = args[0];
@@ -42,7 +42,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
 
         if (!confirm.equalsIgnoreCase("confirm")) {
             ConfigLoader.language.sendMessage(sender, "island.admin.transfer-no-confirm");
-            return true;
+            return;
         }
 
         try {
@@ -53,29 +53,29 @@ public class ForceTransferSubCommands implements SubCommandInterface {
                 previousOwnerId = Bukkit.getPlayerUniqueId(previousOwnerName);
             }
 
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByOwner(previousOwnerId);
 
             if (island == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.no-island");
-                return true;
+                return;
             }
 
             Players oldOwner = skyblockManager.getOwnerByIslandID(island);
             if (oldOwner == null || !oldOwner.getMojangId().equals(previousOwnerId)) {
                 ConfigLoader.language.sendMessage(sender, "island.only-owner");
-                return true;
+                return;
             }
 
             Players newOwner = island.getMember(newOwnerName);
             if (newOwner == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.not-on-island");
-                return true;
+                return;
             }
 
             if (newOwner.getMojangId().equals(previousOwnerId)) {
                 ConfigLoader.language.sendMessage(sender, "island.transfer.already-owner");
-                return true;
+                return;
             }
 
             // Transfert de propriété
@@ -104,8 +104,6 @@ public class ForceTransferSubCommands implements SubCommandInterface {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
         }
-
-        return true;
     }
 
     @Override

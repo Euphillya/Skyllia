@@ -66,31 +66,31 @@ public class PermissionSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.permission")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         if (!canEdit(player, island)) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             ConfigLoader.language.sendMessage(player, "island.permission.usage");
-            return true;
+            return;
         }
 
         PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
@@ -106,7 +106,7 @@ public class PermissionSubCommand implements SubCommandInterface {
 
             if (all.isEmpty()) {
                 ConfigLoader.language.sendMessage(player, "island.permission.list.empty");
-                return true;
+                return;
             }
 
             // header
@@ -126,7 +126,7 @@ public class PermissionSubCommand implements SubCommandInterface {
                         "%more%", String.valueOf(all.size() - limit)
                 ));
             }
-            return true;
+            return;
         }
 
         // Mode actionnel OU forme courte:
@@ -149,7 +149,7 @@ public class PermissionSubCommand implements SubCommandInterface {
 
         if (args.length - offset < 2) {
             ConfigLoader.language.sendMessage(player, "island.permission.usage");
-            return true;
+            return;
         }
 
         RoleType role = parseRole(args[offset]);
@@ -157,7 +157,7 @@ public class PermissionSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.permission.role.invalid", Map.of(
                     "%role%", args[offset]
             ));
-            return true;
+            return;
         }
 
         NamespacedKey key = NamespacedKey.fromString(args[offset + 1]);
@@ -165,7 +165,7 @@ public class PermissionSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.permission.perm.invalid-format", Map.of(
                     "%perm%", args[offset + 1]
             ));
-            return true;
+            return;
         }
 
         PermissionId pid = registry.getIfPresent(key);
@@ -173,7 +173,7 @@ public class PermissionSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.permission.perm.unknown", Map.of(
                     "%perm%", toKeyString(key)
             ));
-            return true;
+            return;
         }
 
         Boolean explicitBool = (args.length - offset >= 3) ? parseBool(args[offset + 2]) : null;
@@ -187,7 +187,7 @@ public class PermissionSubCommand implements SubCommandInterface {
                     "%perm%", toKeyString(key),
                     "%value%", String.valueOf(current)
             ));
-            return true;
+            return;
         }
 
         // TOGGLE
@@ -200,7 +200,7 @@ public class PermissionSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.permission.bool.invalid", Map.of(
                         "%value%", (args.length - offset >= 3 ? args[offset + 2] : "")
                 ));
-                return true;
+                return;
             }
             next = explicitBool;
         }
@@ -208,7 +208,7 @@ public class PermissionSubCommand implements SubCommandInterface {
         boolean updated = setDbAndRuntime(island, role, pid, next);
         if (!updated) {
             ConfigLoader.language.sendMessage(player, "island.permission.update.failed");
-            return true;
+            return;
         }
 
         boolean finalValue = island.getCompiledPermissions().has(registry, role, pid);
@@ -218,7 +218,6 @@ public class PermissionSubCommand implements SubCommandInterface {
                 "%old%", String.valueOf(current),
                 "%new%", String.valueOf(finalValue)
         ));
-        return true;
     }
 
     private boolean setDbAndRuntime(Island island, RoleType role, PermissionId pid, boolean value) {

@@ -38,20 +38,20 @@ public class PromoteSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.promote")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.rank.promote-args-missing");
-            return true;
+            return;
         }
 
         try {
@@ -60,37 +60,37 @@ public class PromoteSubCommand implements SubCommandInterface {
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                return true;
+                return;
             }
 
             Players executorPlayer = island.getMember(player.getUniqueId());
             if (executorPlayer == null) {
                 ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
-                return true;
+                return;
             }
 
             boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_PROMOTE_PERMISSION);
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                return true;
+                return;
             }
 
             Players target = island.getMember(playerName);
             if (target == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-found");
-                return true;
+                return;
             }
 
             if (target.getRoleType() == RoleType.OWNER ||
                     executorPlayer.getRoleType().getValue() <= target.getRoleType().getValue()) {
                 ConfigLoader.language.sendMessage(player, "island.rank.promote-high-rank");
-                return true;
+                return;
             }
 
             RoleType promoteResult = RoleType.getRoleById(target.getRoleType().getValue() + 1);
             if (promoteResult.getValue() == 0 || promoteResult == RoleType.OWNER) {
                 ConfigLoader.language.sendMessage(player, "island.rank.promote-failed", Map.of("%s", playerName));
-                return true;
+                return;
             }
 
             target.setRoleType(promoteResult);
@@ -105,7 +105,6 @@ public class PromoteSubCommand implements SubCommandInterface {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
-        return true;
     }
 
     @Override

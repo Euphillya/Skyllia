@@ -46,20 +46,20 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.biome")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.biome.args-missing");
-            return true;
+            return;
         }
 
         String selectBiome = args[0];
@@ -71,7 +71,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
         if (biome == null) {
             ConfigLoader.language.sendMessage(player, "island.biome.not-exist", Map.of(
                     "%s", selectBiome));
-            return true;
+            return;
         }
 
         String biomeName = biomesImpl.getNameBiome(biome);
@@ -79,7 +79,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.biome.%s".formatted(biomeRaw))) {
             ConfigLoader.language.sendMessage(player, "island.biome.permission-denied", Map.of("%s", selectBiome));
-            return true;
+            return;
         }
 
         Location playerLocation = player.getLocation();
@@ -87,7 +87,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
         if (world == null || !WorldUtils.isWorldSkyblock(world.getName())) {
             ConfigLoader.language.sendMessage(player, "island.biome.only-on-island");
-            return true;
+            return;
         }
 
         try {
@@ -95,14 +95,14 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                return true;
+                return;
             }
 
             final UUID islandId = island.getId();
 
             if (CommandCacheExecution.isAlreadyExecute(islandId, "biome")) {
                 ConfigLoader.language.sendMessage(player, "island.generic.command-in-progress");
-                return true;
+                return;
             }
 
             CommandCacheExecution.addCommandExecute(islandId, "biome");
@@ -111,7 +111,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 CommandCacheExecution.removeCommandExec(islandId, "biome");
-                return true;
+                return;
             }
 
             Position islandPosition = island.getPosition();
@@ -121,7 +121,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");
                 CommandCacheExecution.removeCommandExec(islandId, "biome");
-                return true;
+                return;
             }
 
             ConfigLoader.language.sendMessage(player, "island.biome.change-in-progress");
@@ -160,7 +160,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "biome");
         }
 
-        return true;
+        return;
     }
 
     @Override

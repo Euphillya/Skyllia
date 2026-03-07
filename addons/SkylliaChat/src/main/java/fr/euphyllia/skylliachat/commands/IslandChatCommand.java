@@ -21,18 +21,17 @@ public class IslandChatCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
         if (!sender.hasPermission("skylliachat.use")) {
             ConfigLoader.language.sendMessage(player, "addons.chat.no-permission");
-            return true;
+            return;
         }
         final UUID uuid = player.getUniqueId();
 
-        // Toggle island chat mode
         boolean isEnabled = this.plugin.getIslandChatEnabled().getOrDefault(uuid, false);
         this.plugin.getIslandChatEnabled().put(uuid, !isEnabled);
 
@@ -41,7 +40,6 @@ public class IslandChatCommand implements SubCommandInterface {
         } else {
             ConfigLoader.language.sendMessage(player, "addons.chat.enabled");
         }
-        return true;
     }
 
     @Override

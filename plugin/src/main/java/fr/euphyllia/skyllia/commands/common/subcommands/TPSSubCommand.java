@@ -19,21 +19,21 @@ import java.util.List;
 
 public class TPSSubCommand implements SubCommandInterface {
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.tps")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         final Location playerLocation = player.getLocation();
         if (!WorldUtils.isWorldSkyblock(playerLocation.getWorld().getName())) {
             ConfigLoader.language.sendMessage(player, "island.player.not-on-island");
-            return true;
+            return;
         }
         Bukkit.getRegionScheduler().run(plugin, playerLocation, (task) -> {
             double @Nullable [] tpsIsland = SkylliaAPI.getTPS(playerLocation);
@@ -48,7 +48,6 @@ public class TPSSubCommand implements SubCommandInterface {
             }
             player.sendMessage(TPSFormatter.displayTPS(tpsIsland, msptIsland).asComponent());
         });
-        return true;
     }
 
     @Override

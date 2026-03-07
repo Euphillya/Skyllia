@@ -23,22 +23,22 @@ public class SetSizeSubCommands implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(SetSizeSubCommands.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.setsize")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 3) {
             ConfigLoader.language.sendMessage(sender, "island.admin.size-args-missing");
-            return true;
+            return;
         }
         String playerName = args[0];
         String changeValue = args[1];
         String confirm = args[2];
         if (!confirm.equalsIgnoreCase("confirm")) {
             ConfigLoader.language.sendMessage(sender, "island.admin.size-args-missing");
-            return true;
+            return;
         }
         try {
             UUID playerId;
@@ -47,11 +47,11 @@ public class SetSizeSubCommands implements SubCommandInterface {
             } catch (IllegalArgumentException ignored) {
                 playerId = Bukkit.getPlayerUniqueId(playerName);
             }
-            SkyblockManager skyblockManager = Skyllia.getPlugin(Skyllia.class).getInterneAPI().getSkyblockManager();
+            SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
             Island island = skyblockManager.getIslandByPlayerId(playerId);
             if (island == null) {
                 ConfigLoader.language.sendMessage(sender, "island.player.no-island");
-                return true;
+                return;
             }
 
             double newSize = Double.parseDouble(changeValue);
@@ -70,7 +70,6 @@ public class SetSizeSubCommands implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
             }
         }
-        return true;
     }
 
     @Override

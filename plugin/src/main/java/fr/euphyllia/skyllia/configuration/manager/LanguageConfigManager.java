@@ -27,7 +27,7 @@ public class LanguageConfigManager implements IConfigurationProvider {
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final Map<Locale, Map<String, String>> translations = new HashMap<>();
     private final Locale defaultLocale = Locale.of("en", "GB");
-    private final Skyllia plugin = Skyllia.getPlugin(Skyllia.class);
+    private final Skyllia plugin = Skyllia.getInstance();
     private final Map<Locale, CommentedFileConfig> localeFiles = new HashMap<>();
 
     @Override

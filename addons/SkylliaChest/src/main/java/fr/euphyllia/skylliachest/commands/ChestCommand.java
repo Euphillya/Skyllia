@@ -40,10 +40,10 @@ public class ChestCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         UUID playerId = player.getUniqueId();
@@ -51,13 +51,13 @@ public class ChestCommand implements SubCommandInterface {
         Island island = SkylliaAPI.getIslandByPlayerId(playerId);
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         boolean isAllowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, OPEN_ISLAND_CHEST_PERMISSION);
         if (!isAllowed) {
             ConfigLoader.language.sendMessage(player, "addons.island-chest.no-permission");
-            return true;
+            return;
         }
 
         ChestManager chestManager = SkylliaChest.getInstance().getChestManager();
@@ -66,7 +66,7 @@ public class ChestCommand implements SubCommandInterface {
         int size = chestManager.getChestSize(island);
 
         openChest(player, island, size);
-        return true;
+        return;
     }
 
     private void openChest(@NotNull Player player, @NotNull Island island, int size) {

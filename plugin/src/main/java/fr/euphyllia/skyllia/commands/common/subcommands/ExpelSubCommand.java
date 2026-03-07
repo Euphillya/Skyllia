@@ -69,58 +69,54 @@ public class ExpelSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.expel")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.expel.not-enough-args");
-            return true;
+            return;
         }
         try {
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
 
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                return true;
+                return;
             }
-
-            Players executorPlayer = island.getMember(player.getUniqueId());
 
             boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_EXPEL_PERMISSION);
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                return true;
+                return;
             }
 
             String playerToExpel = args[0];
             Player bPlayerToExpel = Bukkit.getPlayerExact(playerToExpel);
             if (bPlayerToExpel == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-found");
-                return true;
+                return;
             }
             if (!bPlayerToExpel.isOnline()) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-connected");
-                return true;
+                return;
             }
             if (bPlayerToExpel.hasPermission("skyllia.island.command.expel.bypass")) {
                 ConfigLoader.language.sendMessage(player, "island.kick.failed");
-                return true;
+                return;
             }
 
-            expelPlayer(Skyllia.getPlugin(Skyllia.class), island, bPlayerToExpel, player, false);
+            expelPlayer(Skyllia.getInstance(), island, bPlayerToExpel, player, false);
 
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
-
-        return true;
     }
 
     @Override

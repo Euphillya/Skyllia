@@ -12,17 +12,16 @@ public class ReloadSubCommands implements SubCommandInterface {
 
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission("skyllia.admins.commands.island.reload")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         ConfigLoader.reloadConfigs();
         ConfigLoader.permissionsV2.compileNow();
         ConfigLoader.islandFlags.compileNow();
         ConfigLoader.language.sendMessage(sender, "island.admin.reload");
-        return true;
     }
 
     @Override

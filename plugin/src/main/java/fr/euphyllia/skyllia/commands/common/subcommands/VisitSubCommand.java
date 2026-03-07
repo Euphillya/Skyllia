@@ -43,20 +43,20 @@ public class VisitSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.visit")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.visit.args-missing");
-            return true;
+            return;
         }
 
         try {
@@ -69,13 +69,13 @@ public class VisitSubCommand implements SubCommandInterface {
             }
             if (visitPlayerId == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-found");
-                return true;
+                return;
             }
 
             Island island = SkylliaAPI.getIslandByPlayerId(visitPlayerId);
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.visit.no-island");
-                return true;
+                return;
             }
 
             boolean bypass = player.hasPermission("skyllia.island.command.visit.bypass")
@@ -84,12 +84,12 @@ public class VisitSubCommand implements SubCommandInterface {
             if (!bypass) {
                 if (island.isPrivateIsland()) {
                     ConfigLoader.language.sendMessage(player, "island.visit.island-private");
-                    return true;
+                    return;
                 }
                 Players memberIsland = island.getMember(player.getUniqueId());
                 if (memberIsland != null && memberIsland.getRoleType().equals(RoleType.BAN)) {
                     ConfigLoader.language.sendMessage(player, "island.visit.banned");
-                    return true;
+                    return;
                 }
             }
 
@@ -115,7 +115,6 @@ public class VisitSubCommand implements SubCommandInterface {
             logger.log(Level.FATAL, exception.getMessage(), exception);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
         }
-        return true;
     }
 
     @Override

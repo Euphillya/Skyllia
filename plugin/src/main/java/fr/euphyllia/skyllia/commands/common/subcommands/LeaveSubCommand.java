@@ -25,15 +25,15 @@ public class LeaveSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(LeaveSubCommand.class);
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.leave")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         SkyblockManager skyblockManager = Skyllia.getInstance().getInterneAPI().getSkyblockManager();
@@ -41,14 +41,14 @@ public class LeaveSubCommand implements SubCommandInterface {
 
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         Players players = island.getMember(player.getUniqueId());
 
         if (players.getRoleType().equals(RoleType.OWNER)) {
             ConfigLoader.language.sendMessage(player, "island.leave.he-is-owner");
-            return true;
+            return;
         }
 
         if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
@@ -65,7 +65,6 @@ public class LeaveSubCommand implements SubCommandInterface {
         } else {
             ConfigLoader.language.sendMessage(player, "island.leave.confirm");
         }
-        return true;
     }
 
     @Override

@@ -18,15 +18,15 @@ import java.util.Map;
 public class CurrentSubCommands implements SubCommandInterface {
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
         if (!sender.hasPermission(permission())) {
             ConfigLoader.language.sendMessage(sender, "island.admin.current.no-permission");
-            return true;
+            return;
         }
 
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         Location location = player.getLocation();
@@ -34,7 +34,7 @@ public class CurrentSubCommands implements SubCommandInterface {
         Island island = SkylliaAPI.getIslandByChunk(location.getBlockX() >> 4, location.getBlockZ() >> 4);
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.admin.current.no-island-here");
-            return true;
+            return;
         }
 
         Players owner = island.getOwner();
@@ -43,7 +43,7 @@ public class CurrentSubCommands implements SubCommandInterface {
             ConfigLoader.language.sendMessage(player, "island.admin.current.no-owner", Map.of(
                     "%island_id%", String.valueOf(island.getId())
             ));
-            return true;
+            return;
         }
 
         ConfigLoader.language.sendMessage(player, "island.admin.current.info", Map.of(
@@ -51,7 +51,6 @@ public class CurrentSubCommands implements SubCommandInterface {
                 "%owner_name%", owner.getLastKnowName(),
                 "%owner_uuid%", String.valueOf(owner.getMojangId())
         ));
-        return true;
     }
 
     @Override

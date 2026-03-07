@@ -13,18 +13,17 @@ public record ChallengeAdminCommand(SkylliaChallenge plugin) implements SubComma
 
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin0, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin0, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender.hasPermission(permission()) || sender.hasPermission(permission()))) {
             ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.no-permission");
-            return true;
+            return;
         }
         if (args.length == 0 || !args[0].equalsIgnoreCase("reload")) {
             ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.unknown-command");
-            return true;
+            return;
         }
         plugin.reload();
         ConfigLoader.language.sendMessage(sender, "addons.challenge.admin.reload-success");
-        return true;
     }
 
 

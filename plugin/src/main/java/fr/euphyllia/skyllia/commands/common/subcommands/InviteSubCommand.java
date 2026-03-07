@@ -45,48 +45,47 @@ public class InviteSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.invite")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.invite.args-missing");
-            return true;
+            return;
         }
         String type = args[0];
 
         if (type.equalsIgnoreCase("accept")) {
             if (args.length < 2) {
                 ConfigLoader.language.sendMessage(player, "island.invite.accept-args-missing");
-                return true;
+                return;
             }
             String playerOrOwner = args[1];
             acceptPlayer(player, playerOrOwner);
         } else if (type.equalsIgnoreCase("decline")) {
             if (args.length < 2) {
                 ConfigLoader.language.sendMessage(player, "island.invite.decline-args-missing");
-                return true;
+                return;
             }
             String playerOrOwner = args[1];
             declinePlayer(player, playerOrOwner);
         } else if (type.equalsIgnoreCase("delete")) {
             if (args.length < 2) {
                 ConfigLoader.language.sendMessage(player, "island.invite.remove-args-missing");
-                return true;
+                return;
             }
             String playerOrOwner = args[1];
             deleteInvitePlayer(player, playerOrOwner);
         } else {
             invitePlayer(player, args[0]);
         }
-        return true;
     }
 
     @Override

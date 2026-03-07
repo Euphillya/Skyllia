@@ -19,27 +19,27 @@ import java.util.Map;
 public class BanListCommand implements SubCommandInterface {
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, permission())) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         List<Players> banned = island.getBannedMembers();
         if (banned.isEmpty()) {
             ConfigLoader.language.sendMessage(player, "island.banlist.empty");
-            return true;
+            return;
         }
 
         Component message = ConfigLoader.language.translate(player, "island.banlist.title", Map.of(
@@ -55,7 +55,6 @@ public class BanListCommand implements SubCommandInterface {
         }
 
         player.sendMessage(message);
-        return true;
     }
 
     @Override

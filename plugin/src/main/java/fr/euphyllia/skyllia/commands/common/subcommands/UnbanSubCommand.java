@@ -35,32 +35,32 @@ public class UnbanSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.unban")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.unban.not-enough-args");
-            return true;
+            return;
         }
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_UNBAN_PERMISSION);
         if (!allowed) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         String playerBan = args[0];
@@ -68,7 +68,7 @@ public class UnbanSubCommand implements SubCommandInterface {
 
         if (players == null) {
             ConfigLoader.language.sendMessage(player, "island.unban.player-not-banned");
-            return true;
+            return;
         }
 
         boolean isRemoved = island.removeMember(players);
@@ -77,7 +77,6 @@ public class UnbanSubCommand implements SubCommandInterface {
         } else {
             ConfigLoader.language.sendMessage(player, "island.unban.failed");
         }
-        return true;
     }
 
     @Override

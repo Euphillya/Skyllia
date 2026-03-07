@@ -51,17 +51,17 @@ public class BankCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         // Vérifier si c'est un joueur
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.player.player-only");
-            return true;
+            return;
         }
         UUID playerId = player.getUniqueId();
 
         if (CommandCacheExecution.isAlreadyExecute(playerId, "bank")) {
             ConfigLoader.language.sendMessage(player, "island.generic.command-in-progress");
-            return true;
+            return;
         }
         CommandCacheExecution.addCommandExecute(playerId, "bank");
 
@@ -70,13 +70,13 @@ public class BankCommand implements SubCommandInterface {
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-island");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             // Commande sans argument => afficher le solde
             handleBalance(player, island);
-            return true;
+            return;
         }
 
         String subCommand = args[0].toLowerCase();
@@ -89,9 +89,6 @@ public class BankCommand implements SubCommandInterface {
                 CommandCacheExecution.removeCommandExec(playerId, "bank");
             }
         }
-
-
-        return true;
     }
 
     /**

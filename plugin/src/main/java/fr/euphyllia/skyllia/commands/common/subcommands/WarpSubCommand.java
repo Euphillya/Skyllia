@@ -39,19 +39,19 @@ public class WarpSubCommand implements SubCommandInterface {
 
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.warp.args-missing");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.warp")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         String warpName = args[0];
@@ -60,7 +60,7 @@ public class WarpSubCommand implements SubCommandInterface {
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                return true;
+                return;
             }
 
             boolean allowed = SkylliaAPI.getPermissionsManager()
@@ -68,23 +68,20 @@ public class WarpSubCommand implements SubCommandInterface {
 
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                return true;
+                return;
             }
 
             WarpIsland targetWarp = island.getWarpByName(warpName);
             if (targetWarp == null) {
                 ConfigLoader.language.sendMessage(player, "island.warp.warp-not-exist");
-                return true;
+                return;
             }
 
             player.teleportAsync(targetWarp.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
             ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
-            return true;
-
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
-            return true;
         }
     }
 

@@ -36,20 +36,20 @@ public class AccessSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.access")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         boolean hasPermission = SkylliaAPI.getPermissionsManager()
@@ -57,7 +57,7 @@ public class AccessSubCommand implements SubCommandInterface {
 
         if (!hasPermission) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         boolean statusAccessUpdate = !island.isPrivateIsland();
@@ -68,7 +68,7 @@ public class AccessSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.access.close");
                 ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
                     RegionUtils.getEntitiesInRegion(
-                            Skyllia.getPlugin(Skyllia.class),
+                            Skyllia.getInstance(),
                             ConfigLoader.general.getRegionDistance(),
                             EntityType.PLAYER,
                             Bukkit.getWorld(name),
@@ -81,7 +81,7 @@ public class AccessSubCommand implements SubCommandInterface {
                                 // pas sur "playerInIsland". Je garde le même comportement.
                                 if (!PlayerUtils.hasPermission(player, "skyllia.island.command.access.bypass")) return;
 
-                                Bukkit.getAsyncScheduler().runNow(Skyllia.getPlugin(Skyllia.class), t -> {
+                                Bukkit.getAsyncScheduler().runNow(Skyllia.getInstance(), t -> {
                                     Players players = island.getMember(playerInIsland.getUniqueId());
                                     if (players == null
                                             || players.getRoleType().equals(RoleType.BAN)
@@ -96,7 +96,6 @@ public class AccessSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.access.open");
             }
         }
-        return true;
     }
 
     @Override

@@ -34,32 +34,32 @@ public class BanSubCommand implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.ban")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         if (args.length < 1) {
             ConfigLoader.language.sendMessage(player, "island.ban.args-missing");
-            return true;
+            return;
         }
 
         Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
         if (island == null) {
             ConfigLoader.language.sendMessage(player, "island.player.no-island");
-            return true;
+            return;
         }
 
         boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_BAN_PERMISSION);
         if (!allowed) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         final String targetName = args[0];
@@ -71,13 +71,13 @@ public class BanSubCommand implements SubCommandInterface {
             } else {
                 ConfigLoader.language.sendMessage(player, "island.ban.failed-player-in-island");
             }
-            return true;
+            return;
         }
 
         Player target = Bukkit.getPlayerExact(targetName);
         if (target == null) {
             ConfigLoader.language.sendMessage(player, "island.player.not-found");
-            return true;
+            return;
         }
 
         Players banned = new Players(target.getUniqueId(), targetName, island.getId(), RoleType.BAN);
@@ -85,8 +85,7 @@ public class BanSubCommand implements SubCommandInterface {
         island.updateMember(banned);
         ConfigLoader.language.sendMessage(player, "island.ban.success");
 
-        ExpelSubCommand.expelPlayer(Skyllia.getPlugin(Skyllia.class), island, target, player, true);
-        return true;
+        ExpelSubCommand.expelPlayer(Skyllia.getInstance(), island, target, player, true);
     }
 
     @Override

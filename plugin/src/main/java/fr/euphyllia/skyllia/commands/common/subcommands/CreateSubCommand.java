@@ -138,20 +138,20 @@ public class CreateSubCommand implements SubCommandInterface {
 
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
-            return true;
+            return;
         }
 
         if (IslandCreationQueue.isQueued(player.getUniqueId())) {
             ConfigLoader.language.sendMessage(player, "island.create.already-in-queue");
-            return true;
+            return;
         }
 
         if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create")) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-            return true;
+            return;
         }
 
         boolean bypass = ConfigLoader.general.isAllowBypassIslandQueue()
@@ -162,8 +162,6 @@ public class CreateSubCommand implements SubCommandInterface {
         } else {
             IslandCreationQueue.queuePlayer(player, args);
         }
-
-        return true;
     }
 
 

@@ -30,18 +30,18 @@ public class OreCommands implements SubCommandInterface {
     }
 
     @Override
-    public boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skylliaore.use")) return true;
+    public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (!sender.hasPermission("skylliaore.use")) return;
         if (args.length < 2) {
             sender.sendMessage(Component.text("Usage: /skylliaadmin generator <player> <generator>").color(NamedTextColor.RED));
-            return false;
+            return;
         }
 
         OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(args[0]);
         Island island = SkylliaAPI.getIslandByPlayerId(offPlayer.getUniqueId());
         if (island == null) {
             sender.sendMessage(Component.text("No island found.").color(NamedTextColor.RED));
-            return true;
+            return;
         }
 
         final String nameGenerator = args[1];
@@ -49,7 +49,7 @@ public class OreCommands implements SubCommandInterface {
 
         if (generator == null) {
             sender.sendMessage(Component.text("The generator '" + nameGenerator + "' does not exist.").color(NamedTextColor.RED));
-            return true;
+            return;
         }
 
         boolean success = SkylliaOre.getGeneratorManager().updateGenerator(island.getId(), generator.name());
@@ -58,8 +58,6 @@ public class OreCommands implements SubCommandInterface {
         } else {
             sender.sendMessage(Component.text("An error occurred while changing the generator.").color(NamedTextColor.RED));
         }
-
-        return true;
     }
 
     @Override
