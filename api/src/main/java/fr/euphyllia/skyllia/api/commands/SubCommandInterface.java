@@ -3,6 +3,8 @@ package fr.euphyllia.skyllia.api.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -14,6 +16,8 @@ import java.util.List;
  * </p>
  */
 public interface SubCommandInterface {
+
+    private Logger log = LoggerFactory.getLogger(SubCommandInterface.class);
 
     /**
      * Legacy method to handle the execution of a sub-command.
@@ -30,6 +34,7 @@ public interface SubCommandInterface {
     @Deprecated(forRemoval = true)
     default boolean onCommand(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         onExecute(plugin, sender, args);
+        log.warn("The SubCommandInterface#onCommand() method will be removed! Update your plugin : {}", plugin.getName());
         return true;
     }
 
