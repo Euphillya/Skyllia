@@ -16,12 +16,12 @@ public class IslandMobSpawnPassiveFlag implements FlagModule {
     private FlagId ALLOW_SPAWN_CAT;
     private FlagId ALLOW_SPAWN_CHICKEN;
     private FlagId ALLOW_SPAWN_COD;
-    private FlagId ALLOW_SPAWN_COPPERGOLEM;
+    private FlagId ALLOW_SPAWN_COPPER_GOLEM;
     private FlagId ALLOW_SPAWN_COW;
     private FlagId ALLOW_SPAWN_DONKEY;
     private FlagId ALLOW_SPAWN_FROG;
-    private FlagId ALLOW_SPAWN_GLOWSQUID;
-    private FlagId ALLOW_SPAWN_HAPPYGHAST;
+    private FlagId ALLOW_SPAWN_GLOW_SQUID;
+    private FlagId ALLOW_SPAWN_HAPPY_GHAST;
     private FlagId ALLOW_SPAWN_HORSE;
     private FlagId ALLOW_SPAWN_MOOSHROOM;
     private FlagId ALLOW_SPAWN_MULE;
@@ -32,14 +32,14 @@ public class IslandMobSpawnPassiveFlag implements FlagModule {
     private FlagId ALLOW_SPAWN_SALMON;
     private FlagId ALLOW_SPAWN_SHEEP;
     private FlagId ALLOW_SPAWN_SNIFFER;
-    private FlagId ALLOW_SPAWN_SNOWGOLEM;
+    private FlagId ALLOW_SPAWN_SNOW_GOLEM;
     private FlagId ALLOW_SPAWN_SQUID;
     private FlagId ALLOW_SPAWN_STRIDER;
     private FlagId ALLOW_SPAWN_TADPOLE;
-    private FlagId ALLOW_SPAWN_TROPICALFISH;
+    private FlagId ALLOW_SPAWN_TROPICAL_FISH;
     private FlagId ALLOW_SPAWN_TURTLE;
     private FlagId ALLOW_SPAWN_VILLAGER;
-    private FlagId ALLOW_SPAWN_WANDERINGVILLAGER;
+    private FlagId ALLOW_SPAWN_WANDERING_VILLAGER;
 
 
     @Override

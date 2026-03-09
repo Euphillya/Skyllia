@@ -7,10 +7,10 @@ import org.bukkit.plugin.Plugin;
 
 public class IslandMobSpawnHostileAdjacentFlag implements FlagModule {
 
-    private FlagId ALLOW_SPAWN_ALL_HOSTILEADJACENT;
-    private FlagId ALLOW_SPAWN_CAMELHUSK;
-    private FlagId ALLOW_SPAWN_SKELETONHORSE;
-    private FlagId ALLOW_SPAWN_ZOMBIEHORSE;
+    private FlagId ALLOW_SPAWN_ALL_HOSTILE_ADJACENT;
+    private FlagId ALLOW_SPAWN_CAMEL_HUSK;
+    private FlagId ALLOW_SPAWN_SKELETON_HORSE;
+    private FlagId ALLOW_SPAWN_ZOMBIE_HORSE;
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
