@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island;
+package fr.euphyllia.skyllia.listeners.permissions.flags.other;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;

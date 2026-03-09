@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island;
+package fr.euphyllia.skyllia.listeners.permissions.flags.explosion;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
@@ -9,16 +9,17 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowPistonsExtendPermissions implements FlagModule {
+public class IslandAllowExplosionsEntityPermissions implements FlagModule {
 
-    private FlagId ISLAND_ALLOW_PISTONS;
+    private FlagId ISLAND_ALLOW_EXPLOSIONS;
 
     @EventHandler(ignoreCancelled = true)
-    public void onExtend(final BlockPistonExtendEvent event) {
-        final Location location = event.getBlock().getLocation();
+    public void onEntityExplode(final EntityExplodeEvent event) {
+        final Location location = event.getLocation();
+        if (location.getWorld() == null) return;
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
         final int chunkX = location.getBlockX() >> 4;
@@ -26,17 +27,17 @@ public class IslandAllowPistonsExtendPermissions implements FlagModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_PISTONS)) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_EXPLOSIONS)) {
             event.setCancelled(true);
         }
     }
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_PISTONS = registry.register(new FlagNode(
-                new NamespacedKey(owner, "island.allow.pistons"),
-                "Autoriser les pistons",
-                "Contrôle l'extension des pistons"
+        this.ISLAND_ALLOW_EXPLOSIONS = registry.idOrRegister(new FlagNode(
+                new NamespacedKey(owner, "island.allow.explosions"),
+                "Autoriser les explosions",
+                "Contrôle les dégâts d'entités par explosion"
         ));
     }
 }

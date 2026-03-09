@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island.flags;
+package fr.euphyllia.skyllia.listeners.permissions.flags.grief;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
@@ -8,18 +8,15 @@ import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Ghast;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.projectiles.ProjectileSource;
 
-public class IslandGhastGriefFlag implements FlagModule {
+public class IslandWitherGriefFlag implements FlagModule {
 
     private FlagId ALLOW_MOB_GRIEF;
-    private FlagId ALLOW_GHAST_GRIEF;
+    private FlagId ALLOW_WITHER_GRIEF;
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
@@ -27,19 +24,15 @@ public class IslandGhastGriefFlag implements FlagModule {
                 new NamespacedKey(owner, "island.allow.mob-grief"),
                 "Autoriser le grief des mobs (général)", "Placeholder"
         ));
-        this.ALLOW_GHAST_GRIEF = registry.idOrRegister(new FlagNode(
-                new NamespacedKey(owner, "island.allow.ghast-grief"),
-                "Autoriser les explosions de ghast", "Placeholder"
+        this.ALLOW_WITHER_GRIEF = registry.idOrRegister(new FlagNode(
+                new NamespacedKey(owner, "island.allow.wither-grief"),
+                "Autoriser les destructions du wither", "Placeholder"
         ));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
-        final Entity entity = event.getEntity();
-        if (!(entity instanceof Fireball fireball)) return;
-
-        final ProjectileSource shooter = fireball.getShooter();
-        if (!(shooter instanceof Ghast)) return;
+        if (!(event.getEntity() instanceof Wither)) return;
 
         final Location location = event.getLocation();
         if (location.getWorld() == null) return;
@@ -50,7 +43,7 @@ public class IslandGhastGriefFlag implements FlagModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_GHAST_GRIEF, ALLOW_MOB_GRIEF)) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_WITHER_GRIEF, ALLOW_MOB_GRIEF)) {
             event.setCancelled(true);
         }
     }

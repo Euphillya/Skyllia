@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island;
+package fr.euphyllia.skyllia.listeners.permissions.flags.grief;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
@@ -13,13 +13,25 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowEndermanGriefPermissions implements FlagModule {
+public class IslandEndermanGriefFlag implements FlagModule {
 
-    private FlagId ISLAND_ALLOW_ENDERMAN_GRIEF;
-    private FlagId ISLAND_ALLOW_MOB_GRIEF;
+    private FlagId ALLOW_MOB_GRIEF;
+    private FlagId ALLOW_ENDERMAN_GRIEF;
+
+    @Override
+    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
+                new NamespacedKey(owner, "island.allow.mob-grief"),
+                "Autoriser le grief des mobs (général)", "Placeholder"
+        ));
+        this.ALLOW_ENDERMAN_GRIEF = registry.idOrRegister(new FlagNode(
+                new NamespacedKey(owner, "island.allow.enderman-grief"),
+                "Autoriser le grief des endermans", "Placeholder"
+        ));
+    }
 
     @EventHandler(ignoreCancelled = true)
-    public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
+    public void onChangeBlock(final EntityChangeBlockEvent event) {
         if (!(event.getEntity() instanceof Enderman)) return;
 
         final Location location = event.getBlock().getLocation();
@@ -30,22 +42,8 @@ public class IslandAllowEndermanGriefPermissions implements FlagModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_ENDERMAN_GRIEF, ISLAND_ALLOW_MOB_GRIEF)) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_ENDERMAN_GRIEF, ALLOW_MOB_GRIEF)) {
             event.setCancelled(true);
         }
-    }
-
-    @Override
-    public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
-                new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)",
-                "Placeholder"
-        ));
-        this.ISLAND_ALLOW_ENDERMAN_GRIEF = registry.register(new FlagNode(
-                new NamespacedKey(owner, "island.allow.enderman-grief"),
-                "Autoriser le grief des endermans",
-                "Placeholder"
-        ));
     }
 }
