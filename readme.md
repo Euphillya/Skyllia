@@ -2,7 +2,7 @@
 
 # <img src="https://cdn.modrinth.com/data/fGbtispn/d3a18500b1a981a2207407035798e918437d0f94_96.webp" height="25"> Skyllia
 
-### Le premier plugin Skyblock entièrement compatible Folia
+### The first Skyblock plugin fully compatible with Folia
 
 [![Folia](https://img.shields.io/badge/Folia-Compatible-green.svg)](https://papermc.io/software/folia)
 [![Paper](https://img.shields.io/badge/Paper-1.20.1+-blue.svg)](https://papermc.io/)
@@ -11,119 +11,119 @@
 
 [Documentation](https://skyllia.eupyllia.moe) • [GitHub](https://github.com/Euphillya/Skyllia) • [Modrinth](https://modrinth.com/plugin/skyllia) • [Discord](https://discord.gg/uUJQEB7XNN)
 
-[![Servers & Players](https://faststats.dev/embed/26db4d71-4959-449d-a0c9-302ea90f2efc?w=800&h=300)](https://faststats.dev/project/skyllia/skyllia-plugin)
+[![Servers & Players](https://faststats.dev/embed/default:6978bcc2-1574-41ea-b5ae-242398b401c7:servers-and-players?w=800&h=300)](https://faststats.dev/project/skyllia/skyllia-plugin)
 </div>
 
 ---
 
-## 📖 À propos
+## 📖 About
 
-**Skyllia** est un plugin Skyblock moderne et performant, conçu dès le départ pour tirer pleinement parti de
-l'architecture multi-threadée de **Folia**. Premier du genre à offrir une compatibilité native avec Folia, Skyllia
-garantit des performances exceptionnelles même avec des centaines de joueurs simultanés.
+**Skyllia** is a modern, high-performance Skyblock plugin, designed from the ground up to fully leverage the
+multi-threaded architecture of **Folia**. The first of its kind to offer native Folia compatibility, Skyllia
+delivers exceptional performance even with hundreds of simultaneous players.
 
-## ✨ Fonctionnalités principales
+## ✨ Key Features
 
 ### 🚀 Performance & Architecture
 
-- **Premier plugin Skyblock compatible Folia** - Architecture multi-threadée native
-- **Système asynchrone** - Pas de freeze, pas de lag (tant que votre configuration serveur le permet)
+- **First Folia-compatible Skyblock plugin** — Native multi-threaded architecture
+- **Asynchronous system** — No freezes, no lag (as long as your server configuration allows)
 
-### 💾 Gestion des données
+### 💾 Data Management
 
-- **Base de données** - SQLite, MariaDB, PostgreSQL
-- **Pool de connexions HikariCP** - Performances optimales
-- **Sauvegarde asynchrone** - Aucun impact sur les performances
+- **Database support** — SQLite, MariaDB, PostgreSQL
+- **HikariCP connection pool** — Optimal performance
+- **Asynchronous saving** — Zero performance impact
 
-### 🏝️ Gestion des îles
+### 🏝️ Island Management
 
-- **Création instantanée** - File d'attente optimisée
-- **Schématiques personnalisables** - WorldEdit/FAWE ou système interne
-- **Multi-mondes** - Overworld, Nether, End configurables
-- **Portails automatiques** - Navigation fluide entre dimensions
-- **Espacement configurable** - Distance entre les îles ajustable
+- **Instant creation** — Optimized queue system
+- **Customizable schematics** — WorldEdit/FAWE or built-in system
+- **Multi-world** — Overworld, Nether, End all configurable
+- **Automatic portals** — Smooth navigation between dimensions
+- **Configurable spacing** — Adjustable distance between islands
 
-### 👥 Système de permissions
+### 👥 Permission System
 
-- **6 rôles prédéfinis** - Owner, Co-Owner, Moderator, Member, Visitor, Ban
-- **50+ permissions granulaires** - Contrôle total par rôle
-- **Trust temporaire** - Accès invités configurables
-- **Système modulaire** - Créez vos propres rôles
+- **6 predefined roles** — Owner, Co-Owner, Moderator, Member, Visitor, Ban
+- **50+ granular permissions** — Full control per role
+- **Temporary trust** — Configurable guest access
+- **Modular system** — Create your own roles
 
-### 🎯 Fonctionnalités avancées
+### 🎯 Advanced Features
 
-- **Warps d'île** - Téléportation rapide sur votre île
-- **Biomes personnalisables** - Changez l'ambiance de votre île
-- **Game rules par île** - PvP, mobs, explosions, etc.
-- **Système de ban** - Bannissez les griefers de votre île
-- **Invitations** - Système d'invitation avec expiration
+- **Island warps** — Quick teleportation to your island
+- **Customizable biomes** — Change the atmosphere of your island
+- **Per-island game rules** — PvP, mobs, explosions, etc.
+- **Ban system** — Ban griefers from your island
+- **Invitations** — Invitation system with expiry
 
-### 🔌 Intégrations
+### 🔌 Integrations
 
-- **PlaceholderAPI** - Variables pour scoreboard, tab, etc.
-- **Vault** - Support économie (via SkylliaBank)
-- **WorldEdit/FAWE** - Schématiques haute performance
-- **Insights** - Limites de blocs (via InsightsSkyllia)
+- **PlaceholderAPI** — Variables for scoreboard, tab, etc.
+- **Vault** — Economy support (via SkylliaBank)
+- **WorldEdit/FAWE** — High-performance schematics
+- **Insights** — Block limits (via InsightsSkyllia)
 
-## 🎮 Addons officiels
+## 🎮 Official Addons
 
-Étendez Skyllia avec 5 addons officiels gratuits :
+Extend Skyllia with 5 free official addons:
 
-| Addon                | Description                                      |
-|----------------------|--------------------------------------------------|
-| **SkylliaBank**      | Système bancaire partagé par île avec historique |
-| **SkylliaOre**       | Générateur automatique de minerais configurable  |
-| **SkylliaChallenge** | Défis quotidiens/hebdomadaires avec récompenses  |
-| **SkylliaChat**      | Chat séparé par île avec canaux multiples        |
-| **InsightsSkyllia**  | Limites de blocs et entités par île              |
+| Addon                | Description                                           |
+|----------------------|-------------------------------------------------------|
+| **SkylliaBank**      | Shared island bank system with transaction history    |
+| **SkylliaOre**       | Configurable automatic ore generator                  |
+| **SkylliaChallenge** | Daily/weekly challenges with rewards                  |
+| **SkylliaChat**      | Per-island chat with multiple channels                |
+| **InsightsSkyllia**  | Block and entity limits per island                    |
 
-## 📋 Prérequis
+## 📋 Requirements
 
-- **Serveur** : Folia 1.20+ ou Paper 1.20.1+
-- **Java** : 21 ou supérieur
-- **RAM** : 4GB minimum, 8GB+ recommandé
-- **Base de données** (optionnel) : MariaDB 10.5+ ou PostgreSQL 12+ (privilégiez PostgreSQL pour les gros serveurs)
+- **Server**: Folia 1.20+ or Paper 1.20.1+
+- **Java**: 21 or higher
+- **RAM**: 4GB minimum, 8GB+ recommended
+- **Database** (optional): MariaDB 10.5+ or PostgreSQL 12+ (prefer PostgreSQL for large servers)
 
-### Plugins compatibles (optionnels)
+### Compatible plugins (optional)
 
-- WorldEdit ou FastAsyncWorldEdit (recommandé)
-- Vault (pour SkylliaBank)
-- PlaceholderAPI (pour placeholders)
-- LuckPerms (pour permissions serveur)
+- WorldEdit or FastAsyncWorldEdit (recommended)
+- Vault (for SkylliaBank)
+- PlaceholderAPI (for placeholders)
+- LuckPerms (for server permissions)
 
-## 🚀 Installation rapide
+## 🚀 Quick Installation
 
-1. **Téléchargez** Skyllia sur [Modrinth](https://modrinth.com/plugin/skyllia)
-   ou [GitHub Releases](https://github.com/Euphillya/Skyllia/releases)
-2. **Placez** le .jar dans `plugins/`
-3. **Démarrez** le serveur (première initialisation)
-4. **Configurez** dans `plugins/Skyllia/config/`
-5. **Redémarrez** et c'est prêt !
+1. **Download** Skyllia from [Modrinth](https://modrinth.com/plugin/skyllia)
+   or [GitHub Releases](https://github.com/Euphillya/Skyllia/releases)
+2. **Place** the .jar in `plugins/`
+3. **Start** the server (first initialization)
+4. **Configure** in `plugins/Skyllia/config/`
+5. **Restart** and you're good to go!
 
-### Configuration minimale
+### Minimal Configuration
 
 ```toml
 # config.toml
 [settings.island]
-region-distance = 10  # 5120 blocs entre îles, 1 region = 512x512
+region-distance = 10  # 5120 blocks between islands, 1 region = 512x512
 max-islands = 500_000
 
-# database.toml - SQLite par défaut
+# database.toml - SQLite by default
 [sqlite]
 enabled = true
 ```
 
-Pour une installation complète, consultez la [documentation]().
+For a full installation guide, check the [documentation]().
 
 ## 📚 Documentation
 
-La documentation complète est disponible sur GitBook :
+Full documentation is available on GitBook:
 
 **🔗 [skyllia.euphyllia.moe](https://skyllia.euphyllia.moe)**
 
-## 💻 Pour les développeurs
+## 💻 For Developers
 
-Skyllia fournit une API complète pour créer vos propres addons :
+Skyllia provides a complete API to create your own addons:
 
 ```xml
 <!-- Maven -->
@@ -147,51 +147,51 @@ import org.bukkit.entity.Player;
 
 Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
 if(island != null){
-   player.sendMessage("Votre île : "+ island.getId());
+   player.sendMessage("Your island: "+ island.getId());
 }
 ```
 
-Consultez la [documentation API](#) pour plus d'informations.
+See the [API documentation](#) for more information.
 
-## 🎯 Commandes principales
+## 🎯 Main Commands
 
-### Joueurs
-
-```
-/island create <type> - Créer une île
-/island home - Se téléporter à son île
-/island invite <joueur> - Inviter un joueur
-/island delete - Supprimer son île
-/island biome <biome> - Changer le biome
-/island expel <joueur> - Expulser un visiteur
-```
-
-### Administrateurs
+### Players
 
 ```
-/isadmin reload - Recharger les configs
-/isadmin database - Gestion base de données
-/isadmin purge <jours> - Nettoyer îles inactives
-/isadmin setsize <joueur> <taille> - Modifier taille
-/isadmin teleport <joueur> - TP vers île d'un joueur
+/island create <type>    - Create an island
+/island home             - Teleport to your island
+/island invite <player>  - Invite a player
+/island delete           - Delete your island
+/island biome <biome>    - Change the biome
+/island expel <player>   - Expel a visitor
 ```
 
-Liste complète : [Commandes joueur](#) • [Commandes admin](#)
+### Administrators
 
-## 🤝 Contribution
+```
+/isadmin reload              - Reload configs
+/isadmin database            - Database management
+/isadmin purge <days>        - Clean up inactive islands
+/isadmin setsize <player> <size> - Modify island size
+/isadmin teleport <player>   - TP to a player's island
+```
 
-Skyllia est open source, vous pouvez contribuer via :
+Full list: [Player commands](#) • [Admin commands](#)
 
-- **Rapports de bugs** - [Issues GitHub](https://github.com/Euphillya/Skyllia/issues)
-- **Suggestions** - Discord ou GitHub Discussions
-- **Addons communautaires** - Partagez vos créations !
+## 🤝 Contributing
+
+Skyllia is open source, you can contribute via:
+
+- **Bug reports** — [GitHub Issues](https://github.com/Euphillya/Skyllia/issues)
+- **Suggestions** — Discord or GitHub Discussions
+- **Community addons** — Share your creations!
 
 ## 📞 Support
 
-- **GitHub** : [Euphillya/Skyllia](https://github.com/Euphillya/Skyllia)
-- **Issues** : [Signaler un bug](https://github.com/Euphillya/Skyllia/issues)
-- **Discord** : [Serveur Euphyllia](https://discord.gg/uUJQEB7XNN)
+- **GitHub**: [Euphillya/Skyllia](https://github.com/Euphillya/Skyllia)
+- **Issues**: [Report a bug](https://github.com/Euphillya/Skyllia/issues)
+- **Discord**: [Euphyllia Server](https://discord.gg/uUJQEB7XNN)
 
-## 📜 Licence
+## 📜 License
 
-Skyllia est sous licence MIT. Pour plus de détails, consultez le fichier [LICENSE](LICENSE) dans le dépôt GitHub.
+Skyllia is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file in the GitHub repository.
