@@ -7,7 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 public class IslandMobSpawnPassiveFlag implements FlagModule {
 
-    private FlagId ALLOW_ALL_PASSIVE; // Il passe en priorité, si true, tout est true, sinon c'est chacun
+    private FlagId ALLOW_SPAWN_ALL_PASSIVE; // Il passe en priorité, si true, tout est true, sinon c'est chacun
     private FlagId ALLOW_SPAWN_ALLAY;
     private FlagId ALLOW_SPAWN_ARMADILLO;
     private FlagId ALLOW_SPAWN_AXOLOTL;
