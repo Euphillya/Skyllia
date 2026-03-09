@@ -170,8 +170,6 @@ See the [API documentation](#) for more information.
 
 ```
 /isadmin reload              - Reload configs
-/isadmin database            - Database management
-/isadmin purge <days>        - Clean up inactive islands
 /isadmin setsize <player> <size> - Modify island size
 /isadmin teleport <player>   - TP to a player's island
 ```
