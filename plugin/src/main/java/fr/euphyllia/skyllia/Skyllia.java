@@ -26,13 +26,12 @@ import java.io.File;
 @SuppressWarnings("UnstableApiUsage")
 public class Skyllia extends JavaPlugin {
 
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
     private static Skyllia instance;
     private final Logger logger = LogManager.getLogger(this);
     private InterneAPI interneAPI;
     private SubCommandRegistry commandRegistry;
     private SubCommandRegistry adminCommandRegistry;
-
-    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
     private BukkitMetrics fastStatsMetrics;
 
     public static Skyllia getInstance() {

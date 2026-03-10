@@ -1,47 +1,67 @@
 package fr.euphyllia.skyllia.listeners.permissions.flags.entity;
 
+import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
+import fr.euphyllia.skyllia.api.permissions.FlagNode;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
+import fr.euphyllia.skyllia.api.skyblock.Island;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.Plugin;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class IslandMobSpawnHostileFlag implements FlagModule {
 
     private FlagId ALLOW_SPAWN_ALL_HOSTILE;
-    private FlagId ALLOW_SPAWN_BLAZE;
-    private FlagId ALLOW_SPAWN_BOGGED;
-    private FlagId ALLOW_SPAWN_BREEZE;
-    private FlagId ALLOW_SPAWN_CREAKING;
-    private FlagId ALLOW_SPAWN_CREEPER;
-    private FlagId ALLOW_SPAWN_ELDER_GUARDIAN;
-    private FlagId ALLOW_SPAWN_ENDERMITE;
-    private FlagId ALLOW_SPAWN_EVOKER;
-    private FlagId ALLOW_SPAWN_GHAST;
-    private FlagId ALLOW_SPAWN_GUARDIAN;
-    private FlagId ALLOW_SPAWN_HOGLIN;
-    private FlagId ALLOW_SPAWN_HUSK;
-    private FlagId ALLOW_SPAWN_MAGMA_CUBE;
-    private FlagId ALLOW_SPAWN_PARCHED;
-    private FlagId ALLOW_SPAWN_PHANTOM;
-    private FlagId ALLOW_SPAWN_PIGLIN_BRUTE;
-    private FlagId ALLOW_SPAWN_PILLAGER;
-    private FlagId ALLOW_SPAWN_RAVAGER;
-    private FlagId ALLOW_SPAWN_SHULKER;
-    private FlagId ALLOW_SPAWN_SILVERFISH;
-    private FlagId ALLOW_SPAWN_SKELETON;
-    private FlagId ALLOW_SPAWN_SLIME;
-    private FlagId ALLOW_SPAWN_STRAY;
-    private FlagId ALLOW_SPAWN_VEX;
-    private FlagId ALLOW_SPAWN_VINDICATOR;
-    private FlagId ALLOW_SPAWN_WARDEN;
-    private FlagId ALLOW_SPAWN_WITCH;
-    private FlagId ALLOW_SPAWN_WITHER_SKELETON;
-    private FlagId ALLOW_SPAWN_ZOGLIN;
-    private FlagId ALLOW_SPAWN_ZOMBIE;
-    private FlagId ALLOW_SPAWN_ZOMBIE_VILLAGER;
+    private Map<EntityType, FlagId> flagByType;
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
+        this.ALLOW_SPAWN_ALL_HOSTILE = registry.idOrRegister(new FlagNode(
+                new NamespacedKey(owner, "island.spawn.hostile.all"),
+                "Autoriser le spawn des mobs hostiles (général)", "Contrôle le spawn de tous les mobs hostiles"));
 
+        this.flagByType = new EnumMap<>(EntityType.class);
+        Map<EntityType, String> supported = SkylliaAPI.getMobsSpawnImpl().supportedHostileMobs();
+        for (Map.Entry<EntityType, String> entry : supported.entrySet()) {
+            flagByType.put(entry.getKey(), registry.idOrRegister(new FlagNode(
+                    new NamespacedKey(owner, "island.spawn.hostile." + entry.getValue()),
+                    "Autoriser le spawn : " + entry.getValue(), "Placeholder")));
+        }
+    }
+
+    private void handleSpawn(EntityType type, Location location, Runnable cancel) {
+        if (flagByType == null) return;
+        FlagId specific = flagByType.get(type);
+        if (specific == null) return;
+        if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
+        Island island = SkylliaAPI.getIslandByChunk(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        if (island == null) return;
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, specific, ALLOW_SPAWN_ALL_HOSTILE)) {
+            cancel.run();
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    public void onPreCreatureSpawn(final PreCreatureSpawnEvent event) {
+        if (SkylliaAPI.getMobsSpawnImpl().ignoredReasons().contains(event.getReason())) return;
+        handleSpawn(event.getType(), event.getSpawnLocation(), () -> {
+            event.setCancelled(true);
+            event.setShouldAbortSpawn(true);
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    public void onCreatureSpawn(final CreatureSpawnEvent event) {
+        if (SkylliaAPI.getMobsSpawnImpl().ignoredReasons().contains(event.getSpawnReason())) return;
+        handleSpawn(event.getEntityType(), event.getLocation(), () -> event.setCancelled(true));
     }
 }

@@ -69,13 +69,13 @@ delivers exceptional performance even with hundreds of simultaneous players.
 
 Extend Skyllia with 5 free official addons:
 
-| Addon                | Description                                           |
-|----------------------|-------------------------------------------------------|
-| **SkylliaBank**      | Shared island bank system with transaction history    |
-| **SkylliaOre**       | Configurable automatic ore generator                  |
-| **SkylliaChallenge** | Daily/weekly challenges with rewards                  |
-| **SkylliaChat**      | Per-island chat with multiple channels                |
-| **InsightsSkyllia**  | Block and entity limits per island                    |
+| Addon                | Description                                        |
+|----------------------|----------------------------------------------------|
+| **SkylliaBank**      | Shared island bank system with transaction history |
+| **SkylliaOre**       | Configurable automatic ore generator               |
+| **SkylliaChallenge** | Daily/weekly challenges with rewards               |
+| **SkylliaChat**      | Per-island chat with multiple channels             |
+| **InsightsSkyllia**  | Block and entity limits per island                 |
 
 ## 📋 Requirements
 

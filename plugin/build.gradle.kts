@@ -6,7 +6,7 @@ group = "fr.euphyllia.skyllia"
 
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT") { isTransitive = false }
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT") { isTransitive = false }
     compileOnly("net.kyori:adventure-text-minimessage:4.25.0")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("dev.faststats.metrics:bukkit:0.17.2")
@@ -20,9 +20,6 @@ dependencies {
     compileOnly(project(":hook:essentialsx"))
 
     // NMS Version
-    compileOnly(project(":nms:v1_20_R1"))
-    compileOnly(project(":nms:v1_20_R2"))
-    compileOnly(project(":nms:v1_20_R3"))
     compileOnly(project(":nms:v1_20_R4"))
     compileOnly(project(":nms:v1_21_R1"))
     compileOnly(project(":nms:v1_21_R2"))

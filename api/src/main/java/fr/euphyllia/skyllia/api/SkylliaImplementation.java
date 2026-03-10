@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
+import fr.euphyllia.skyllia.api.utils.nms.MobsSpawnImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -161,6 +162,12 @@ public interface SkylliaImplementation {
      */
     @ApiStatus.Internal
     WorldNMS getWorldNMS();
+
+    /**
+     * Do not use. Reserved for Skyllia internal NMS bridges.
+     */
+    @ApiStatus.Internal
+    MobsSpawnImpl getMobsSpawnImpl();
 
     /**
      * Retrieves the Permissions Manager.
