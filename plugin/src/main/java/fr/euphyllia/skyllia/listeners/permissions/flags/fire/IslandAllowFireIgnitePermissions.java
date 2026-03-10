@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island;
+package fr.euphyllia.skyllia.listeners.permissions.flags.fire;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
@@ -9,17 +9,16 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowExplosionsEntityPermissions implements FlagModule {
+public class IslandAllowFireIgnitePermissions implements FlagModule {
 
-    private FlagId ISLAND_ALLOW_EXPLOSIONS;
+    private FlagId ISLAND_ALLOW_FIRE;
 
     @EventHandler(ignoreCancelled = true)
-    public void onEntityExplode(final EntityExplodeEvent event) {
-        final Location location = event.getLocation();
-        if (location.getWorld() == null) return;
+    public void onIgnite(final BlockIgniteEvent event) {
+        final Location location = event.getBlock().getLocation();
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
         final int chunkX = location.getBlockX() >> 4;
@@ -27,17 +26,19 @@ public class IslandAllowExplosionsEntityPermissions implements FlagModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_EXPLOSIONS)) {
+        final boolean flagEnabled = SkylliaAPI.getPermissionsManager()
+                .hasFlag(island, ISLAND_ALLOW_FIRE);
+        if (!flagEnabled) {
             event.setCancelled(true);
         }
     }
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_EXPLOSIONS = registry.idOrRegister(new FlagNode(
-                new NamespacedKey(owner, "island.allow.explosions"),
-                "Autoriser les explosions",
-                "Contrôle les dégâts d'entités par explosion"
+        this.ISLAND_ALLOW_FIRE = registry.register(new FlagNode(
+                new NamespacedKey(owner, "island.allow.fire"),
+                "Autoriser le feu",
+                "Contrôle l'allumage du feu (briquet, portail, foudre, lave)"
         ));
     }
 }

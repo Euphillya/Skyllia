@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
+import fr.euphyllia.skyllia.api.utils.nms.MobsSpawnImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -242,6 +243,11 @@ public final class SkylliaAPI {
     @ApiStatus.Internal
     public static WorldNMS getWorldNMS() {
         return implementation.getWorldNMS();
+    }
+
+    @ApiStatus.Internal
+    public static MobsSpawnImpl getMobsSpawnImpl() {
+        return implementation.getMobsSpawnImpl();
     }
 
     /**

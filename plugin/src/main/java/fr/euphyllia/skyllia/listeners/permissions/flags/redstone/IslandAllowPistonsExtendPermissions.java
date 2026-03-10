@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island;
+package fr.euphyllia.skyllia.listeners.permissions.flags.redstone;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
@@ -9,15 +9,15 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowFireSpreadPermissions implements FlagModule {
+public class IslandAllowPistonsExtendPermissions implements FlagModule {
 
-    private FlagId ISLAND_ALLOW_FIRE;
+    private FlagId ISLAND_ALLOW_PISTONS;
 
     @EventHandler(ignoreCancelled = true)
-    public void onSpread(final BlockSpreadEvent event) {
+    public void onExtend(final BlockPistonExtendEvent event) {
         final Location location = event.getBlock().getLocation();
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
@@ -26,17 +26,17 @@ public class IslandAllowFireSpreadPermissions implements FlagModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_FIRE)) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_PISTONS)) {
             event.setCancelled(true);
         }
     }
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_FIRE = registry.idOrRegister(new FlagNode(
-                new NamespacedKey(owner, "island.allow.fire"),
-                "Autoriser le feu",
-                "Contrôle la propagation du feu"
+        this.ISLAND_ALLOW_PISTONS = registry.register(new FlagNode(
+                new NamespacedKey(owner, "island.allow.pistons"),
+                "Autoriser les pistons",
+                "Contrôle l'extension des pistons"
         ));
     }
 }

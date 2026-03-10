@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island.flags;
+package fr.euphyllia.skyllia.listeners.permissions.flags.grief;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
@@ -9,15 +9,16 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.WitherSkull;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandWitherSkullGriefFlag implements FlagModule {
+public class IslandTntGriefFlag implements FlagModule {
 
     private FlagId ALLOW_MOB_GRIEF;
-    private FlagId ALLOW_WITHER_SKULL_GRIEF;
+    private FlagId ALLOW_TNT_GRIEF;
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
@@ -25,16 +26,16 @@ public class IslandWitherSkullGriefFlag implements FlagModule {
                 new NamespacedKey(owner, "island.allow.mob-grief"),
                 "Autoriser le grief des mobs (général)", "Placeholder"
         ));
-        this.ALLOW_WITHER_SKULL_GRIEF = registry.idOrRegister(new FlagNode(
-                new NamespacedKey(owner, "island.allow.wither-skull-grief"),
-                "Autoriser les explosions des têtes de wither", "Placeholder"
+        this.ALLOW_TNT_GRIEF = registry.idOrRegister(new FlagNode(
+                new NamespacedKey(owner, "island.allow.tnt-grief"),
+                "Autoriser les explosions de TNT", "Placeholder"
         ));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
         final Entity entity = event.getEntity();
-        if (!(entity instanceof WitherSkull)) return;
+        if (!(entity instanceof TNTPrimed) && !(entity instanceof ExplosiveMinecart)) return;
 
         final Location location = event.getLocation();
         if (location.getWorld() == null) return;
@@ -45,7 +46,7 @@ public class IslandWitherSkullGriefFlag implements FlagModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_WITHER_SKULL_GRIEF, ALLOW_MOB_GRIEF)) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_TNT_GRIEF, ALLOW_MOB_GRIEF)) {
             event.setCancelled(true);
         }
     }

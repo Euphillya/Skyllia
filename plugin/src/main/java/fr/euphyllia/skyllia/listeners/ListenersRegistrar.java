@@ -15,11 +15,19 @@ import fr.euphyllia.skyllia.listeners.permissions.decor.DecorHangingPlacePermiss
 import fr.euphyllia.skyllia.listeners.permissions.entity.EntityBreedPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.entity.EntityDamagePermissions;
 import fr.euphyllia.skyllia.listeners.permissions.entity.EntityInteractPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.entity.*;
+import fr.euphyllia.skyllia.listeners.permissions.flags.explosion.IslandAllowExplosionsBlockPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.explosion.IslandAllowExplosionsEntityPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.fire.IslandAllowFireBurnPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.fire.IslandAllowFireIgnitePermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.fire.IslandAllowFireSpreadPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.grief.*;
+import fr.euphyllia.skyllia.listeners.permissions.flags.other.IslandAllowFluidsPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.redstone.IslandAllowPistonsExtendPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.flags.redstone.IslandAllowPistonsRetractPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.inventory.InventoryModifyClickPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.inventory.InventoryModifyDragPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.inventory.InventoryOpenPermissions;
-import fr.euphyllia.skyllia.listeners.permissions.island.*;
-import fr.euphyllia.skyllia.listeners.permissions.island.flags.*;
 import fr.euphyllia.skyllia.listeners.permissions.player.ItemDropPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.player.ItemPickupPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.player.TeleportPermissions;
@@ -106,6 +114,12 @@ public class ListenersRegistrar {
         flagModuleManager.addModule(plugin, new IslandAllowFluidsPermissions());
         flagModuleManager.addModule(plugin, new IslandAllowPistonsExtendPermissions());
         flagModuleManager.addModule(plugin, new IslandAllowPistonsRetractPermissions());
+        flagModuleManager.addModule(plugin, new IslandMobSpawnBossFlag());
+        flagModuleManager.addModule(plugin, new IslandMobSpawnHostileAdjacentFlag());
+        flagModuleManager.addModule(plugin, new IslandMobSpawnHostileFlag());
+        flagModuleManager.addModule(plugin, new IslandMobSpawnNeutralFlag());
+        flagModuleManager.addModule(plugin, new IslandMobSpawnOtherFlag());
+        flagModuleManager.addModule(plugin, new IslandMobSpawnPassiveFlag());
 
         moduleManager.initAndRegisterAll();
         flagModuleManager.initAndRegisterAll();

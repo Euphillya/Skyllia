@@ -10,6 +10,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +31,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
     @Override
     public void execute(CommandSourceStack sender, String @NotNull [] args) {
         Player player = sender.getSender() instanceof Player ? (Player) sender.getSender() : null;
-        if (!sender.getSender().hasPermission("skyllia.admins.commands")) {
+        if (!sender.getSender().hasPermission(permission())) {
             ConfigLoader.language.sendMessage(player != null ? player : sender.getSender(), "island.player.permission-denied");
             return;
         }
@@ -45,11 +46,13 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
             Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
                     subCommandInterface.onExecute(this.plugin, sender.getSender(), listArgs));
         }
-        return;
     }
 
     @Override
-    public @NotNull Collection<String> suggest(CommandSourceStack sender, String[] args) {
+    public @NotNull Collection<String> suggest(@NonNull CommandSourceStack sender, String[] args) {
+        if (!sender.getSender().hasPermission(permission())) {
+            return Collections.emptyList();
+        }
         Set<String> commands = registry.getCommandMap().keySet();
         if (args.length == 0) {
             return commands;
@@ -76,5 +79,10 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new SetMaxMembersSubCommands(), "set_max_member", "setmaxmembers");
         registry.registerSubCommand(new SetSizeSubCommands(), "set_size", "setsize");
         registry.registerSubCommand(new SchematicSubCommands(), "schematic", "schem");
+    }
+
+    @Override
+    public @NotNull String permission() {
+        return "skyllia.admins.commands";
     }
 }

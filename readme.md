@@ -69,17 +69,17 @@ delivers exceptional performance even with hundreds of simultaneous players.
 
 Extend Skyllia with 5 free official addons:
 
-| Addon                | Description                                           |
-|----------------------|-------------------------------------------------------|
-| **SkylliaBank**      | Shared island bank system with transaction history    |
-| **SkylliaOre**       | Configurable automatic ore generator                  |
-| **SkylliaChallenge** | Daily/weekly challenges with rewards                  |
-| **SkylliaChat**      | Per-island chat with multiple channels                |
-| **InsightsSkyllia**  | Block and entity limits per island                    |
+| Addon                | Description                                        |
+|----------------------|----------------------------------------------------|
+| **SkylliaBank**      | Shared island bank system with transaction history |
+| **SkylliaOre**       | Configurable automatic ore generator               |
+| **SkylliaChallenge** | Daily/weekly challenges with rewards               |
+| **SkylliaChat**      | Per-island chat with multiple channels             |
+| **InsightsSkyllia**  | Block and entity limits per island                 |
 
 ## 📋 Requirements
 
-- **Server**: Folia 1.20+ or Paper 1.20.1+
+- **Server**: Folia 1.20.6+ or Paper 1.20.6+
 - **Java**: 21 or higher
 - **RAM**: 4GB minimum, 8GB+ recommended
 - **Database** (optional): MariaDB 10.5+ or PostgreSQL 12+ (prefer PostgreSQL for large servers)

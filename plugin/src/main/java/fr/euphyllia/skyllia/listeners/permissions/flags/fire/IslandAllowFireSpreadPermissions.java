@@ -1,4 +1,4 @@
-package fr.euphyllia.skyllia.listeners.permissions.island;
+package fr.euphyllia.skyllia.listeners.permissions.flags.fire;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.permissions.FlagId;
@@ -9,15 +9,15 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.plugin.Plugin;
 
-public class IslandAllowPistonsRetractPermissions implements FlagModule {
+public class IslandAllowFireSpreadPermissions implements FlagModule {
 
-    private FlagId ISLAND_ALLOW_PISTONS;
+    private FlagId ISLAND_ALLOW_FIRE;
 
     @EventHandler(ignoreCancelled = true)
-    public void onRetract(final BlockPistonRetractEvent event) {
+    public void onSpread(final BlockSpreadEvent event) {
         final Location location = event.getBlock().getLocation();
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
@@ -26,17 +26,17 @@ public class IslandAllowPistonsRetractPermissions implements FlagModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_PISTONS)) {
+        if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_FIRE)) {
             event.setCancelled(true);
         }
     }
 
     @Override
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
-        this.ISLAND_ALLOW_PISTONS = registry.idOrRegister(new FlagNode(
-                new NamespacedKey(owner, "island.allow.pistons"),
-                "Autoriser les pistons",
-                "Contrôle la rétraction des pistons"
+        this.ISLAND_ALLOW_FIRE = registry.idOrRegister(new FlagNode(
+                new NamespacedKey(owner, "island.allow.fire"),
+                "Autoriser le feu",
+                "Contrôle la propagation du feu"
         ));
     }
 }
