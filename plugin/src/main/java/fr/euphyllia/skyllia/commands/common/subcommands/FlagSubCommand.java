@@ -16,10 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FlagSubCommand implements SubCommandInterface {
@@ -57,6 +54,14 @@ public class FlagSubCommand implements SubCommandInterface {
         return key.getNamespace() + ":" + key.getKey();
     }
 
+    private static String flagPermNode(NamespacedKey key) {
+        return "skyllia.island.flag." + toKeyString(key);
+    }
+
+    private static boolean hasPermissionForFlag(Player player, NamespacedKey key) {
+        return PlayerUtils.hasPermission(player, flagPermNode(key));
+    }
+
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -91,7 +96,7 @@ public class FlagSubCommand implements SubCommandInterface {
             String filter = (args.length >= 2) ? args[1].toLowerCase(Locale.ROOT) : "";
             List<String> all = registry.keys().stream()
                     .map(FlagSubCommand::toKeyString)
-                    .filter(k -> filter.isEmpty() || k.toLowerCase(Locale.ROOT).contains(filter))
+                    .filter(k -> (filter.isEmpty() || k.toLowerCase(Locale.ROOT).contains(filter)) && PlayerUtils.hasPermission(player, "skyllia.island.flag." + k))
                     .sorted()
                     .toList();
 
@@ -149,6 +154,16 @@ public class FlagSubCommand implements SubCommandInterface {
             return;
         }
 
+        boolean isReadOnly = action.equals("get")
+                || (action.equals("auto") && (args.length - offset < 2 || parseBool(args[offset + 1]) == null));
+
+        if (!isReadOnly && !hasPermissionForFlag(player, key)) {
+            ConfigLoader.language.sendMessage(player, "island.flag.permission-denied", Map.of(
+                    "%flag%", toKeyString(key)
+            ));
+            return;
+        }
+
         Boolean explicitBool = (args.length - offset >= 2) ? parseBool(args[offset + 1]) : null;
 
         boolean current = island.getIslandFlags().has(registry, fid);
@@ -186,7 +201,6 @@ public class FlagSubCommand implements SubCommandInterface {
                 "%old%", String.valueOf(current),
                 "%new%", String.valueOf(finalValue)
         ));
-        return;
     }
 
 
@@ -229,18 +243,29 @@ public class FlagSubCommand implements SubCommandInterface {
         }
 
         int offset = isAction(args[0]) ? 1 : 0;
+        String action = isAction(args[0]) ? args[0].toLowerCase(Locale.ROOT) : "auto";
 
         if (args.length == offset + 1) {
             String partial = args[offset].trim().toLowerCase(Locale.ROOT);
-            return registry.keys().stream()
-                    .map(FlagSubCommand::toKeyString)
-                    .filter(k -> k.toLowerCase(Locale.ROOT).startsWith(partial))
-                    .sorted()
-                    .limit(50)
-                    .toList();
+            List<String> toSort = new ArrayList<>();
+            for (NamespacedKey k : registry.keys()) {
+                if (action.equals("get") || action.equals("list") || hasPermissionForFlag(player, k)) {
+                    String string = toKeyString(k);
+                    if (string.toLowerCase(Locale.ROOT).startsWith(partial)) {
+                        toSort.add(string);
+                    }
+                }
+            }
+            toSort.sort(null);
+            List<String> list = new ArrayList<>();
+            long limit = 50;
+            for (String keyString : toSort) {
+                if (limit-- == 0) break;
+                list.add(keyString);
+            }
+            return list;
         }
 
-        String action = isAction(args[0]) ? args[0].toLowerCase(Locale.ROOT) : "auto";
         if (args.length == offset + 2 && !action.equals("get") && !action.equals("list") && !action.equals("toggle")) {
             String partial = args[offset + 1].trim().toLowerCase(Locale.ROOT);
             return BOOLS.stream().filter(b -> b.startsWith(partial)).toList();

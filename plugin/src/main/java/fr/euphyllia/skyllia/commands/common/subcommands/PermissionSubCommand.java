@@ -53,8 +53,7 @@ public class PermissionSubCommand implements SubCommandInterface {
 
     private static Boolean parseBool(String input) {
         if (input == null) return null;
-        String v = input.toLowerCase(Locale.ROOT);
-        return switch (v) {
+        return switch (input.toLowerCase(Locale.ROOT)) {
             case "true", "on", "1", "yes" -> true;
             case "false", "off", "0", "no" -> false;
             default -> null;
@@ -63,6 +62,18 @@ public class PermissionSubCommand implements SubCommandInterface {
 
     private static String toKeyString(NamespacedKey key) {
         return key.getNamespace() + ":" + key.getKey();
+    }
+
+    /**
+     * skyllia.island.permission.<namespace>:<key>
+     * ex: skyllia.island.permission.skyllia:island.member.break
+     */
+    private static String permPermNode(NamespacedKey key) {
+        return "skyllia.island.permission." + toKeyString(key);
+    }
+
+    private static boolean hasPermissionForPerm(Player player, NamespacedKey key) {
+        return PlayerUtils.hasPermission(player, permPermNode(key));
     }
 
     @Override
@@ -95,12 +106,11 @@ public class PermissionSubCommand implements SubCommandInterface {
 
         PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
 
-        // /is permission list [filter]
         if (args[0].equalsIgnoreCase("list")) {
             String filter = (args.length >= 2) ? args[1].toLowerCase(Locale.ROOT) : "";
             List<String> all = registry.keys().stream()
                     .map(PermissionSubCommand::toKeyString)
-                    .filter(k -> filter.isEmpty() || k.toLowerCase(Locale.ROOT).contains(filter))
+                    .filter(k -> (filter.isEmpty() || k.toLowerCase(Locale.ROOT).contains(filter)) && PlayerUtils.hasPermission(player, "skyllia.island.permission." + k))
                     .sorted()
                     .toList();
 
@@ -109,12 +119,10 @@ public class PermissionSubCommand implements SubCommandInterface {
                 return;
             }
 
-            // header
             ConfigLoader.language.sendMessage(player, "island.permission.list.header", Map.of(
                     "%count%", String.valueOf(all.size())
             ));
 
-            // limite anti-spam (tu peux ajuster / paginer plus tard)
             int limit = Math.min(all.size(), 80);
             for (int i = 0; i < limit; i++) {
                 ConfigLoader.language.sendMessage(player, "island.permission.list.entry", Map.of(
@@ -177,10 +185,18 @@ public class PermissionSubCommand implements SubCommandInterface {
         }
 
         Boolean explicitBool = (args.length - offset >= 3) ? parseBool(args[offset + 2]) : null;
-
         boolean current = island.getCompiledPermissions().has(registry, role, pid);
 
-        // GET explicite, ou auto sans bool
+        boolean isReadOnly = action.equals("get")
+                || (action.equals("auto") && (args.length - offset < 3 || explicitBool == null));
+
+        if (!isReadOnly && !hasPermissionForPerm(player, key)) {
+            ConfigLoader.language.sendMessage(player, "island.permission.permission-denied", Map.of(
+                    "%perm%", toKeyString(key)
+            ));
+            return;
+        }
+
         if (action.equals("get") || (action.equals("auto") && explicitBool == null)) {
             ConfigLoader.language.sendMessage(player, "island.permission.value", Map.of(
                     "%role%", role.name(),
@@ -190,12 +206,10 @@ public class PermissionSubCommand implements SubCommandInterface {
             return;
         }
 
-        // TOGGLE
         boolean next;
         if (action.equals("toggle")) {
             next = !current;
         } else {
-            // SET (explicite ou auto avec bool)
             if (explicitBool == null) {
                 ConfigLoader.language.sendMessage(player, "island.permission.bool.invalid", Map.of(
                         "%value%", (args.length - offset >= 3 ? args[offset + 2] : "")
@@ -261,8 +275,8 @@ public class PermissionSubCommand implements SubCommandInterface {
         }
 
         int offset = isAction(args[0]) ? 1 : 0;
+        String action = isAction(args[0]) ? args[0].toLowerCase(Locale.ROOT) : "auto";
 
-        // rôle
         if (args.length == offset + 1) {
             String partial = args[offset].trim().toLowerCase(Locale.ROOT);
             return Arrays.stream(RoleType.values())
@@ -272,10 +286,10 @@ public class PermissionSubCommand implements SubCommandInterface {
                     .toList();
         }
 
-        // permission key
         if (args.length == offset + 2) {
             String partial = args[offset + 1].trim().toLowerCase(Locale.ROOT);
             return registry.keys().stream()
+                    .filter(k -> action.equals("get") || action.equals("list") || hasPermissionForPerm(player, k))
                     .map(PermissionSubCommand::toKeyString)
                     .filter(k -> k.toLowerCase(Locale.ROOT).startsWith(partial))
                     .sorted()
@@ -283,14 +297,11 @@ public class PermissionSubCommand implements SubCommandInterface {
                     .toList();
         }
 
-        // bool uniquement si action != get/list (ou forme courte auto)
-        String action = isAction(args[0]) ? args[0].toLowerCase(Locale.ROOT) : "auto";
         if (args.length == offset + 3 && !action.equals("get") && !action.equals("list") && !action.equals("toggle")) {
             String partial = args[offset + 2].trim().toLowerCase(Locale.ROOT);
             return BOOLS.stream().filter(b -> b.startsWith(partial)).toList();
         }
 
-        // si forme courte auto: autoriser le bool en 3e arg
         if (action.equals("auto") && args.length == 3) {
             String partial = args[2].trim().toLowerCase(Locale.ROOT);
             return BOOLS.stream().filter(b -> b.startsWith(partial)).toList();

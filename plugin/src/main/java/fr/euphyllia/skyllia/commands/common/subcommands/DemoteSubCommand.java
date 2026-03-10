@@ -107,7 +107,6 @@ public class DemoteSubCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
         }
 
-        return;
     }
 
     @Override

@@ -160,7 +160,6 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             CommandCacheExecution.removeCommandExec(player.getUniqueId(), "biome");
         }
 
-        return;
     }
 
     @Override
