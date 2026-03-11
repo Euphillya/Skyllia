@@ -104,7 +104,7 @@ public class VisitSubCommand implements SubCommandInterface {
                     loc = warpIsland.location();
                 }
                 loc.setY(loc.getY() + 0.5);
-                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRunAsync(() -> {
+                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
                     Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player,
                             RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
                     ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(

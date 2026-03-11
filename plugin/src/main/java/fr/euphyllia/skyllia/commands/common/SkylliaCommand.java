@@ -7,7 +7,6 @@ import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.commands.common.subcommands.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
@@ -66,12 +65,10 @@ public class SkylliaCommand implements SkylliaCommandInterface {
                 ConfigLoader.language.sendMessage(sender.getSender(), "misc.unknown-command");
                 return;
             }
-            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                    subCommandInterface.onExecute(this.plugin, sender.getSender(), listArgs));
+            subCommandInterface.onExecute(this.plugin, sender.getSender(), listArgs);
         } else {
             // If no subcommand is provided, we can default to the "create" command
-            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                    registry.getSubCommandByName("create").onExecute(this.plugin, sender.getSender(), args));
+            registry.getSubCommandByName("create").onExecute(this.plugin, sender.getSender(), args);
         }
     }
 

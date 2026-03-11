@@ -7,7 +7,6 @@ import fr.euphyllia.skyllia.api.commands.SubCommandRegistry;
 import fr.euphyllia.skyllia.commands.admin.subcommands.*;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
@@ -43,8 +42,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
                 ConfigLoader.language.sendMessage(player != null ? player : sender.getSender(), "misc.unknown-command");
                 return;
             }
-            Bukkit.getAsyncScheduler().runNow(this.plugin, task ->
-                    subCommandInterface.onExecute(this.plugin, sender.getSender(), listArgs));
+            subCommandInterface.onExecute(this.plugin, sender.getSender(), listArgs);
         }
     }
 
