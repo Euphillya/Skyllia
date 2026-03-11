@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -140,7 +141,11 @@ public class DeleteSubCommand implements SubCommandInterface {
                 this.updatePlayer(skyblockManager, island);
                 this.kickAllPlayerOnIsland(island);
 
-                AtomicInteger worldsLeft = new AtomicInteger(ConfigLoader.worldManager.getWorldConfigs().size());
+                List<String> worldsToDelete = ConfigLoader.worldManager.getWorldConfigs().entrySet().stream()
+                        .filter(entry -> entry.getValue().shouldDeleteIsland())
+                        .map(Map.Entry::getKey)
+                        .toList();
+                AtomicInteger worldsLeft = new AtomicInteger(worldsToDelete.size());
                 AtomicBoolean failed = new AtomicBoolean(false);
 
                 if (worldsLeft.get() == 0) {
@@ -152,16 +157,13 @@ public class DeleteSubCommand implements SubCommandInterface {
                     return;
                 }
 
-                ConfigLoader.worldManager.getWorldConfigs().forEach((s, envs) -> {
-                    if (envs.shouldDeleteIsland()) {
-                        Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
-                            if (!success) failed.set(true);
-                            if (worldsLeft.decrementAndGet() == 0) {
-                                skyblockManager.setLockedIsland(island, failed.get());
-                            }
-                        });
-                    }
-
+                worldsToDelete.forEach(s -> {
+                    Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
+                        if (!success) failed.set(true);
+                        if (worldsLeft.decrementAndGet() == 0) {
+                            skyblockManager.setLockedIsland(island, failed.get());
+                        }
+                    });
                 });
             } else {
                 ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
