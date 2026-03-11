@@ -77,18 +77,14 @@ public class AccessSubCommand implements SubCommandInterface {
                             entity -> {
                                 Player playerInIsland = (Player) entity;
 
-                                // NOTE: ton code d'origine check la permission sur "player" (le sender),
-                                // pas sur "playerInIsland". Je garde le même comportement.
-                                if (!PlayerUtils.hasPermission(player, "skyllia.island.command.access.bypass")) return;
+                                if (PlayerUtils.hasPermission(playerInIsland, "skyllia.island.command.access.bypass")) return;
 
-                                Bukkit.getAsyncScheduler().runNow(Skyllia.getInstance(), t -> {
-                                    Players players = island.getMember(playerInIsland.getUniqueId());
-                                    if (players == null
-                                            || players.getRoleType().equals(RoleType.BAN)
-                                            || players.getRoleType().equals(RoleType.VISITOR)) {
-                                        PlayerUtils.teleportPlayerSpawn(playerInIsland);
-                                    }
-                                });
+                                Players players = island.getMember(playerInIsland.getUniqueId());
+                                if (players == null
+                                        || players.getRoleType().equals(RoleType.BAN)
+                                        || players.getRoleType().equals(RoleType.VISITOR)) {
+                                    PlayerUtils.teleportPlayerSpawn(playerInIsland);
+                                }
                             }
                     );
                 });
