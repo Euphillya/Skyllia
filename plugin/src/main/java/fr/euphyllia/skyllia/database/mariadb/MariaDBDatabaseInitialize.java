@@ -104,8 +104,17 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             CREATE TABLE IF NOT EXISTS player_clear (
                 uuid_player CHAR(36) NOT NULL,
                 cause VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED',
-                PRIMARY KEY (uuid_player)
+                PRIMARY KEY (uuid_player, cause)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+
+    private static final String SELECT_PLAYER_CLEAR_CAUSE_IN_PRIMARY_KEY = """
+            SELECT COUNT(*) AS count_primary_cause
+            FROM information_schema.statistics
+            WHERE table_schema = DATABASE()
+              AND table_name = 'player_clear'
+              AND index_name = 'PRIMARY'
+              AND column_name = 'cause';
             """;
 
     private static final String INSERT_SPIRAL = """
@@ -189,6 +198,14 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         }
 
         exec("ALTER TABLE islands ADD COLUMN IF NOT EXISTS locked TINYINT(1) NOT NULL DEFAULT 0;");
+
+        if (!isPlayerClearPrimaryKeyComposite()) {
+            exec("""
+                    ALTER TABLE player_clear
+                    DROP PRIMARY KEY,
+                    ADD PRIMARY KEY (uuid_player, cause);
+                    """);
+        }
     }
 
     private void initializeSpiralTable() {
@@ -218,5 +235,25 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
 
     private void exec(String sql) {
         SQLExecute.update(databaseLoader, sql, null);
+    }
+
+    private boolean isPlayerClearPrimaryKeyComposite() {
+        Boolean hasCauseInPrimaryKey = SQLExecute.queryMap(
+                databaseLoader,
+                SELECT_PLAYER_CLEAR_CAUSE_IN_PRIMARY_KEY,
+                null,
+                rs -> {
+                    try {
+                        if (!rs.next()) {
+                            return false;
+                        }
+                        return rs.getInt("count_primary_cause") > 0;
+                    } catch (Exception exception) {
+                        logger.error("Unable to inspect player_clear primary key", exception);
+                        return false;
+                    }
+                }
+        );
+        return Boolean.TRUE.equals(hasCauseInPrimaryKey);
     }
 }
