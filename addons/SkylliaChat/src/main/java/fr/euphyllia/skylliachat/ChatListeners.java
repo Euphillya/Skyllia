@@ -4,10 +4,10 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,48 +41,50 @@ public class ChatListeners implements Listener {
         if (plugin.getIslandChatEnabled().getOrDefault(uuid, false)) {
             event.setCancelled(true);
 
-            Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> {
-                Island island = SkylliaAPI.getIslandByPlayerId(uuid);
-                if (island == null) {
-                    ConfigLoader.language.sendMessage(player, "island.player.no-island");
-                    return;
-                }
+            Island island = SkylliaAPI.getIslandByPlayerId(uuid);
+            if (island == null) {
+                player.getScheduler().execute(plugin, () ->
+                        ConfigLoader.language.sendMessage(player, "island.player.no-island"), null, 0L);
+                return;
+            }
 
-                String message = event.getMessage();
-                String format = this.plugin.getConfig().getString("chat.format", "<red>[Messaging Island] %player_name%: <gray>%message%")
-                        .replace("%player_name%", playerName)
-                        .replace("%message%", message);
+            String message = event.getMessage();
+            String format = this.plugin.getConfig().getString("chat.format", "<red>[Messaging Island] %player_name%: <gray>%message%")
+                    .replace("%player_name%", playerName)
+                    .replace("%message%", message);
 
-                // MiniMessage doesn't like legacy formatting codes...
-                format = ChatColor.translateAlternateColorCodes('&', format)
-                        .replace("§0", "<black>")
-                        .replace("§1", "<dark_blue>")
-                        .replace("§2", "<dark_green>")
-                        .replace("§3", "<dark_aqua>")
-                        .replace("§4", "<dark_red>")
-                        .replace("§5", "<dark_purple>")
-                        .replace("§6", "<gold>")
-                        .replace("§7", "<gray>")
-                        .replace("§8", "<dark_gray>")
-                        .replace("§9", "<blue>")
-                        .replace("§a", "<green>")
-                        .replace("§b", "<aqua>")
-                        .replace("§c", "<red>")
-                        .replace("§d", "<light_purple>")
-                        .replace("§e", "<yellow>")
-                        .replace("§f", "<white>")
-                        .replace("§r", "<reset>")
-                        .replace("§k", "<obfuscated>")
-                        .replace("§l", "<bold>")
-                        .replace("§m", "<strikethrough>")
-                        .replace("§n", "<underlined>")
-                        .replace("§o", "<italic>");
+            // MiniMessage doesn't like legacy formatting codes...
+            format = ChatColor.translateAlternateColorCodes('&', format)
+                    .replace("§0", "<black>")
+                    .replace("§1", "<dark_blue>")
+                    .replace("§2", "<dark_green>")
+                    .replace("§3", "<dark_aqua>")
+                    .replace("§4", "<dark_red>")
+                    .replace("§5", "<dark_purple>")
+                    .replace("§6", "<gold>")
+                    .replace("§7", "<gray>")
+                    .replace("§8", "<dark_gray>")
+                    .replace("§9", "<blue>")
+                    .replace("§a", "<green>")
+                    .replace("§b", "<aqua>")
+                    .replace("§c", "<red>")
+                    .replace("§d", "<light_purple>")
+                    .replace("§e", "<yellow>")
+                    .replace("§f", "<white>")
+                    .replace("§r", "<reset>")
+                    .replace("§k", "<obfuscated>")
+                    .replace("§l", "<bold>")
+                    .replace("§m", "<strikethrough>")
+                    .replace("§n", "<underlined>")
+                    .replace("§o", "<italic>");
 
+            Component islandMessage = miniMessage.deserialize(format);
 
+            Bukkit.getGlobalRegionScheduler().execute(plugin, () -> {
                 for (Players islandMember : island.getMembers()) {
-                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(islandMember.getMojangId());
-                    if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
-                        offlinePlayer.getPlayer().sendMessage(miniMessage.deserialize(format));
+                    Player member = Bukkit.getPlayer(islandMember.getMojangId());
+                    if (member != null && member.isOnline()) {
+                        member.getScheduler().execute(plugin, () -> member.sendMessage(islandMessage), null, 0L);
                     }
                 }
             });
