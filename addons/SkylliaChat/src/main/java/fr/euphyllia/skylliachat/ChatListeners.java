@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ChatListeners implements Listener {
@@ -47,6 +48,9 @@ public class ChatListeners implements Listener {
                         ConfigLoader.language.sendMessage(player, "island.player.no-island"), null, 0L);
                 return;
             }
+            List<UUID> memberIds = island.getMembers().stream()
+                    .map(Players::getMojangId)
+                    .toList();
 
             String message = event.getMessage();
             String format = this.plugin.getConfig().getString("chat.format", "<red>[Messaging Island] %player_name%: <gray>%message%")
@@ -81,8 +85,8 @@ public class ChatListeners implements Listener {
             Component islandMessage = miniMessage.deserialize(format);
 
             Bukkit.getGlobalRegionScheduler().execute(plugin, () -> {
-                for (Players islandMember : island.getMembers()) {
-                    Player member = Bukkit.getPlayer(islandMember.getMojangId());
+                for (UUID memberId : memberIds) {
+                    Player member = Bukkit.getPlayer(memberId);
                     if (member != null && member.isOnline()) {
                         member.getScheduler().execute(plugin, () -> member.sendMessage(islandMessage), null, 0L);
                     }
