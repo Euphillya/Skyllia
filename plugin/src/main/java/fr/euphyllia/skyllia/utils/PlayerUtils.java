@@ -34,7 +34,7 @@ public class PlayerUtils {
             }
 
             Location location = ConfigLoader.general.getSpawnLocation();
-            if (location == null) location = Bukkit.getWorlds().getFirst().getSpawnLocation();
+            if (location == null || location.getWorld() == null) location = Bukkit.getWorlds().getFirst().getSpawnLocation();
             PlayerTeleportSpawnEvent playerTeleportSpawnEvent = new PlayerTeleportSpawnEvent(player, location);
             Bukkit.getPluginManager().callEvent(playerTeleportSpawnEvent);
             if (playerTeleportSpawnEvent.isCancelled()) {

@@ -145,7 +145,16 @@ public class GeneralConfigManager implements IConfigurationProvider {
     }
 
     public Location getSpawnLocation() {
-        return spawnEnabled ? new Location(Bukkit.getWorld(spawnWorld), spawnX, spawnY, spawnZ, spawnYaw, spawnPitch) : null;
+        if (!spawnEnabled) {
+            return null;
+        }
+
+        var world = Bukkit.getWorld(spawnWorld);
+        if (world == null) {
+            return null;
+        }
+
+        return new Location(world, spawnX, spawnY, spawnZ, spawnYaw, spawnPitch);
     }
 
     public int getRegionDistance() {
