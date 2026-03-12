@@ -203,6 +203,8 @@ public class InviteSubCommand implements SubCommandInterface {
             int currentMembers = islandOwner.getMembers().size();
 
             if (currentMembers < maxMembers) {
+                InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantJoin.getUniqueId());
+
                 Players newPlayer = new Players(
                         playerWantJoin.getUniqueId(),
                         playerWantJoin.getName(),
@@ -215,8 +217,6 @@ public class InviteSubCommand implements SubCommandInterface {
                     ConfigLoader.language.sendMessage(playerWantJoin, "island.generic.unexpected-error");
                     return;
                 }
-
-                InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantJoin.getUniqueId());
 
                 ConfigLoader.language.sendMessage(playerWantJoin, "island.invite.join-success");
 
