@@ -7,16 +7,21 @@ import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
+import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -36,7 +41,6 @@ public class WarpSubCommand implements SubCommandInterface {
                 "Autorise à utiliser /is warp sur l'île"
         ));
     }
-
 
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
@@ -77,8 +81,20 @@ public class WarpSubCommand implements SubCommandInterface {
                 return;
             }
 
-            player.teleportAsync(targetWarp.location(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-            ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
+            double rayon = island.getSize();
+            Location center = RegionHelper.getCenterRegion(
+                    Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()),
+                    island.getPosition().x(),
+                    island.getPosition().z()
+            );
+            Location loc = targetWarp.location().clone();
+
+            player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                player.setVelocity(new Vector(0, 0, 0));
+                player.setFallDistance(0);
+                Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player, center, rayon, 0, 0);
+                ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
+            });
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
@@ -100,7 +116,7 @@ public class WarpSubCommand implements SubCommandInterface {
         String prefix = args[0].trim().toLowerCase(Locale.ROOT);
 
         return warps.stream()
-                .map(WarpIsland::warpName) // record -> warpName()
+                .map(WarpIsland::warpName)
                 .filter(n -> n != null && n.toLowerCase(Locale.ROOT).startsWith(prefix))
                 .distinct()
                 .sorted()
