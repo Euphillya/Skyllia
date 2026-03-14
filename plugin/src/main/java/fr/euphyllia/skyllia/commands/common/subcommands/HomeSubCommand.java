@@ -21,7 +21,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HomeSubCommand implements SubCommandInterface {
@@ -49,22 +49,26 @@ public class HomeSubCommand implements SubCommandInterface {
 
             WarpIsland warpIsland = island.getWarpByName("home");
             double rayon = island.getSize();
+            Location center = RegionHelper.getCenterRegion(
+                    Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()),
+                    island.getPosition().x(),
+                    island.getPosition().z()
+            );
 
-            player.getScheduler().execute(plugin, () -> {
-                Location loc;
-                if (warpIsland == null) {
-                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getPosition().x(), island.getPosition().z());
-                } else {
-                    loc = warpIsland.location();
-                }
-                loc.add(0, 0.5, 0);
-                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
-                    player.setVelocity(new Vector(0, 0, 0));
-                    player.setFallDistance(0);
-                    Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player, RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), rayon, 0, 0);
-                    ConfigLoader.language.sendMessage(player, "island.home.success");
-                });
-            }, null, 1L);
+            Location loc;
+            if (warpIsland == null || warpIsland.location() == null) {
+                loc = center.clone();
+            } else {
+                loc = warpIsland.location().clone();
+            }
+            loc.add(0, 0.5, 0);
+
+            player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                player.setVelocity(new Vector(0, 0, 0));
+                player.setFallDistance(0);
+                Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player, center, rayon, 0, 0);
+                ConfigLoader.language.sendMessage(player, "island.home.success");
+            });
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);
             ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
@@ -73,7 +77,6 @@ public class HomeSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
-
 }
