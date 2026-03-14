@@ -212,13 +212,46 @@ public class FlagSubCommand implements SubCommandInterface {
         if (query == null) return false;
 
         IslandFlagRegistry registry = SkylliaAPI.getFlagRegistry();
-        boolean success = query.setFlag(island.getId(), registry, fid, value);
+
+        // When a ".all" flag is toggled, cascade the value to all children with the same prefix
+        FlagNode node = registry.node(fid);
+        NamespacedKey key = node.node();
+        String keyStr = key.getKey();
+
+        List<FlagId> childFlags = new ArrayList<>();
+
+        if (keyStr.endsWith(".all")) {
+            String prefix = keyStr.substring(0, keyStr.length() - 3);
+            for (Map.Entry<NamespacedKey, FlagId> entry : registry.entries().entrySet()) {
+                NamespacedKey k = entry.getKey();
+                if (k.getNamespace().equals(key.getNamespace())
+                        && k.getKey().startsWith(prefix)
+                        && !k.getKey().equals(keyStr)) {
+                    childFlags.add(entry.getValue());
+                }
+            }
+        }
+
+        // Load flags from DB, apply all changes at once, save once
+        IslandFlags dbFlags = query.loadIslandFlags(island.getId(), registry);
+        if (dbFlags == null) dbFlags = new IslandFlags(registry);
+
+        dbFlags.set(registry, fid, value);
+        for (FlagId child : childFlags) {
+            dbFlags.set(registry, child, value);
+        }
+
+        byte[] blob = PermissionSetCodec.encodeLongs(dbFlags.snapshotWords());
+        boolean success = query.saveIslandFlags(island.getId(), blob);
         if (!success) return false;
 
-
+        // Update runtime cache
         IslandFlags flags = island.getIslandFlags();
         flags.ensureUpToDate(registry);
         flags.set(registry, fid, value);
+        for (FlagId child : childFlags) {
+            flags.set(registry, child, value);
+        }
         return true;
     }
 

@@ -37,7 +37,7 @@ public class PermissionsManagers {
     public boolean hasFlag(Island island, FlagId specific, FlagId fallback) {
         var flags = island.getIslandFlags();
         var registry = SkylliaAPI.getFlagRegistry();
-        return flags.has(registry, specific) || flags.has(registry, fallback);
+        return flags.has(registry, specific);
     }
 
     /**
