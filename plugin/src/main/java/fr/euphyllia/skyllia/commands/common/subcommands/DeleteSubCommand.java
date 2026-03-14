@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -140,28 +142,35 @@ public class DeleteSubCommand implements SubCommandInterface {
                 this.updatePlayer(skyblockManager, island);
                 this.kickAllPlayerOnIsland(island);
 
-                AtomicInteger worldsLeft = new AtomicInteger(ConfigLoader.worldManager.getWorldConfigs().size());
+                List<String> worldsToDelete = ConfigLoader.worldManager.getWorldConfigs().entrySet().stream()
+                        .filter(entry -> entry.getValue().shouldDeleteIsland())
+                        .map(Map.Entry::getKey)
+                        .toList();
+                AtomicInteger worldsLeft = new AtomicInteger(worldsToDelete.size());
                 AtomicBoolean failed = new AtomicBoolean(false);
 
                 if (worldsLeft.get() == 0) {
-                    boolean lockResult = skyblockManager.setLockedIsland(island, false);
-                    if (!lockResult) {
-                        logger.log(Level.FATAL, "Failed to unlock island {} after deletion: unknown reason", island.getId());
-                    }
-                    ConfigLoader.language.sendMessage(player, "island.delete-success");
+                    finalizeDeletion(skyblockManager, island, false, player);
                     return;
                 }
 
-                ConfigLoader.worldManager.getWorldConfigs().forEach((s, envs) -> {
-                    if (envs.shouldDeleteIsland()) {
-                        Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, Bukkit.getWorld(s), ConfigLoader.general.getRegionDistance(), (success) -> {
-                            if (!success) failed.set(true);
-                            if (worldsLeft.decrementAndGet() == 0) {
-                                skyblockManager.setLockedIsland(island, failed.get());
-                            }
-                        });
+                worldsToDelete.forEach(worldName -> {
+                    World world = Bukkit.getWorld(worldName);
+                    if (world == null) {
+                        failed.set(true);
+                        logger.log(Level.FATAL, "Failed to delete island {} in world {}: world not loaded", island.getId(), worldName);
+                        if (worldsLeft.decrementAndGet() == 0) {
+                            finalizeDeletion(skyblockManager, island, failed.get(), player);
+                        }
+                        return;
                     }
 
+                    Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.UNKNOWN).deleteIsland(island, world, ConfigLoader.general.getRegionDistance(), (success) -> {
+                        if (!success) failed.set(true);
+                        if (worldsLeft.decrementAndGet() == 0) {
+                            finalizeDeletion(skyblockManager, island, failed.get(), player);
+                        }
+                    });
                 });
             } else {
                 ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
@@ -188,6 +197,27 @@ public class DeleteSubCommand implements SubCommandInterface {
             players.setRoleType(RoleType.VISITOR);
             island.updateMember(players);
             checkClearPlayer(skyblockManager, players, RemovalCause.ISLAND_DELETED);
+        }
+    }
+
+    private void finalizeDeletion(SkyblockManager skyblockManager, Island island, boolean failed, Player player) {
+        boolean lockResult = skyblockManager.setLockedIsland(island, failed);
+        if (!lockResult) {
+            logger.log(Level.FATAL, "Failed to update lock state for island {} after deletion", island.getId());
+            if (player.isOnline()) {
+                ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+            }
+            return;
+        }
+
+        if (!player.isOnline()) {
+            return;
+        }
+
+        if (failed) {
+            ConfigLoader.language.sendMessage(player, "island.generic.unexpected-error");
+        } else {
+            ConfigLoader.language.sendMessage(player, "island.delete-success");
         }
     }
 
