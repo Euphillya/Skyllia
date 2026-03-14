@@ -199,12 +199,12 @@ public class InviteSubCommand implements SubCommandInterface {
                 return;
             }
 
-            InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantJoin.getUniqueId());
-
             int maxMembers = islandOwner.getMaxMembers();
             int currentMembers = islandOwner.getMembers().size();
 
             if (currentMembers < maxMembers) {
+                InviteCacheExecution.removeInviteCache(islandOwner.getId(), playerWantJoin.getUniqueId());
+
                 Players newPlayer = new Players(
                         playerWantJoin.getUniqueId(),
                         playerWantJoin.getName(),
