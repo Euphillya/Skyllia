@@ -69,7 +69,6 @@ allprojects {
         compileOnly("org.xerial:sqlite-jdbc:3.51.2.0")
         compileOnly("org.jetbrains:annotations:26.1.0")
         compileOnly("com.electronwill.night-config:toml:3.8.3")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.3")
         compileOnly("net.md-5:bungeecord-api:1.20-R0.2")
         compileOnly("com.mojang:brigadier:1.0.18")
     }

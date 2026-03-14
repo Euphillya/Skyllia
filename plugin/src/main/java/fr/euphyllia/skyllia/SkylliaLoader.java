@@ -23,8 +23,6 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-api:2.25.3"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.20.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.8.3"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.2.3"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ExcaliaSI:exp4j:e50bdd65e4"), null));
 
         // HikariCP dependency
         resolver.addDependency(new Dependency(new DefaultArtifact("com.zaxxer:HikariCP:7.0.2"), null));
@@ -42,7 +40,7 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("com.mojang:brigadier:1.0.18"), null));
 
         // thenextlvl Repo
-        resolver.addDependency(new Dependency(new DefaultArtifact("dev.faststats.metrics:bukkit:0.17.2"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("dev.faststats.metrics:bukkit:0.18.1"), null));
 
         classpathBuilder.addLibrary(resolver);
     }

@@ -9,7 +9,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT") { isTransitive = false }
     compileOnly("net.kyori:adventure-text-minimessage:4.25.0")
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("dev.faststats.metrics:bukkit:0.17.2")
+    compileOnly("dev.faststats.metrics:bukkit:0.18.1")
     compileOnly(project(":api"))
     compileOnly(project(":database"))
     compileOnly(project(":hook:worldedit"))
