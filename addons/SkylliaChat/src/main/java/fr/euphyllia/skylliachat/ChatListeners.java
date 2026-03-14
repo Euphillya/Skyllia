@@ -4,10 +4,11 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,10 +51,9 @@ public class ChatListeners implements Listener {
 
                 String message = event.getMessage();
                 String format = this.plugin.getConfig().getString("chat.format", "<red>[Messaging Island] %player_name%: <gray>%message%")
-                        .replace("%player_name%", playerName)
-                        .replace("%message%", message);
+                        .replace("%player_name%", "<player_name>")
+                        .replace("%message%", "<message>");
 
-                // MiniMessage doesn't like legacy formatting codes...
                 format = ChatColor.translateAlternateColorCodes('&', format)
                         .replace("§0", "<black>")
                         .replace("§1", "<dark_blue>")
@@ -78,11 +78,14 @@ public class ChatListeners implements Listener {
                         .replace("§n", "<underlined>")
                         .replace("§o", "<italic>");
 
+                Component islandMessage = miniMessage.deserialize(format,
+                        Placeholder.unparsed("player_name", playerName),
+                        Placeholder.unparsed("message", message));
 
                 for (Players islandMember : island.getMembers()) {
-                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(islandMember.getMojangId());
-                    if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
-                        offlinePlayer.getPlayer().sendMessage(miniMessage.deserialize(format));
+                    Player member = Bukkit.getPlayer(islandMember.getMojangId());
+                    if (member != null && member.isOnline()) {
+                        member.sendMessage(islandMessage);
                     }
                 }
             });
