@@ -12,6 +12,7 @@ include("nms:v1_21_R4")
 include("nms:v1_21_R5")
 include("nms:v1_21_R6")
 include("nms:v1_21_R7")
+include("nms:v26_1")
 // Addons
 include("addons:SkylliaOre")
 include("addons:InsightsSkyllia")

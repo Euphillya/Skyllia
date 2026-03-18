@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":nms:v1_21_R5"))
     implementation(project(":nms:v1_21_R6"))
     implementation(project(":nms:v1_21_R7"))
+    implementation(project(":nms:v26_1"))
 }
 
 allprojects {
@@ -96,8 +97,8 @@ tasks.test {
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 fun getGitCommitHash(): String {
@@ -160,7 +161,8 @@ modrinth {
         "1.21.8",
         "1.21.9",
         "1.21.10",
-        "1.21.11"
+        "1.21.11",
+        "26.1"
     )
 
     loaders.addAll("folia", "paper", "purpur")
