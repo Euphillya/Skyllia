@@ -104,7 +104,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             CREATE TABLE IF NOT EXISTS player_clear (
                 uuid_player CHAR(36) NOT NULL,
                 cause VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED',
-                PRIMARY KEY (uuid_player)
+                PRIMARY KEY (uuid_player, cause)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 
@@ -189,6 +189,12 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         }
 
         exec("ALTER TABLE islands ADD COLUMN IF NOT EXISTS locked TINYINT(1) NOT NULL DEFAULT 0;");
+
+        exec("""
+                ALTER TABLE player_clear
+                DROP PRIMARY KEY,
+                ADD PRIMARY KEY (uuid_player, cause);
+                """);
     }
 
     private void initializeSpiralTable() {
