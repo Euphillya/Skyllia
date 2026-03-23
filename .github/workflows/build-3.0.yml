@@ -43,6 +43,12 @@ jobs:
           name: Skyllia-Build
           path: release/*.jar
 
+      - name: Publish all modules to Nexus
+        run: ./gradlew publish --no-daemon
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+
       - name: Publish to Modrinth (Gradle Minotaur)
         if: github.event_name != 'pull_request' || (github.event.pull_request.number == 94 && github.event.pull_request.head.repo.full_name == github.repository)
         run: ./gradlew modrinth
