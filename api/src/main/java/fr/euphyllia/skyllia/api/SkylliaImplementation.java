@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
@@ -220,4 +221,13 @@ public interface SkylliaImplementation {
      * @return The IslandCustomDataQuery implementation for database operations.
      */
     IslandCustomDataQuery getIslandCustomDataQuery();
+
+    /**
+     * Retrieves the configuration registry.
+     * Addons can use this to register their own {@link fr.euphyllia.skyllia.api.configuration.IConfigurationProvider}
+     * so they participate in Skyllia's global reload cycle.
+     *
+     * @return The IConfigRegistry instance.
+     */
+    IConfigRegistry getConfigRegistry();
 }

@@ -403,3 +403,7 @@ failure = "<red>An error occurred while adding %amount% to the island's account 
 no-permission = "<red>You do not have permission to open the island chest.</red>"
 inventory-title = "<gold>%island_name%'s Island Chest</gold>"
 open = "<green>You have opened the island chest.</green>"
+
+[addons.acid-island]
+water-contact = "<red>⚠ Acidic water burns you !</red>"
+rain-contact = "<dark_aqua>☔ Acid rain is eating away at your skin !</dark_aqua>"

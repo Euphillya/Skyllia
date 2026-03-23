@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.configuration;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skyllia.configuration.manager.*;
 import org.apache.logging.log4j.Level;
@@ -11,10 +12,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigLoader {
+public class ConfigLoader implements IConfigRegistry {
 
     private static final Logger logger = LogManager.getLogger(ConfigLoader.class);
     private static final List<IConfigurationProvider> configManagers = new ArrayList<>();
+
+    public static final ConfigLoader INSTANCE = new ConfigLoader();
 
     public static GeneralConfigManager general;
     public static DatabaseConfigManager database;
@@ -75,6 +78,18 @@ public class ConfigLoader {
         CommentedFileConfig configFile = CommentedFileConfig.builder(file).sync().autosave().build();
         configFile.load();
         return configFile;
+    }
+
+    @Override
+    public void registerConfig(IConfigurationProvider provider) {
+        if (!configManagers.contains(provider)) {
+            configManagers.add(provider);
+        }
+    }
+
+    @Override
+    public void unregisterConfig(IConfigurationProvider provider) {
+        configManagers.remove(provider);
     }
 
     public static void reloadConfigs() {

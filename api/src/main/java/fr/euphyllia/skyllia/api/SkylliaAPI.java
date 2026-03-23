@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
@@ -316,5 +317,17 @@ public final class SkylliaAPI {
      */
     public static FlagModuleManager getFlagModuleManager() {
         return implementation.getFlagModuleManager();
+    }
+
+
+    /**
+     * Retrieves the configuration registry.
+     * Addons can register their {@link fr.euphyllia.skyllia.api.configuration.IConfigurationProvider}
+     * to participate in Skyllia's global reload cycle.
+     *
+     * @return The IConfigRegistry instance.
+     */
+    public static IConfigRegistry getConfigRegistry() {
+        return implementation.getConfigRegistry();
     }
 }
