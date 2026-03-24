@@ -14,7 +14,7 @@ public class AcidConfigManager implements IConfigurationProvider {
     private boolean changed = false;
 
     private double damage;
-    private long damageIntervalMs;
+    private long damageIntervalTick;
     private boolean particles;
     private boolean sound;
     private String soundName;
@@ -41,7 +41,7 @@ public class AcidConfigManager implements IConfigurationProvider {
         changed = false;
 
         this.damage = getOrSetDefault("acid.damage", 2.0, Double.class);
-        this.damageIntervalMs = getOrSetDefault("acid.damage-interval-ms", 1000L, Long.class);
+        this.damageIntervalTick = getOrSetDefault("acid.damage-interval-tick", 20L, Long.class); // 20 tick = 1 second
 
         this.particles = getOrSetDefault("acid.particles", true, Boolean.class);
         this.sound = getOrSetDefault("acid.sound.enabled", true, Boolean.class);
@@ -105,8 +105,8 @@ public class AcidConfigManager implements IConfigurationProvider {
         return damage;
     }
 
-    public long getDamageIntervalMs() {
-        return damageIntervalMs;
+    public long getDamageIntervalTick() {
+        return damageIntervalTick;
     }
 
     public boolean isParticles() {
