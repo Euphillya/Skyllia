@@ -6,9 +6,12 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
 import fr.euphyllia.skylliaacidrain.listener.AcidListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AcidConfigManager implements IConfigurationProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(AcidConfigManager.class);
     private final AcidListener acidListener;
     private final CommentedFileConfig config;
     private boolean changed = false;
@@ -69,7 +72,7 @@ public class AcidConfigManager implements IConfigurationProvider {
             tomlWriter.write(config, config.getFile(), WritingMode.REPLACE);
         }
 
-
+        log.info("(Re)Loaded config SkylliaAcidRain");
     }
 
     @Override
