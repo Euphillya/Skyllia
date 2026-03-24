@@ -399,3 +399,7 @@ failure = "<red>Une erreur s'est produite lors de l'ajout de %amount% dans le co
 no-permission = "<red>Votre rang ne vous permet pas d'utiliser ce coffre."
 inventory-title = "<gold>=== Coffre de l'île de %island_name% ===</gold>"
 open = "<green>Vous avez ouvert le coffre de l'île.</green>"
+
+[addons.acid-island]
+water-contact = "<red>⚠ L'eau acide vous brûle !</red>"
+rain-contact = "<dark_aqua>☔ La pluie acide vous ronge la peau !</dark_aqua>"
