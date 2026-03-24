@@ -97,7 +97,7 @@ public class AcidListener implements Listener {
 
     private void startTask(LivingEntity entity) {
         UUID uuid = entity.getUniqueId();
-        long intervalTick = AcidConfigLoader.config.getDamageIntervalMs();
+        long intervalTick = AcidConfigLoader.config.getDamageIntervalTick();
 
         ScheduledTask task = entity.getScheduler().runAtFixedRate(
                 plugin,
