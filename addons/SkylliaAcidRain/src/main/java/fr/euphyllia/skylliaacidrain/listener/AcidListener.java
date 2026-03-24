@@ -188,8 +188,8 @@ public class AcidListener implements Listener {
 
         if (entity instanceof Player player) {
             Component msg = inWater
-                    ? ConfigLoader.language.translate(player, "addons.acid-island.water-contact")
-                    : ConfigLoader.language.translate(player, "addons.acid-island.rain-contact");
+                    ? ConfigLoader.language.translate(player.locale(), "addons.acid-island.water-contact", Map.of(), false)
+                    : ConfigLoader.language.translate(player.locale(), "addons.acid-island.rain-contact", Map.of(), false);
             player.sendActionBar(msg);
         }
     }
