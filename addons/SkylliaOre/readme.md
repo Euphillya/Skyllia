@@ -1,4 +1,4 @@
-# SkylliaOre Generator Plugin
+# SkylliaOre Generator Plugin (LEGACY)
 
 This plugin manages custom block generators for SkyBlock islands, with support for Oraxen.
 
