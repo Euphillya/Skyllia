@@ -20,6 +20,7 @@ include("addons:SkylliaBank")
 include("addons:SkylliaChallenge")
 include("addons:SkylliaChest")
 include("addons:SkylliaAcidRain")
+include("addons:SkylliaGenerator")
 // Hook
 include("hook:worldedit")
 include("hook:fastasyncworldedit")
