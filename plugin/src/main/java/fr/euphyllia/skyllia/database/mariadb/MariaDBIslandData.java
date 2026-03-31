@@ -1,11 +1,14 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.database.IslandDataQuery;
+import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,22 +88,30 @@ public class MariaDBIslandData extends IslandDataQuery {
 
     @Override
     public @Nullable Island getIslandByOwnerId(UUID playerId) {
-        return SQLExecute.queryMap(
+        Island island = SQLExecute.queryMap(
                 databaseLoader,
                 SELECT_ISLAND_BY_OWNER,
                 List.of(playerId.toString()),
                 rs -> firstIsland(rs, playerId, "owner")
         );
+        if (island != null) {
+            Bukkit.getAsyncScheduler().runNow(SkylliaAPI.getPlugin(), scheduledTask -> new SkyblockLoadEvent(island).callEvent());
+        }
+        return island;
     }
 
     @Override
     public @Nullable Island getIslandByPlayerId(UUID playerId) {
-        return SQLExecute.queryMap(
+        Island island = SQLExecute.queryMap(
                 databaseLoader,
                 SELECT_ISLAND_BY_PLAYER_ID,
                 List.of(playerId.toString()),
                 rs -> firstIsland(rs, playerId, "player")
         );
+        if (island != null) {
+            Bukkit.getAsyncScheduler().runNow(SkylliaAPI.getPlugin(), scheduledTask -> new SkyblockLoadEvent(island).callEvent());
+        }
+        return island;
     }
 
     @Override

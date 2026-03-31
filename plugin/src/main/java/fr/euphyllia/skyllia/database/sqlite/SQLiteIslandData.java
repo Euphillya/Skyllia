@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.database.sqlite;
 
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.database.IslandDataQuery;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -127,7 +128,7 @@ public class SQLiteIslandData extends IslandDataQuery {
         });
 
         if (island != null) {
-            Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+            Bukkit.getAsyncScheduler().runNow(SkylliaAPI.getPlugin(), scheduledTask -> new SkyblockLoadEvent(island).callEvent());
         }
         return island;
     }
@@ -146,7 +147,7 @@ public class SQLiteIslandData extends IslandDataQuery {
         });
 
         if (island != null) {
-            Bukkit.getPluginManager().callEvent(new SkyblockLoadEvent(island));
+            Bukkit.getAsyncScheduler().runNow(SkylliaAPI.getPlugin(), scheduledTask -> new SkyblockLoadEvent(island).callEvent());
         }
         return island;
     }
