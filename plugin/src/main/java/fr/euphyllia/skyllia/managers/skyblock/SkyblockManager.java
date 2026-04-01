@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.managers.skyblock;
 
+import com.google.common.base.Preconditions;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.event.PrepareSkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -114,10 +115,20 @@ public class SkyblockManager {
      *
      * @param islandId   The UUID of the new island.
      * @param islandType The settings to apply to the new island.
-     * @return A {@link CompletableFuture} that completes with {@code true} if the island was created,
-     * or {@code false} if creation was cancelled or an error occurred.
+     * @param owners     The owner of the island, must have {@link RoleType#OWNER}.
+     * @return {@code true} if the island was successfully created,
+     *         {@code false} if creation was cancelled or an error occurred.
+     * @throws IllegalArgumentException If any argument is null.
+     * @throws IllegalStateException    If the owner's island ID is already set.
      */
-    public Boolean createIsland(UUID islandId, IslandSettings islandType) {
+    public Boolean createIsland(UUID islandId, IslandSettings islandType, Players owners) {
+        Preconditions.checkArgument(islandType != null, "islandType cannot be null");
+        Preconditions.checkArgument(islandId != null, "islandId cannot be null");
+        Preconditions.checkArgument(owners != null, "owners cannot be null");
+        if (!owners.getRoleType().equals(RoleType.OWNER)) {
+            LOGGER.error("Only owners can be created for islands");
+            return false;
+        }
         PrepareSkyblockCreateEvent event = new PrepareSkyblockCreateEvent(islandId, islandType);
         Bukkit.getPluginManager().callEvent(event);
 
@@ -158,6 +169,12 @@ public class SkyblockManager {
                         permQuery.saveIslandFlags(event.getIslandId(), flagsBlob);
                     }
                 }
+
+                owners.setIslandId(event.getIslandId());
+                plugin.getInterneAPI()
+                        .getIslandQuery()
+                        .getIslandMemberQuery()
+                        .updateMember(futureIsland, owners);
 
                 invalidateIsland(event.getIslandId());
                 return true;

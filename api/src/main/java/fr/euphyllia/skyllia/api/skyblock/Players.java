@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api.skyblock;
 
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 public class Players {
 
     private final UUID mojangId;
-    private final UUID islandId;
+    private UUID islandId = null;
     private String lastKnowName;
     private RoleType roleType;
 
@@ -22,7 +23,7 @@ public class Players {
      * @param islandId   The UUID of the island the player is associated with.
      * @param role       The role of the player on the island.
      */
-    public Players(UUID playerId, String playerName, UUID islandId, RoleType role) {
+    public Players(UUID playerId, String playerName, @Nullable UUID islandId, RoleType role) {
         this.mojangId = playerId;
         this.lastKnowName = playerName;
         this.islandId = islandId;
@@ -79,7 +80,24 @@ public class Players {
      *
      * @return The Island UUID.
      */
-    public UUID getIslandId() {
+    public @Nullable UUID getIslandId() {
         return islandId;
+    }
+
+    /**
+     * Sets the island ID of the player.
+     * <p>
+     * This method can only be called once. If the island ID is already set,
+     * an {@link IllegalStateException} is thrown to prevent accidental reassignment.
+     *
+     * @param id The UUID of the island to associate with this player.
+     * @throws IllegalStateException If the island ID has already been set.
+     */
+    public void setIslandId(UUID id) {
+        if (this.islandId == null) {
+            this.islandId = id;
+        } else {
+            throw new IllegalStateException("Island ID is already set for player %s and cannot be changed".formatted(this.lastKnowName));
+        }
     }
 }

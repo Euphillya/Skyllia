@@ -12,6 +12,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.FlagModuleManager;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
@@ -223,8 +224,8 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
-    public Boolean createIsland(UUID islandId, IslandSettings settings) {
-        return this.interneAPI.getSkyblockManager().createIsland(islandId, settings);
+    public Boolean createIsland(UUID islandId, IslandSettings settings, Players owners) {
+        return this.interneAPI.getSkyblockManager().createIsland(islandId, settings, owners);
     }
 
     @Override
