@@ -212,15 +212,4 @@ public class CreateSubCommand implements SubCommandInterface {
 
         return Collections.emptyList();
     }
-
-    private boolean pasteSchematic(Island island, Location center, SchematicSetting schematicWorld) {
-        try {
-            Skyllia.getInstance().getInterneAPI().getWorldModifier(SchematicPlugin.fromString(schematicWorld.plugin())).pasteSchematicWE(center, schematicWorld);
-            return true;
-        } catch (Exception e) {
-            logger.error("An error occurred while pasting schematic for island {}: {}", island.getId(), e.getMessage());
-            island.setDisable(true);
-            return false;
-        }
-    }
 }
