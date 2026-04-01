@@ -35,10 +35,10 @@ public class IslandHook extends Island {
     private final Timestamp createDate;
     private final Position position;
     private final int maxMemberInIsland;
+    private final Map<World, Location> islandCenterLocations;
     private double islandSize;
     private transient volatile CompiledPermissions compiledPermissions;
     private transient volatile IslandFlags islandFlags;
-    private final Map<World, Location> islandCenterLocations;
 
     /**
      * Constructs a new {@code IslandHook} instance.
@@ -332,16 +332,28 @@ public class IslandHook extends Island {
 
     @Override
     public Location getCenterLocation(World world) {
+        if (islandCenterLocations.isEmpty()) {
+            List<Location> stored = this.plugin.getInterneAPI()
+                    .getSkyblockManager()
+                    .getCenterLocations(this);
+            for (Location loc : stored) {
+                if (loc.getWorld() != null) {
+                    islandCenterLocations.put(loc.getWorld(), loc);
+                }
+            }
+        }
         Location location = islandCenterLocations.get(world);
         if (location != null) return location;
 
-        Location centerPaste = RegionHelper.getCenterRegion(world, this.position.x(), this.position.z());
-        centerPaste.setY(64.0);
-        return centerPaste;
+        Location fallback = RegionHelper.getCenterRegion(world, this.position.x(), this.position.z());
+        fallback.setY(64.0);
+        setCenterLocation(fallback);
+        return fallback;
     }
 
     @Override
     public void setCenterLocation(Location location) {
-        this.islandCenterLocations.put(location.getWorld(), location); // Todo = mettre en db
+        this.islandCenterLocations.put(location.getWorld(), location);
+        this.plugin.getInterneAPI().getSkyblockManager().updateCenterLocation(this, location);
     }
 }

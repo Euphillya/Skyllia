@@ -117,7 +117,7 @@ public class SkyblockManager {
      * @param islandType The settings to apply to the new island.
      * @param owners     The owner of the island, must have {@link RoleType#OWNER}.
      * @return {@code true} if the island was successfully created,
-     *         {@code false} if creation was cancelled or an error occurred.
+     * {@code false} if creation was cancelled or an error occurred.
      * @throws IllegalArgumentException If any argument is null.
      * @throws IllegalStateException    If the owner's island ID is already set.
      */
@@ -720,6 +720,20 @@ public class SkyblockManager {
 
         cache.putState(island.getId(), new SkyblockCache.IslandStateSnapshot(disabled, priv, locked, max, size));
         return locked;
+    }
+
+    public boolean updateCenterLocation(Island island, Location location) {
+        return plugin.getInterneAPI()
+                .getIslandQuery()
+                .getIslandDataQuery()
+                .upsertCenterLocation(island.getId(), location);
+    }
+
+    public List<Location> getCenterLocations(Island island) {
+        return plugin.getInterneAPI()
+                .getIslandQuery()
+                .getIslandDataQuery()
+                .getCenterLocations(island.getId());
     }
 
 }

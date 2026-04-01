@@ -198,8 +198,28 @@ public abstract class Island {
 
     public abstract void invalidateIslandFlags();
 
+    /**
+     * Gets the center {@link Location} of the island in the specified world.
+     * <p>
+     * If no center has been stored for this world yet, a fallback location is computed
+     * from the island's region position at Y=64, persisted to the database, and returned.
+     * </p>
+     *
+     * @param world The {@link World} for which to retrieve the center location.
+     * @return The center {@link Location} of the island in the given world, never {@code null}.
+     */
     public abstract Location getCenterLocation(World world);
 
+    /**
+     * Sets the center {@link Location} of the island for the world contained in the given location.
+     * <p>
+     * This updates both the in-memory cache and the database. If multiple worlds are configured
+     * for this island, each world has its own center location stored independently.
+     * </p>
+     *
+     * @param location The {@link Location} to store as the island center.
+     *                 The world is inferred from {@link Location#getWorld()}.
+     */
     public abstract void setCenterLocation(Location location);
 
 }
