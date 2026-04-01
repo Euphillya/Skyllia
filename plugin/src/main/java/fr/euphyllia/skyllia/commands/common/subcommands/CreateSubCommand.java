@@ -53,8 +53,8 @@ public class CreateSubCommand implements SubCommandInterface {
             }
 
             try {
-                AtomicReference<Island> island = new AtomicReference<>(SkylliaAPI.getIslandByPlayerId(playerId));
-                if (island.get() == null) {
+                AtomicReference<Island> optionalIsland = new AtomicReference<>(SkylliaAPI.getIslandByPlayerId(playerId));
+                if (optionalIsland.get() == null) {
                     List<String> schematicsKeys = ConfigLoader.schematicManager.getIslandTypes();
                     if (schematicsKeys.isEmpty()) {
                         ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
@@ -92,33 +92,34 @@ public class CreateSubCommand implements SubCommandInterface {
                         ConfigLoader.language.sendMessage(player, "island.generic-error");
                         return;
                     }
-                    island.set(SkylliaAPI.getIslandByIslandId(idIsland));
-                    if (island.get() == null) {
+                    optionalIsland.set(SkylliaAPI.getIslandByIslandId(idIsland));
+                    if (optionalIsland.get() == null) {
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                         ConfigLoader.language.sendMessage(player, "island.generic-error");
                         return;
                     }
-                    new SkyblockCreateEvent(island.get(), playerId).callEvent();
+                    Island island = optionalIsland.get();
+                    new SkyblockCreateEvent(island, playerId).callEvent();
 
                     boolean isFirstIteration = true;
                     for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
                         String worldName = entry.getKey();
                         SchematicSetting schematicSetting = entry.getValue();
-                        Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.get().getPosition().x(), island.get().getPosition().z());
+                        Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
                         centerPaste.setY(schematicSetting.height());
-                        this.pasteSchematic(island.get(), centerPaste, schematicSetting);
+                        this.pasteSchematic(island, centerPaste, schematicSetting);
                         if (isFirstIteration) {
-                            this.setFirstHome(island.get(), centerPaste);
+                            this.setFirstHome(island, centerPaste);
                             Location loc = centerPaste.clone();
                             loc.add(0, 0.5, 0);
-                            this.addOwnerIslandInMember(island.get(), player);
+                            this.addOwnerIslandInMember(island, player);
                             player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN)
                                     .thenRun(() -> {
                                         player.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
                                         player.setFallDistance(0);
-                                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.get().getSize(), 0, 0);
+                                        plugin.getInterneAPI().getPlayerNMS().setOwnWorldBorder(plugin, player, centerPaste, island.getSize(), 0, 0);
                                     });
-                            new SkyblockLoadEvent(island.get()).callEvent();
+                            new SkyblockLoadEvent(island).callEvent();
                             isFirstIteration = false;
                         }
                     }

@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.permissions.IslandFlags;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,5 +197,9 @@ public abstract class Island {
     public abstract IslandFlags getIslandFlags();
 
     public abstract void invalidateIslandFlags();
+
+    public abstract Location getCenterLocation(World world);
+
+    public abstract void setCenterLocation(Location location);
 
 }
