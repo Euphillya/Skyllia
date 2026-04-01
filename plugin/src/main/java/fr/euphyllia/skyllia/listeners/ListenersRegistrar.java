@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.GrowEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.folia.PortalAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.paper.PortalAlternativePaperEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.JoinEvent;
@@ -67,6 +68,7 @@ public class ListenersRegistrar {
         registerEvent(pluginManager, new JoinEvent(interneAPI));
         registerEvent(pluginManager, new TeleportEvent(interneAPI));
         registerEvent(pluginManager, new PistonEvent(interneAPI));
+        registerEvent(pluginManager, new GrowEvent(interneAPI));
         registerEvent(pluginManager, new MoveEvent());
 
         // Folia/Paper specifics
