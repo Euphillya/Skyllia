@@ -128,6 +128,18 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
             
             """;
 
+    private static final String CREATE_ISLAND_CENTER_LOCATIONS_TABLE = """
+            CREATE TABLE IF NOT EXISTS island_center_locations (
+                island_id  TEXT NOT NULL,
+                world_name TEXT NOT NULL,
+                center_x   REAL NOT NULL,
+                center_y   REAL NOT NULL,
+                center_z   REAL NOT NULL,
+                PRIMARY KEY (island_id, world_name),
+                FOREIGN KEY (island_id) REFERENCES islands(island_id) ON DELETE CASCADE
+            );
+            """;
+
     private final DatabaseLoader databaseLoader;
 
     public SQLiteDatabaseInitialize(DatabaseLoader databaseLoader) {
@@ -152,6 +164,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_PLAYER_CLEAR_TABLE);
         exec(CREATE_ISLANDS_GAMERULE_TABLE);
         exec(CREATE_PERMISSION_REGISTRY_TABLE);
+        exec(CREATE_ISLAND_CENTER_LOCATIONS_TABLE);
 
         exec(CREATE_ISLANDS_INDEX);
         exec(CREATE_SPIRAL_INDEX);

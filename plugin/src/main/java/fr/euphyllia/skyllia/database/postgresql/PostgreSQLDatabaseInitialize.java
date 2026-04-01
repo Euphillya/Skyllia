@@ -145,6 +145,16 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
             );
             """;
 
+    private static final String CREATE_ISLAND_CENTER_LOCATIONS_TABLE = """
+            CREATE TABLE IF NOT EXISTS %s.island_center_locations (
+                island_id  UUID         NOT NULL REFERENCES %s.islands(island_id) ON DELETE CASCADE,
+                world_name VARCHAR(255) NOT NULL,
+                center_x   DOUBLE PRECISION NOT NULL,
+                center_y   DOUBLE PRECISION NOT NULL,
+                center_z   DOUBLE PRECISION NOT NULL,
+                PRIMARY KEY (island_id, world_name)
+            );
+            """;
 
     private final String schema;
     private final DatabaseLoader databaseLoader;
@@ -208,6 +218,7 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_SPIRAL_INDEX.formatted(s));
         exec(CREATE_MEMBERS_BY_PLAYER_INDEX.formatted(s));
         exec(CREATE_MEMBER_BY_ISLAND_ROLE_INDEX.formatted(s));
+        exec(CREATE_ISLAND_CENTER_LOCATIONS_TABLE.formatted(s, s));
     }
 
     private void applyMigrations() {

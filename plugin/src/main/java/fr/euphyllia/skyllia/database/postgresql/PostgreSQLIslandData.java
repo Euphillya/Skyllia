@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,21 @@ public class PostgreSQLIslandData extends IslandDataQuery {
               AND disable = FALSE
               AND locked = FALSE
             LIMIT 1;
+            """;
+
+    private static final String UPSERT_CENTER_LOCATION = """
+            INSERT INTO island_center_locations (island_id, world_name, center_x, center_y, center_z)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT (island_id, world_name) DO UPDATE SET
+                center_x = EXCLUDED.center_x,
+                center_y = EXCLUDED.center_y,
+                center_z = EXCLUDED.center_z;
+            """;
+
+    private static final String SELECT_CENTER_LOCATIONS = """
+            SELECT world_name, center_x, center_y, center_z
+            FROM island_center_locations
+            WHERE island_id = ?;
             """;
 
 
@@ -174,6 +190,44 @@ public class PostgreSQLIslandData extends IslandDataQuery {
                     return null;
                 }
         );
+    }
+
+    @Override
+    public boolean upsertCenterLocation(UUID islandId, Location location) {
+        int affected = SQLExecute.update(databaseLoader, UPSERT_CENTER_LOCATION, List.of(
+                islandId,
+                location.getWorld().getName(),
+                location.getX(),
+                location.getY(),
+                location.getZ()
+        ));
+        return affected > 0;
+    }
+
+    @Override
+    public List<Location> getCenterLocations(UUID islandId) {
+        List<Location> result = SQLExecute.queryMap(databaseLoader, SELECT_CENTER_LOCATIONS,
+                List.of(islandId), rs -> {
+                    List<Location> locations = new ArrayList<>();
+                    try {
+                        while (rs.next()) {
+                            String worldName = rs.getString("world_name");
+                            double x = rs.getDouble("center_x");
+                            double y = rs.getDouble("center_y");
+                            double z = rs.getDouble("center_z");
+                            org.bukkit.World world = Bukkit.getWorld(worldName);
+                            if (world != null) {
+                                locations.add(new Location(world, x, y, z));
+                            } else {
+                                log.warn("World '{}' not found for island center {}", worldName, islandId);
+                            }
+                        }
+                    } catch (SQLException e) {
+                        log.error("getCenterLocations failed for island {}", islandId, e);
+                    }
+                    return locations;
+                });
+        return result != null ? result : List.of();
     }
 
 

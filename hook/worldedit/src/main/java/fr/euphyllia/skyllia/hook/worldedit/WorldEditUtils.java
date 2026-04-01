@@ -48,7 +48,8 @@ public record WorldEditUtils(JavaPlugin plugin) implements WorldModifier {
     private static final Logger logger = LogManager.getLogger(WorldEditUtils.class);
 
     @Override
-    public void pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings) {
+    public CompletableFuture<Boolean> pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
         Bukkit.getRegionScheduler().run(plugin, loc, task -> {
             try {
                 File file = new File(plugin.getDataFolder() + File.separator + settings.schematicFile());
@@ -63,16 +64,19 @@ public record WorldEditUtils(JavaPlugin plugin) implements WorldModifier {
                         Operation operation = new ClipboardHolder(clipboard)
                                 .createPaste(editSession)
                                 .to(BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()))
-                                .copyEntities(settings.copyEntities()) // Si la schem a des entités
-                                .ignoreAirBlocks(settings.ignoreAirBlocks()) // On ne colle pas les blocks d'air de la schematic, gain de performance accru
+                                .copyEntities(settings.copyEntities())
+                                .ignoreAirBlocks(settings.ignoreAirBlocks())
                                 .build();
                         Operations.complete(operation);
                     }
                 }
+                future.complete(true);
             } catch (Exception e) {
                 logger.log(Level.FATAL, e.getMessage(), e);
+                future.complete(false);
             }
         });
+        return future;
     }
 
     @Override
