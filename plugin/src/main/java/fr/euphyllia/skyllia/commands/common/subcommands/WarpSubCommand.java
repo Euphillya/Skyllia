@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.WorldBorder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -92,7 +93,15 @@ public class WarpSubCommand implements SubCommandInterface {
             player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
                 player.setVelocity(new Vector(0, 0, 0));
                 player.setFallDistance(0);
-                Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player, center, rayon, 0, 0);
+
+                WorldBorder border = player.getWorldBorder();
+                if (border == null) {
+                    border = Bukkit.createWorldBorder();
+                }
+                border.setCenter(center);
+                border.setSize(rayon);
+                player.setWorldBorder(border);
+
                 ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
             });
         } catch (Exception e) {

@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.WorldBorder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -104,9 +105,18 @@ public class VisitSubCommand implements SubCommandInterface {
                     loc = warpIsland.location();
                 }
                 loc.setY(loc.getY() + 0.5);
-                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRunAsync(() -> {
-                    Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player,
-                            RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z()), island.getSize(), 0, 0);
+                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                    Location center = RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z());
+
+                    WorldBorder border = player.getWorldBorder();
+                    if (border == null) {
+                        border = Bukkit.createWorldBorder();
+                    }
+
+                    border.setCenter(center);
+                    border.setSize(island.getSize());
+                    player.setWorldBorder(border);
+
                     ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
                             "%player%", visitPlayer));
                 });

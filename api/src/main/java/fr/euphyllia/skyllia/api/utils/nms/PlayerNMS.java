@@ -15,5 +15,6 @@ public abstract class PlayerNMS {
      * @param warningBlocks Sets the warning distance that causes the screen to be tinted red when the player is within the specified number of blocks from the border.
      * @param warningTime   Sets the warning time that causes the screen to be tinted red when a contracting border will reach the player within the specified time.
      */
+    @Deprecated(forRemoval = true, since = "3.0")
     public abstract void setOwnWorldBorder(JavaPlugin main, Player player, @NotNull Location centerBorder, double borderSize, int warningBlocks, int warningTime);
 }

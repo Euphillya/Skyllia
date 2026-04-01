@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -73,7 +74,14 @@ public class JoinEvent implements Listener {
                                     island.getPosition().x(),
                                     island.getPosition().z()
                             );
-                            api.getPlayerNMS().setOwnWorldBorder(api.getPlugin(), player, centerIsland, island.getSize(), 0, 0);
+
+                            WorldBorder border = player.getWorldBorder();
+                            if (border == null) {
+                                border = Bukkit.createWorldBorder();
+                            }
+                            border.setCenter(centerIsland);
+                            border.setSize(island.getSize());
+                            player.setWorldBorder(border);
                         }, null, 1L);
                     }
                 }
