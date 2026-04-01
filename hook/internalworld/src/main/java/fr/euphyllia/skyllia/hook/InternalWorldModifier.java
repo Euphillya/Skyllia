@@ -82,12 +82,14 @@ public record InternalWorldModifier(JavaPlugin plugin) implements WorldModifier 
      * @param settings The settings for the schematic paste operation.
      */
     @Override
-    public void pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings) {
+    public CompletableFuture<Boolean> pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
         World world = loc.getWorld();
 
         if (world == null) {
             log.error("World is null for location: {}", loc);
-            return;
+            future.complete(false);
+            return future;
         }
 
         File file = new File(plugin.getDataFolder() + File.separator + settings.schematicFile());
@@ -98,7 +100,8 @@ public record InternalWorldModifier(JavaPlugin plugin) implements WorldModifier 
             schematicDTO = GSON.fromJson(r, SchematicDTO.class);
         } catch (Exception e) {
             log.error("Failed to read schematic file: {}", file.getAbsolutePath(), e);
-            return;
+            future.complete(false);
+            return future;
         }
 
         final Map<Long, List<BlockEntityPlace>> besByChunk = new HashMap<>();
@@ -131,108 +134,104 @@ public record InternalWorldModifier(JavaPlugin plugin) implements WorldModifier 
         }
 
         Bukkit.getRegionScheduler().execute(plugin, loc, () -> {
-            List<BlockData> palette = new ArrayList<>(schematicDTO.palette.size());
-            for (String state : schematicDTO.palette) palette.add(Bukkit.createBlockData(state));
+            try {
+                List<BlockData> palette = new ArrayList<>(schematicDTO.palette.size());
+                for (String state : schematicDTO.palette) palette.add(Bukkit.createBlockData(state));
 
-            int dx = schematicDTO.size.dx(), dy = schematicDTO.size.dy(), dz = schematicDTO.size.dz();
+                int dx = schematicDTO.size.dx(), dy = schematicDTO.size.dy(), dz = schematicDTO.size.dz();
+                int ox = loc.getBlockX() - schematicDTO.origin.x();
+                int oy = loc.getBlockY() - schematicDTO.origin.y();
+                int oz = loc.getBlockZ() - schematicDTO.origin.z();
 
-            int ox = loc.getBlockX() - schematicDTO.origin.x();
-            int oy = loc.getBlockY() - schematicDTO.origin.y();
-            int oz = loc.getBlockZ() - schematicDTO.origin.z();
+                final Map<Long, List<Voxel>> blocksByChunk = new HashMap<>();
+                int y = 0, z = 0, x = 0, r = 0, runRemaining = 0, idx = 0;
 
-            final Map<Long, List<Voxel>> blocksByChunk = new HashMap<>();
-            int y = 0, z = 0, x = 0, r = 0, runRemaining = 0, idx = 0;
+                while (y < dy) {
+                    if (runRemaining == 0) {
+                        int[] entry = schematicDTO.blocks.get(r++);
+                        idx = entry[0];
+                        runRemaining = entry[1];
+                    }
+                    runRemaining--;
 
-            while (y < dy) {
-                if (runRemaining == 0) {
-                    int[] entry = schematicDTO.blocks.get(r++);
-                    idx = entry[0];
-                    runRemaining = entry[1];
-                }
-                runRemaining--;
+                    int wx = ox + x, wy = oy + y, wz = oz + z;
+                    BlockData bd = palette.get(idx);
+                    if (!(settings.ignoreAirBlocks() && isAir(bd))) {
+                        int cx = wx >> 4, cz = wz >> 4;
+                        long key = (((long) cx) << 32) ^ (cz & 0xffffffffL);
+                        blocksByChunk.computeIfAbsent(key, k -> new ArrayList<>()).add(new Voxel(wx, wy, wz, bd));
+                    }
 
-                int wx = ox + x, wy = oy + y, wz = oz + z;
-
-                BlockData bd = palette.get(idx);
-                if (!(settings.ignoreAirBlocks() && isAir(bd))) {
-                    int cx = wx >> 4, cz = wz >> 4;
-                    long key = (((long) cx) << 32) ^ (cz & 0xffffffffL);
-                    blocksByChunk.computeIfAbsent(key, k -> new ArrayList<>()).add(new Voxel(wx, wy, wz, bd));
-                }
-
-                if (++x >= dx) {
-                    x = 0;
-                    if (++z >= dz) {
-                        z = 0;
-                        ++y;
+                    if (++x >= dx) {
+                        x = 0;
+                        if (++z >= dz) {
+                            z = 0;
+                            ++y;
+                        }
                     }
                 }
-            }
 
-            for (var e : blocksByChunk.entrySet()) {
-                final int cx = (int) (e.getKey() >> 32);
-                final int cz = (int) (e.getKey().longValue());
-                final List<Voxel> voxels = e.getValue();
-                final List<BlockEntityPlace> bes = besByChunk.getOrDefault(e.getKey(), List.of());
-                try {
-                    for (Voxel v : voxels) {
-                        Block b = world.getBlockAt(v.x, v.y, v.z);
-                        b.setBlockData(v.bd, false);
+                for (var e : blocksByChunk.entrySet()) {
+                    final int cx = (int) (e.getKey() >> 32);
+                    final int cz = (int) (e.getKey().longValue());
+                    final List<Voxel> voxels = e.getValue();
+                    final List<BlockEntityPlace> bes = besByChunk.getOrDefault(e.getKey(), List.of());
+                    try {
+                        for (Voxel v : voxels) {
+                            world.getBlockAt(v.x, v.y, v.z).setBlockData(v.bd, false);
+                        }
+                        for (BlockEntityPlace be : bes) {
+                            BlockState bs = world.getBlockAt(be.x, be.y, be.z).getState(true);
+                            if (!(bs instanceof TileState ts)) continue;
+
+                            if (ts instanceof Container c) applyContainer(c, be.data.get("inv"));
+
+                            if (ts instanceof Sign sign) {
+                                Object linesObj = be.data.get("lines");
+                                if (linesObj instanceof List<?> lines) {
+                                    for (int i = 0; i < Math.min(4, lines.size()); i++) {
+                                        sign.setLine(i, String.valueOf(lines.get(i)));
+                                    }
+                                }
+                                Object color = be.data.get("color");
+                                if (color instanceof String col) {
+                                    try { sign.setColor(DyeColor.valueOf(col)); } catch (Exception ignored) {}
+                                }
+                                if (be.data.get("glow") instanceof Boolean g) sign.setGlowingText(g);
+                            }
+
+                            if (ts instanceof CreatureSpawner sp) {
+                                Object type = be.data.get("type");
+                                if (type instanceof String name) {
+                                    try { sp.setSpawnedType(EntityType.valueOf(name)); } catch (Exception ignored) {}
+                                }
+                                setInt(sp::setDelay, be.data.get("delay"));
+                                setInt(sp::setMinSpawnDelay, be.data.get("minDelay"));
+                                setInt(sp::setMaxSpawnDelay, be.data.get("maxDelay"));
+                                setInt(sp::setMaxNearbyEntities, be.data.get("maxNearbyEntities"));
+                                setInt(sp::setSpawnCount, be.data.get("spawnCount"));
+                                setInt(sp::setSpawnRange, be.data.get("spawnRange"));
+                                setInt(sp::setRequiredPlayerRange, be.data.get("requiredPlayerRange"));
+                            }
+                            ts.update(true, false);
+                        }
+                    } catch (Exception ex) {
+                        log.error("Failed to paste chunk {}/{}", cx, cz, ex);
                     }
-                    for (BlockEntityPlace be : bes) {
-                        BlockState bs = world.getBlockAt(be.x, be.y, be.z).getState(true);
-                        if (!(bs instanceof TileState ts)) continue;
-
-                        if (ts instanceof Container c) {
-                            applyContainer(c, be.data.get("inv"));
-                        }
-
-                        if (ts instanceof Sign sign) {
-                            Object linesObj = be.data.get("lines");
-                            if (linesObj instanceof List<?> lines) {
-                                for (int i = 0; i < Math.min(4, lines.size()); i++) {
-                                    sign.setLine(i, String.valueOf(lines.get(i)));
-                                }
-                            }
-                            Object color = be.data.get("color");
-                            if (color instanceof String col) {
-                                try {
-                                    sign.setColor(DyeColor.valueOf(col));
-                                } catch (Exception ignored) {
-                                }
-                            }
-                            Object glow = be.data.get("glow");
-                            if (glow instanceof Boolean g) sign.setGlowingText(g);
-                        }
-                        if (ts instanceof CreatureSpawner sp) {
-                            Object type = be.data.get("type");
-                            if (type instanceof String name) {
-                                try {
-                                    sp.setSpawnedType(EntityType.valueOf(name));
-                                } catch (Exception ignored) {
-                                }
-                            }
-                            setInt(sp::setDelay, be.data.get("delay"));
-                            setInt(sp::setMinSpawnDelay, be.data.get("minDelay"));
-                            setInt(sp::setMaxSpawnDelay, be.data.get("maxDelay"));
-                            setInt(sp::setMaxNearbyEntities, be.data.get("maxNearbyEntities"));
-                            setInt(sp::setSpawnCount, be.data.get("spawnCount"));
-                            setInt(sp::setSpawnRange, be.data.get("spawnRange"));
-                            setInt(sp::setRequiredPlayerRange, be.data.get("requiredPlayerRange"));
-                        }
-                        ts.update(true, false);
-                    }
-                } catch (Exception ex) {
-                    log.error("Failed to paste chunk {}/{}", cx, cz, ex);
                 }
-            }
-            for (List<EntityPlace> b : entsByChunk.values()) {
-                for (EntityPlace ep : b) {
-                    spawnEntityAPI(world, ep);
+
+                for (List<EntityPlace> b : entsByChunk.values()) {
+                    for (EntityPlace ep : b) spawnEntityAPI(world, ep);
                 }
+
+                future.complete(true);
+            } catch (Exception e) {
+                log.error("Failed to paste schematic at {}: {}", loc, e.getMessage(), e);
+                future.complete(false);
             }
         });
 
+        return future;
     }
 
     /**

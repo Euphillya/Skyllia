@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CreateSubCommand implements SubCommandInterface {
 
@@ -70,8 +71,8 @@ public class CreateSubCommand implements SubCommandInterface {
                     ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
                     return;
                 }
-                IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
 
+                IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
                 if (islandSettings == null) {
                     ConfigLoader.language.sendMessage(player, "island.type-not-exist");
                     return;
@@ -86,16 +87,13 @@ public class CreateSubCommand implements SubCommandInterface {
                 UUID idIsland = UUID.randomUUID();
 
                 Players owners = new Players(player.getUniqueId(), player.getName(), null, RoleType.OWNER);
-
                 boolean isCreate = SkylliaAPI.createIsland(idIsland, islandSettings, owners);
-
                 if (!isCreate) {
                     ConfigLoader.language.sendMessage(player, "island.generic-error");
                     return;
                 }
 
                 Island island = SkylliaAPI.getIslandByIslandId(idIsland);
-
                 if (island == null) {
                     ConfigLoader.language.sendMessage(player, "island.generic-error");
                     return;
@@ -103,42 +101,64 @@ public class CreateSubCommand implements SubCommandInterface {
 
                 new SkyblockCreateEvent(island, playerId).callEvent();
 
-                boolean isFirstIteration = true;
-                for (Map.Entry<String, SchematicSetting> entry : schematicSettingMap.entrySet()) {
-                    String worldName = entry.getKey();
-                    SchematicSetting schematicSetting = entry.getValue();
-                    Location centerPaste = RegionHelper.getCenterRegion(Bukkit.getWorld(worldName), island.getPosition().x(), island.getPosition().z());
-                    centerPaste.setY(schematicSetting.height());
-                    island.setCenterLocation(centerPaste);
-
-                    if (!this.pasteSchematic(island, centerPaste, schematicSetting)) {
-                        ConfigLoader.language.sendMessage(player, "island.generic-error");
-                        return;
-                    }
-
-                    if (isFirstIteration) {
-                        island.addWarps("home", centerPaste, true);
-                        player.teleportAsync(centerPaste, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                                .thenRun(() -> {
-                                    player.setVelocity(new Vector(0, 0, 0));
-                                    player.setFallDistance(0);
-                                    WorldBorder playerBorder = player.getWorldBorder();
-                                    if (playerBorder == null) {
-                                        playerBorder = Bukkit.createWorldBorder();
-                                    }
-                                    playerBorder.setCenter(centerPaste);
-                                    playerBorder.setSize(island.getSize());
-                                    player.setWorldBorder(playerBorder);
-                                });
-                        new SkyblockLoadEvent(island).callEvent();
-                        isFirstIteration = false;
-                    }
-                }
-                ConfigLoader.language.sendMessage(player, "island.create-finish");
+                pasteAllSchematics(plugin, player, island, schematicSettingMap)
+                        .thenRun(() -> ConfigLoader.language.sendMessage(player, "island.create-finish"))
+                        .exceptionally(e -> {
+                            logger.error("Island creation failed for {}: {}", island.getId(), e.getMessage());
+                            ConfigLoader.language.sendMessage(player, "island.generic-error");
+                            return null;
+                        });
             } finally {
                 CommandCacheExecution.removeCommandExec(playerId, "create");
             }
         });
+    }
+
+    private CompletableFuture<Void> pasteAllSchematics(Skyllia plugin, Player player, Island island,
+                                                       Map<String, SchematicSetting> schematicMap) {
+        CompletableFuture<Void> chain = CompletableFuture.completedFuture(null);
+        AtomicBoolean isFirst = new AtomicBoolean(true);
+        for (Map.Entry<String, SchematicSetting> entry : schematicMap.entrySet()) {
+            String worldName = entry.getKey();
+            SchematicSetting setting = entry.getValue();
+            boolean first = isFirst.getAndSet(false);
+
+            chain = chain.thenCompose(ignored -> {
+                Location center = RegionHelper.getCenterRegion(
+                        Bukkit.getWorld(worldName),
+                        island.getPosition().x(),
+                        island.getPosition().z()
+                );
+                center.setY(setting.height());
+                island.setCenterLocation(center);
+
+                return Skyllia.getInstance().getInterneAPI()
+                        .getWorldModifier(SchematicPlugin.fromString(setting.plugin()))
+                        .pasteSchematicWE(center, setting)
+                        .thenAcceptAsync(success -> {
+                            if (!success) {
+                                island.setDisable(true);
+                                throw new RuntimeException("Schematic paste failed for world " + worldName);
+                            }
+                            if (first) {
+                                island.addWarps("home", center, true);
+                                Location spawnLoc = center.clone().add(0, 0.5, 0);
+                                player.teleportAsync(spawnLoc, PlayerTeleportEvent.TeleportCause.PLUGIN)
+                                        .thenRun(() -> {
+                                            player.setVelocity(new Vector(0, 0, 0));
+                                            player.setFallDistance(0);
+                                            WorldBorder border = player.getWorldBorder();
+                                            if (border == null) border = Bukkit.createWorldBorder();
+                                            border.setCenter(center);
+                                            border.setSize(island.getSize());
+                                            player.setWorldBorder(border);
+                                        });
+                                new SkyblockLoadEvent(island).callEvent();
+                            }
+                        });
+            });
+        }
+        return chain;
     }
 
 
