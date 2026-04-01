@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.api.configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,7 @@ public class WorldConfig {
     private @Nullable Integer seaHeight;
     private @Nullable String seaBlock;
     private boolean deleteIsland = false;
+    private World world;
 
     public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd, String generator, String biomeId, boolean deleteIsland) {
         World.Environment env;
@@ -84,5 +86,12 @@ public class WorldConfig {
 
     public void setDeleteIsland(boolean deleteIsland) {
         this.deleteIsland = deleteIsland;
+    }
+
+    public World getWorld() {
+        if (world == null) {
+            world = Bukkit.getWorld(worldName);
+        }
+        return world;
     }
 }

@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.commands.common.subcommands;
 
-import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -68,6 +67,12 @@ public class HomeSubCommand implements SubCommandInterface {
                 player.setVelocity(new Vector(0, 0, 0));
                 player.setFallDistance(0);
 
+                ConfigLoader.language.sendMessage(player, "island.home.success");
+
+                if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                    return;
+                }
+
                 WorldBorder border = player.getWorldBorder();
                 if (border == null) {
                     border = Bukkit.createWorldBorder();
@@ -75,8 +80,6 @@ public class HomeSubCommand implements SubCommandInterface {
                 border.setCenter(center);
                 border.setSize(rayon);
                 player.setWorldBorder(border);
-
-                ConfigLoader.language.sendMessage(player, "island.home.success");
             });
         } catch (Exception exception) {
             logger.log(Level.FATAL, exception.getMessage(), exception);

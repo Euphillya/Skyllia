@@ -94,6 +94,12 @@ public class WarpSubCommand implements SubCommandInterface {
                 player.setVelocity(new Vector(0, 0, 0));
                 player.setFallDistance(0);
 
+                ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
+
+                if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                    return;
+                }
+
                 WorldBorder border = player.getWorldBorder();
                 if (border == null) {
                     border = Bukkit.createWorldBorder();
@@ -101,8 +107,6 @@ public class WarpSubCommand implements SubCommandInterface {
                 border.setCenter(center);
                 border.setSize(rayon);
                 player.setWorldBorder(border);
-
-                ConfigLoader.language.sendMessage(player, "island.warp.teleport-success");
             });
         } catch (Exception e) {
             logger.log(Level.FATAL, e.getMessage(), e);

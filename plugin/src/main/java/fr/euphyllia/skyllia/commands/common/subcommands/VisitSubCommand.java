@@ -106,6 +106,13 @@ public class VisitSubCommand implements SubCommandInterface {
                 }
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
+                    if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                        return;
+                    }
+
+                    ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
+                            "%player%", visitPlayer));
+
                     Location center = RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z());
 
                     WorldBorder border = player.getWorldBorder();
@@ -116,9 +123,6 @@ public class VisitSubCommand implements SubCommandInterface {
                     border.setCenter(center);
                     border.setSize(island.getSize());
                     player.setWorldBorder(border);
-
-                    ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
-                            "%player%", visitPlayer));
                 });
             }, null, 1L);
         } catch (Exception exception) {

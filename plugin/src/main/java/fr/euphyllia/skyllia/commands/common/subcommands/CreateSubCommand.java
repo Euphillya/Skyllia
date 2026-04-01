@@ -147,6 +147,9 @@ public class CreateSubCommand implements SubCommandInterface {
                                         .thenRun(() -> {
                                             player.setVelocity(new Vector(0, 0, 0));
                                             player.setFallDistance(0);
+                                            if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                                                return;
+                                            }
                                             WorldBorder border = player.getWorldBorder();
                                             if (border == null) border = Bukkit.createWorldBorder();
                                             border.setCenter(center);

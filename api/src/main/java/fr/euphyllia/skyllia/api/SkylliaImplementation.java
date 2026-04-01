@@ -210,11 +210,11 @@ public interface SkylliaImplementation {
     /**
      * Creates a new island with the specified {@link IslandSettings}.
      *
-     * @param islandId   The UUID of the new island.
+     * @param islandId The UUID of the new island.
      * @param settings The settings to apply to the new island.
-     * @param owners     The owner of the island, must have {@link RoleType#OWNER}.
+     * @param owners   The owner of the island, must have {@link RoleType#OWNER}.
      * @return {@code true} if the island was successfully created,
-     *         {@code false} if creation was cancelled or an error occurred.
+     * {@code false} if creation was cancelled or an error occurred.
      * @throws IllegalArgumentException If any argument is null.
      * @throws IllegalStateException    If the owner's island ID is already set.
      */

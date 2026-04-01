@@ -20,7 +20,7 @@ public interface WorldModifier {
      * @param loc      The location where the schematic will be pasted.
      * @param settings The settings for the schematic paste operation.
      * @return A {@link CompletableFuture} that completes with {@code true} if the paste succeeded,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     CompletableFuture<Boolean> pasteSchematicWE(@NotNull Location loc, @NotNull SchematicSetting settings);
 

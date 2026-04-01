@@ -23,9 +23,8 @@ import org.jetbrains.annotations.NotNull;
 public class EntityDamageAcidEvent extends EntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    private double damage;
     private final boolean inWater;
+    private double damage;
     private boolean cancelled;
 
     public EntityDamageAcidEvent(@NotNull LivingEntity entity, double damage, boolean inWater) {
@@ -33,6 +32,10 @@ public class EntityDamageAcidEvent extends EntityEvent implements Cancellable {
         this.damage = damage;
         this.inWater = inWater;
         this.cancelled = false;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
@@ -86,10 +89,6 @@ public class EntityDamageAcidEvent extends EntityEvent implements Cancellable {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

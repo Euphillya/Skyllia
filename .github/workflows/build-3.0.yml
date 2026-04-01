@@ -43,8 +43,8 @@ jobs:
           name: Skyllia-Build
           path: release/*.jar
 
-#      - name: Publish all modules to Nexus
-#        run: ./gradlew publish
+      #      - name: Publish all modules to Nexus
+      #        run: ./gradlew publish
 
       - name: Publish to Modrinth (Gradle Minotaur)
         if: github.event_name != 'pull_request' || (github.event.pull_request.number == 94 && github.event.pull_request.head.repo.full_name == github.repository)

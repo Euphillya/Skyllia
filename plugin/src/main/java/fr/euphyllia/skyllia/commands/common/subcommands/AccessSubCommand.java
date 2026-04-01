@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -11,7 +12,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
-import org.bukkit.Bukkit;
+import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -66,18 +67,20 @@ public class AccessSubCommand implements SubCommandInterface {
         if (isUpdate) {
             if (statusAccessUpdate) {
                 ConfigLoader.language.sendMessage(player, "island.access.close");
-                ConfigLoader.worldManager.getWorldConfigs().forEach((name, environnements) -> {
+
+                for (WorldConfig worldConfig : WorldUtils.getWorldConfigs()) {
                     RegionUtils.getEntitiesInRegion(
                             Skyllia.getInstance(),
                             ConfigLoader.general.getRegionDistance(),
                             EntityType.PLAYER,
-                            Bukkit.getWorld(name),
+                            worldConfig.getWorld(),
                             island.getPosition(),
                             island.getSize(),
                             entity -> {
                                 Player playerInIsland = (Player) entity;
 
-                                if (PlayerUtils.hasPermission(playerInIsland, "skyllia.island.command.access.bypass")) return;
+                                if (PlayerUtils.hasPermission(playerInIsland, "skyllia.island.command.access.bypass"))
+                                    return;
 
                                 Players players = island.getMember(playerInIsland.getUniqueId());
                                 if (players == null
@@ -87,7 +90,7 @@ public class AccessSubCommand implements SubCommandInterface {
                                 }
                             }
                     );
-                });
+                }
             } else {
                 ConfigLoader.language.sendMessage(player, "island.access.open");
             }

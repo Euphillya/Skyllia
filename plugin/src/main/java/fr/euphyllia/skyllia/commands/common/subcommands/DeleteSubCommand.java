@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
@@ -12,6 +13,7 @@ import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
+import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -222,12 +224,12 @@ public class DeleteSubCommand implements SubCommandInterface {
     }
 
     private void kickAllPlayerOnIsland(final Island island) {
-        ConfigLoader.worldManager.getWorldConfigs().forEach((s, environnements) -> {
-            RegionUtils.getEntitiesInRegion(Skyllia.getInstance(), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, Bukkit.getWorld(s), island.getPosition(), island.getSize(), entity -> {
+        for (WorldConfig worldConfig : WorldUtils.getWorldConfigs()) {
+            RegionUtils.getEntitiesInRegion(Skyllia.getInstance(), ConfigLoader.general.getRegionDistance(), EntityType.PLAYER, worldConfig.getWorld(), island.getPosition(), island.getSize(), entity -> {
                 Player playerInIsland = (Player) entity;
                 if (entity.hasPermission("skyllia.island.command.access.bypass")) return;
                 PlayerUtils.teleportPlayerSpawn(playerInIsland);
             });
-        });
+        }
     }
 }

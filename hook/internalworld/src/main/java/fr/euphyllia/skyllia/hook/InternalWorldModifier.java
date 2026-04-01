@@ -195,7 +195,10 @@ public record InternalWorldModifier(JavaPlugin plugin) implements WorldModifier 
                                 }
                                 Object color = be.data.get("color");
                                 if (color instanceof String col) {
-                                    try { sign.setColor(DyeColor.valueOf(col)); } catch (Exception ignored) {}
+                                    try {
+                                        sign.setColor(DyeColor.valueOf(col));
+                                    } catch (Exception ignored) {
+                                    }
                                 }
                                 if (be.data.get("glow") instanceof Boolean g) sign.setGlowingText(g);
                             }
@@ -203,7 +206,10 @@ public record InternalWorldModifier(JavaPlugin plugin) implements WorldModifier 
                             if (ts instanceof CreatureSpawner sp) {
                                 Object type = be.data.get("type");
                                 if (type instanceof String name) {
-                                    try { sp.setSpawnedType(EntityType.valueOf(name)); } catch (Exception ignored) {}
+                                    try {
+                                        sp.setSpawnedType(EntityType.valueOf(name));
+                                    } catch (Exception ignored) {
+                                    }
                                 }
                                 setInt(sp::setDelay, be.data.get("delay"));
                                 setInt(sp::setMinSpawnDelay, be.data.get("minDelay"));

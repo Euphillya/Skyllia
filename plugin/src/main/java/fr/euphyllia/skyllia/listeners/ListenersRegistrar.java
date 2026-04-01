@@ -3,13 +3,13 @@ package fr.euphyllia.skyllia.listeners;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.GrowEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.folia.PortalAlternativeFoliaEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.paper.PortalAlternativePaperEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.JoinEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.MoveEvent;
-import fr.euphyllia.skyllia.listeners.bukkitevents.player.TeleportEvent;
+import fr.euphyllia.skyllia.listeners.bukkitevents.player.WorldBorderAddEvent;
 import fr.euphyllia.skyllia.listeners.permissions.block.*;
 import fr.euphyllia.skyllia.listeners.permissions.decor.DecorHangingBreakPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.decor.DecorHangingPlacePermissions;
@@ -66,7 +66,7 @@ public class ListenersRegistrar {
 
         // Bukkit Events
         registerEvent(pluginManager, new JoinEvent(interneAPI));
-        registerEvent(pluginManager, new TeleportEvent(interneAPI));
+        registerEvent(pluginManager, new WorldBorderAddEvent(interneAPI));
         registerEvent(pluginManager, new PistonEvent(interneAPI));
         registerEvent(pluginManager, new GrowEvent(interneAPI));
         registerEvent(pluginManager, new MoveEvent());

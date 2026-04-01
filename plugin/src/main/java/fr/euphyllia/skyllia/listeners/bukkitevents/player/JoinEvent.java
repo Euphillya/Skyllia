@@ -5,7 +5,6 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
-import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CacheCommands;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -15,8 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,7 +37,7 @@ public class JoinEvent implements Listener {
         final UUID playerId = player.getUniqueId();
         final String worldName = player.getWorld().getName();
 
-        executeAsync(() -> {
+        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> {
             try {
                 CacheCommands.refreshFor(playerId);
 
@@ -64,25 +61,7 @@ public class JoinEvent implements Listener {
 
                 if (shouldTeleportSpawn) {
                     if (ConfigLoader.playerManager.isTeleportSpawnIfNoIsland()) {
-                        player.getScheduler().execute(api.getPlugin(), () -> PlayerUtils.teleportPlayerSpawn(player), null, 1L);
-                    }
-                } else {
-                    if (ConfigLoader.playerManager.isTeleportOwnIslandOnJoin() && WorldUtils.isWorldSkyblock(worldName)) {
-                        player.getScheduler().execute(api.getPlugin(), () -> {
-                            Location centerIsland = RegionHelper.getCenterRegion(
-                                    player.getWorld(),
-                                    island.getPosition().x(),
-                                    island.getPosition().z()
-                            );
-
-                            WorldBorder border = player.getWorldBorder();
-                            if (border == null) {
-                                border = Bukkit.createWorldBorder();
-                            }
-                            border.setCenter(centerIsland);
-                            border.setSize(island.getSize());
-                            player.setWorldBorder(border);
-                        }, null, 1L);
+                        PlayerUtils.teleportPlayerSpawn(player);
                     }
                 }
 
@@ -111,9 +90,6 @@ public class JoinEvent implements Listener {
         }
     }
 
-    private void executeAsync(Runnable task) {
-        Bukkit.getAsyncScheduler().runNow(api.getPlugin(), scheduledTask -> task.run());
-    }
 
     private void clearPlayerData(Player player, RemovalCause cause) {
         switch (cause) {

@@ -1,6 +1,8 @@
 # SkylliaAcidRain
 
-**SkylliaAcidRain** is an addon for the [Skyllia](https://github.com/Euphyllia/Skyllia) skyblock plugin. It adds an **acid rain/water** mechanic: any living entity exposed to rain or water on a skyblock island takes periodic damage and receives debuff effects.
+**SkylliaAcidRain** is an addon for the [Skyllia](https://github.com/Euphyllia/Skyllia) skyblock plugin. It adds an *
+*acid rain/water** mechanic: any living entity exposed to rain or water on a skyblock island takes periodic damage and
+receives debuff effects.
 
 ---
 
@@ -31,7 +33,8 @@
 
 ### Entity Tracking
 
-When an entity enters a skyblock world, it is registered and a **repeating task** is scheduled on its entity scheduler (Folia-safe). When the entity leaves the world, the task is cancelled and the entity is untracked.
+When an entity enters a skyblock world, it is registered and a **repeating task** is scheduled on its entity scheduler (
+Folia-safe). When the entity leaves the world, the task is cancelled and the entity is untracked.
 
 ### Acid Tick
 
@@ -48,7 +51,8 @@ On each tick interval, the following logic runs:
 
 ### Configuration Reload
 
-When the config file is reloaded (via Skyllia's reload mechanism), all running tasks are **cancelled and restarted** with the new values.
+When the config file is reloaded (via Skyllia's reload mechanism), all running tasks are **cancelled and restarted**
+with the new values.
 
 ---
 

@@ -80,6 +80,11 @@ public class TeleportPermissions implements PermissionModule {
     @EventHandler(ignoreCancelled = true)
     public void onAddWorldBorder(final PlayerTeleportIslandEvent event) {
         final Player player = event.getPlayer();
+
+        if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+            return;
+        }
+
         final Location to = event.getTo();
         final Island island = event.getIsland();
 
