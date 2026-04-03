@@ -7,7 +7,6 @@ create-in-progress = "L'île est en cours de création"
 create-finish = "Bienvenue sur votre île !"
 delete-success = "L'île a été supprimée avec succès."
 delete-only-owner = "Désolé, seul le propriétaire peut exécuter cette commande."
-delete-has-members = "Vous ne pouvez pas supprimer votre île car elle possède encore des membres. Veuillez les exclure avant de continuer."
 type-not-exist = "Le type d'île sélectionné n'existe pas."
 schematic-not-exist = "Le schéma pour créer l'île n'existe pas."
 generic-error = "Une erreur est survenue lors de la création de l'île."
@@ -46,15 +45,10 @@ failed = "Vous n'avez pas pu quitter votre île. Si le problème persiste, conta
 open = "Votre ile est maintenant accessible pour les visiteurs."
 close = "Votre ile n'est maintenant plus accessible pour les visiteurs."
 
-[island.gamerule]
-args-missing = "Vous devez spécifier une gamerule : /skyllia gamerule <gamerule> <valeur>"
-invalid = "La gamerule spécifiée n'existe pas."
-success = "La gamerule %gamerule% a été définie sur %value%."
-failed = "La gamerule %gamerule% n'a pas pu être définie sur %value%."
-
 [island.permission]
 usage = "<gray>Usage:</gray> <light_purple>/is permission list [filter]</light_purple>\n<gray> - </gray><light_purple>/is permission <role> <namespace:key> [true|false]</light_purple>\n<gray> - </gray><light_purple>/is permission toggle <role> <namespace:key></light_purple>\n<gray> - </gray><light_purple>/is permission set <role> <namespace:key> <true|false></light_purple>"
 value = "<light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>=</gray> <aqua>%value%</aqua>"
+permission-denied = "<red>Vous n'avez pas la permission de modifier cette permission.</red>"
 
 [island.permission.role]
 invalid = "<red>Invalid role:</red> <white>%role%</white>"
@@ -82,6 +76,7 @@ usage = """<gray>Usage:</gray> <light_purple>/is flag list [filtre]</light_purpl
 <gray> - </gray><light_purple>/is flag toggle <namespace:clé></light_purple>
 <gray> - </gray><light_purple>/is flag set <namespace:clé> <true|false></light_purple>"""
 value = "<white>%flag%</white> <gray>=</gray> <aqua>%value%</aqua>"
+permission-denied = "<red>Vous n'avez pas la permission de modifier ce flag.</red>"
 
 [island.flag.flag]
 invalid-format = "<red>Format de flag invalide :</red> <white>%flag%</white> <gray>(attendu namespace:clé)</gray>"
@@ -100,10 +95,6 @@ more = "<gray>... et</gray> <white>%more%</white> <gray>de plus (utilisez un fil
 success = "<green>Mis à jour :</green> <white>%flag%</white> <gray>:</gray> <yellow>%old%</yellow> <gray>-></gray> <aqua>%new%</aqua>"
 failed = "<red>Échec de la mise à jour en base de données.</red>"
 
-[island.debug]
-args-missing = "La commande est incomplète : /skyllia debug <gamerule/commands/inventory/island>"
-unknown-debug = "Le type de débogage %s spécifié n'existe pas."
-
 [island.player]
 no-island = "Vous n'avez pas d'île !"
 already-has-island = "Vous avez déjà une île."
@@ -113,8 +104,8 @@ not-on-own-island = "Vous devez être sur votre île."
 permission-denied = "Vous n'avez pas la permission de faire cela."
 not-connected = "Le joueur n'est pas connecté."
 player-only-command = "Cette commande peut être exécutée uniquement par un joueur."
-command-in-progress = "La commande est déjà en cours d'exécution, veuillez patienter un instant."
 outside-island = "Vous ne pouvez pas quitter les limites de votre île !"
+delete-has-members = "Vous ne pouvez pas supprimer votre île car elle possède encore des membres. Veuillez les exclure avant de continuer."
 
 [island.transfer]
 success = "Vous avez transféré la propriété à %new_owner% avec succès."
@@ -130,7 +121,6 @@ demote-failed = "Le joueur %s ne peut pas être rétrogradé."
 demote-high-rank = "Vous ne pouvez pas rétrograder un joueur de votre rang ou supérieur."
 demote-args-missing = "La commande est incomplète : /skyllia demote <membre>"
 
-promote-success = "Le joueur %s a été promu."
 promote-failed = "Le joueur %s ne peut pas être promu."
 promote-high-rank = "Vous ne pouvez pas promouvoir un joueur à votre rang ou supérieur."
 promote-args-missing = "La commande est incomplète : /skyllia promote <membre>"
@@ -142,7 +132,6 @@ accept-args-missing = "Vous devez spécifier à quelle île vous souhaitez rejoi
 remove-args-missing = "La commande est incomplète : /skyllia invite remove <propriétaire_île>"
 decline-args-missing = "Vous devez spécifier quelle invitation vous souhaitez refuser : /skyllia invite decline <propriétaire_île>"
 invite-yourself = "Vous ne pouvez pas vous inviter vous-même."
-add-args-missing = "Vous devez spécifier le joueur à inviter : /skyllia invite <joueur>"
 player-invited = "Le joueur %s a été invité. En attente de réponse..."
 invite-deleted = "Vous avez supprimé l'invitation envoyée à %s."
 player-notified = "Le joueur %player_invite% vous a invité sur son île. Pour accepter : /skyllia invite accept %player_invite%. Pour refuser : /skyllia invite decline %player_invite%"
@@ -180,12 +169,12 @@ args-missing = "La commande est incomplète : /skyllia kick <joueur>"
 
 [island.ban]
 args-missing = "La commande est incomplète : /skyllia ban <joueur>"
-player-in-island = "Le joueur ne peut pas être banni car il est membre de votre île."
+failed-player-in-island = "Le joueur ne peut pas être banni car il est membre de votre île."
 already-banned = "Le joueur est déjà banni."
 success = "Le joueur a été banni de votre île."
 
 [island.unban]
-args-missing = "La commande est incomplète : /skyllia unban <joueur>"
+not-enough-args = "Vous devez spécifier un joueur à débannir."
 player-not-banned = "Le joueur n'est pas banni."
 success = "Le joueur a été débanni."
 failed = "Le joueur n'a pas pu être débanni pour une raison inconnue."
@@ -203,6 +192,7 @@ island-success = "Le changement de biome sur votre île est terminé ! Quittez p
 args-missing = "Vous devez spécifier l'île que vous souhaitez visiter : /skyllia visit <joueur>"
 no-island = "Le joueur n'a pas d'île."
 island-private = "L'île est fermée."
+island-closed = "L'île est fermée."
 banned = "Vous êtes banni de l'île."
 success = "Vous avez été téléporté sur l'île de %player%."
 no-island-location = "Aucune île n'a été trouvée à cet endroit."
@@ -210,6 +200,7 @@ no-island-location = "Aucune île n'a été trouvée à cet endroit."
 [island.generic]
 unexpected-error = "Une erreur est survenue. Veuillez contacter un administrateur."
 location-unsafe = "La position n'est pas sécurisée ! Téléportation impossible."
+command-in-progress = "La commande est déjà en cours d'exécution, veuillez patienter un instant."
 
 [island.warp]
 create-success = "Le warp %s a été créé avec succès."
@@ -222,6 +213,7 @@ teleport-success = "Vous avez été téléporté au warp."
 [island.trust]
 success = "Le joueur a été ajouté à votre liste de confiance jusqu'au prochain redémarrage ou jusqu'à ce que vous le supprimiez. Notez qu'une personne de confiance dispose d'autant d'autorisations qu'un membre de votre île."
 args-missing = "La commande est incomplète : /skyllia trust <player>"
+already-trusted = "Ce joueur est déjà dans votre liste de confiance."
 
 [island.untrust]
 success = "Le membre n'est plus dans votre liste de confiance."
@@ -231,18 +223,14 @@ args-missing = "La commande est incomplète : /skyllia untrust <player>"
 [island.admin]
 delete-args-missing = "Le nom du joueur est manquant."
 delete-no-confirm = "Ajoutez 'confirm' à la fin de la commande."
-setsize-args-missing = "Commande incomplète : /skylliadmin setsize <joueur/uuid> <nombre> confirm"
-setsize-no-confirm = "Ajoutez 'confirm' à la fin."
-setsize-nan = "Vous n'avez pas indiqué un nombre entier."
-setsize-failed = "Le changement n'a pas pu être effectué."
-setsize-success = "La taille de l'île a été modifiée."
-setmaxmembers-args-missing = "Commande incomplète : /skyllia setmaxmembers <valeur> confirm"
-setmaxmembers-no-confirm = "Ajoutez 'confirm' à la fin."
-setmaxmembers-nan = "Le nombre indiqué est incorrect."
 transfer-args-missing = "Commande incomplète : /skylliadmin transfer <ancien> <nouveau> confirm"
 transfer-no-confirm = "Ajoutez 'confirm' à la fin."
-transfer-success = "La propriété a été transférée de %previous_owner% à %new_owner%."
 reload = "Les configurations ont été rechargés.."
+size-args-missing = "Commande incomplète : /skylliadmin setsize <joueur/uuid> <nombre> confirm"
+size-success = "La taille de l'île a été modifiée."
+size-failed = "Le changement n'a pas pu être effectué."
+size-nan = "Vous n'avez pas indiqué un nombre entier."
+max-members-nan = "Le nombre de membres indiqué est incorrect."
 
 [island.admin.schematic]
 pos1-selected = "Position 1 sélectionnée."
@@ -250,13 +238,21 @@ pos2-selected = "Position 2 sélectionnée."
 positions-not-set = "Les positions 1 et 2 doivent être définies avant d'enregistrer un schéma."
 save-success = "Le schéma a été enregistré avec succès sous le nom de %schematic_name%."
 save-failed = "Le schéma n'a pas pu être enregistré. Veuillez vérifier la console pour plus de détails."
+args-missing = "Commande incomplète : /skylliadmin schematic <pos1|pos2|save> [nom]"
+player-only = "Cette commande ne peut être utilisée que par un joueur."
 
 [island.admin.current]
 no-island-here = "Aucune île n'a été trouvée à cet endroit."
 no-permission = "Vous n'avez pas la permission d'utiliser cette commande."
-player-only-command = "Cette commande ne peut être utilisée que par un joueur."
 no-owner = "L'île n'a pas de propriétaire."
 info = "Vous êtes sur l'île de %owner_name% (ID ile: %island_id%, ID propriétaire: %owner_uuid%)."
+
+[island.admin.max-members]
+args-missing = "Commande incomplète : /skylliadmin setmaxmembers <joueur/uuid> <nombre> confirm"
+no-confirm = "Ajoutez 'confirm' à la fin de la commande."
+
+[island.admin.rank]
+promote-success = "Le joueur %s a été promu."
 
 [misc]
 unknown-command = "<red>Commande inconnue."
@@ -293,13 +289,11 @@ success-withdraw = "<green>Retiré %amount% de la banque de votre île."
 error-deposit-player-refund-island = "<red>Erreur lors du dépôt sur votre portefeuille. La banque de l'île a été remboursée."
 critical-error-withdraw = "<red>Erreur critique : le retrait vers votre portefeuille et le remboursement sur l'île ont échoué. Contactez un administrateur."
 error-withdraw-island = "<red>Une erreur s'est produite lors du retrait de votre banque d'ile."
-error-generic-withdraw = "<red>Une erreur s'est produite lors du retrait. Veuillez réessayer ultérieurement."
 
 # Balance
 no-permission-balance = "<red>Vous n'avez pas l'autorisation de consulter le solde."
 balance = "<green>Solde bancaire de votre île : %amount%"
 error-get-balance = "<red>Impossible de récupérer le solde de votre île."
-
 
 [addons.bank.admin]
 usage-root = "<yellow>Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"
@@ -332,7 +326,6 @@ set-balance-error = "<red>Une erreur s'est produite lors de la définition du so
 [addons.ore.display]
 title = "<gold>=== Générateur ===</gold>"
 generator = "<yellow>Générateur : </yellow><white>%ore%</white>"
-
 
 [addons.challenge.admin]
 no-permission = "<red>Vous n'avez pas la permission d'utiliser cette commande."
@@ -393,7 +386,7 @@ display = "<!italic><gray>- Avoir crafté %amount% de %item_name%</gray>"
 
 [addons.challenge.reward.bank]
 success = "<green>Vous avez reçu %amount% dans le compte de l'île en récompense du défi %challenge_name%.</green>"
-failure = "<red>Une erreur s'est produite lors de l'ajout de %amount% dans le compte de l'île en récompense du défi %challenge_name%.</red>"
+failed = "<red>Une erreur s'est produite lors de l'ajout de %amount% dans le compte de l'île en récompense du défi %challenge_name%.</red>"
 
 [addons.island-chest]
 no-permission = "<red>Votre rang ne vous permet pas d'utiliser ce coffre."
@@ -403,3 +396,8 @@ open = "<green>Vous avez ouvert le coffre de l'île.</green>"
 [addons.acid-island]
 water-contact = "<red>⚠ L'eau acide vous brûle !</red>"
 rain-contact = "<dark_aqua>☔ La pluie acide vous ronge la peau !</dark_aqua>"
+
+[addons.chat]
+no-permission = "<red>Vous n'avez pas la permission d'utiliser le chat d'île.</red>"
+enabled = "<green>Chat d'île activé.</green>"
+disabled = "<gray>Chat d'île désactivé.</gray>"

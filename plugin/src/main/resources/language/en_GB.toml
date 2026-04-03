@@ -13,15 +13,15 @@ schematic-not-exist = "The schematic to create the island does not exist."
 generic-error = "An error occurred during island creation"
 only-owner = "Only the island owner can execute this command."
 
-[island.banlist]
-title = "<gold>📌 Island ban list <gray>(%count%)</gray>"
-line = "<red>-</red> <white>%name%</white>"
-empty = "<gray>No players are banned from your island.</gray>"
-
 [island.create]
 already-in-queue = "⏳ You are already in the island creation queue. Current position: #%position%"
 queued = "⌛ You have been added to the island creation queue. Position: #%position%"
 position-update = "📣 Your new position in the queue is: #%position%"
+
+[island.banlist]
+title = "<gold>📌 Island ban list <gray>(%count%)</gray>"
+line = "<red>-</red> <white>%name%</white>"
+empty = "<gray>No players are banned from your island.</gray>"
 
 [island.home]
 success = "You have been teleported to your island."
@@ -46,15 +46,10 @@ failed = "You could not leave your island. If the problem persists, contact an a
 open = "Your island is now accessible to visitors."
 close = "Your island is no longer accessible to visitors."
 
-[island.gamerule]
-args-missing = "You must specify a gamerule: /skyllia gamerule <gamerule> <value>"
-invalid = "The specified gamerule does not exist."
-success = "The gamerule %gamerule% has been set to %value%."
-failed = "The gamerule %gamerule% could not be set to %value%."
-
 [island.permission]
-value = "<light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>=</gray> <aqua>%value%</aqua>"
 usage = "<gray>Usage:</gray> <light_purple>/is permission list [filter]</light_purple>\n<gray> - </gray><light_purple>/is permission <role> <namespace:key> [true|false]</light_purple>\n<gray> - </gray><light_purple>/is permission toggle <role> <namespace:key></light_purple>\n<gray> - </gray><light_purple>/is permission set <role> <namespace:key> <true|false></light_purple>"
+value = "<light_purple>%role%</light_purple> <gray>-></gray> <white>%perm%</white> <gray>=</gray> <aqua>%value%</aqua>"
+permission-denied = "<red>You do not have permission to modify this permission.</red>"
 
 [island.permission.role]
 invalid = "<red>Invalid role:</red> <white>%role%</white>"
@@ -82,6 +77,7 @@ usage = """<gray>Usage:</gray> <light_purple>/is flag list [filter]</light_purpl
 <gray> - </gray><light_purple>/is flag toggle <namespace:key></light_purple>
 <gray> - </gray><light_purple>/is flag set <namespace:key> <true|false></light_purple>"""
 value = "<white>%flag%</white> <gray>=</gray> <aqua>%value%</aqua>"
+permission-denied = "<red>You do not have permission to modify this flag.</red>"
 
 [island.flag.flag]
 invalid-format = "<red>Invalid flag format:</red> <white>%flag%</white> <gray>(expected namespace:key)</gray>"
@@ -100,11 +96,6 @@ more = "<gray>... and</gray> <white>%more%</white> <gray>more (use filter)</gray
 success = "<green>Updated:</green> <white>%flag%</white> <gray>:</gray> <yellow>%old%</yellow> <gray>-></gray> <aqua>%new%</aqua>"
 failed = "<red>Database update failed.</red>"
 
-
-[island.debug]
-args-missing = "The command is incomplete: /skyllia debug <gamerule/commands/inventory/island"
-unknown-debug = "The specified debug %s does not exist."
-
 [island.player]
 no-island = "You don't have an island!"
 already-has-island = "You already have an island."
@@ -112,13 +103,13 @@ not-found = "Player not found."
 not-on-island = "You must be on an island."
 not-on-own-island = "You must be on your island."
 permission-denied = "You do not have permission to do this."
-not-connected = "The player is not connected"
+not-connected = "The player is not connected."
 player-only-command = "This command can only be executed by a player."
-command-in-progress = "The command is already being executed, please wait a moment."
 outside-island = "You can't leave the confines of your island!"
+delete-has-members = "You cannot delete your island because it has members. Please remove all members before deleting."
 
 [island.transfer]
-success = "You have successfully transferred ownership to %new_owner%"
+success = "You have successfully transferred ownership to %new_owner%."
 notify-old-owner = "You have been made the owner of the island by %old_owner%."
 confirm = "You are about to transfer ownership of the island to %new_owner%; this action is irreversible. Type /is transfer %new_owner% confirm to confirm."
 specify-player = "Please specify a player to transfer ownership to."
@@ -130,8 +121,6 @@ demote-success = "The player %s has been demoted."
 demote-failed = "The player %s cannot be demoted."
 demote-high-rank = "You cannot demote a player of your rank or higher."
 demote-args-missing = "The command is incomplete: /skyllia demote <member>"
-
-promote-success = "The player %s has been promoted."
 promote-failed = "The player %s cannot be promoted."
 promote-high-rank = "You cannot promote a player to your rank or higher."
 promote-args-missing = "The command is incomplete: /skyllia promote <member>"
@@ -141,9 +130,8 @@ already-on-island = "You are already on an island!"
 args-missing = "The command is incomplete: /skyllia invite <add/accept/decline> <player/island_owner>"
 accept-args-missing = "You must specify which island you want to join: /skyllia invite accept <island_owner>"
 remove-args-missing = "The command is incomplete: /skyllia invite remove <island_owner>"
-decline-args-missing = "You must specify which island you want to decline: /skyllia invite decline <island_owner>"
+decline-args-missing = "You must specify which invitation you want to decline: /skyllia invite decline <island_owner>"
 invite-yourself = "You cannot invite yourself."
-add-args-missing = "You must specify which island you want to decline: /skyllia invite <player>"
 player-invited = "The player %s has been invited. Awaiting a response..."
 invite-deleted = "You have deleted %s's invitation."
 player-notified = "The player %player_invite% has invited you to their island. To accept: /skyllia invite accept %player_invite%. To decline: /skyllia invite decline %player_invite%"
@@ -151,7 +139,7 @@ island-not-found = "The island of the player %s was not found."
 join-success = "You are now a member of the island!"
 member-limit-reached = "The member limit of the island has been reached. You cannot join the island."
 decline-success = "You have declined the invitation from %player_invite%."
-invite-not-found = "You have not received an invitation from the player."
+invite-not-found = "You have not received an invitation from this player."
 accept-notify-owner = "Player %player_accept% has accepted your island invitation."
 decline-notify-owner = "Player %player_decline% has declined your island invitation."
 home-not-found = "The island home was not found."
@@ -175,35 +163,36 @@ member-line = "%color%- [%role%] %name%"
 
 [island.kick]
 success = "The player has been kicked from your island."
-failed = "The player could not be kicked. If the problem persists, contact an administrator"
+failed = "The player could not be kicked. If the problem persists, contact an administrator."
 high-rank = "You cannot kick a player of your rank or higher."
 args-missing = "The command is incomplete: /skyllia kick <player>"
 
 [island.ban]
 args-missing = "The command is incomplete: /skyllia ban <player>"
-player-in-island = "The player cannot be banned as they are a member of your island."
-success = "The player has been banned from your island."
+failed-player-in-island = "The player cannot be banned as they are a member of your island."
 already-banned = "The player is already banned."
+success = "The player has been banned from your island."
 
 [island.unban]
-args-missing = "The command is incomplete: /skyllia unban <player>"
+not-enough-args = "You must specify a player to unban."
 player-not-banned = "The player is not banned."
 success = "The player has been unbanned."
 failed = "The player could not be unbanned for an unknown reason."
 
 [island.biome]
 args-missing = "The command is incomplete: /skyllia biome <biome>"
-only-on-island = "The command can only be executed on an island"
+only-on-island = "The command can only be executed on an island."
 not-exist = "The biome %s does not exist."
 permission-denied = "You do not have permission to use this biome."
-change-in-progress = "Biome change in progress. Please note that it takes time... A message will notify you when the process is complete."
-chunk-success = "The biome change in the chunk you were in is complete! You need to leave and return to your island to see the change."
-island-success = "The biome change in your island you were in is complete! You need to leave and return to your island to see the change."
+change-in-progress = "Biome change in progress. A message will notify you when the process is complete."
+chunk-success = "The biome change in your chunk is complete! Leave and return to see the change."
+island-success = "The biome change on your island is complete! Leave and return to see the change."
 
 [island.visit]
 args-missing = "You must specify the name of the island you want to visit: /skyllia visit <player>"
-no-island = "The player does not have an island"
+no-island = "The player does not have an island."
 island-private = "The island is closed."
+island-closed = "The island is closed."
 banned = "You are banned from the island."
 success = "You have been teleported to the island of %player%."
 no-island-location = "No island was found at this location."
@@ -211,9 +200,10 @@ no-island-location = "No island was found at this location."
 [island.generic]
 unexpected-error = "An error occurred. Please contact an administrator."
 location-unsafe = "The location is not safe! Teleportation impossible."
+command-in-progress = "The command is already being executed, please wait a moment."
 
 [island.warp]
-create-success = "Your warp: %s has been created."
+create-success = "Your warp %s has been created."
 args-missing = "You must specify the name of the warp to register: /skyllia <set/del>warp <warp_name>"
 delete-home-forbidden = "You cannot delete the home warp."
 delete-success = "The warp has been deleted."
@@ -223,27 +213,31 @@ teleport-success = "You have been teleported to the requested warp."
 [island.trust]
 success = "The player has been added to your trust list until the next restart or until you remove them. Note that a trusted person has as many permissions as a member of your island."
 args-missing = "The command is incomplete: /skyllia trust <player>"
+already-trusted = "This player is already in your trust list."
 
 [island.untrust]
-success = "The member is no longer in your trusted list"
-failed = "An error occurred while removing the person from your trust list. Were they really trusted on your island?"
+success = "The member is no longer in your trusted list."
+failed = "An error occurred while removing the person from your trust list."
 args-missing = "The command is incomplete: /skyllia untrust <player>"
 
 [island.admin]
 delete-args-missing = "The player's name is missing."
-delete-no-confirm = "You must add 'confirm' to the end of your command"
-setsize-args-missing = "The command is incomplete: /skylliadmin setsize <player/uuid> <number> confirm"
-setsize-no-confirm = "You must add the argument 'confirm' to the end of your command."
-setsize-nan = "You did not choose an integer."
-setsize-failed = "The change could not be made."
-setsize-success = "The number of people on the island has been changed."
-setmaxmembers-args-missing = "The command is incomplete: /skyllia setmaxmembers <value> confirm"
-setmaxmembers-no-confirm = "You did not add 'confirm' to the end"
-setmaxmembers-nan = "The indicated number is incorrect."
+delete-no-confirm = "You must add 'confirm' to the end of your command."
 transfer-args-missing = "The command is incomplete: /skylliadmin transfer <previousOwner> <newOwner> confirm"
-transfer-no-confirm = "You must add 'confirm' to the end of your command"
-transfer-success = "Ownership has been successfully transferred from %previous_owner% to %new_owner%."
+transfer-no-confirm = "You must add 'confirm' to the end of your command."
 reload = "The configurations have been reloaded."
+size-args-missing = "The command is incomplete: /skylliadmin setsize <player/uuid> <number> confirm"
+size-success = "The island size has been changed."
+size-failed = "The change could not be made."
+size-nan = "You did not provide a valid integer."
+max-members-nan = "The indicated number is incorrect."
+
+[island.admin.max-members]
+args-missing = "The command is incomplete: /skylliadmin setmaxmembers <player/uuid> <number> confirm"
+no-confirm = "You must add 'confirm' to the end of your command."
+
+[island.admin.rank]
+promote-success = "The player %s has been promoted."
 
 [island.admin.schematic]
 pos1-selected = "Position 1 has been selected."
@@ -251,20 +245,25 @@ pos2-selected = "Position 2 has been selected."
 positions-not-set = "Both positions must be set before saving the schematic."
 save-success = "The schematic has been saved successfully as %schematic_name%."
 save-failed = "An error occurred while saving the schematic."
+args-missing = "The command is incomplete: /skylliadmin schematic <pos1|pos2|save> [name]"
+player-only = "This command can only be executed by a player."
 
 [island.admin.current]
 no-island-here = "There is no island at your current location."
 no-permission = "You do not have permission to manage this island."
-player-only-command = "This command can only be executed by a player."
 no-owner = "This island has no owner."
-info = "You are currently on the island of %owner_name% (ID ile: %island_id%, ID propriétaire: %owner_uuid%)."
+info = "You are currently on the island of %owner_name% (Island ID: %island_id%, Owner ID: %owner_uuid%)."
 
 [misc]
 unknown-command = "This subcommand does not exist."
 
+# ───────────────────────────────────────────
+#  Addons
+# ───────────────────────────────────────────
+
 [addons.bank]
 no-permissions = "<red>You do not have permission to use this command."
-error = "An error occurred while executing the command. Please contact an administrator."
+
 [addons.bank.display]
 title = "<gold>=== Island Bank ===</gold>"
 balance = "<yellow>Island Bank Balance: </yellow><white>%amount%</white>"
@@ -273,7 +272,6 @@ balance = "<yellow>Island Bank Balance: </yellow><white>%amount%</white>"
 player-only = "<red>This command can only be used by a player."
 no-island = "<red>You do not have an island."
 unknown-command = "<yellow>Unknown command. Use /is bank [deposit|withdraw|balance]"
-
 # Deposit
 no-permission-deposit = "<red>You do not have permission to deposit money."
 usage-deposit = "<yellow>Usage: /is bank deposit <amount>"
@@ -284,7 +282,6 @@ success-deposit = "<green>Deposited %amount% into your island's bank."
 error-deposit-refunded = "<red>An error occurred. Your money has been refunded."
 critical-error-deposit = "<red>Critical error: deposit failed, refund also failed. Contact an administrator."
 error-withdraw-player = "<red>Withdrawal error: %errorMessage%"
-
 # Withdraw
 no-permission-withdraw = "<red>You do not have permission to withdraw money."
 usage-withdraw = "<yellow>Usage: /is bank withdraw <amount>"
@@ -293,8 +290,6 @@ success-withdraw = "<green>Withdrew %amount% from your island's bank."
 error-deposit-player-refund-island = "<red>Error depositing to your wallet. The island bank has been refunded."
 critical-error-withdraw = "<red>Critical error: deposit to your wallet and island refund both failed. Contact an administrator."
 error-withdraw-island = "<red>An error occurred while withdrawing from your island bank."
-error-generic-withdraw = "<red>An error occurred during the withdrawal. Please try again later."
-
 # Balance
 no-permission-balance = "<red>You do not have permission to view the balance."
 balance = "<green>Your island's bank balance: %amount%"
@@ -303,40 +298,27 @@ error-get-balance = "<red>Unable to retrieve your island's balance."
 [addons.bank.admin]
 usage-root = "<yellow>Usage: /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"
 unknown-command = "<yellow>Unknown command. Use /skylliadmin bank <balance|deposit|withdraw|setbalance> <player> [amount]"
-
 usage-balance = "<yellow>Usage: /skylliadmin bank balance <player>"
 usage-deposit = "<yellow>Usage: /skylliadmin bank deposit <player> <amount>"
 usage-withdraw = "<yellow>Usage: /skylliadmin bank withdraw <player> <amount>"
 usage-set-balance = "<yellow>Usage: /skylliadmin bank setbalance <player> <amount>"
-
 player-not-found = "<red>The player does not exist or was not found."
 player-not-island = "<red>The player has no island."
-
 invalid-amount = "<red>Invalid amount."
 invalid-amount-positive = "<red>Invalid amount. Must be positive."
 invalid-amount-negative = "<red>Amount cannot be negative."
-
-island-balance = "<green>{player_name}'s Island Balance: <yellow>{amount}."
+island-balance = "<green>{player_name}'s Island Balance: <yellow>%amount%."
 island-error-balance = "<red>Unable to recover {player_name}'s Island balance."
-
 deposit-success = "<green>Deposited %amount% into {player_name}'s island bank."
 deposit-error = "<red>An error occurred while depositing to {player_name}'s island bank."
-
 success-withdraw = "<green>Withdrawn %amount% from {player_name}'s island bank."
 error-withdraw = "<red>An error occurred while withdrawing from {player_name}'s island bank."
-
 set-balance-success = "<green>Set {player_name}'s island bank balance to %amount%."
 set-balance-error = "<red>An error occurred while setting {player_name}'s island balance."
 
 [addons.ore.display]
 title = "<gold>=== Island Ore ===</gold>"
 generator = "<yellow>Ore: </yellow><white>%ore%</white>"
-
-[addons.chat]
-no-permission = "<red>You do not have permission to use this command."
-enabled = "<green>Island chat enabled."
-disabled = "<red>Island chat disabled."
-
 
 [addons.challenge.admin]
 no-permission = "<red>You do not have permission to use this command."
@@ -360,25 +342,10 @@ next = "<!italic><gray>Next page</gray>"
 cooldown = "<!italic>⏳ Remaining cooldown: %time_left%."
 
 [addons.challenge.display.requirement]
-count = "<!italic><gray>Objectif %collected%/%required% %met%</gray>"
+count = "<!italic><gray>Progress %collected%/%required% %met%</gray>"
 
 [addons.challenge.requirement.potion]
 display = "<!italic><gray>- Have the effect %potion_name% (variant %potion_data%) x %amount%.</gray>"
-
-[addons.challenge.requirement.nearby_entity]
-display = "<!italic><gray>- Have %amount% %entity_type% nearby ( %radius% m)</gray>"
-
-[addons.challenge.requirement.item]
-display = "<!italic><gray>- Have %amount% of %item_name%</gray>"
-
-[addons.challenge.requirement.vault]
-display = "<!italic><gray>- Have %amount% in your account.</gray>"
-
-[addons.challenge.requirement.bank]
-display = "<!italic><gray>- Have %amount% in your island account.</gray>"
-
-[addons.challenge.requirement.craft]
-display = "<!italic><gray>- Craft %amount% of %item_name%</gray>"
 
 [addons.challenge.requirement.player_consume]
 display = "<!italic><gray>- Consume %amount% of %material%.</gray>"
@@ -395,9 +362,24 @@ display = "<!italic><gray>- Enchant %amount% items with %enchantment_name% (leve
 [addons.challenge.requirement.block_break]
 display = "<!italic><gray>- Break %amount% of %material%.</gray>"
 
+[addons.challenge.requirement.nearby_entity]
+display = "<!italic><gray>- Have %amount% %entity_type% nearby (%radius% m).</gray>"
+
+[addons.challenge.requirement.item]
+display = "<!italic><gray>- Have %amount% of %item_name%.</gray>"
+
+[addons.challenge.requirement.vault]
+display = "<!italic><gray>- Have %amount% in your account.</gray>"
+
+[addons.challenge.requirement.bank]
+display = "<!italic><gray>- Have %amount% in your island account.</gray>"
+
+[addons.challenge.requirement.craft]
+display = "<!italic><gray>- Craft %amount% of %item_name%.</gray>"
+
 [addons.challenge.reward.bank]
 success = "<green>You have received %amount% in your island account as a reward for completing the %challenge_name% challenge.</green>"
-failure = "<red>An error occurred while adding %amount% to the island's account as a reward for the challenge %challenge_name%.</red>"
+failed = "<red>An error occurred while adding %amount% to the island's account as a reward for the challenge %challenge_name%.</red>"
 
 [addons.island-chest]
 no-permission = "<red>You do not have permission to open the island chest.</red>"
@@ -405,5 +387,10 @@ inventory-title = "<gold>%island_name%'s Island Chest</gold>"
 open = "<green>You have opened the island chest.</green>"
 
 [addons.acid-island]
-water-contact = "<red>⚠ Acidic water burns you !</red>"
-rain-contact = "<dark_aqua>☔ Acid rain is eating away at your skin !</dark_aqua>"
+water-contact = "<red>⚠ Acidic water burns you!</red>"
+rain-contact = "<dark_aqua>☔ Acid rain is eating away at your skin!</dark_aqua>"
+
+[addons.chat]
+no-permission = "<red>You do not have permission to use the island chat.</red>"
+enabled = "<green>Island chat enabled.</green>"
+disabled = "<gray>Island chat disabled.</gray>"
