@@ -3,7 +3,7 @@ plugins {
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19" apply false
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21" apply false
     id("xyz.jpenilla.run-paper") version "3.0.2"
     id("com.modrinth.minotaur") version "2.8.10"
 }
