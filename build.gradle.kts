@@ -3,12 +3,14 @@ plugins {
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19" apply false
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21" apply false
     id("xyz.jpenilla.run-paper") version "3.0.2"
     id("com.modrinth.minotaur") version "2.8.10"
 }
 
 evaluationDependsOn(":plugin")
+
+java.disableAutoTargetJvm()
 
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
 val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
@@ -38,6 +40,7 @@ dependencies {
     implementation(project(":nms:v1_21_R5"))
     implementation(project(":nms:v1_21_R6"))
     implementation(project(":nms:v1_21_R7"))
+    implementation(project(":nms:v26_1"))
 }
 
 allprojects {
@@ -96,8 +99,8 @@ tasks.test {
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 fun getGitCommitHash(): String {
@@ -161,7 +164,9 @@ modrinth {
         "1.21.8",
         "1.21.9",
         "1.21.10",
-        "1.21.11"
+        "1.21.11",
+        "26.1",
+        "26.1.1"
     )
 
     loaders.addAll("folia", "paper", "purpur")

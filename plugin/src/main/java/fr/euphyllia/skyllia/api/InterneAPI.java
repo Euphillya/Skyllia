@@ -171,6 +171,13 @@ public class InterneAPI {
                 this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.ExplosionEntityImpl();
                 this.mobsSpawnImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.MobSpawnNMS();
             }
+            case "26.1", "26.1.1" -> {
+                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v26_1.WorldNMS();
+                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v26_1.PlayerNMS();
+                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v26_1.BiomeNMS();
+                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v26_1.ExplosionEntityImpl();
+                this.mobsSpawnImpl = new fr.euphyllia.skyllia.utils.nms.v26_1.MobSpawnNMS();
+            }
             default ->
                     throw new UnsupportedMinecraftVersionException("Version " + minecraftVersion + " not supported!");
         }

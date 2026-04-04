@@ -82,7 +82,7 @@ Extend Skyllia with 7 free official addons:
 ## 📋 Requirements
 
 - **Server**: Folia 1.20.6+ or Paper 1.20.6+
-- **Java**: 21 or higher
+- **Java**: 25 or higher
 - **RAM**: 4GB minimum, 8GB+ recommended
 - **Database** (optional): MariaDB 10.5+ or PostgreSQL 12+ (prefer PostgreSQL for large servers)
 

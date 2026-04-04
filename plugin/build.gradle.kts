@@ -28,11 +28,12 @@ dependencies {
     compileOnly(project(":nms:v1_21_R5"))
     compileOnly(project(":nms:v1_21_R6"))
     compileOnly(project(":nms:v1_21_R7"))
+    compileOnly(project(":nms:v26_1"))
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 publishing {
