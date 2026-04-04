@@ -10,6 +10,8 @@ plugins {
 
 evaluationDependsOn(":plugin")
 
+java.disableAutoTargetJvm()
+
 val paperRepo = "https://repo.papermc.io/repository/maven-public/";
 val sonatypeRepo = "https://oss.sonatype.org/content/groups/public/";
 val engineHubRepo = "https://maven.enginehub.org/repo/";

@@ -47,11 +47,7 @@ public class BiomeNMS extends BiomesImpl {
         Biome biome = biomeRegistry.get(NamespacedKey.minecraft(biomeName));
         if (biome != null) return biome;
 
-        try {
-            return Biome.valueOf(biomeName.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
+        return Bukkit.getUnsafe().get(RegistryKey.BIOME, NamespacedKey.fromString(biomeName.toLowerCase(Locale.ROOT)));
     }
 
     @Override
@@ -92,7 +88,7 @@ public class BiomeNMS extends BiomesImpl {
                 for (int x = 0; x < 4; x++) {
                     for (int y = 0; y < 4; y++) {
                         for (int z = 0; z < 4; z++) {
-                            section.setBiome(x, y, z, biomeHolder);
+                            section.setNoiseBiome(x, y, z, biomeHolder);
                         }
                     }
                 }
