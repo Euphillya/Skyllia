@@ -1,6 +1,5 @@
 package fr.euphyllia.skyllia.listeners.permissions.player;
 
-import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.teleport.PlayerTeleportIslandEvent;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
@@ -10,8 +9,10 @@ import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -32,7 +33,6 @@ public class TeleportPermissions implements PermissionModule {
 
     @EventHandler
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
-        // Implementation basic
         final Player player = event.getPlayer();
         Location to = event.getTo();
         if (!SkylliaAPI.isWorldSkyblock(to.getWorld())) return;
@@ -74,20 +74,30 @@ public class TeleportPermissions implements PermissionModule {
                 ConfigLoader.language.sendMessage(event.getPlayer(), "island.visit.island-closed");
                 event.setCancelled(true);
             }
-            return;
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onAddWorldBorder(final PlayerTeleportIslandEvent event) {
         final Player player = event.getPlayer();
+
+        if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+            return;
+        }
+
         final Location to = event.getTo();
         final Island island = event.getIsland();
 
         if (island == null) return;
 
         Location centerIsland = RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z());
-        Skyllia.getInstance().getInterneAPI().getPlayerNMS().setOwnWorldBorder(Skyllia.getInstance(), player, centerIsland, island.getSize(), 0, 0);
 
+        WorldBorder border = player.getWorldBorder();
+        if (border == null) {
+            border = Bukkit.createWorldBorder();
+        }
+        border.setCenter(centerIsland);
+        border.setSize(island.getSize());
+        player.setWorldBorder(border);
     }
 }

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
@@ -8,8 +9,10 @@ import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.FlagModuleManager;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.MobsSpawnImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
@@ -278,14 +281,18 @@ public final class SkylliaAPI {
     }
 
     /**
-     * Creates a new island with the specified ID and settings.
+     * Creates a new island with the specified {@link IslandSettings}.
      *
-     * @param islandId The UUID of the island to create.
-     * @param settings The settings for the new island.
-     * @return True if the island was successfully created, false otherwise.
+     * @param islandId The UUID of the new island.
+     * @param settings The settings to apply to the new island.
+     * @param owners   The owner of the island, must have {@link RoleType#OWNER}.
+     * @return {@code true} if the island was successfully created,
+     * {@code false} if creation was cancelled or an error occurred.
+     * @throws IllegalArgumentException If any argument is null.
+     * @throws IllegalStateException    If the owner's island ID is already set.
      */
-    public static Boolean createIsland(UUID islandId, IslandSettings settings) {
-        return implementation.createIsland(islandId, settings);
+    public static Boolean createIsland(UUID islandId, IslandSettings settings, Players owners) {
+        return implementation.createIsland(islandId, settings, owners);
     }
 
     /**
@@ -316,5 +323,17 @@ public final class SkylliaAPI {
      */
     public static FlagModuleManager getFlagModuleManager() {
         return implementation.getFlagModuleManager();
+    }
+
+
+    /**
+     * Retrieves the configuration registry.
+     * Addons can register their {@link fr.euphyllia.skyllia.api.configuration.IConfigurationProvider}
+     * to participate in Skyllia's global reload cycle.
+     *
+     * @return The IConfigRegistry instance.
+     */
+    public static IConfigRegistry getConfigRegistry() {
+        return implementation.getConfigRegistry();
     }
 }

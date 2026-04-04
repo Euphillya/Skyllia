@@ -67,7 +67,7 @@ delivers exceptional performance even with hundreds of simultaneous players.
 
 ## 🎮 Official Addons
 
-Extend Skyllia with 5 free official addons:
+Extend Skyllia with 7 free official addons:
 
 | Addon                | Description                                        |
 |----------------------|----------------------------------------------------|
@@ -76,6 +76,8 @@ Extend Skyllia with 5 free official addons:
 | **SkylliaChallenge** | Daily/weekly challenges with rewards               |
 | **SkylliaChat**      | Per-island chat with multiple channels             |
 | **InsightsSkyllia**  | Block and entity limits per island                 |
+| **SkylliaChest**     | Share a chest across your entire island (beta)     |
+| **SkylliaAcidRain**  | The water is becoming acidic!                      |
 
 ## 📋 Requirements
 

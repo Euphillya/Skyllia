@@ -13,13 +13,17 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An implementation of {@link Island} for managing island data and operations.
@@ -31,6 +35,7 @@ public class IslandHook extends Island {
     private final Timestamp createDate;
     private final Position position;
     private final int maxMemberInIsland;
+    private final Map<World, Location> islandCenterLocations;
     private double islandSize;
     private transient volatile CompiledPermissions compiledPermissions;
     private transient volatile IslandFlags islandFlags;
@@ -55,6 +60,7 @@ public class IslandHook extends Island {
         this.position = position;
         this.maxMemberInIsland = maxMembers;
         this.islandSize = size;
+        this.islandCenterLocations = new ConcurrentHashMap<>();
     }
 
     /**
@@ -322,5 +328,32 @@ public class IslandHook extends Island {
     @Override
     public final void invalidateIslandFlags() {
         this.islandFlags = null;
+    }
+
+    @Override
+    public Location getCenterLocation(World world) {
+        if (islandCenterLocations.isEmpty()) {
+            List<Location> stored = this.plugin.getInterneAPI()
+                    .getSkyblockManager()
+                    .getCenterLocations(this);
+            for (Location loc : stored) {
+                if (loc.getWorld() != null) {
+                    islandCenterLocations.put(loc.getWorld(), loc);
+                }
+            }
+        }
+        Location location = islandCenterLocations.get(world);
+        if (location != null) return location;
+
+        Location fallback = RegionHelper.getCenterRegion(world, this.position.x(), this.position.z());
+        fallback.setY(64.0);
+        setCenterLocation(fallback);
+        return fallback;
+    }
+
+    @Override
+    public void setCenterLocation(Location location) {
+        this.islandCenterLocations.put(location.getWorld(), location);
+        this.plugin.getInterneAPI().getSkyblockManager().updateCenterLocation(this, location);
     }
 }

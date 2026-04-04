@@ -104,7 +104,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             CREATE TABLE IF NOT EXISTS player_clear (
                 uuid_player CHAR(36) NOT NULL,
                 cause VARCHAR(50) NOT NULL DEFAULT 'ISLAND_DELETED',
-                PRIMARY KEY (uuid_player)
+                PRIMARY KEY (uuid_player, cause)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 
@@ -142,6 +142,20 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             );
             
             """;
+
+    private static final String CREATE_ISLAND_CENTER_LOCATIONS_TABLE = """
+            CREATE TABLE IF NOT EXISTS island_center_locations (
+                island_id  CHAR(36)     NOT NULL,
+                world_name VARCHAR(255) NOT NULL,
+                center_x   DOUBLE       NOT NULL,
+                center_y   DOUBLE       NOT NULL,
+                center_z   DOUBLE       NOT NULL,
+                PRIMARY KEY (island_id, world_name),
+                CONSTRAINT island_center_locations_FK FOREIGN KEY (island_id) REFERENCES islands (island_id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+
+
     public final int regionDistance;
     public final int maxIslands;
     private final DatabaseLoader databaseLoader;
@@ -176,6 +190,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_SPIRAL_INDEX);
         exec(CREATE_MEMBERS_BY_PLAYER_INDEX);
         exec(CREATE_MEMBER_BY_ISLAND_ROLE_INDEX);
+        exec(CREATE_ISLAND_CENTER_LOCATIONS_TABLE);
     }
 
     private void applyMigrations() {
@@ -189,6 +204,12 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         }
 
         exec("ALTER TABLE islands ADD COLUMN IF NOT EXISTS locked TINYINT(1) NOT NULL DEFAULT 0;");
+
+        exec("""
+                ALTER TABLE player_clear
+                DROP PRIMARY KEY,
+                ADD PRIMARY KEY (uuid_player, cause);
+                """);
     }
 
     private void initializeSpiralTable() {

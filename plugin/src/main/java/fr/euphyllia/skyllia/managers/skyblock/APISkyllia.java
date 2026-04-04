@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.SkylliaImplementation;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
@@ -11,11 +12,13 @@ import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.permissions.modules.FlagModuleManager;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModuleManager;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.MobsSpawnImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -221,8 +224,8 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
-    public Boolean createIsland(UUID islandId, IslandSettings settings) {
-        return this.interneAPI.getSkyblockManager().createIsland(islandId, settings);
+    public Boolean createIsland(UUID islandId, IslandSettings settings, Players owners) {
+        return this.interneAPI.getSkyblockManager().createIsland(islandId, settings, owners);
     }
 
     @Override
@@ -230,6 +233,10 @@ public final class APISkyllia implements SkylliaImplementation {
         return this.interneAPI.getIslandQuery().getIslandCustomDataQuery();
     }
 
+    @Override
+    public IConfigRegistry getConfigRegistry() {
+        return ConfigLoader.INSTANCE;
+    }
 
     private double[] append(double[] arr, double element) {
         double[] newArr = new double[arr.length + 1];
