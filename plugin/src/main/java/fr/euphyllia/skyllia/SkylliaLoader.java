@@ -21,7 +21,8 @@ public class SkylliaLoader implements PluginLoader {
         // Maven Repository Dependencies
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-core:2.25.3"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-api:2.25.3"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.20.0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:4.26.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-serializer-legacy:4.26.1"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.8.3"), null));
 
         // HikariCP dependency

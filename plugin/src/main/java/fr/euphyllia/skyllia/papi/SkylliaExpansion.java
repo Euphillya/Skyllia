@@ -2,55 +2,65 @@ package fr.euphyllia.skyllia.papi;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
-import fr.euphyllia.skyllia.api.permissions.FlagId;
-import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
-import fr.euphyllia.skyllia.api.permissions.PermissionId;
-import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import fr.euphyllia.skyllia.papi.handlers.*;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+/**
+ * PlaceholderAPI expansion for Skyllia.
+ *
+ * <p>Acts as a pure router: it resolves the island for the requesting player,
+ * strips the placeholder prefix, and delegates to the appropriate
+ * {@link PlaceholderHandler}. No business logic lives here.
+ *
+ * <p>To add a new placeholder group, implement {@link PlaceholderHandler}
+ * and register it in {@link #buildHandlerRegistry()}.
+ */
 public class SkylliaExpansion extends PlaceholderExpansion {
-
 
     private final Skyllia plugin;
 
-    public SkylliaExpansion(Skyllia skyllia) {
+    private final Map<String, PlaceholderHandler> handlers;
+
+    public SkylliaExpansion(@NotNull Skyllia skyllia) {
         this.plugin = skyllia;
+        this.handlers = buildHandlerRegistry();
     }
 
-    private static @NotNull RoleType resolveRole(Island island, UUID playerId) {
-        var member = island.getMember(playerId);
-        if (member == null) {
-            return RoleType.VISITOR;
+    /**
+     * Registers all placeholder handlers.
+     * Add new entries here when creating a new handler.
+     */
+    private static Map<String, PlaceholderHandler> buildHandlerRegistry() {
+        List<PlaceholderHandler> allHandlers = List.of(
+                new IslandHandler(),
+                new FlagsHandler(),
+                new PermissionsHandler(),
+                new BannedHandler(),
+                new MembersHandler(),
+                new WarpHandler(),
+                // Legacy alias: gamerule_* → same handler as flags_*
+                new FlagsHandler() {
+                    @Override
+                    public @NotNull String prefix() {
+                        return "gamerule";
+                    }
+                }
+        );
+
+        Map<String, PlaceholderHandler> registry = new HashMap<>();
+        for (PlaceholderHandler handler : allHandlers) {
+            registry.put(handler.prefix() + "_", handler);
         }
-        RoleType role = member.getRoleType();
-        return role != null ? role : RoleType.VISITOR;
-    }
-
-    private static @Nullable RoleType parseRole(String input) {
-        if (input == null || input.isEmpty()) return null;
-        try {
-            return RoleType.valueOf(input.toUpperCase(Locale.ROOT));
-        } catch (Exception ignored) {
-            return null;
-        }
-    }
-
-    private static @Nullable NamespacedKey parseKeyLenient(String input) {
-        if (input == null || input.isEmpty()) return null;
-
-        NamespacedKey key = NamespacedKey.fromString(input);
-        if (key != null) return key;
-
-        return NamespacedKey.fromString("skyllia:" + input);
+        return Map.copyOf(registry);
     }
 
     @Override
@@ -80,87 +90,22 @@ public class SkylliaExpansion extends PlaceholderExpansion {
 
     @Nullable
     @Override
-    public String onRequest(final OfflinePlayer player, @NotNull final String placeholder) {
-        UUID offlinePlayerUUID = player.getUniqueId();
+    public String onRequest(@NotNull OfflinePlayer player, @NotNull String placeholder) {
+        UUID playerId = player.getUniqueId();
 
-        Island island = SkylliaAPI.getIslandByPlayerId(offlinePlayerUUID);
-        if (island == null) {
-            return null;
-        }
+        Island island = SkylliaAPI.getIslandByPlayerId(playerId);
+        if (island == null) return null;
 
-        String placeholderLower = placeholder.toLowerCase();
-        if (placeholderLower.startsWith("island_")) {
-            return processIsland(island, offlinePlayerUUID, placeholderLower);
-        }
+        String lowerPlaceholder = placeholder.toLowerCase();
 
-        if (placeholderLower.startsWith("permissions_")) {
-            return processPermissions(island, offlinePlayerUUID, placeholderLower);
-        }
-
-        if (placeholderLower.startsWith("flags_")) {
-            return processFlags(island, placeholder.substring("flags_".length()));
-        }
-
-        if (placeholderLower.startsWith("gamerule_")) { // ancien nom
-            return processFlags(island, placeholder.substring("gamerule_".length()));
+        for (Map.Entry<String, PlaceholderHandler> entry : handlers.entrySet()) {
+            String prefix = entry.getKey();   // e.g. "island_"
+            if (lowerPlaceholder.startsWith(prefix)) {
+                String key = lowerPlaceholder.substring(prefix.length());
+                return entry.getValue().handle(player, island, key);
+            }
         }
 
         return null;
-    }
-
-    private String processIsland(Island island, UUID playerId, String placeholder) {
-        RoleType role = resolveRole(island, playerId);
-
-        return switch (placeholder) {
-            case "island_size" -> String.valueOf(island.getSize());
-            case "island_members_max_size" -> String.valueOf(island.getMaxMembers());
-            case "island_members_size" -> String.valueOf(island.getMembers().size());
-            case "island_role", "island_rank" -> role.name();
-            case "island_role_value" -> String.valueOf(role.getValue());
-            default -> null;
-        };
-    }
-
-    private String processPermissions(Island island, UUID playerId, String placeholder) {
-        PermissionRegistry registry = SkylliaAPI.getPermissionRegistry();
-        String rest = placeholder.substring("permissions_".length());
-
-        RoleType role;
-        String keyPart;
-
-        if (rest.startsWith("role_")) {
-            String tmp = rest.substring("role_".length());
-            int idx = tmp.indexOf('_');
-            if (idx <= 0) return null;
-
-            String roleStr = tmp.substring(0, idx);
-            keyPart = tmp.substring(idx + 1);
-
-            role = parseRole(roleStr);
-            if (role == null) return null;
-        } else {
-            role = resolveRole(island, playerId);
-            keyPart = rest;
-        }
-        NamespacedKey key = parseKeyLenient(keyPart);
-        if (key == null) return null;
-
-        PermissionId pid = registry.getIfPresent(key);
-        if (pid == null) return null;
-
-        boolean allowed = island.getCompiledPermissions().has(registry, role, pid);
-        return String.valueOf(allowed);
-    }
-
-    private String processFlags(Island island, String keyPart) {
-        IslandFlagRegistry registry = SkylliaAPI.getFlagRegistry();
-
-        NamespacedKey key = parseKeyLenient(keyPart);
-        if (key == null) return null;
-
-        FlagId fid = registry.getIfPresent(key);
-        if (fid == null) return null;
-
-        return String.valueOf(island.getIslandFlags().has(registry, fid));
     }
 }

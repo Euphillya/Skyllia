@@ -14,6 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.InputStream;
@@ -210,4 +212,20 @@ public class LanguageConfigManager implements IConfigurationProvider {
         sender.sendMessage(translate(key, Map.of()));
     }
 
+    public @Nullable String translateRaw(@NotNull Locale locale, String key,  @NotNull Map<String, String> placeholders) {
+        Map<String, String> langMessages = translations.get(locale);
+        if (langMessages == null) {
+            langMessages = translations.get(defaultLocale);
+        }
+
+        String message = (langMessages != null)
+                ? langMessages.getOrDefault(key, "<red>Missing translation: " + key + "</red>")
+                : "<red>Missing translation: " + key + "</red>";
+
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            message = message.replace(entry.getKey(), entry.getValue());
+        }
+
+        return message;
+    }
 }
