@@ -38,6 +38,7 @@ public class IslandHandler implements PlaceholderHandler {
             case "members_max_size" -> String.valueOf(island.getMaxMembers());
             case "role", "rank" -> role.name();
             case "role_value" -> String.valueOf(role.getValue());
+            case "access" -> String.valueOf(island.isPrivateIsland());
             default -> null;
         };
     }
