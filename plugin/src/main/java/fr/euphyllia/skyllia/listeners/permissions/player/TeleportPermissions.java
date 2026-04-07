@@ -26,8 +26,8 @@ public class TeleportPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.TELEPORT = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "player.teleport"),
-                "Téléporter vers une île",
-                "Placeholder"
+                "island.permission.player_teleport.name",
+                "island.permission.player_teleport.description"
         ));
     }
 

@@ -38,15 +38,16 @@ public class BankCommand implements SubCommandInterface {
     public BankCommand(Plugin plugin) {
         this.plugin = plugin;
         this.economy = EconomyManager.getEconomy();
+
         this.BANK_DEPOSIT_PERMISSION = SkylliaAPI.getPermissionRegistry().idOrRegister(new PermissionNode(
                 new NamespacedKey(plugin, "command.bank.deposit"),
-                "Banque: déposer de l'argent",
-                "Autorise à déposer de l'argent sur le compte banque de l'île"
+                "addons.bank.permission.deposit.name",
+                "addons.bank.permission.deposit.description"
         ));
         this.BANK_WITHDRAW_PERMISSION = SkylliaAPI.getPermissionRegistry().idOrRegister(new PermissionNode(
                 new NamespacedKey(plugin, "command.bank.withdraw"),
-                "Banque: retirer de l'argent",
-                "Autorise à retirer de l'argent du compte banque de l'île"
+                "addons.bank.permission.withdraw.name",
+                "addons.bank.permission.withdraw.description"
         ));
     }
 

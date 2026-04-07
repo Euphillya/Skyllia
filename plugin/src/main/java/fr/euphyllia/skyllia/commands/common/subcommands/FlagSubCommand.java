@@ -30,8 +30,8 @@ public class FlagSubCommand implements SubCommandInterface {
     public FlagSubCommand() {
         this.PERMISSION_COMMAND_FLAG = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(SkylliaAPI.getPlugin(), "command.island.flag"),
-                "Flags île: gérer les flags",
-                "Autorise à gérer les flags de l'île"
+                "island.permission.command.flag.name",
+                "island.permission.command.flag.description"
         ));
     }
 

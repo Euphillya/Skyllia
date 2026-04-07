@@ -46,8 +46,8 @@ public class BlockInteractPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.BLOCK_INTERACT = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "block.interact"),
-                "Interagir avec les blocs",
-                "Placeholder"
+                "island.permission.block_interact.name",
+                "island.permission.block_interact.description"
         ));
     }
 }

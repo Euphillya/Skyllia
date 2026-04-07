@@ -32,8 +32,8 @@ public class KickSubCommand implements SubCommandInterface {
     public KickSubCommand() {
         this.ISLAND_KICK_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.kick"),
-                "Kicker un joueur",
-                "Autorise à kicker un joueur de l'île"
+                "island.permission.command.kick.name",
+                "island.permission.command.kick.description"
         ));
     }
 

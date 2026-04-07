@@ -394,3 +394,139 @@ rain-contact = "<dark_aqua>☔ Acid rain is eating away at your skin!</dark_aqua
 no-permission = "<red>You do not have permission to use the island chat.</red>"
 enabled = "<green>Island chat enabled.</green>"
 disabled = "<gray>Island chat disabled.</gray>"
+
+[addons.bank.permission.deposit]
+name = "Bank: Deposit"
+description = "Allows depositing money into the island bank."
+
+[addons.bank.permission.withdraw]
+name = "Bank: Withdraw"
+description = "Allows withdrawing money from the island bank."
+
+[addons.chest.permission.open]
+name = "Island Chest"
+description = "Allows opening the island's shared chest."
+
+[island.permission.access]
+name = "Access: Open/Close"
+description = "Allows changing the island access (public/private)."
+
+[island.permission.ban]
+name = "Ban a Player"
+description = "Allows banning a player from the island."
+
+[island.permission.delwarp]
+name = "Delete a Warp"
+description = "Allows deleting a warp from the island."
+
+[island.permission.demote]
+name = "Demote a Member"
+description = "Allows demoting a member of the island."
+
+[island.permission.expel]
+name = "Expel a Player"
+description = "Allows expelling a player currently on the island."
+
+[island.permission.flag]
+name = "Manage Flags"
+description = "Allows modifying the island's flags."
+
+[island.permission.invite]
+name = "Invite a Player"
+description = "Allows sending and cancelling invitations."
+
+[island.permission.kick]
+name = "Kick a Member"
+description = "Allows removing a member from the island."
+
+[island.permission.manage]
+name = "Manage Permissions"
+description = "Allows modifying role permissions on the island."
+
+[island.permission.promote]
+name = "Promote a Member"
+description = "Allows increasing the rank of a member."
+
+[island.permission.set_biome]
+name = "Change Biome"
+description = "Allows modifying the island or chunk biome."
+
+[island.permission.set_home]
+name = "Set Home"
+description = "Allows moving the island's main spawn point."
+
+[island.permission.set_warp]
+name = "Create a Warp"
+description = "Allows creating or editing a warp on the island."
+
+[island.permission.manage_trust]
+name = "Manage Trust"
+description = "Allows adding or removing trusted players."
+
+[island.permission.unban]
+name = "Unban a Player"
+description = "Allows lifting a player's ban from the island."
+
+[island.permission.visit_bypass]
+name = "Visit (Bypass)"
+description = "Allows visiting a private island or despite a ban."
+
+[island.permission.block_break]
+name = "Break Blocks"
+description = "Allows breaking blocks on the island."
+
+[island.permission.block_interact]
+name = "Interact with Blocks"
+description = "Allows using levers, buttons, doors, etc."
+
+[island.permission.block_physical]
+name = "Physical Interactions"
+description = "Allows physical interactions such as pressure plates."
+
+[island.permission.block_place]
+name = "Place Blocks"
+description = "Allows placing blocks on the island."
+
+[island.permission.block_use_bucket]
+name = "Use Buckets"
+description = "Allows filling or emptying buckets on the island."
+
+[island.permission.decor_hanging_break]
+name = "Remove Decorations"
+description = "Allows removing item frames and paintings."
+
+[island.permission.decor_hanging_place]
+name = "Place Decorations"
+description = "Allows placing item frames and paintings."
+
+[island.permission.entity_breed]
+name = "Breed Animals"
+description = "Allows breeding animals on the island."
+
+[island.permission.entity_damage]
+name = "Attack Entities"
+description = "Allows dealing damage to entities on the island."
+
+[island.permission.entity_interact]
+name = "Interact with Entities"
+description = "Allows interacting with entities (villagers, animals, etc.)."
+
+[island.permission.inventory_modify]
+name = "Modify Inventory"
+description = "Allows moving items inside containers."
+
+[island.permission.inventory_open]
+name = "Open Containers"
+description = "Allows opening chests and other containers."
+
+[island.permission.item_drop]
+name = "Drop Items"
+description = "Allows dropping items on the ground on the island."
+
+[island.permission.item_pickup]
+name = "Pick Up Items"
+description = "Allows picking up items from the ground on the island."
+
+[island.permission.player_teleport]
+name = "Teleport to Island"
+description = "Allows teleporting to a private island."

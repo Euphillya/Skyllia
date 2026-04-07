@@ -401,3 +401,139 @@ rain-contact = "<dark_aqua>☔ La pluie acide vous ronge la peau !</dark_aqua>"
 no-permission = "<red>Vous n'avez pas la permission d'utiliser le chat d'île.</red>"
 enabled = "<green>Chat d'île activé.</green>"
 disabled = "<gray>Chat d'île désactivé.</gray>"
+
+[addons.bank.command.deposit]
+name = "Banque : dépôt"
+description = "Autorise à déposer de l'argent sur la banque de l'île."
+
+[addons.bank.command.withdraw]
+name = "Banque : retrait"
+description = "Autorise à retirer de l'argent de la banque de l'île."
+
+[addons.chest.command.permission]
+name = "Coffre d'île"
+description = "Autorise à ouvrir le coffre partagé de l'île."
+
+[island.permission.command.access]
+name = "Accès : ouvrir/fermer"
+description = "Autorise à changer l'accès de l'île (public/privé)."
+
+[island.permission.command.ban]
+name = "Bannir un joueur"
+description = "Autorise à bannir un joueur de l'île."
+
+[island.permission.command.delwarp]
+name = "Supprimer un warp"
+description = "Autorise à supprimer un warp de l'île."
+
+[island.permission.command.demote]
+name = "Rétrograder un membre"
+description = "Autorise à rétrograder un membre de l'île."
+
+[island.permission.command.expel]
+name = "Expulser un joueur"
+description = "Autorise à expulser un joueur présent sur l'île."
+
+[island.permission.command.flag]
+name = "Gérer les flags"
+description = "Autorise à modifier les flags de l'île."
+
+[island.permission.command.invite]
+name = "Inviter un joueur"
+description = "Autorise à envoyer et annuler des invitations."
+
+[island.permission.command.kick]
+name = "Exclure un membre"
+description = "Autorise à retirer un membre de l'île."
+
+[island.permission.command.permission]
+name = "Gérer les permissions"
+description = "Autorise à modifier les permissions des rôles de l'île."
+
+[island.permission.command.promote]
+name = "Promouvoir un membre"
+description = "Autorise à augmenter le grade d'un membre de l'île."
+
+[island.permission.command.set_biome]
+name = "Changer le biome"
+description = "Autorise à modifier le biome de l'île ou d'un chunk."
+
+[island.permission.command.set_home]
+name = "Définir le home"
+description = "Autorise à déplacer le point de retour principal de l'île."
+
+[island.permission.command.set_warp]
+name = "Créer un warp"
+description = "Autorise à créer ou modifier un warp sur l'île."
+
+[island.permission.command.manage_trust]
+name = "Gérer la confiance"
+description = "Autorise à ajouter ou retirer des joueurs de confiance."
+
+[island.permission.command.unban]
+name = "Débannir un joueur"
+description = "Autorise à lever le ban d'un joueur de l'île."
+
+[island.permission.command.visit_bypass]
+name = "Visiter (bypass)"
+description = "Autorise à visiter une île privée ou malgré un ban."
+
+[island.permission.block_break]
+name = "Casser des blocs"
+description = "Autorise à casser des blocs sur l'île."
+
+[island.permission.block_interact]
+name = "Interagir avec les blocs"
+description = "Autorise à utiliser les leviers, boutons, portes, etc."
+
+[island.permission.block_physical]
+name = "Interactions physiques"
+description = "Autorise les interactions physiques (plaques de pression, etc.)."
+
+[island.permission.block_place]
+name = "Poser des blocs"
+description = "Autorise à placer des blocs sur l'île."
+
+[island.permission.block_use_bucket]
+name = "Utiliser des seaux"
+description = "Autorise à vider ou remplir des seaux sur l'île."
+
+[island.permission.decor_hanging_break]
+name = "Décrocher des décorations"
+description = "Autorise à retirer des cadres et tableaux."
+
+[island.permission.decor_hanging_place]
+name = "Accrocher des décorations"
+description = "Autorise à placer des cadres et tableaux."
+
+[island.permission.entity_breed]
+name = "Reproduire des animaux"
+description = "Autorise à faire se reproduire des animaux sur l'île."
+
+[island.permission.entity_damage]
+name = "Attaquer des entités"
+description = "Autorise à infliger des dégâts aux entités sur l'île."
+
+[island.permission.entity_interact]
+name = "Interagir avec les entités"
+description = "Autorise à interagir avec les entités (marchands, animaux, etc.)."
+
+[island.permission.inventory_modify]
+name = "Modifier un inventaire"
+description = "Autorise à déplacer des objets dans les conteneurs."
+
+[island.permission.inventory_open]
+name = "Ouvrir des conteneurs"
+description = "Autorise à ouvrir les coffres et autres conteneurs."
+
+[island.permission.item_drop]
+name = "Jeter des objets"
+description = "Autorise à lâcher des objets au sol sur l'île."
+
+[island.permission.item_pickup]
+name = "Ramasser des objets"
+description = "Autorise à ramasser des objets au sol sur l'île."
+
+[island.permission.player_teleport]
+name = "Se téléporter sur l'île"
+description = "Autorise la téléportation vers une île privée."

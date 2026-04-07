@@ -39,8 +39,8 @@ public class InviteSubCommand implements SubCommandInterface {
     public InviteSubCommand() {
         this.ISLAND_INVITE_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.invite"),
-                "Inviter un joueur",
-                "Autorise à inviter/supprimer une invitation sur l'île"
+                "island.permission.command.invite.name",
+                "island.permission.command.invite.description"
         ));
     }
 

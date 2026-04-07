@@ -58,8 +58,8 @@ public class BlockUseBucketPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.BLOCK_USE_BUCKET = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "block.use.bucket"),
-                "Utiliser des seaux",
-                "Placeholder"
+                "island.permission.block_use_bucket.name",
+                "island.permission.block_use_bucket.description"
         ));
     }
 }

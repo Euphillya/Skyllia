@@ -42,8 +42,8 @@ public class EntityDamagePermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.ENTITY_DAMAGE = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "entity.damage"),
-                "Dégâts aux entités",
-                "Placeholder"
+                "island.permission.entity_damage.name",
+                "island.permission.entity_damage.description"
         ));
     }
 }

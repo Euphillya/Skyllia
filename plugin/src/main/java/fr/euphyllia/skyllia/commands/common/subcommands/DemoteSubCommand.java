@@ -33,8 +33,8 @@ public class DemoteSubCommand implements SubCommandInterface {
     public DemoteSubCommand() {
         this.ISLAND_DEMOTE_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.demote"),
-                "Rétrograder un joueur",
-                "Autorise à rétrograder un membre de l'île"
+                "island.permission.command.demote.name",
+                "island.permission.command.demote.description"
         ));
     }
 

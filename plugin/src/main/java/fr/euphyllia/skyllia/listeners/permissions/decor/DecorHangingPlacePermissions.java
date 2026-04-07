@@ -40,8 +40,8 @@ public class DecorHangingPlacePermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.DECOR_HANGING_PLACE = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "decor.hanging.place"),
-                "Placer des décorations (cadres/tableaux)",
-                "Placeholder"
+                "island.permission.decor_hanging_place.name",
+                "island.permission.decor_hanging_place.description"
         ));
     }
 }

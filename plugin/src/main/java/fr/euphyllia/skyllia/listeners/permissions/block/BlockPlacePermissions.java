@@ -39,8 +39,8 @@ public class BlockPlacePermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.BLOCK_PLACE = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "block.place"),
-                "Poser des blocs",
-                "Placeholder"
+                "island.permission.block_place.name",
+                "island.permission.block_place.description"
         ));
     }
 }

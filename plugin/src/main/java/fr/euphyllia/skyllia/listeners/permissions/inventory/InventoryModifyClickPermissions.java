@@ -39,8 +39,8 @@ public class InventoryModifyClickPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.INVENTORY_MODIFY = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "inventory.modify"),
-                "Modifier un inventaire",
-                "Placeholder"
+                "island.permission.inventory_modify.name",
+                "island.permission.inventory_modify.description"
         ));
     }
 }

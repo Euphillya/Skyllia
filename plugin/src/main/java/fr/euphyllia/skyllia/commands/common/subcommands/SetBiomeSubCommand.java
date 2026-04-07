@@ -40,8 +40,8 @@ public class SetBiomeSubCommand implements SubCommandInterface {
     public SetBiomeSubCommand() {
         this.ISLAND_SET_BIOME_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.set_biome"),
-                "Changer le biome",
-                "Autorise à changer le biome de l'île (chunk / île si autorisé)"
+                "island.permission.command.set_biome.name",
+                "island.permission.command.set_biome.description"
         ));
     }
 

@@ -41,8 +41,8 @@ public class ItemPickupPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.ITEM_PICKUP = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "item.pickup"),
-                "Ramasser des objets",
-                "Placeholder"
+                "island.permission.item_pickup.name",
+                "island.permission.item_pickup.description"
         ));
     }
 }

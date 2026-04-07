@@ -41,8 +41,8 @@ public class DecorHangingBreakPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.DECOR_HANGING_BREAK = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "decor.hanging.break"),
-                "Casser des décorations (cadres/tableaux)",
-                "Placeholder"
+                "island.permission.decor_hanging_break.name",
+                "island.permission.decor_hanging_break.description"
         ));
     }
 }
