@@ -35,8 +35,8 @@ public class IslandAllowFireBurnPermissions implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ISLAND_ALLOW_FIRE = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.fire"),
-                "Autoriser le feu",
-                "Contrôle si le feu peut brûler des blocs"
+                "island.flag.allow_fire.name",
+                "island.flag.allow_fire.description"
         ));
     }
 }

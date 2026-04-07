@@ -537,3 +537,423 @@ description = "Autorise à ramasser des objets au sol sur l'île."
 [island.permission.player_teleport]
 name = "Se téléporter sur l'île"
 description = "Autorise la téléportation vers une île privée."
+
+# ── Flags : Environnement ────────────────────────────────────────────────
+
+[island.flag.allow_explosions]
+name = "Explosions"
+description = "Contrôle les dégâts de blocs et d'entités causés par les explosions."
+
+[island.flag.allow_fire]
+name = "Feu"
+description = "Contrôle l'allumage du feu et la combustion des blocs."
+
+[island.flag.allow_fluids]
+name = "Écoulement des fluides"
+description = "Contrôle l'écoulement de l'eau et de la lave."
+
+[island.flag.allow_pistons]
+name = "Pistons"
+description = "Contrôle l'extension et la rétraction des pistons."
+
+# ── Flags : Grief des mobs ───────────────────────────────────────────────
+
+[island.flag.allow_mob_grief]
+name = "Grief des mobs (général)"
+description = "Contrôle les modifications de blocs causées par tous les mobs."
+
+[island.flag.allow_creeper_grief]
+name = "Explosions de Creepers"
+description = "Contrôle les dégâts de blocs causés par les explosions de Creepers."
+
+[island.flag.allow_enderman_grief]
+name = "Grief des Endermans"
+description = "Contrôle le déplacement de blocs par les Endermans."
+
+[island.flag.allow_ghast_grief]
+name = "Boules de feu de Ghast"
+description = "Contrôle les dégâts de blocs causés par les boules de feu des Ghasts."
+
+[island.flag.allow_tnt_grief]
+name = "Explosions de TNT"
+description = "Contrôle les dégâts de blocs causés par le TNT et les minecarts explosifs."
+
+[island.flag.allow_wither_grief]
+name = "Destruction du Wither"
+description = "Contrôle les dégâts de blocs causés par le boss Wither."
+
+[island.flag.allow_wither_skull_grief]
+name = "Explosions de têtes de Wither"
+description = "Contrôle les dégâts de blocs causés par les têtes de Wither."
+
+# ── Flags : Spawn boss ───────────────────────────────────────────────────
+
+[island.flag.spawn_boss_all]
+name = "Boss (général)"
+description = "Contrôle l'apparition de tous les boss."
+
+[island.flag.spawn_boss_wither]
+name = "Wither"
+description = "Contrôle l'apparition du Wither."
+
+[island.flag.spawn_boss_ender_dragon]
+name = "Dragon de l'End"
+description = "Contrôle l'apparition du Dragon de l'End."
+
+# ── Flags : Spawn hostile adjacent ──────────────────────────────────────
+
+[island.flag.spawn_hostile_adjacent_all]
+name = "Mobs hostiles adjacents (général)"
+description = "Contrôle l'apparition de tous les mobs hostiles 'adjacents' à proximité."
+
+[island.flag.spawn_hostile_adjacent_skeleton_horse]
+name = "Cheval squelette"
+description = "Contrôle l'apparition des chevaux squelettes."
+
+# ── Flags : Spawn hostile ────────────────────────────────────────────────
+
+[island.flag.spawn_hostile_all]
+name = "Mobs hostiles (général)"
+description = "Contrôle l'apparition de tous les mobs hostiles."
+
+[island.flag.spawn_hostile_blaze]
+name = "Blaze"
+description = "Contrôle l'apparition des Blazes."
+
+[island.flag.spawn_hostile_bogged]
+name = "Bogged"
+description = "Contrôle l'apparition des Boggeds."
+
+[island.flag.spawn_hostile_breeze]
+name = "Breeze"
+description = "Contrôle l'apparition des Breezes."
+
+[island.flag.spawn_hostile_creaker]
+name = "Creaking"
+description = "Contrôle l'apparition des Creakings."
+
+[island.flag.spawn_hostile_creeper]
+name = "Creeper"
+description = "Contrôle l'apparition des Creepers."
+
+[island.flag.spawn_hostile_elder_guardian]
+name = "Grand Gardien"
+description = "Contrôle l'apparition des Grands Gardiens."
+
+[island.flag.spawn_hostile_endermite]
+name = "Endermite"
+description = "Contrôle l'apparition des Endermites."
+
+[island.flag.spawn_hostile_evoker]
+name = "Évocateur"
+description = "Contrôle l'apparition des Évocateurs."
+
+[island.flag.spawn_hostile_ghast]
+name = "Ghast"
+description = "Contrôle l'apparition des Ghasts."
+
+[island.flag.spawn_hostile_guardian]
+name = "Gardien"
+description = "Contrôle l'apparition des Gardiens."
+
+[island.flag.spawn_hostile_hoglin]
+name = "Hoglin"
+description = "Contrôle l'apparition des Hoglins."
+
+[island.flag.spawn_hostile_husk]
+name = "Husk"
+description = "Contrôle l'apparition des Husks."
+
+[island.flag.spawn_hostile_magma_cube]
+name = "Cube de Magma"
+description = "Contrôle l'apparition des Cubes de Magma."
+
+[island.flag.spawn_hostile_parched]
+name = "Parched"
+description = "Contrôle l'apparition des Parcheds."
+
+[island.flag.spawn_hostile_phantom]
+name = "Phantom"
+description = "Contrôle l'apparition des Phantoms."
+
+[island.flag.spawn_hostile_piglin_brute]
+name = "Piglin Brute"
+description = "Contrôle l'apparition des Piglins Brutes."
+
+[island.flag.spawn_hostile_pillager]
+name = "Pillard"
+description = "Contrôle l'apparition des Pillards."
+
+[island.flag.spawn_hostile_ravager]
+name = "Ravageur"
+description = "Contrôle l'apparition des Ravageurs."
+
+[island.flag.spawn_hostile_shulker]
+name = "Shulker"
+description = "Contrôle l'apparition des Shulkers."
+
+[island.flag.spawn_hostile_silverfish]
+name = "Poisson d'argent"
+description = "Contrôle l'apparition des Poissons d'argent."
+
+[island.flag.spawn_hostile_skeleton]
+name = "Squelette"
+description = "Contrôle l'apparition des Squelettes."
+
+[island.flag.spawn_hostile_slime]
+name = "Slime"
+description = "Contrôle l'apparition des Slimes."
+
+[island.flag.spawn_hostile_stray]
+name = "Vagabond"
+description = "Contrôle l'apparition des Vagabonds."
+
+[island.flag.spawn_hostile_vex]
+name = "Vex"
+description = "Contrôle l'apparition des Vexs."
+
+[island.flag.spawn_hostile_vindicator]
+name = "Vindicateur"
+description = "Contrôle l'apparition des Vindicateurs."
+
+[island.flag.spawn_hostile_warden]
+name = "Warden"
+description = "Contrôle l'apparition des Wardens."
+
+[island.flag.spawn_hostile_witch]
+name = "Sorcière"
+description = "Contrôle l'apparition des Sorcières."
+
+[island.flag.spawn_hostile_wither_skeleton]
+name = "Squelette de Wither"
+description = "Contrôle l'apparition des Squelettes de Wither."
+
+[island.flag.spawn_hostile_zoglin]
+name = "Zoglin"
+description = "Contrôle l'apparition des Zoglins."
+
+[island.flag.spawn_hostile_zombie]
+name = "Zombie"
+description = "Contrôle l'apparition des Zombies."
+
+[island.flag.spawn_hostile_zombie_villager]
+name = "Villageois Zombie"
+description = "Contrôle l'apparition des Villageois Zombies."
+
+# ── Flags : Spawn neutre ─────────────────────────────────────────────────
+
+[island.flag.spawn_neutral_all]
+name = "Mobs neutres (général)"
+description = "Contrôle l'apparition de tous les mobs neutres."
+
+[island.flag.spawn_neutral_bee]
+name = "Abeille"
+description = "Contrôle l'apparition des Abeilles."
+
+[island.flag.spawn_neutral_cave_spider]
+name = "Araignée des cavernes"
+description = "Contrôle l'apparition des Araignées des cavernes."
+
+[island.flag.spawn_neutral_dolphin]
+name = "Dauphin"
+description = "Contrôle l'apparition des Dauphins."
+
+[island.flag.spawn_neutral_drowned]
+name = "Noyé"
+description = "Contrôle l'apparition des Noyés."
+
+[island.flag.spawn_neutral_enderman]
+name = "Enderman"
+description = "Contrôle l'apparition des Endermans."
+
+[island.flag.spawn_neutral_fox]
+name = "Renard"
+description = "Contrôle l'apparition des Renards."
+
+[island.flag.spawn_neutral_goat]
+name = "Chèvre"
+description = "Contrôle l'apparition des Chèvres."
+
+[island.flag.spawn_neutral_iron_golem]
+name = "Golem de fer"
+description = "Contrôle l'apparition des Golems de fer."
+
+[island.flag.spawn_neutral_llama]
+name = "Lama"
+description = "Contrôle l'apparition des Lamas."
+
+[island.flag.spawn_neutral_panda]
+name = "Panda"
+description = "Contrôle l'apparition des Pandas."
+
+[island.flag.spawn_neutral_piglin]
+name = "Piglin"
+description = "Contrôle l'apparition des Piglins."
+
+[island.flag.spawn_neutral_polar_bear]
+name = "Ours polaire"
+description = "Contrôle l'apparition des Ours polaires."
+
+[island.flag.spawn_neutral_pufferfish]
+name = "Poisson-globe"
+description = "Contrôle l'apparition des Poissons-globes."
+
+[island.flag.spawn_neutral_spider]
+name = "Araignée"
+description = "Contrôle l'apparition des Araignées."
+
+[island.flag.spawn_neutral_trader_llama]
+name = "Lama marchand"
+description = "Contrôle l'apparition des Lamas marchands."
+
+[island.flag.spawn_neutral_wolf]
+name = "Loup"
+description = "Contrôle l'apparition des Loups."
+
+[island.flag.spawn_neutral_zombified_piglin]
+name = "Piglin Zombifié"
+description = "Contrôle l'apparition des Piglins Zombifiés."
+
+# ── Flags : Spawn passif ─────────────────────────────────────────────────
+
+[island.flag.spawn_passive_all]
+name = "Mobs passifs (général)"
+description = "Contrôle l'apparition de tous les mobs passifs."
+
+[island.flag.spawn_passive_allay]
+name = "Allay"
+description = "Contrôle l'apparition des Allays."
+
+[island.flag.spawn_passive_armadillo]
+name = "Tatou"
+description = "Contrôle l'apparition des Tatous."
+
+[island.flag.spawn_passive_axolotl]
+name = "Axolotl"
+description = "Contrôle l'apparition des Axolotls."
+
+[island.flag.spawn_passive_bat]
+name = "Chauve-souris"
+description = "Contrôle l'apparition des Chauves-souris."
+
+[island.flag.spawn_passive_camel]
+name = "Chameau"
+description = "Contrôle l'apparition des Chameaux."
+
+[island.flag.spawn_passive_cat]
+name = "Chat"
+description = "Contrôle l'apparition des Chats."
+
+[island.flag.spawn_passive_chicken]
+name = "Poulet"
+description = "Contrôle l'apparition des Poulets."
+
+[island.flag.spawn_passive_cod]
+name = "Morue"
+description = "Contrôle l'apparition des Morue."
+
+[island.flag.spawn_passive_cow]
+name = "Vache"
+description = "Contrôle l'apparition des Vaches."
+
+[island.flag.spawn_passive_donkey]
+name = "Âne"
+description = "Contrôle l'apparition des Ânes."
+
+[island.flag.spawn_passive_frog]
+name = "Grenouille"
+description = "Contrôle l'apparition des Grenouilles."
+
+[island.flag.spawn_passive_glow_squid]
+name = "Poulpes lumineux"
+description = "Contrôle l'apparition des Poulpes lumineux."
+
+[island.flag.spawn_passive_horse]
+name = "Cheval"
+description = "Contrôle l'apparition des Chevaux."
+
+[island.flag.spawn_passive_mooshroom]
+name = "Meuchampignon"
+description = "Contrôle l'apparition des Meuchampignons."
+
+[island.flag.spawn_passive_mule]
+name = "Mulet"
+description = "Contrôle l'apparition des Mulets."
+
+[island.flag.spawn_passive_ocelot]
+name = "Ocelot"
+description = "Contrôle l'apparition des Ocelots."
+
+[island.flag.spawn_passive_parrot]
+name = "Perroquet"
+description = "Contrôle l'apparition des Perroquets."
+
+[island.flag.spawn_passive_pig]
+name = "Cochon"
+description = "Contrôle l'apparition des Cochons."
+
+[island.flag.spawn_passive_rabbit]
+name = "Lapin"
+description = "Contrôle l'apparition des Lapins."
+
+[island.flag.spawn_passive_salmon]
+name = "Saumon"
+description = "Contrôle l'apparition des Saumons."
+
+[island.flag.spawn_passive_sheep]
+name = "Mouton"
+description = "Contrôle l'apparition des Moutons."
+
+[island.flag.spawn_passive_sniffer]
+name = "Renifleur"
+description = "Contrôle l'apparition des Renifleurs."
+
+[island.flag.spawn_passive_snow_golem]
+name = "Golem de neige"
+description = "Contrôle l'apparition des Golems de neige."
+
+[island.flag.spawn_passive_squid]
+name = "Poulpes"
+description = "Contrôle l'apparition des Poulpes."
+
+[island.flag.spawn_passive_strider]
+name = "Arpenteur"
+description = "Contrôle l'apparition des Arpenteurs."
+
+[island.flag.spawn_passive_tadpole]
+name = "Têtard"
+description = "Contrôle l'apparition des Têtards."
+
+[island.flag.spawn_passive_tropical_fish]
+name = "Poisson tropical"
+description = "Contrôle l'apparition des Poissons tropicaux."
+
+[island.flag.spawn_passive_turtle]
+name = "Tortue"
+description = "Contrôle l'apparition des Tortues."
+
+[island.flag.spawn_passive_villager]
+name = "Villageois"
+description = "Contrôle l'apparition des Villageois."
+
+[island.flag.spawn_passive_wandering_villager]
+name = "Marchand ambulant"
+description = "Contrôle l'apparition des Marchands ambulants."
+
+# ── Flags : Spawn autre ──────────────────────────────────────────────────
+
+[island.flag.spawn_other_all]
+name = "Autres entités (général)"
+description = "Contrôle l'apparition de toutes les entités non classifiées."
+
+[island.flag.spawn_other_armor_stand]
+name = "Porte Armure"
+description = "Contrôle l'apparition des Présentoirs d'armure."
+
+[island.flag.spawn_other_giant]
+name = "Zombie Géant"
+description = "Contrôle l'apparition des Géants."
+
+[island.flag.spawn_other_illusioner]
+name = "Illusionniste"
+description = "Contrôle l'apparition des Illusionnistes."

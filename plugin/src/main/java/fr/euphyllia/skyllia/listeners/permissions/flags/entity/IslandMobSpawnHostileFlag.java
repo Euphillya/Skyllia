@@ -27,14 +27,18 @@ public class IslandMobSpawnHostileFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_SPAWN_ALL_HOSTILE = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.spawn.hostile.all"),
-                "Autoriser le spawn des mobs hostiles (général)", "Contrôle le spawn de tous les mobs hostiles"));
+                "island.flag.spawn_hostile_all.name",
+                "island.flag.spawn_hostile_all.description"
+        ));
 
         this.flagByType = new EnumMap<>(EntityType.class);
         Map<EntityType, String> supported = SkylliaAPI.getMobsSpawnImpl().supportedHostileMobs();
         for (Map.Entry<EntityType, String> entry : supported.entrySet()) {
             flagByType.put(entry.getKey(), registry.idOrRegister(new FlagNode(
                     new NamespacedKey(owner, "island.spawn.hostile." + entry.getValue()),
-                    "Autoriser le spawn : " + entry.getValue(), "Placeholder")));
+                    "island.flag.spawn_hostile_" + entry.getValue() + ".name",
+                    "island.flag.spawn_hostile_" + entry.getValue() + ".description"
+            )));
         }
     }
 

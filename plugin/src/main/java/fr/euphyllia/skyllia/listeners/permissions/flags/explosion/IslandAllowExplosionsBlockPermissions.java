@@ -35,8 +35,8 @@ public class IslandAllowExplosionsBlockPermissions implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ISLAND_ALLOW_EXPLOSIONS = registry.register(new FlagNode(
                 new NamespacedKey(owner, "island.allow.explosions"),
-                "Autoriser les explosions",
-                "Contrôle les dégâts de blocs par explosion"
+                "island.flag.allow_explosions.name",
+                "island.flag.allow_explosions.description"
         ));
     }
 }

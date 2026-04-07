@@ -36,8 +36,8 @@ public class IslandAllowExplosionsEntityPermissions implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ISLAND_ALLOW_EXPLOSIONS = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.explosions"),
-                "Autoriser les explosions",
-                "Contrôle les dégâts d'entités par explosion"
+                "island.flag.allow_explosions.name",
+                "island.flag.allow_explosions.description"
         ));
     }
 }
