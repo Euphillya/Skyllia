@@ -46,8 +46,8 @@ public class BlockPhysicalPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.BLOCK_PHYSICAL = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "block.physical"),
-                "Interactions physiques",
-                "Placeholder"
+                "island.permission.block_physical.name",
+                "island.permission.block_physical.description"
         ));
     }
 }

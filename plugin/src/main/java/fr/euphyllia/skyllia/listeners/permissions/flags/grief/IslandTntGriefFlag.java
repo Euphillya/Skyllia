@@ -24,14 +24,15 @@ public class IslandTntGriefFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)", "Placeholder"
+                "island.flag.allow_mob_grief.name",
+                "island.flag.allow_mob_grief.description"
         ));
         this.ALLOW_TNT_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.tnt-grief"),
-                "Autoriser les explosions de TNT", "Placeholder"
+                "island.flag.allow_tnt_grief.name",
+                "island.flag.allow_tnt_grief.description"
         ));
     }
-
     @EventHandler(ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
         final Entity entity = event.getEntity();

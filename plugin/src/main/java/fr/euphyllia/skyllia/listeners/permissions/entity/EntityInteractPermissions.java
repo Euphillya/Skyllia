@@ -41,8 +41,8 @@ public class EntityInteractPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.ENTITY_INTERACT = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "entity.interact"),
-                "Interagir avec les entités",
-                "Placeholder"
+                "island.permission.entity_interact.name",
+                "island.permission.entity_interact.description"
         ));
     }
 }

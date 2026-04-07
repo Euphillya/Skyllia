@@ -29,8 +29,8 @@ public class UnbanSubCommand implements SubCommandInterface {
     public UnbanSubCommand() {
         this.ISLAND_UNBAN_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.unban"),
-                "Débannir un joueur",
-                "Autorise à débannir un joueur de l'île"
+                "island.permission.command.unban.name",
+                "island.permission.command.unban.description"
         ));
     }
 

@@ -39,8 +39,8 @@ public class BlockBreakPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.BLOCK_BREAK = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "block.break"),
-                "Casser des blocs",
-                "Placeholder"
+                "island.permission.block_break.name",
+                "island.permission.block_break.description"
         ));
     }
 }

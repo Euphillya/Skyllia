@@ -37,8 +37,8 @@ public class ExpelSubCommand implements SubCommandInterface {
     public ExpelSubCommand() {
         this.ISLAND_EXPEL_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.expel"),
-                "Expulser un joueur",
-                "Autorise à expulser un joueur de l'île"
+                "island.permission.command.expel.name",
+                "island.permission.command.expel.description"
         ));
     }
 

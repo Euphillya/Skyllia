@@ -27,14 +27,18 @@ public class IslandMobSpawnBossFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_SPAWN_ALL_BOSS = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.spawn.boss.all"),
-                "Autoriser le spawn des boss (général)", "Contrôle le spawn de tous les boss"));
+                "island.flag.spawn_boss_all.name",
+                "island.flag.spawn_boss_all.description"
+        ));
 
         this.flagByType = new EnumMap<>(EntityType.class);
         Map<EntityType, String> supported = SkylliaAPI.getMobsSpawnImpl().supportedBossMobs();
         for (Map.Entry<EntityType, String> entry : supported.entrySet()) {
             flagByType.put(entry.getKey(), registry.idOrRegister(new FlagNode(
                     new NamespacedKey(owner, "island.spawn.boss." + entry.getValue()),
-                    "Autoriser le spawn : " + entry.getValue(), "Placeholder")));
+                    "island.flag.spawn_boss_" + entry.getValue() + ".name",
+                    "island.flag.spawn_boss_" + entry.getValue() + ".description"
+            )));
         }
     }
 

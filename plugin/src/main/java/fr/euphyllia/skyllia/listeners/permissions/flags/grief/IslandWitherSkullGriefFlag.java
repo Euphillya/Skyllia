@@ -23,11 +23,13 @@ public class IslandWitherSkullGriefFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)", "Placeholder"
+                "island.flag.allow_mob_grief.name",
+                "island.flag.allow_mob_grief.description"
         ));
         this.ALLOW_WITHER_SKULL_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.wither-skull-grief"),
-                "Autoriser les explosions des têtes de wither", "Placeholder"
+                "island.flag.allow_wither_skull_grief.name",
+                "island.flag.allow_wither_skull_grief.description"
         ));
     }
 

@@ -34,8 +34,8 @@ public class SetWarpSubCommand implements SubCommandInterface {
     public SetWarpSubCommand() {
         this.ISLAND_SET_WARP_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.set_warp"),
-                "Créer un warp",
-                "Autorise à créer/modifier un warp sur l'île"
+                "island.permission.command.set_warp.name",
+                "island.permission.command.set_warp.description"
         ));
     }
 

@@ -31,8 +31,8 @@ public class AccessSubCommand implements SubCommandInterface {
     public AccessSubCommand() {
         this.ACCESS_COMMAND_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(SkylliaAPI.getPlugin(), NODE),
-                "Accès île: ouvrir/fermer",
-                "Autorise à changer l'accès de l'île (public/privé)"
+                "island.permission.command.access.name",
+                "island.permission.command.access.description"
         ));
     }
 

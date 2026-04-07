@@ -35,8 +35,8 @@ public class UntrustSubCommand implements SubCommandInterface {
         this.ISLAND_MANAGE_TRUST_PERMISSION = SkylliaAPI.getPermissionRegistry().register(
                 new PermissionNode(
                         new NamespacedKey(Skyllia.getInstance(), "command.island.manage_trust"),
-                        "Gérer les accès de confiance",
-                        "Autorise à retirer des joueurs trusted de l'île"
+                        "island.permission.command.manage_trust.name",
+                        "island.permission.command.manage_trust.description"
                 )
         );
     }

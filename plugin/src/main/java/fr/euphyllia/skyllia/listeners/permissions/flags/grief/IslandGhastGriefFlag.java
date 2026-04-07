@@ -25,11 +25,13 @@ public class IslandGhastGriefFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)", "Placeholder"
+                "island.flag.allow_mob_grief.name",
+                "island.flag.allow_mob_grief.description"
         ));
         this.ALLOW_GHAST_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.ghast-grief"),
-                "Autoriser les explosions de ghast", "Placeholder"
+                "island.flag.allow_ghast_grief.name",
+                "island.flag.allow_ghast_grief.description"
         ));
     }
 

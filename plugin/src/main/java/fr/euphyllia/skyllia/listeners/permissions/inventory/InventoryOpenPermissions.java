@@ -41,8 +41,8 @@ public class InventoryOpenPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.INVENTORY_OPEN = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "inventory.open"),
-                "Ouvrir des conteneurs",
-                "Placeholder"
+                "island.permission.inventory_open.name",
+                "island.permission.inventory_open.description"
         ));
     }
 }

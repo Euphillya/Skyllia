@@ -35,8 +35,8 @@ public class IslandAllowFluidsPermissions implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ISLAND_ALLOW_FLUIDS = registry.register(new FlagNode(
                 new NamespacedKey(owner, "island.allow.fluids"),
-                "Autoriser les fluides",
-                "Contrôle l'écoulement de l'eau et de la lave"
+                "island.flag.allow_fluids.name",
+                "island.flag.allow_fluids.description"
         ));
     }
 }

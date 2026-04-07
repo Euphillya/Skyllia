@@ -28,8 +28,8 @@ public class BanSubCommand implements SubCommandInterface {
     public BanSubCommand() {
         this.ISLAND_BAN_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.ban"),
-                "Bannir un joueur",
-                "Autorise à bannir un joueur de l'île"
+                "island.permission.command.ban.name",
+                "island.permission.command.ban.description"
         ));
     }
 

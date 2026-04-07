@@ -27,15 +27,18 @@ public class IslandMobSpawnOtherFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_SPAWN_ALL_OTHER = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.spawn.other.all"),
-                "Autoriser le spawn des autres entités (général)",
-                "Contrôle le spawn de toutes les entités non classifiées"));
+                "island.flag.spawn_other_all.name",
+                "island.flag.spawn_other_all.description"
+        ));
 
         this.flagByType = new EnumMap<>(EntityType.class);
         Map<EntityType, String> supported = SkylliaAPI.getMobsSpawnImpl().supportedOtherMobs();
         for (Map.Entry<EntityType, String> entry : supported.entrySet()) {
             flagByType.put(entry.getKey(), registry.idOrRegister(new FlagNode(
                     new NamespacedKey(owner, "island.spawn.other." + entry.getValue()),
-                    "Autoriser le spawn : " + entry.getValue(), "Placeholder")));
+                    "island.flag.spawn_other_" + entry.getValue() + ".name",
+                    "island.flag.spawn_other_" + entry.getValue() + ".description"
+            )));
         }
     }
 

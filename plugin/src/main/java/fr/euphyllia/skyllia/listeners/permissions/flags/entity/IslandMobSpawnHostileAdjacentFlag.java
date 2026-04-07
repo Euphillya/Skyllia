@@ -27,15 +27,18 @@ public class IslandMobSpawnHostileAdjacentFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_SPAWN_ALL_HOSTILE_ADJACENT = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.spawn.hostile_adjacent.all"),
-                "Autoriser le spawn des mobs hostiles adjacents (général)",
-                "Contrôle le spawn des mobs hostiles proches du hostile"));
+                "island.flag.spawn_hostile_adjacent_all.name",
+                "island.flag.spawn_hostile_adjacent_all.description"
+        ));
 
         this.flagByType = new EnumMap<>(EntityType.class);
         Map<EntityType, String> supported = SkylliaAPI.getMobsSpawnImpl().supportedHostileAdjacentMobs();
         for (Map.Entry<EntityType, String> entry : supported.entrySet()) {
             flagByType.put(entry.getKey(), registry.idOrRegister(new FlagNode(
                     new NamespacedKey(owner, "island.spawn.hostile_adjacent." + entry.getValue()),
-                    "Autoriser le spawn : " + entry.getValue(), "Placeholder")));
+                    "island.flag.spawn_hostile_adjacent_" + entry.getValue() + ".name",
+                    "island.flag.spawn_hostile_adjacent_" + entry.getValue() + ".description"
+            )));
         }
     }
 

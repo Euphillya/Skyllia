@@ -35,8 +35,8 @@ public class IslandAllowPistonsExtendPermissions implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ISLAND_ALLOW_PISTONS = registry.register(new FlagNode(
                 new NamespacedKey(owner, "island.allow.pistons"),
-                "Autoriser les pistons",
-                "Contrôle l'extension des pistons"
+                "island.flag.allow_pistons.name",
+                "island.flag.allow_pistons.description"
         ));
     }
 }

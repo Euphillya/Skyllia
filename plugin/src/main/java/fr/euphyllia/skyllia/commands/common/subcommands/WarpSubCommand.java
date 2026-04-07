@@ -38,8 +38,8 @@ public class WarpSubCommand implements SubCommandInterface {
     public WarpSubCommand() {
         this.ISLAND_WARP_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.warp"),
-                "Se téléporter à un warp",
-                "Autorise à utiliser /is warp sur l'île"
+                "island.permission.command.warp.name",
+                "island.permission.command.warp.description"
         ));
     }
 

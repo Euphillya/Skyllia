@@ -40,8 +40,8 @@ public class ItemDropPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.ITEM_DROP = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "item.drop"),
-                "Jeter des objets",
-                "Placeholder"
+                "island.permission.item_drop.name",
+                "island.permission.item_drop.description"
         ));
     }
 }

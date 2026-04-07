@@ -22,11 +22,13 @@ public class IslandEndermanGriefFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)", "Placeholder"
+                "island.flag.allow_mob_grief.name",
+                "island.flag.allow_mob_grief.description"
         ));
         this.ALLOW_ENDERMAN_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.enderman-grief"),
-                "Autoriser le grief des endermans", "Placeholder"
+                "island.flag.allow_enderman_grief.name",
+                "island.flag.allow_enderman_grief.description"
         ));
     }
 

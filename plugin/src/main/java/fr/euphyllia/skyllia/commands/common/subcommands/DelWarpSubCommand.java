@@ -31,8 +31,8 @@ public class DelWarpSubCommand implements SubCommandInterface {
     public DelWarpSubCommand() {
         this.ISLAND_DELWARP_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.delwarp"),
-                "Supprimer un warp",
-                "Autorise à supprimer un warp de l'île"
+                "island.permission.command.delwarp.name",
+                "island.permission.command.delwarp.description"
         ));
     }
 

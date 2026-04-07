@@ -33,8 +33,8 @@ public class ChestCommand implements SubCommandInterface {
         this.OPEN_ISLAND_CHEST_PERMISSION = SkylliaAPI.getPermissionRegistry().idOrRegister(
                 new PermissionNode(
                         new NamespacedKey(plugin, "open_private_island_chest"),
-                        "Allows the player to open their island chest inventory",
-                        "skyblock.island.chest.open"
+                        "addons.chest.permission.open.name",
+                        "addons.chest.permission.open.description"
                 )
         );
     }

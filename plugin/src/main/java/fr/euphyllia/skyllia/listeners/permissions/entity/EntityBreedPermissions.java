@@ -42,8 +42,8 @@ public class EntityBreedPermissions implements PermissionModule {
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {
         this.ENTITY_BREED = registry.register(new PermissionNode(
                 new NamespacedKey(owner, "entity.breed"),
-                "Reproduire des animaux",
-                "Placeholder"
+                "island.permission.entity_breed.name",
+                "island.permission.entity_breed.description"
         ));
     }
 }

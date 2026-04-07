@@ -31,8 +31,8 @@ public class PermissionSubCommand implements SubCommandInterface {
     public PermissionSubCommand() {
         this.PERMISSION_COMMAND_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(SkylliaAPI.getPlugin(), "command.island.permission"),
-                "Permissions île: gérer les permissions",
-                "Autorise à gérer les permissions des rôles de l'île"
+                "island.permission.command.permission.name",
+                "island.permission.command.permission.description"
         ));
     }
 

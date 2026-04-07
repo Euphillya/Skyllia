@@ -32,8 +32,8 @@ public class PromoteSubCommand implements SubCommandInterface {
     public PromoteSubCommand() {
         this.ISLAND_PROMOTE_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.promote"),
-                "Promouvoir un joueur",
-                "Autorise à promouvoir un membre de l'île"
+                "island.permission.command.promote.name",
+                "island.permission.command.promote.description"
         ));
     }
 

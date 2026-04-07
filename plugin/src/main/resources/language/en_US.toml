@@ -394,3 +394,559 @@ rain-contact = "<dark_aqua>☔ Acid rain is eating away at your skin!</dark_aqua
 no-permission = "<red>You do not have permission to use the island chat.</red>"
 enabled = "<green>Island chat enabled.</green>"
 disabled = "<gray>Island chat disabled.</gray>"
+
+[addons.bank.permission.deposit]
+name = "Bank: Deposit"
+description = "Allows depositing money into the island bank."
+
+[addons.bank.permission.withdraw]
+name = "Bank: Withdraw"
+description = "Allows withdrawing money from the island bank."
+
+[addons.chest.permission.open]
+name = "Island Chest"
+description = "Allows opening the island's shared chest."
+
+[island.permission.access]
+name = "Access: Open/Close"
+description = "Allows changing the island access (public/private)."
+
+[island.permission.ban]
+name = "Ban a Player"
+description = "Allows banning a player from the island."
+
+[island.permission.delwarp]
+name = "Delete a Warp"
+description = "Allows deleting a warp from the island."
+
+[island.permission.demote]
+name = "Demote a Member"
+description = "Allows demoting a member of the island."
+
+[island.permission.expel]
+name = "Expel a Player"
+description = "Allows expelling a player currently on the island."
+
+[island.permission.flag]
+name = "Manage Flags"
+description = "Allows modifying the island's flags."
+
+[island.permission.invite]
+name = "Invite a Player"
+description = "Allows sending and cancelling invitations."
+
+[island.permission.kick]
+name = "Kick a Member"
+description = "Allows removing a member from the island."
+
+[island.permission.manage]
+name = "Manage Permissions"
+description = "Allows modifying role permissions on the island."
+
+[island.permission.promote]
+name = "Promote a Member"
+description = "Allows increasing the rank of a member."
+
+[island.permission.set_biome]
+name = "Change Biome"
+description = "Allows modifying the island or chunk biome."
+
+[island.permission.set_home]
+name = "Set Home"
+description = "Allows moving the island's main spawn point."
+
+[island.permission.set_warp]
+name = "Create a Warp"
+description = "Allows creating or editing a warp on the island."
+
+[island.permission.manage_trust]
+name = "Manage Trust"
+description = "Allows adding or removing trusted players."
+
+[island.permission.unban]
+name = "Unban a Player"
+description = "Allows lifting a player's ban from the island."
+
+[island.permission.visit_bypass]
+name = "Visit (Bypass)"
+description = "Allows visiting a private island or despite a ban."
+
+[island.permission.block_break]
+name = "Break Blocks"
+description = "Allows breaking blocks on the island."
+
+[island.permission.block_interact]
+name = "Interact with Blocks"
+description = "Allows using levers, buttons, doors, etc."
+
+[island.permission.block_physical]
+name = "Physical Interactions"
+description = "Allows physical interactions such as pressure plates."
+
+[island.permission.block_place]
+name = "Place Blocks"
+description = "Allows placing blocks on the island."
+
+[island.permission.block_use_bucket]
+name = "Use Buckets"
+description = "Allows filling or emptying buckets on the island."
+
+[island.permission.decor_hanging_break]
+name = "Remove Decorations"
+description = "Allows removing item frames and paintings."
+
+[island.permission.decor_hanging_place]
+name = "Place Decorations"
+description = "Allows placing item frames and paintings."
+
+[island.permission.entity_breed]
+name = "Breed Animals"
+description = "Allows breeding animals on the island."
+
+[island.permission.entity_damage]
+name = "Attack Entities"
+description = "Allows dealing damage to entities on the island."
+
+[island.permission.entity_interact]
+name = "Interact with Entities"
+description = "Allows interacting with entities (villagers, animals, etc.)."
+
+[island.permission.inventory_modify]
+name = "Modify Inventory"
+description = "Allows moving items inside containers."
+
+[island.permission.inventory_open]
+name = "Open Containers"
+description = "Allows opening chests and other containers."
+
+[island.permission.item_drop]
+name = "Drop Items"
+description = "Allows dropping items on the ground on the island."
+
+[island.permission.item_pickup]
+name = "Pick Up Items"
+description = "Allows picking up items from the ground on the island."
+
+[island.permission.player_teleport]
+name = "Teleport to Island"
+description = "Allows teleporting to a private island."
+
+# ── Flags: Environment ───────────────────────────────────────────────────
+
+[island.flag.allow_explosions]
+name = "Explosions"
+description = "Controls block and entity damage caused by explosions."
+
+[island.flag.allow_fire]
+name = "Fire"
+description = "Controls fire ignition and block burning."
+
+[island.flag.allow_fluids]
+name = "Fluid Flow"
+description = "Controls the flow of water and lava."
+
+[island.flag.allow_pistons]
+name = "Pistons"
+description = "Controls piston extension and retraction."
+
+# ── Flags: Mob Grief ─────────────────────────────────────────────────────
+
+[island.flag.allow_mob_grief]
+name = "Mob Griefing (All)"
+description = "Controls block modifications caused by all mobs."
+
+[island.flag.allow_creeper_grief]
+name = "Creeper Explosions"
+description = "Controls block damage caused by Creeper explosions."
+
+[island.flag.allow_enderman_grief]
+name = "Enderman Griefing"
+description = "Controls block picking by Endermen."
+
+[island.flag.allow_ghast_grief]
+name = "Ghast Fireballs"
+description = "Controls block damage caused by Ghast fireball explosions."
+
+[island.flag.allow_tnt_grief]
+name = "TNT Explosions"
+description = "Controls block damage caused by TNT and explosive minecarts."
+
+[island.flag.allow_wither_grief]
+name = "Wither Destruction"
+description = "Controls block damage caused by the Wither boss."
+
+[island.flag.allow_wither_skull_grief]
+name = "Wither Skull Explosions"
+description = "Controls block damage caused by Wither skull explosions."
+
+# ── Flags: Boss Spawning ─────────────────────────────────────────────────
+
+[island.flag.spawn_boss_all]
+name = "Bosses (All)"
+description = "Controls the spawning of all bosses."
+
+[island.flag.spawn_boss_wither]
+name = "Wither"
+description = "Controls Wither spawning."
+
+[island.flag.spawn_boss_ender_dragon]
+name = "Ender Dragon"
+description = "Controls Ender Dragon spawning."
+
+# ── Flags: Adjacent Hostile Spawning ─────────────────────────────────────
+
+[island.flag.spawn_hostile_adjacent_all]
+name = "Adjacent Hostile Mobs (All)"
+description = "Controls the spawning of all adjacent hostile mobs."
+
+[island.flag.spawn_hostile_adjacent_skeleton_horse]
+name = "Skeleton Horse"
+description = "Controls Skeleton Horse spawning."
+
+# ── Flags: Hostile Spawning ───────────────────────────────────────────────
+
+[island.flag.spawn_hostile_all]
+name = "Hostile Mobs (All)"
+description = "Controls the spawning of all hostile mobs."
+
+[island.flag.spawn_hostile_blaze]
+name = "Blaze"
+description = "Controls Blaze spawning."
+
+[island.flag.spawn_hostile_bogged]
+name = "Bogged"
+description = "Controls Bogged spawning."
+
+[island.flag.spawn_hostile_breeze]
+name = "Breeze"
+description = "Controls Breeze spawning."
+
+[island.flag.spawn_hostile_creaker]
+name = "Creaking"
+description = "Controls Creaking spawning."
+
+[island.flag.spawn_hostile_creeper]
+name = "Creeper"
+description = "Controls Creeper spawning."
+
+[island.flag.spawn_hostile_elder_guardian]
+name = "Elder Guardian"
+description = "Controls Elder Guardian spawning."
+
+[island.flag.spawn_hostile_endermite]
+name = "Endermite"
+description = "Controls Endermite spawning."
+
+[island.flag.spawn_hostile_evoker]
+name = "Evoker"
+description = "Controls Evoker spawning."
+
+[island.flag.spawn_hostile_ghast]
+name = "Ghast"
+description = "Controls Ghast spawning."
+
+[island.flag.spawn_hostile_guardian]
+name = "Guardian"
+description = "Controls Guardian spawning."
+
+[island.flag.spawn_hostile_hoglin]
+name = "Hoglin"
+description = "Controls Hoglin spawning."
+
+[island.flag.spawn_hostile_husk]
+name = "Husk"
+description = "Controls Husk spawning."
+
+[island.flag.spawn_hostile_magma_cube]
+name = "Magma Cube"
+description = "Controls Magma Cube spawning."
+
+[island.flag.spawn_hostile_parched]
+name = "Parched"
+description = "Controls Parched spawning."
+
+[island.flag.spawn_hostile_phantom]
+name = "Phantom"
+description = "Controls Phantom spawning."
+
+[island.flag.spawn_hostile_piglin_brute]
+name = "Piglin Brute"
+description = "Controls Piglin Brute spawning."
+
+[island.flag.spawn_hostile_pillager]
+name = "Pillager"
+description = "Controls Pillager spawning."
+
+[island.flag.spawn_hostile_ravager]
+name = "Ravager"
+description = "Controls Ravager spawning."
+
+[island.flag.spawn_hostile_shulker]
+name = "Shulker"
+description = "Controls Shulker spawning."
+
+[island.flag.spawn_hostile_silverfish]
+name = "Silverfish"
+description = "Controls Silverfish spawning."
+
+[island.flag.spawn_hostile_skeleton]
+name = "Skeleton"
+description = "Controls Skeleton spawning."
+
+[island.flag.spawn_hostile_slime]
+name = "Slime"
+description = "Controls Slime spawning."
+
+[island.flag.spawn_hostile_stray]
+name = "Stray"
+description = "Controls Stray spawning."
+
+[island.flag.spawn_hostile_vex]
+name = "Vex"
+description = "Controls Vex spawning."
+
+[island.flag.spawn_hostile_vindicator]
+name = "Vindicator"
+description = "Controls Vindicator spawning."
+
+[island.flag.spawn_hostile_warden]
+name = "Warden"
+description = "Controls Warden spawning."
+
+[island.flag.spawn_hostile_witch]
+name = "Witch"
+description = "Controls Witch spawning."
+
+[island.flag.spawn_hostile_wither_skeleton]
+name = "Wither Skeleton"
+description = "Controls Wither Skeleton spawning."
+
+[island.flag.spawn_hostile_zoglin]
+name = "Zoglin"
+description = "Controls Zoglin spawning."
+
+[island.flag.spawn_hostile_zombie]
+name = "Zombie"
+description = "Controls Zombie spawning."
+
+[island.flag.spawn_hostile_zombie_villager]
+name = "Zombie Villager"
+description = "Controls Zombie Villager spawning."
+
+# ── Flags: Neutral Spawning ───────────────────────────────────────────────
+
+[island.flag.spawn_neutral_all]
+name = "Neutral Mobs (All)"
+description = "Controls the spawning of all neutral mobs."
+
+[island.flag.spawn_neutral_bee]
+name = "Bee"
+description = "Controls Bee spawning."
+
+[island.flag.spawn_neutral_cave_spider]
+name = "Cave Spider"
+description = "Controls Cave Spider spawning."
+
+[island.flag.spawn_neutral_dolphin]
+name = "Dolphin"
+description = "Controls Dolphin spawning."
+
+[island.flag.spawn_neutral_drowned]
+name = "Drowned"
+description = "Controls Drowned spawning."
+
+[island.flag.spawn_neutral_enderman]
+name = "Enderman"
+description = "Controls Enderman spawning."
+
+[island.flag.spawn_neutral_fox]
+name = "Fox"
+description = "Controls Fox spawning."
+
+[island.flag.spawn_neutral_goat]
+name = "Goat"
+description = "Controls Goat spawning."
+
+[island.flag.spawn_neutral_iron_golem]
+name = "Iron Golem"
+description = "Controls Iron Golem spawning."
+
+[island.flag.spawn_neutral_llama]
+name = "Llama"
+description = "Controls Llama spawning."
+
+[island.flag.spawn_neutral_panda]
+name = "Panda"
+description = "Controls Panda spawning."
+
+[island.flag.spawn_neutral_piglin]
+name = "Piglin"
+description = "Controls Piglin spawning."
+
+[island.flag.spawn_neutral_polar_bear]
+name = "Polar Bear"
+description = "Controls Polar Bear spawning."
+
+[island.flag.spawn_neutral_pufferfish]
+name = "Pufferfish"
+description = "Controls Pufferfish spawning."
+
+[island.flag.spawn_neutral_spider]
+name = "Spider"
+description = "Controls Spider spawning."
+
+[island.flag.spawn_neutral_trader_llama]
+name = "Trader Llama"
+description = "Controls Trader Llama spawning."
+
+[island.flag.spawn_neutral_wolf]
+name = "Wolf"
+description = "Controls Wolf spawning."
+
+[island.flag.spawn_neutral_zombified_piglin]
+name = "Zombified Piglin"
+description = "Controls Zombified Piglin spawning."
+
+# ── Flags: Passive Spawning ───────────────────────────────────────────────
+
+[island.flag.spawn_passive_all]
+name = "Passive Mobs (All)"
+description = "Controls the spawning of all passive mobs."
+
+[island.flag.spawn_passive_allay]
+name = "Allay"
+description = "Controls Allay spawning."
+
+[island.flag.spawn_passive_armadillo]
+name = "Armadillo"
+description = "Controls Armadillo spawning."
+
+[island.flag.spawn_passive_axolotl]
+name = "Axolotl"
+description = "Controls Axolotl spawning."
+
+[island.flag.spawn_passive_bat]
+name = "Bat"
+description = "Controls Bat spawning."
+
+[island.flag.spawn_passive_camel]
+name = "Camel"
+description = "Controls Camel spawning."
+
+[island.flag.spawn_passive_cat]
+name = "Cat"
+description = "Controls Cat spawning."
+
+[island.flag.spawn_passive_chicken]
+name = "Chicken"
+description = "Controls Chicken spawning."
+
+[island.flag.spawn_passive_cod]
+name = "Cod"
+description = "Controls Cod spawning."
+
+[island.flag.spawn_passive_cow]
+name = "Cow"
+description = "Controls Cow spawning."
+
+[island.flag.spawn_passive_donkey]
+name = "Donkey"
+description = "Controls Donkey spawning."
+
+[island.flag.spawn_passive_frog]
+name = "Frog"
+description = "Controls Frog spawning."
+
+[island.flag.spawn_passive_glow_squid]
+name = "Glow Squid"
+description = "Controls Glow Squid spawning."
+
+[island.flag.spawn_passive_horse]
+name = "Horse"
+description = "Controls Horse spawning."
+
+[island.flag.spawn_passive_mooshroom]
+name = "Mooshroom"
+description = "Controls Mooshroom spawning."
+
+[island.flag.spawn_passive_mule]
+name = "Mule"
+description = "Controls Mule spawning."
+
+[island.flag.spawn_passive_ocelot]
+name = "Ocelot"
+description = "Controls Ocelot spawning."
+
+[island.flag.spawn_passive_parrot]
+name = "Parrot"
+description = "Controls Parrot spawning."
+
+[island.flag.spawn_passive_pig]
+name = "Pig"
+description = "Controls Pig spawning."
+
+[island.flag.spawn_passive_rabbit]
+name = "Rabbit"
+description = "Controls Rabbit spawning."
+
+[island.flag.spawn_passive_salmon]
+name = "Salmon"
+description = "Controls Salmon spawning."
+
+[island.flag.spawn_passive_sheep]
+name = "Sheep"
+description = "Controls Sheep spawning."
+
+[island.flag.spawn_passive_sniffer]
+name = "Sniffer"
+description = "Controls Sniffer spawning."
+
+[island.flag.spawn_passive_snow_golem]
+name = "Snow Golem"
+description = "Controls Snow Golem spawning."
+
+[island.flag.spawn_passive_squid]
+name = "Squid"
+description = "Controls Squid spawning."
+
+[island.flag.spawn_passive_strider]
+name = "Strider"
+description = "Controls Strider spawning."
+
+[island.flag.spawn_passive_tadpole]
+name = "Tadpole"
+description = "Controls Tadpole spawning."
+
+[island.flag.spawn_passive_tropical_fish]
+name = "Tropical Fish"
+description = "Controls Tropical Fish spawning."
+
+[island.flag.spawn_passive_turtle]
+name = "Turtle"
+description = "Controls Turtle spawning."
+
+[island.flag.spawn_passive_villager]
+name = "Villager"
+description = "Controls Villager spawning."
+
+[island.flag.spawn_passive_wandering_villager]
+name = "Wandering Trader"
+description = "Controls Wandering Trader spawning."
+
+# ── Flags: Other Entities ─────────────────────────────────────────────────
+
+[island.flag.spawn_other_all]
+name = "Other Entities (All)"
+description = "Controls the spawning of all unclassified entities."
+
+[island.flag.spawn_other_armor_stand]
+name = "Armor Stand"
+description = "Controls Armor Stand spawning."
+
+[island.flag.spawn_other_giant]
+name = "Giant Zombie"
+description = "Controls Giant spawning."
+
+[island.flag.spawn_other_illusioner]
+name = "Illusioner"
+description = "Controls Illusioner spawning."

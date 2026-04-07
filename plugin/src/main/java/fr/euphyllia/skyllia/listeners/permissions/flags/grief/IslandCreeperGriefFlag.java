@@ -22,11 +22,13 @@ public class IslandCreeperGriefFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_MOB_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.mob-grief"),
-                "Autoriser le grief des mobs (général)", "Placeholder"
+                "island.flag.allow_mob_grief.name",
+                "island.flag.allow_mob_grief.description"
         ));
         this.ALLOW_CREEPER_GRIEF = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.creeper-grief"),
-                "Autoriser les explosions des creepers", "Placeholder"
+                "island.flag.allow_creeper_grief.name",
+                "island.flag.allow_creeper_grief.description"
         ));
     }
 

@@ -33,8 +33,8 @@ public class SetHomeSubCommand implements SubCommandInterface {
     public SetHomeSubCommand() {
         this.ISLAND_SET_HOME_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.set_home"),
-                "Définir le home",
-                "Autorise à définir le home de l'île"
+                "island.permission.command.set_home.name",
+                "island.permission.command.set_home.description"
         ));
     }
 

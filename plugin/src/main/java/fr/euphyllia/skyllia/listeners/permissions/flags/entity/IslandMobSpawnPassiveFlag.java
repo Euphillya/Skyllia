@@ -27,14 +27,18 @@ public class IslandMobSpawnPassiveFlag implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ALLOW_SPAWN_ALL_PASSIVE = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.spawn.passive.all"),
-                "Autoriser le spawn des mobs passifs (général)", "Contrôle le spawn de tous les mobs passifs"));
+                "island.flag.spawn_passive_all.name",
+                "island.flag.spawn_passive_all.description"
+        ));
 
         this.flagByType = new EnumMap<>(EntityType.class);
         Map<EntityType, String> supported = SkylliaAPI.getMobsSpawnImpl().supportedPassiveMobs();
         for (Map.Entry<EntityType, String> entry : supported.entrySet()) {
             flagByType.put(entry.getKey(), registry.idOrRegister(new FlagNode(
                     new NamespacedKey(owner, "island.spawn.passive." + entry.getValue()),
-                    "Autoriser le spawn : " + entry.getValue(), "Placeholder")));
+                    "island.flag.spawn_passive_" + entry.getValue() + ".name",
+                    "island.flag.spawn_passive_" + entry.getValue() + ".description"
+            )));
         }
     }
 

@@ -38,8 +38,8 @@ public class VisitSubCommand implements SubCommandInterface {
     public VisitSubCommand() {
         this.ISLAND_VISIT_BYPASS_PERMISSION = SkylliaAPI.getPermissionRegistry().register(new PermissionNode(
                 new NamespacedKey(Skyllia.getInstance(), "command.island.visit.bypass"),
-                "Visiter une île en bypass",
-                "Autorise à visiter une île privée / même si banni"
+                "island.permission.command.visit_bypass.name",
+                "island.permission.command.visit_bypass.description"
         ));
     }
 
