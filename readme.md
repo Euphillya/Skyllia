@@ -82,7 +82,7 @@ Extend Skyllia with 7 free official addons:
 ## 📋 Requirements
 
 - **Server**: Folia 1.20.6+ or Paper 1.20.6+
-- **Java**: 25 or higher
+- **Java**: 25 or higher (since 3.0-42)
 - **RAM**: 4GB minimum, 8GB+ recommended
 - **Database** (optional): MariaDB 10.5+ or PostgreSQL 12+ (prefer PostgreSQL for large servers)
 
@@ -146,10 +146,19 @@ Skyllia provides a complete API to create your own addons:
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.island.Island;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 
-Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
-if(island != null){
-   player.sendMessage("Your island: "+ island.getId());
+public class MyPlugin {
+
+   @EventHandler
+   public void onPlayerJoin(PlayerJoinEvent event) {
+      Player player = event.getPlayer();
+      Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+      if (island != null) {
+         player.sendMessage("Your island: " + island.getId());
+      }
+   }
 }
 ```
 
