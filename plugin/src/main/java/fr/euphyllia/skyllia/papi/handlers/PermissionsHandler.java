@@ -84,14 +84,17 @@ public class PermissionsHandler implements PlaceholderHandler {
         if (key.startsWith("role_")) {
             // Format: role_<ROLE>_<perm_key>
             String withoutPrefix = key.substring("role_".length());
-            int separatorIndex = withoutPrefix.indexOf('_');
-            if (separatorIndex <= 0) return null;
-
-            String roleName = withoutPrefix.substring(0, separatorIndex);
-            permKey = withoutPrefix.substring(separatorIndex + 1);
-
-            role = SkylliaPAPIUtils.parseRole(roleName);
-            if (role == null) return null;
+            role = null;
+            permKey = null;
+            for (RoleType candidate : RoleType.values()) {
+                String candidateLower = candidate.name().toLowerCase(Locale.ROOT);
+                if (withoutPrefix.startsWith(candidateLower + "_")) {
+                    role = candidate;
+                    permKey = withoutPrefix.substring(candidateLower.length() + 1);
+                    break;
+                }
+            }
+            if (role == null || permKey == null || permKey.isEmpty()) return null;
         } else {
             // Format: <perm_key>  →  use requesting player's role
             role = SkylliaPAPIUtils.resolveRole(island, player.getUniqueId());
