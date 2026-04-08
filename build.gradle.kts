@@ -142,7 +142,7 @@ modrinth {
     additionalFiles.set(
         listOf(
             project(":addons:SkylliaOre").tasks.named("shadowJar"),
-            project(":addons:InsightsSkyllia").tasks.named("shadowJar"),
+            project(":addons:SkylliaInsights").tasks.named("shadowJar"),
             project(":addons:SkylliaChat").tasks.named("shadowJar"),
             project(":addons:SkylliaBank").tasks.named("shadowJar"),
             project(":addons:SkylliaChallenge").tasks.named("shadowJar"),
@@ -186,7 +186,7 @@ tasks.modrinth {
     dependsOn(
         "shadowJar",
         ":addons:SkylliaOre:shadowJar",
-        ":addons:InsightsSkyllia:shadowJar",
+        ":addons:SkylliaInsights:shadowJar",
         ":addons:SkylliaChat:shadowJar",
         ":addons:SkylliaBank:shadowJar",
         ":addons:SkylliaChallenge:shadowJar",

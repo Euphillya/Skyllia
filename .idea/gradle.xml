@@ -10,12 +10,12 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/addons" />
-            <option value="$PROJECT_DIR$/addons/InsightsSkyllia" />
             <option value="$PROJECT_DIR$/addons/SkylliaAcidRain" />
             <option value="$PROJECT_DIR$/addons/SkylliaBank" />
             <option value="$PROJECT_DIR$/addons/SkylliaChallenge" />
             <option value="$PROJECT_DIR$/addons/SkylliaChat" />
             <option value="$PROJECT_DIR$/addons/SkylliaChest" />
+            <option value="$PROJECT_DIR$/addons/SkylliaInsights" />
             <option value="$PROJECT_DIR$/addons/SkylliaOre" />
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/database" />
