@@ -24,7 +24,6 @@ public class AdminPanelCommand implements SubCommandInterface {
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
         if (!sender.hasPermission(permission())) {
             // Todo message - not permission
-            return;
         }
 
 

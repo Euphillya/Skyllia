@@ -9,6 +9,10 @@ public class SkylliaPanelPlugin extends JavaPlugin {
 
     private static SkylliaPanelPlugin instance;
 
+    public static SkylliaPanelPlugin getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -24,9 +28,5 @@ public class SkylliaPanelPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
 
-    }
-
-    public static SkylliaPanelPlugin getInstance() {
-        return instance;
     }
 }

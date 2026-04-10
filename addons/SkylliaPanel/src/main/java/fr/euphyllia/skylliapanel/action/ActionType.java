@@ -15,10 +15,6 @@ public enum ActionType {
         this.key = key;
     }
 
-    public String getKey() {
-        return key;
-    }
-
     public static ActionType fromString(String raw) {
         for (ActionType type : values()) {
             if (type.key.equalsIgnoreCase(raw) || type.name().equalsIgnoreCase(raw)) {
@@ -26,5 +22,9 @@ public enum ActionType {
             }
         }
         throw new IllegalArgumentException("Unknown action type: " + raw + ". Please use one of: " + String.join(", ", Arrays.toString(values())));
+    }
+
+    public String getKey() {
+        return key;
     }
 }

@@ -12,9 +12,10 @@ import java.util.List;
 public class ActionExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(ActionExecutor.class);
-    private static SkylliaPanelPlugin plugin = SkylliaPanelPlugin.getInstance();
+    private static final SkylliaPanelPlugin plugin = SkylliaPanelPlugin.getInstance();
 
-    private ActionExecutor() {}
+    private ActionExecutor() {
+    }
 
     public static void execute(Player player, List<ActionDefinition> actions) {
         if (actions == null || actions.isEmpty()) return;
