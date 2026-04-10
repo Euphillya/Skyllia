@@ -164,7 +164,7 @@ public class DynamicPanelGui {
 
         return new ButtonDefinition(
                 btn.slot(), btn.material(), btn.skullTexture(), btn.skullPlayer(),
-                resolvedName, resolvedLore, btn.glow(), btn.modelData(), btn.model(), resolvedActions
+                resolvedName, resolvedLore, btn.glow(), btn.customModelData(), btn.itemModel(), resolvedActions
         );
     }
 }
