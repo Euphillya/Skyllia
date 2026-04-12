@@ -29,15 +29,15 @@ public class ConvertObsidianToLavaPermissions implements PermissionModule {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInteractEntity(final PlayerInteractEvent event) {
         if (!ConfigLoader.general.isEnableObsidianToLavaConversion()) return;
-        if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY) return;
         if (!event.getAction().isRightClick()) return;
+
+        if (event.getHand() == EquipmentSlot.OFF_HAND) return;
 
         final Player player = event.getPlayer();
         final Block target = event.getClickedBlock();
         if (target == null || target.getType() != Material.OBSIDIAN) return;
 
         final Location location = target.getLocation();
-
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
         final int chunkX = location.getBlockX() >> 4;
@@ -45,24 +45,19 @@ public class ConvertObsidianToLavaPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, CONVERT_OBSIDIAN_TO_LAVA, "skyllia.player.convert_obsidian_to_lava.bypass");
-        if (!hasPermission) {
-            event.setCancelled(true);
-            return;
-        }
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(
+                player, island, CONVERT_OBSIDIAN_TO_LAVA, "skyllia.player.convert_obsidian_to_lava.bypass"
+        );
+        if (!hasPermission) return;
 
-        final EquipmentSlot hand = event.getHand();
-        if (hand == null) return;
+        event.setCancelled(true);
+        event.setUseInteractedBlock(Event.Result.DENY);
+        event.setUseItemInHand(Event.Result.DENY);
 
-        ItemStack handItem = switch (hand) {
-            case HAND -> player.getInventory().getItemInMainHand();
-            case OFF_HAND -> player.getInventory().getItemInOffHand();
-            default -> null;
-        };
-        if (handItem == null || handItem.getType() != Material.BUCKET) return;
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+        if (handItem.getType() != Material.BUCKET) return;
 
         target.setType(Material.AIR);
-
         handItem.setAmount(Math.max(0, handItem.getAmount() - 1));
 
         HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
@@ -70,7 +65,7 @@ public class ConvertObsidianToLavaPermissions implements PermissionModule {
                 player.getWorld().dropItemNaturally(player.getLocation(), leftover)
         );
 
-        player.swingHand(hand);
+        player.swingHand(EquipmentSlot.HAND);
         player.playSound(target.getLocation(), org.bukkit.Sound.ITEM_BUCKET_FILL_LAVA, 1.0f, 1.0f);
     }
 
