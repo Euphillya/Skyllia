@@ -29,6 +29,7 @@ import fr.euphyllia.skyllia.listeners.permissions.flags.redstone.IslandAllowPist
 import fr.euphyllia.skyllia.listeners.permissions.inventory.InventoryModifyClickPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.inventory.InventoryModifyDragPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.inventory.InventoryOpenPermissions;
+import fr.euphyllia.skyllia.listeners.permissions.player.ConvertObsidianToLavaPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.player.ItemDropPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.player.ItemPickupPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.player.TeleportPermissions;
@@ -95,6 +96,7 @@ public class ListenersRegistrar {
         moduleManager.addModule(plugin, new InventoryModifyClickPermissions());
         moduleManager.addModule(plugin, new InventoryModifyDragPermissions());
         moduleManager.addModule(plugin, new InventoryOpenPermissions());
+        moduleManager.addModule(plugin, new ConvertObsidianToLavaPermissions());
         moduleManager.addModule(plugin, new ItemPickupPermissions());
         moduleManager.addModule(plugin, new ItemDropPermissions());
         moduleManager.addModule(plugin, new TeleportPermissions());

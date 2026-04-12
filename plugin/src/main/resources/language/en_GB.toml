@@ -531,6 +531,10 @@ description = "Allows picking up items from the ground on the island."
 name = "Teleport to Island"
 description = "Allows teleporting to a private island."
 
+[island.permission.convert_obsidian_to_lava]
+name = "Convert Obsidian to Lava"
+description = "Allows converting obsidian to lava by placing an empty bucket on it."
+
 # ── Flags: Environment ───────────────────────────────────────────────────
 
 [island.flag.allow_explosions]

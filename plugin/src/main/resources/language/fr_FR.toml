@@ -538,6 +538,10 @@ description = "Autorise à ramasser des objets au sol sur l'île."
 name = "Se téléporter sur l'île"
 description = "Autorise la téléportation vers une île privée."
 
+[island.permission.convert_obsidian_to_lava]
+name = "Convertir l'obsidienne en lave"
+description = "Autorise la conversion de l'obsidienne en lave en utilisant un seau vide sur de l'obsidienne."
+
 # ── Flags : Environnement ────────────────────────────────────────────────
 
 [island.flag.allow_explosions]
