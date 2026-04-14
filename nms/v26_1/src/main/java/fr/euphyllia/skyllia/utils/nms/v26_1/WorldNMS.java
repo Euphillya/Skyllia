@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.utils.nms.v26_1;
 import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import io.papermc.paper.world.PaperWorldLoader;
@@ -30,7 +31,10 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
-import net.minecraft.world.level.storage.*;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
@@ -60,6 +64,20 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
+        return createWorldInternal(creator, null, null);
+    }
+
+    @Override
+    public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator, WorldConfig worldConfig) {
+        if (!worldConfig.hasCustomHeight()) {
+            return createWorldInternal(creator, null, null);
+        }
+        net.minecraft.core.Holder<net.minecraft.world.level.dimension.DimensionType> holder =
+                WorldHeightUtil.registerCustomDimension(creator.name(), worldConfig);
+        return createWorldInternal(creator, worldConfig, holder);
+    }
+
+    private WorldFeedback.FeedbackWorld createWorldInternal(WorldCreator creator, WorldConfig worldConfig, net.minecraft.core.Holder<net.minecraft.world.level.dimension.DimensionType> customHeightHolder) {
         Preconditions.checkArgument(creator != null, "WorldCreator cannot be null");
 
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
@@ -165,6 +183,10 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         LevelStem customStem = genSettingsFinal.dimensions().get(actualDimension).orElse(null);
         if (customStem == null) {
             customStem = contextLevelStemRegistry.getValue(actualDimension);
+        }
+        // Custom height: override LevelStem with patched DimensionType
+        if (customHeightHolder != null && customStem != null) {
+            customStem = new LevelStem(customHeightHolder, customStem.generator());
         }
         if (customStem == null) {
             throw new IllegalStateException("Missing level stem for world " + name + " using key " + actualDimension);
@@ -345,5 +367,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     public double @Nullable [] getAverageTickTimes(Chunk chunk) {
         return fr.euphyllia.skyllia.utils.nms.v1_21_R7.WorldNMS.getAverageTickTimesHelper(chunk);
     }
+
 
 }

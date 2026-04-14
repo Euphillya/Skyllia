@@ -25,6 +25,10 @@ public final class WorldUtils {
         return interneAPI.getWorldNMS().createWorld(creator);
     }
 
+    public static WorldFeedback.FeedbackWorld addWorld(InterneAPI interneAPI, WorldCreator creator, WorldConfig worldConfig) {
+        return interneAPI.getWorldNMS().createWorld(creator, worldConfig);
+    }
+
     public static Boolean isWorldSkyblock(String name) {
         return ConfigLoader.worldManager.getWorldConfigs().keySet().stream().anyMatch(worldName -> worldName.equalsIgnoreCase(name));
     }

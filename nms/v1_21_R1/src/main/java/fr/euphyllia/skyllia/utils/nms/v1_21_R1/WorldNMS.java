@@ -5,9 +5,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtException;
@@ -31,6 +34,7 @@ import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.PatrolSpawner;
 import net.minecraft.world.level.levelgen.PhantomSpawner;
@@ -94,12 +98,42 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         }
     }
 
+    private double[] getTPSFromRegion(ServerLevel world, int x, int z) {
+        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
+                region = world.regioniser.getRegionAtSynchronised(x, z);
+        if (region == null) {
+            return null;
+        } else {
+            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
+            final long currTime = System.nanoTime();
+            return new double[]{
+                    regionData.getRegionSchedulingHandle().getTickReport5s(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport15s(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport1m(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
+                    regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
+            };
+        }
+    }
+
     @Override
     public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator) {
+        return createWorldInternal(creator, null, null);
+    }
+
+    @Override
+    public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator, WorldConfig worldConfig) {
+        if (!worldConfig.hasCustomHeight()) {
+            return createWorldInternal(creator, null, null);
+        }
+        Holder<DimensionType> holder = WorldHeightUtil.registerCustomDimension(creator.name(), worldConfig);
+        return createWorldInternal(creator, worldConfig, holder);
+    }
+
+    private WorldFeedback.FeedbackWorld createWorldInternal(WorldCreator creator, WorldConfig worldConfig, Holder<DimensionType> customHeightHolder) {
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
         Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
-        //Preconditions.checkState(!console.isIteratingOverLevels, "Cannot create a world while worlds are being ticked"); // Paper - Cat - Temp disable. We'll see how this goes.
         Preconditions.checkArgument(creator != null, "WorldCreator cannot be null");
 
         String name = creator.name();
@@ -108,7 +142,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         File folder = new File(craftServer.getWorldContainer(), name);
         World world = craftServer.getWorld(name);
 
-        // Paper start
         World worldByKey = craftServer.getWorld(creator.key());
         if (world != null || worldByKey != null) {
             if (world != worldByKey) {
@@ -145,33 +178,28 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         Dynamic<?> dynamic;
         if (worldSession.hasWorldData()) {
             net.minecraft.world.level.storage.LevelSummary worldinfo;
-
             try {
                 dynamic = worldSession.getDataTag();
                 worldinfo = worldSession.getSummary(dynamic);
             } catch (NbtException | ReportedNbtException | IOException ioexception) {
                 LevelStorageSource.LevelDirectory convertable_b = worldSession.getLevelDirectory();
-
                 MinecraftServer.LOGGER.warn("Failed to load world data from {}", convertable_b.dataFile(), ioexception);
                 MinecraftServer.LOGGER.info("Attempting to use fallback");
-
                 try {
                     dynamic = worldSession.getDataTagFallback();
                     worldinfo = worldSession.getSummary(dynamic);
                 } catch (NbtException | ReportedNbtException | IOException ioexception1) {
                     MinecraftServer.LOGGER.error("Failed to load world data from {}", convertable_b.oldDataFile(), ioexception1);
-                    MinecraftServer.LOGGER.error("Failed to load world data from {} and {}. World files may be corrupted. Shutting down.", convertable_b.dataFile(), convertable_b.oldDataFile());
+                    MinecraftServer.LOGGER.error("Failed to load world data from {} and {}. World files may be corrupted. Shutting down.",
+                            convertable_b.dataFile(), convertable_b.oldDataFile());
                     return null;
                 }
-
                 worldSession.restoreLevelDataFromOld();
             }
-
             if (worldinfo.requiresManualConversion()) {
                 MinecraftServer.LOGGER.info("This world must be opened in an older version (like 1.6.4) to be safely converted");
                 return null;
             }
-
             if (!worldinfo.isCompatible()) {
                 MinecraftServer.LOGGER.info("This world was created by an incompatible version.");
                 return null;
@@ -187,45 +215,48 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         RegistryAccess.Frozen iregistrycustom_dimension = worldloader_a.datapackDimensions();
         net.minecraft.core.Registry<LevelStem> iregistry = iregistrycustom_dimension.registryOrThrow(Registries.LEVEL_STEM);
         if (dynamic != null) {
-            LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(dynamic, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen());
-
+            LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(
+                    dynamic, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen());
             worlddata = (PrimaryLevelData) leveldataanddimensions.worldData();
             iregistry = leveldataanddimensions.dimensions().dimensions();
             iregistrycustom_dimension = leveldataanddimensions.dimensions().dimensionsRegistryAccess();
         } else {
-            LevelSettings worldsettings;
             WorldOptions worldoptions = new WorldOptions(creator.seed(), creator.generateStructures(), false);
-            WorldDimensions worlddimensions;
-
-            DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(GsonHelper.parse((creator.generatorSettings().isEmpty()) ? "{}" : creator.generatorSettings()), creator.type().name().toLowerCase(Locale.ROOT));
-
-            worldsettings = new LevelSettings(name, getGameType(GameMode.SURVIVAL), hardcore, Difficulty.EASY, false, new GameRules(), worldloader_a.dataConfiguration());
-            worlddimensions = properties.create(worldloader_a.datapackWorldgen());
-
+            DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(
+                    GsonHelper.parse((creator.generatorSettings().isEmpty()) ? "{}" : creator.generatorSettings()),
+                    creator.type().name().toLowerCase(Locale.ROOT));
+            LevelSettings worldsettings = new LevelSettings(name,
+                    getGameType(GameMode.SURVIVAL), hardcore, Difficulty.EASY, false,
+                    new GameRules(), worldloader_a.dataConfiguration());
+            WorldDimensions worlddimensions = properties.create(worldloader_a.datapackWorldgen());
             WorldDimensions.Complete worlddimensions_b = worlddimensions.bake(iregistry);
             Lifecycle lifecycle = worlddimensions_b.lifecycle().add(worldloader_a.datapackWorldgen().allRegistriesLifecycle());
-
             worlddata = new PrimaryLevelData(worldsettings, worldoptions, worlddimensions_b.specialWorldProperty(), lifecycle);
             iregistry = worlddimensions_b.dimensions();
             iregistrycustom_dimension = worlddimensions_b.dimensionsRegistryAccess();
         }
+
         worlddata.customDimensions = iregistry;
         worlddata.checkName(name);
         worlddata.setModdedInfo(console.getServerModName(), console.getModdedStatus().shouldReportAsModified());
 
-        // Paper start - fix and optimise world upgrading
         if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, iregistrycustom_dimension, console.options.has("recreateRegionFiles"));
+            net.minecraft.server.Main.forceUpgrade(worldSession, DataFixers.getDataFixer(),
+                    console.options.has("eraseCache"), () -> true, iregistrycustom_dimension,
+                    console.options.has("recreateRegionFiles"));
         }
-        // Paper end - fix and optimise world upgrading
 
-        // Paper - fix and optimise world upgrading; move down
+        long j = BiomeManager.obfuscateSeed(worlddata.worldGenOptions().seed());
+        List<CustomSpawner> list = ImmutableList.of(
+                new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
 
-        long j = BiomeManager.obfuscateSeed(worlddata.worldGenOptions().seed()); // Paper - use world seed
-        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
-        LevelStem worlddimension = iregistry.get(actualDimension);
+        LevelStem worlddimensionBase = iregistry.get(actualDimension);
+        LevelStem worlddimension = (customHeightHolder != null)
+                ? new LevelStem(customHeightHolder, worlddimensionBase.generator())
+                : worlddimensionBase;
 
-        WorldInfo worldInfo = new CraftWorldInfo(worlddata, worldSession, creator.environment(), worlddimension.type().value(), worlddimension.generator(), craftServer.getHandle().getServer().registryAccess()); // Paper - Expose vanilla BiomeProvider from WorldInfo
+        WorldInfo worldInfo = new CraftWorldInfo(worlddata, worldSession, creator.environment(),
+                worlddimension.type().value(), worlddimension.generator(), craftServer.getHandle().getServer().registryAccess());
         if (biomeProvider == null && generator != null) {
             biomeProvider = generator.getDefaultBiomeProvider(worldInfo);
         }
@@ -240,23 +271,27 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             worldKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(creator.key().namespace(), creator.key().value()));
         }
 
-        // If set to not keep spawn in memory (changed from default) then adjust rule accordingly
-        if (creator.keepSpawnLoaded() == net.kyori.adventure.util.TriState.FALSE) { // Paper
+        if (creator.keepSpawnLoaded() == net.kyori.adventure.util.TriState.FALSE) {
             worlddata.getGameRules().getRule(GameRules.RULE_SPAWN_CHUNK_RADIUS).set(0, null);
         }
 
-        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, craftServer.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
-                worlddata.isDebugWorld(), j, creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
+        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension,
+                craftServer.getServer().progressListenerFactory.create(worlddata.getGameRules().getInt(GameRules.RULE_SPAWN_CHUNK_RADIUS)),
+                worlddata.isDebugWorld(), j,
+                creator.environment() == World.Environment.NORMAL ? list : ImmutableList.of(),
+                true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
 
-        internal.randomSpawnSelection = new ChunkPos(internal.getChunkSource().randomState().sampler().findSpawnPosition());
+        if (SkylliaAPI.isFolia()) {
+            internal.randomSpawnSelection = new ChunkPos(internal.getChunkSource().randomState().sampler().findSpawnPosition());
+        }
 
         console.addLevel(internal);
-
         internal.setSpawnSettings(true, true);
-
         console.prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
 
-        io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
+        if (SkylliaAPI.isFolia()) {
+            io.papermc.paper.threadedregions.RegionizedServer.getInstance().addWorld(internal);
+        }
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(internal.getWorld()));
         return WorldFeedback.Feedback.SUCCESS.toFeedbackWorld(internal.getWorld());
@@ -339,27 +374,14 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         if (hasAnyPlayer) {
             LevelChunk finalChunk = chunk;
             nms.getChunkSource().chunkMap.getPlayers(new ChunkPos(chunkX, chunkZ), false)
-                    .forEach(player -> {
-                        player.connection.send(
-                                new ClientboundLevelChunkWithLightPacket(
-                                        finalChunk,
-                                        nms.getLightEngine(),
-                                        null,
-                                        null
-                                )
-                        );
-                    });
+                    .forEach(player -> player.connection.send(
+                            new ClientboundLevelChunkWithLightPacket(finalChunk, nms.getLightEngine(), null, null)
+                    ));
         }
 
         chunk.setUnsaved(true);
     }
 
-    /**
-     * Gets the current location TPS.
-     *
-     * @param location the location for which to get the TPS
-     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
-     */
     @Override
     public double @Nullable [] getTPS(Location location) {
         final int x = location.blockX() >> 4;
@@ -368,12 +390,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         return getTPSFromRegion(world, x, z);
     }
 
-    /**
-     * Gets the current chunk TPS.
-     *
-     * @param chunk the chunk for which to get the TPS
-     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
-     */
     @Override
     public double @Nullable [] getTPS(Chunk chunk) {
         final int x = chunk.getX();
@@ -382,12 +398,6 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         return getTPSFromRegion(world, x, z);
     }
 
-    /**
-     * Gets the average tick times for a specific location.
-     *
-     * @param location the location for which to get the average tick times
-     * @return an array of average tick times, or null if the region doesn't exist
-     */
     @Override
     public double @Nullable [] getAverageTickTimes(Location location) {
         final int x = location.blockX() >> 4;
@@ -396,35 +406,11 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         return getAverageTickTime(world, x, z);
     }
 
-    /**
-     * Gets the average tick times for a specific chunk.
-     *
-     * @param chunk the chunk for which to get the average tick times
-     * @return an array of average tick times, or null if the region doesn't exist
-     */
     @Override
     public double @Nullable [] getAverageTickTimes(Chunk chunk) {
         final int x = chunk.getX();
         final int z = chunk.getZ();
         final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
         return getAverageTickTime(world, x, z);
-    }
-
-    private double[] getTPSFromRegion(ServerLevel world, int x, int z) {
-        io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData>
-                region = world.regioniser.getRegionAtSynchronised(x, z);
-        if (region == null) {
-            return null;
-        } else {
-            io.papermc.paper.threadedregions.TickRegions.TickRegionData regionData = region.getData();
-            final long currTime = System.nanoTime();
-            return new double[]{
-                    regionData.getRegionSchedulingHandle().getTickReport5s(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport15s(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport1m(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport5m(currTime).tpsData().segmentAll().average(),
-                    regionData.getRegionSchedulingHandle().getTickReport15m(currTime).tpsData().segmentAll().average(),
-            };
-        }
     }
 }

@@ -55,6 +55,13 @@ public class FlagsHandler implements PlaceholderHandler {
                 .getBoolean("use_adventure_provided_replacer", false);
     }
 
+    private static @NotNull Locale resolveLocale(@NotNull OfflinePlayer player) {
+        if (player.isOnline() && player.getPlayer() != null) {
+            return player.getPlayer().locale();
+        }
+        return Locale.getDefault();
+    }
+
     @Override
     public @NotNull String prefix() {
         return "flags";
@@ -83,15 +90,6 @@ public class FlagsHandler implements PlaceholderHandler {
         return String.valueOf(island.getIslandFlags().has(registry, fid));
     }
 
-    private enum MetaType { NAME, DESCRIPTION }
-
-    private static @NotNull Locale resolveLocale(@NotNull OfflinePlayer player) {
-        if (player.isOnline() && player.getPlayer() != null) {
-            return player.getPlayer().locale();
-        }
-        return Locale.getDefault();
-    }
-
     /**
      * Resolves the translated string for a flag metadata field.
      * <p>
@@ -112,7 +110,7 @@ public class FlagsHandler implements PlaceholderHandler {
 
         FlagNode node = registry.node(fid);
         String langKey = switch (type) {
-            case NAME        -> node.displayName();
+            case NAME -> node.displayName();
             case DESCRIPTION -> node.description();
         };
 
@@ -123,4 +121,6 @@ public class FlagsHandler implements PlaceholderHandler {
                     .serialize(ConfigLoader.language.translate(locale, langKey, Map.of(), false));
         }
     }
+
+    private enum MetaType {NAME, DESCRIPTION}
 }

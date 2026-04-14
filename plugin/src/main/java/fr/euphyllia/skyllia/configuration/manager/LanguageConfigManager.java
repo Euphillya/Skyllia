@@ -212,7 +212,7 @@ public class LanguageConfigManager implements IConfigurationProvider {
         sender.sendMessage(translate(key, Map.of()));
     }
 
-    public @Nullable String translateRaw(@NotNull Locale locale, String key,  @NotNull Map<String, String> placeholders) {
+    public @Nullable String translateRaw(@NotNull Locale locale, String key, @NotNull Map<String, String> placeholders) {
         Map<String, String> langMessages = translations.get(locale);
         if (langMessages == null) {
             langMessages = translations.get(defaultLocale);

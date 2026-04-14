@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.api.utils.nms;
 
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import org.bukkit.Chunk;
@@ -20,6 +21,20 @@ public abstract class WorldNMS {
      * @return A FeedbackWorld object containing feedback about the world creation process.
      */
     public abstract WorldFeedback.FeedbackWorld createWorld(WorldCreator creator);
+
+    /**
+     * Creates a new world with optional custom height settings.
+     * Implementations that support custom height should override this method.
+     * The default implementation ignores the WorldConfig height settings and
+     * falls back to {@link #createWorld(WorldCreator)}.
+     *
+     * @param creator     The WorldCreator to use for creating the world.
+     * @param worldConfig The world configuration, potentially containing custom height settings.
+     * @return A FeedbackWorld object containing feedback about the world creation process.
+     */
+    public WorldFeedback.FeedbackWorld createWorld(WorldCreator creator, WorldConfig worldConfig) {
+        return createWorld(creator);
+    }
 
     /**
      * Resets a chunk at the specified position in the given world.
