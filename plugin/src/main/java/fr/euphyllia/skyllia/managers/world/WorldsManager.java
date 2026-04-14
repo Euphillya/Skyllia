@@ -91,19 +91,15 @@ public class WorldsManager {
                     )
             );
 
-            World w;
-            try {
-                w = worldCreator.createWorld(); // Work with Paper, not Folia
-            } catch (Exception ignored) {
-                worldCreator.keepSpawnLoaded(TriState.TRUE); // Toujours chargé le monde ! Prévenir du crash avec le PlayerRespawnLogic
-                WorldFeedback.FeedbackWorld feedbackWorld = WorldUtils.addWorld(this.api, worldCreator);
-                if (feedbackWorld.feedback == WorldFeedback.Feedback.SUCCESS) {
-                    w = feedbackWorld.world;
-                } else {
-                    logger.log(Level.FATAL, "WORLD IMPOSSIBLE TO CREATE");
-                    continue;
-                }
+            worldCreator.keepSpawnLoaded(TriState.TRUE); // Toujours chargé le monde ! Prévenir du crash avec le PlayerRespawnLogic
 
+            World w;
+            WorldFeedback.FeedbackWorld feedbackWorld = WorldUtils.addWorld(this.api, worldCreator, worldConfig);
+            if (feedbackWorld.feedback == WorldFeedback.Feedback.SUCCESS) {
+                w = feedbackWorld.world;
+            } else {
+                logger.log(Level.FATAL, "WORLD IMPOSSIBLE TO CREATE");
+                continue;
             }
             if (w != null) {
                 w.setAutoSave(true);

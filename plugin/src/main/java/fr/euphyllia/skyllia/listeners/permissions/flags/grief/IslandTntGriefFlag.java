@@ -33,6 +33,7 @@ public class IslandTntGriefFlag implements FlagModule {
                 "island.flag.allow_tnt_grief.description"
         ));
     }
+
     @EventHandler(ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
         final Entity entity = event.getEntity();

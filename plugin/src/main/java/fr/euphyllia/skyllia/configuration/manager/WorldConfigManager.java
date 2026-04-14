@@ -52,12 +52,26 @@ public class WorldConfigManager implements IConfigurationProvider {
 
                 WorldConfig wc = new WorldConfig(worldName, envString, portalNether, portalEnd, generator, biomeId, deleteIslandChunks);
                 if (generator.equalsIgnoreCase("ocean")) {
-                    int seaHeight = getOrSetDefault(basePath + "sea-height", 54, Integer.class); // Seulement avec le generator "ocean"
-                    String seaBlock = getOrSetDefault(basePath + "sea-block", "WATER", String.class); // Seulement avec le generator "ocean"
+                    int seaHeight = getOrSetDefault(basePath + "sea-height", 54, Integer.class);
+                    String seaBlock = getOrSetDefault(basePath + "sea-block", "WATER", String.class);
                     wc.setSeaBlock(seaBlock);
                     wc.setSeaHeight(seaHeight);
-                    wc.setDeleteIsland(false); // Si le generator est "ocean", on ne supprime pas les chunks de l'île pour éviter les problèmes de génération. Ce qui se passera, c'est qu'on mettra l'ile en locked
+                    wc.setDeleteIsland(false);
                 }
+
+                Integer minY = config.get(basePath + "min-y");
+                Integer height = config.get(basePath + "height");
+                Integer logicalHeight = config.get(basePath + "logical-height");
+                if (minY != null) {
+                    wc.setWorldMinY(minY);
+                }
+                if (height != null) {
+                    wc.setWorldHeight(height);
+                }
+                if (logicalHeight != null) {
+                    wc.setWorldLogicalHeight(logicalHeight);
+                }
+
                 worldConfigs.put(worldName, wc);
             }
         }

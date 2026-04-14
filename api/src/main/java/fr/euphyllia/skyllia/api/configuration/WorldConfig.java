@@ -21,6 +21,10 @@ public class WorldConfig {
     private boolean deleteIsland = false;
     private World world;
 
+    private @Nullable Integer worldMinY;
+    private @Nullable Integer worldHeight;
+    private @Nullable Integer worldLogicalHeight;
+
     public WorldConfig(String worldName, String environmentStr, String portalNether, String portalEnd, String generator, String biomeId, boolean deleteIsland) {
         World.Environment env;
         try {
@@ -93,5 +97,33 @@ public class WorldConfig {
             world = Bukkit.getWorld(worldName);
         }
         return world;
+    }
+
+    public @Nullable Integer getWorldMinY() {
+        return worldMinY;
+    }
+
+    public void setWorldMinY(@Nullable Integer worldMinY) {
+        this.worldMinY = worldMinY;
+    }
+
+    public @Nullable Integer getWorldHeight() {
+        return worldHeight;
+    }
+
+    public void setWorldHeight(@Nullable Integer worldHeight) {
+        this.worldHeight = worldHeight;
+    }
+
+    public @Nullable Integer getWorldLogicalHeight() {
+        return worldLogicalHeight;
+    }
+
+    public void setWorldLogicalHeight(@Nullable Integer worldLogicalHeight) {
+        this.worldLogicalHeight = worldLogicalHeight;
+    }
+
+    public boolean hasCustomHeight() {
+        return worldMinY != null || worldHeight != null;
     }
 }

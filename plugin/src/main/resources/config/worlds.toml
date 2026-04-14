@@ -8,6 +8,7 @@ suppress-warning-nether-end = false
 # Configuration of the worlds used by Skyblock.
 # Each world can define its environment, linked portals, and the generator used.
 # Format: [worlds.<world_name>]
+
 [worlds.sky-overworld]
 # Minecraft world type (NORMAL = Overworld).
 environment = "NORMAL"
@@ -22,6 +23,13 @@ biome-id = "minecraft:plains"
 # When generator is "ocean", you must specify the sea level and the block used for the ocean floor.
 # sea-height = 63.0
 # sea-block = "WATER"
+# ── Custom world height (optional) ──────────────────────────────────────────
+# Minimum Y level of the world. Default for Overworld: -64
+# min-y = -64
+# Total height of the world in blocks (must be a multiple of 16). Default: 384
+# height = 384
+# Maximum height players/mobs can reach. Defaults to height if not set.
+# logical-height = 384
 
 [worlds.sky-nether]
 environment = "NETHER"
@@ -29,6 +37,10 @@ portal-nether = "sky-overworld"
 portal-end = "sky-end"
 generator = "default"
 biome-id = "minecraft:basalt_deltas"
+# ── Custom world height (optional) ──────────────────────────────────────────
+# min-y = 0
+# height = 256
+# logical-height = 128
 
 [worlds.sky-end]
 environment = "THE_END"
@@ -36,3 +48,7 @@ portal-nether = "sky-nether"
 portal-end = "sky-overworld"
 generator = "default"
 biome-id = "minecraft:end_highlands"
+# ── Custom world height (optional) ──────────────────────────────────────────
+# min-y = 0
+# height = 256
+# logical-height = 256
