@@ -94,27 +94,6 @@ public class InterneAPI {
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
         final String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
         switch (minecraftVersion) {
-//            case "1.20", "1.20.1" -> {
-//                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.WorldNMS();
-//                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.PlayerNMS();
-//                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.BiomeNMS();
-//                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.ExplosionEntityImpl();
-//                this.mobsSpawnImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R1.MobSpawnNMS();
-//            }
-//            case "1.20.2" -> {
-//                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.WorldNMS();
-//                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.PlayerNMS();
-//                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.BiomeNMS();
-//                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.ExplosionEntityImpl();
-//                this.mobsSpawnImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R2.MobSpawnNMS();
-//            }
-//            case "1.20.3", "1.20.4" -> {
-//                this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.WorldNMS();
-//                this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.PlayerNMS();
-//                this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.BiomeNMS();
-//                this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.ExplosionEntityImpl();
-//                this.mobsSpawnImpl = new fr.euphyllia.skyllia.utils.nms.v1_20_R3.MobSpawnNMS();
-//            }
             case "1.20.5", "1.20.6" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v1_20_R4.PlayerNMS();
@@ -171,7 +150,7 @@ public class InterneAPI {
                 this.explosionEntityImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.ExplosionEntityImpl();
                 this.mobsSpawnImpl = new fr.euphyllia.skyllia.utils.nms.v1_21_R7.MobSpawnNMS();
             }
-            case "26.1", "26.1.1" -> {
+            case "26.1", "26.1.1", "26.1.2" -> {
                 this.worldNMS = new fr.euphyllia.skyllia.utils.nms.v26_1.WorldNMS();
                 this.playerNMS = new fr.euphyllia.skyllia.utils.nms.v26_1.PlayerNMS();
                 this.biomesImpl = new fr.euphyllia.skyllia.utils.nms.v26_1.BiomeNMS();
