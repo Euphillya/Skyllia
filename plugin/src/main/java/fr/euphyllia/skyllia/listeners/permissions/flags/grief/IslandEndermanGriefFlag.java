@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.permissions.FlagNode;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Enderman;
@@ -46,6 +47,11 @@ public class IslandEndermanGriefFlag implements FlagModule {
 
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_ENDERMAN_GRIEF, ALLOW_MOB_GRIEF)) {
             event.setCancelled(true);
+            return;
+        }
+
+        if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
+            return;
         }
     }
 }

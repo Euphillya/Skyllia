@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.permissions.FlagNode;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -29,6 +30,11 @@ public class IslandAllowExplosionsEntityPermissions implements FlagModule {
 
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_EXPLOSIONS)) {
             event.setCancelled(true);
+            return;
+        }
+
+        if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
+            return;
         }
     }
 

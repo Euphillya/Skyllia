@@ -56,9 +56,12 @@ public class SchematicConfigManager implements IConfigurationProvider {
             boolean copyEntities = getOrSetDefault(node, "copy-entities", true, Boolean.class);
             String pluginName = getOrSetDefault(node, "plugin", "WorldEdit", String.class);
 
+            Integer minBuildHeight = getOrSetDefault(node, "min-build-height", null, Integer.class);
+            Integer maxBuildHeight = getOrSetDefault(node, "max-build-height", null, Integer.class);
+
             schematicMap
                     .computeIfAbsent(islandType, k -> new HashMap<>())
-                    .put(worldName, new SchematicSetting(height, schematicFile, ignoreAirBlocks, copyEntities, pluginName));
+                    .put(worldName, new SchematicSetting(height, schematicFile, ignoreAirBlocks, copyEntities, pluginName, minBuildHeight, maxBuildHeight));
         }
 
         if (schematicMap.isEmpty()) {
@@ -86,6 +89,9 @@ public class SchematicConfigManager implements IConfigurationProvider {
     public <T> T getOrSetDefault(CommentedConfig node, String path, T defaultValue, Class<T> expectedClass) {
         Object value = node.get(path);
         if (value == null) {
+            if (defaultValue == null) {
+                return null;
+            }
             node.set(path, defaultValue);
             changed = true;
             return defaultValue;
@@ -137,7 +143,7 @@ public class SchematicConfigManager implements IConfigurationProvider {
     public SchematicSetting getSchematicSetting(String islandType, String worldName) {
         return schematicMap
                 .getOrDefault(islandType, new HashMap<>())
-                .getOrDefault(worldName, new SchematicSetting(64.0, "./schematics/default.schem", true, true, "Internal"));
+                .getOrDefault(worldName, new SchematicSetting(64.0, "./schematics/default.schem", true, true, "Internal", null, null));
     }
 
     public Map<String, Map<String, SchematicSetting>> getSchematics() {

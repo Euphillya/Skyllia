@@ -156,6 +156,18 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
             );
             """;
 
+    private static final String CREATE_ISLANDS_BUILD_HEIGHT_TABLE = """
+            CREATE TABLE IF NOT EXISTS %s.islands_build_height (
+                island_id  CHAR(36)     NOT NULL,
+                world_name VARCHAR(255) NOT NULL,
+                min_height INT          NOT NULL,
+                max_height INT          NOT NULL,
+                PRIMARY KEY (island_id, world_name),
+                CONSTRAINT islands_build_height_FK
+                    FOREIGN KEY (island_id) REFERENCES %s.islands (island_id) ON DELETE CASCADE
+            );
+            """;
+
     private final String schema;
     private final DatabaseLoader databaseLoader;
     private final int regionDistance;
@@ -219,6 +231,7 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_MEMBERS_BY_PLAYER_INDEX.formatted(s));
         exec(CREATE_MEMBER_BY_ISLAND_ROLE_INDEX.formatted(s));
         exec(CREATE_ISLAND_CENTER_LOCATIONS_TABLE.formatted(s, s));
+        exec(CREATE_ISLANDS_BUILD_HEIGHT_TABLE.formatted(s, s));
     }
 
     private void applyMigrations() {

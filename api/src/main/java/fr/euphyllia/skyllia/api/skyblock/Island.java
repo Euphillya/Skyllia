@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api.skyblock;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.permissions.IslandFlags;
+import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
@@ -222,4 +223,36 @@ public abstract class Island {
      */
     public abstract void setCenterLocation(Location location);
 
+    /**
+     * Returns the custom minimum build height for this island in the given world,
+     * or {@code null} if no custom value is set (the world default applies).
+     *
+     * @param worldName The name of the world.
+     * @return The custom min height, or {@code null}.
+     */
+    public abstract @Nullable Integer getBuildMinHeight(String worldName);
+
+    /**
+     * Returns the custom maximum build height for this island in the given world,
+     * or {@code null} if no custom value is set (the world default applies).
+     *
+     * @param worldName The name of the world.
+     * @return The custom max height, or {@code null}.
+     */
+    public abstract @Nullable Integer getBuildMaxHeight(String worldName);
+
+    /**
+     * Sets a custom build-height limit (min or max) for this island in the given world.
+     * <p>
+     * The value is silently clamped so it never exceeds the world's actual height bounds.
+     * </p>
+     *
+     * @param worldName The name of the world.
+     * @param type      {@link HeightType#MIN} or {@link HeightType#MAX}.
+     * @param value     The desired height value.
+     * @return {@code true} if the database update succeeded.
+     */
+    public abstract boolean setBuildHeight(String worldName, HeightType type, int value);
+
 }
+

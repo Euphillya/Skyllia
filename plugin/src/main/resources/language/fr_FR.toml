@@ -254,6 +254,16 @@ no-confirm = "Ajoutez 'confirm' à la fin de la commande."
 [island.admin.rank]
 promote-success = "Le joueur %s a été promu."
 
+[island.admin.height]
+args-missing = "Commande incomplète : /skylliadmin setheight <joueur> <nombre> confirm"
+invalid-type = "Type invalide. Utilise 'min' ou 'max'."
+not-an-number = "La valeur doit être un entier."
+no-world = "Aucun monde Skyblock trouvé."
+below-world-min = "La valeur min est déjà au plancher du monde. Utilise une valeur plus haute."
+above-world-max = "La valeur max est déjà au plafond du monde. Utilise une valeur plus basse."
+success = "La hauteur de l'île a été modifiée avec succès."
+failed = "Le changement de hauteur n'a pas pu être effectué. Veuillez vérifier la console pour plus de détails."
+
 [misc]
 unknown-command = "<red>Commande inconnue."
 

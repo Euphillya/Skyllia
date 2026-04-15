@@ -56,19 +56,73 @@ public class ListenersUtils {
     }
 
     /**
-     * Checks whether a block is outside the island's boundaries. If it is outside, the event is cancelled.
+     * Checks whether a block is outside the island's boundaries (X/Z square AND
+     * per-island build-height limits on the Y axis). If it is outside, the event
+     * is cancelled.
+     *
+     * <p>Y limits are resolved in priority order:
+     * <ol>
+     *   <li>Island-specific custom value stored in {@code islands_build_height}</li>
+     *   <li>World-config value ({@code min-y} / {@code height} from the TOML config)</li>
+     *   <li>Bukkit's own {@link org.bukkit.World#getMinHeight()} /
+     *       {@link org.bukkit.World#getMaxHeight()}</li>
+     * </ol>
+     * When no custom Y restriction has been set the Y check is skipped entirely,
+     * preserving the original behaviour.
      *
      * @param island      The {@link Island} in question.
      * @param location    The {@link Location} to check.
      * @param cancellable The event that can be cancelled.
      * @return {@code true} if the block is outside the island boundaries, {@code false} otherwise.
      */
-    public static boolean isBlockOutsideIsland(Island island, Location location, Cancellable cancellable) {
+    public static boolean isBlockOutsideIsland(Island island, Location location, @Nullable Cancellable cancellable) {
         Position origin = island.getPosition();
         Location center = RegionHelper.getCenterRegion(location.getWorld(), origin.x(), origin.z());
-        boolean outside = !RegionHelper.isBlockWithinSquare(center, location.getBlockX(), location.getBlockZ(), island.getSize());
-        if (outside) cancellable.setCancelled(true);
-        return outside;
+
+        boolean outsideXZ = !RegionHelper.isBlockWithinSquare(center, location.getBlockX(), location.getBlockZ(), island.getSize());
+        if (outsideXZ) {
+            if (cancellable != null) {
+                cancellable.setCancelled(true);
+            }
+            return true;
+        }
+
+        if (location.getWorld() != null) {
+            World world = location.getWorld();
+            String worldName = world.getName();
+
+            Integer customMin = island.getBuildMinHeight(worldName);
+            Integer customMax = island.getBuildMaxHeight(worldName);
+
+            // Only enforce when at least one custom limit exists
+            if (customMin != null || customMax != null) {
+                int effectiveMin = resolveMin(world, customMin);
+                int effectiveMax = resolveMax(world, customMax);
+
+                if (location.getBlockY() < effectiveMin || location.getBlockY() > effectiveMax) {
+                    if (cancellable != null) {
+                        cancellable.setCancelled(true);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static int resolveMin(World world, @Nullable Integer customMin) {
+        if (customMin != null) return customMin;
+        WorldConfig wc = WorldUtils.getWorldConfig(world.getName());
+        if (wc != null && wc.getWorldMinY() != null) return wc.getWorldMinY();
+        return world.getMinHeight();
+    }
+
+    private static int resolveMax(World world, @Nullable Integer customMax) {
+        if (customMax != null) return customMax;
+        WorldConfig wc = WorldUtils.getWorldConfig(world.getName());
+        if (wc != null && wc.getWorldHeight() != null) return wc.getWorldHeight();
+        return world.getMaxHeight();
     }
 
 

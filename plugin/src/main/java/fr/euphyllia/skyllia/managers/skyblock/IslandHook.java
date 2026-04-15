@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.permissions.IslandFlags;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -30,12 +31,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class IslandHook extends Island {
 
+    /**
+     * Sentinel value stored in the height cache to mean "no custom limit set".
+     * Using Integer cache means null can't be stored in ConcurrentHashMap,
+     * so we use this constant instead.
+     */
+    private static final int HEIGHT_NOT_SET = Integer.MIN_VALUE;
+
     private final Skyllia plugin;
     private final UUID islandId;
     private final Timestamp createDate;
     private final Position position;
     private final int maxMemberInIsland;
     private final Map<World, Location> islandCenterLocations;
+    private final ConcurrentHashMap<String, Integer> buildMinHeightCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Integer> buildMaxHeightCache = new ConcurrentHashMap<>();
     private double islandSize;
     private transient volatile CompiledPermissions compiledPermissions;
     private transient volatile IslandFlags islandFlags;
@@ -102,7 +112,6 @@ public class IslandHook extends Island {
     public boolean setSize(double newSize) {
         double oldSize = this.islandSize;
         this.islandSize = newSize;
-        // Update in database
         boolean isUpdated = this.plugin.getInterneAPI()
                 .getSkyblockManager()
                 .setSizeIsland(this, newSize);
@@ -294,6 +303,7 @@ public class IslandHook extends Island {
         }
     }
 
+    @Override
     public final void invalidateCompiledPermissions() {
         this.compiledPermissions = null;
     }
@@ -355,5 +365,52 @@ public class IslandHook extends Island {
     public void setCenterLocation(Location location) {
         this.islandCenterLocations.put(location.getWorld(), location);
         this.plugin.getInterneAPI().getSkyblockManager().updateCenterLocation(this, location);
+    }
+
+    @Override
+    public @Nullable Integer getBuildMinHeight(String worldName) {
+        Integer cached = buildMinHeightCache.get(worldName);
+        if (cached != null) {
+            return cached == HEIGHT_NOT_SET ? null : cached;
+        }
+        Integer db = this.plugin.getInterneAPI()
+                .getIslandQuery()
+                .getIslandBuildHeightQuery()
+                .getMinHeight(this, worldName);
+        buildMinHeightCache.put(worldName, db != null ? db : HEIGHT_NOT_SET);
+        return db;
+    }
+
+    @Override
+    public @Nullable Integer getBuildMaxHeight(String worldName) {
+        Integer cached = buildMaxHeightCache.get(worldName);
+        if (cached != null) {
+            return cached == HEIGHT_NOT_SET ? null : cached;
+        }
+        Integer db = this.plugin.getInterneAPI()
+                .getIslandQuery()
+                .getIslandBuildHeightQuery()
+                .getMaxHeight(this, worldName);
+        buildMaxHeightCache.put(worldName, db != null ? db : HEIGHT_NOT_SET);
+        return db;
+    }
+
+    @Override
+    public boolean setBuildHeight(String worldName, HeightType type, int value) {
+        boolean ok;
+        if (type == HeightType.MIN) {
+            ok = this.plugin.getInterneAPI()
+                    .getIslandQuery()
+                    .getIslandBuildHeightQuery()
+                    .setMinHeight(this, worldName, value);
+            if (ok) buildMinHeightCache.put(worldName, value);
+        } else {
+            ok = this.plugin.getInterneAPI()
+                    .getIslandQuery()
+                    .getIslandBuildHeightQuery()
+                    .setMaxHeight(this, worldName, value);
+            if (ok) buildMaxHeightCache.put(worldName, value);
+        }
+        return ok;
     }
 }
