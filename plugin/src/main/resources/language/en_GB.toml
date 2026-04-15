@@ -254,6 +254,16 @@ no-permission = "You do not have permission to manage this island."
 no-owner = "This island has no owner."
 info = "You are currently on the island of %owner_name% (Island ID: %island_id%, Owner ID: %owner_uuid%)."
 
+[island.admin.height]
+args-missing = "Incomplete command: /skylliadmin setheight <player> <min|max> <value> confirm"
+invalid-type = "Invalid type. Use 'min' or 'max'."
+not-an-number = "The value must be a whole number."
+no-world = "No Skyblock world found."
+below-world-min = "The minimum value is already at the world floor. Please use a higher value."
+above-world-max = "The maximum value is already at the world ceiling. Please use a lower value."
+success = "The island build height has been successfully updated."
+failed = "The build height could not be updated. Please check the console for further details."
+
 [misc]
 unknown-command = "This subcommand does not exist."
 

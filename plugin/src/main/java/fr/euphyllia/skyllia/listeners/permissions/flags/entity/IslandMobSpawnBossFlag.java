@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.permissions.FlagNode;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
@@ -49,6 +50,10 @@ public class IslandMobSpawnBossFlag implements FlagModule {
         Island island = SkylliaAPI.getIslandByChunk(location.getBlockX() >> 4, location.getBlockZ() >> 4);
         if (island == null) return;
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, specific, ALLOW_SPAWN_ALL_BOSS)) {
+            cancel.run();
+            return;
+        }
+        if (ListenersUtils.isBlockOutsideIsland(island, location, null)) {
             cancel.run();
         }
     }

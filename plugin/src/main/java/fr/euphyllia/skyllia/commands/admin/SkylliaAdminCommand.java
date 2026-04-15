@@ -78,6 +78,7 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new ReloadSubCommands(), "reload");
         registry.registerSubCommand(new SetMaxMembersSubCommands(), "set_max_member", "setmaxmembers");
         registry.registerSubCommand(new SetSizeSubCommands(), "set_size", "setsize");
+        registry.registerSubCommand(new SetHeightSubCommands(), "set_height", "setheight");
         registry.registerSubCommand(new SchematicSubCommands(), "schematic", "schem");
     }
 

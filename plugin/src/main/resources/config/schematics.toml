@@ -17,6 +17,12 @@ ignore-air-blocks = true
 copy-entities = true
 # Specify the schematic handling plugin: WorldEdit or Internal (WorldEdit and FastAsyncWorldEdit are the same)
 plugin = "WorldEdit"
+# (Optional) Restrict the Y range in which players can build on this island type.
+# If not set, the world's default min/max height applies.
+# min-build-height must be above the world floor (e.g. -64 for overworld), max-build-height below the world ceiling (e.g. 320).
+# Example: players can only build between Y=0 and Y=150 on this island type.
+#min-build-height = 0
+#max-build-height = 150
 
 ["my_first_island.sky-nether"]
 schematic = "./schematics/default.schem"

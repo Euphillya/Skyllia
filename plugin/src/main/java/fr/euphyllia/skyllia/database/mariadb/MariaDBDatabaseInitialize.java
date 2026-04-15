@@ -155,6 +155,18 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """;
 
+    private static final String CREATE_ISLANDS_BUILD_HEIGHT_TABLE = """
+            CREATE TABLE IF NOT EXISTS islands_build_height (
+                island_id  CHAR(36)     NOT NULL,
+                world_name VARCHAR(255) NOT NULL,
+                min_height INT          NOT NULL,
+                max_height INT          NOT NULL,
+                PRIMARY KEY (island_id, world_name),
+                CONSTRAINT islands_build_height_FK
+                    FOREIGN KEY (island_id) REFERENCES islands (island_id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """;
+
 
     public final int regionDistance;
     public final int maxIslands;
@@ -191,6 +203,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         exec(CREATE_MEMBERS_BY_PLAYER_INDEX);
         exec(CREATE_MEMBER_BY_ISLAND_ROLE_INDEX);
         exec(CREATE_ISLAND_CENTER_LOCATIONS_TABLE);
+        exec(CREATE_ISLANDS_BUILD_HEIGHT_TABLE);
     }
 
     private void applyMigrations() {

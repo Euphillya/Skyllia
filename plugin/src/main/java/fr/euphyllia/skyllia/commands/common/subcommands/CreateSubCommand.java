@@ -7,10 +7,7 @@ import fr.euphyllia.skyllia.api.event.SkyblockCreateEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
-import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
-import fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin;
-import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
+import fr.euphyllia.skyllia.api.skyblock.model.*;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
 import fr.euphyllia.skyllia.cache.island.IslandCreationQueue;
@@ -139,6 +136,12 @@ public class CreateSubCommand implements SubCommandInterface {
                             if (!success) {
                                 island.setDisable(true);
                                 throw new RuntimeException("Schematic paste failed for world " + worldName);
+                            }
+                            if (setting.minBuildHeight() != null) {
+                                island.setBuildHeight(worldName, HeightType.MIN, setting.minBuildHeight());
+                            }
+                            if (setting.maxBuildHeight() != null) {
+                                island.setBuildHeight(worldName, HeightType.MAX, setting.maxBuildHeight());
                             }
                             if (first) {
                                 island.addWarps("home", center, true);

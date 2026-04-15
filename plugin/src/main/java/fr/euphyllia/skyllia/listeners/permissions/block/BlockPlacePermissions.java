@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -29,9 +30,14 @@ public class BlockPlacePermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_PLACE, "skyllia.player.place.bypass");
+        final boolean hasBypass = player.hasPermission("skyllia.player.place.bypass");
+        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_PLACE);
         if (!hasPermission) {
             event.setCancelled(true);
+            return;
+        }
+        if (!hasBypass && ListenersUtils.isBlockOutsideIsland(island, location, event)) {
+            return;
         }
     }
 
