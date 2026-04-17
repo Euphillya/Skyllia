@@ -57,7 +57,7 @@ public class WorldsManager {
     }
 
     public void registerGenerator(String id, GeneratorFactory factory) {
-        generators.put(id.toLowerCase(), factory);
+        generators.put(id, factory);
     }
 
     public void initWorld() {
@@ -109,23 +109,26 @@ public class WorldsManager {
     }
 
     private void applyGenerator(String name, WorldConfig config, WorldCreator worldCreator) {
-        String generatorId = config.getGenerator().toLowerCase();
+        String generatorId = config.getGenerator();
         GeneratorFactory factory = generators.get(generatorId);
         if (factory != null) {
             worldCreator.generator(factory.create(name, config));
         } else {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin(config.getGenerator());
+            String pluginName = generatorId.contains(":")
+                    ? generatorId.split(":")[0]
+                    : generatorId;
+
+            Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
             if (plugin == null) {
                 throw new IllegalArgumentException(
                         String.format(
                                 "[WorldInit] Failed to load world \"%s\": generator plugin \"%s\" not found. " +
                                         "Please ensure the plugin providing this generator is installed.",
-                                name, config.getGenerator()
+                                name, pluginName
                         )
                 );
             }
-            // Apply the plugin-based generator to the WorldCreator using the configured generator ID
-            worldCreator.generator(config.getGenerator());
+            worldCreator.generator(generatorId);
         }
     }
 }
