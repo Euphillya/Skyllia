@@ -119,7 +119,7 @@ public class InviteSubCommand implements SubCommandInterface {
             return;
         }
 
-        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(ownerIsland, island, ISLAND_INVITE_PERMISSION);
+        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(ownerIsland, island, ISLAND_INVITE_PERMISSION, null, ConfigLoader.general.isDebugPermission());
         if (!allowed) {
             ConfigLoader.language.sendMessage(ownerIsland, "island.player.permission-denied");
             return;
@@ -155,7 +155,7 @@ public class InviteSubCommand implements SubCommandInterface {
                 return;
             }
 
-            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(ownerIsland, island, ISLAND_INVITE_PERMISSION);
+            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(ownerIsland, island, ISLAND_INVITE_PERMISSION, null, ConfigLoader.general.isDebugPermission());
             if (!allowed) {
                 ConfigLoader.language.sendMessage(ownerIsland, "island.player.permission-denied");
                 return;

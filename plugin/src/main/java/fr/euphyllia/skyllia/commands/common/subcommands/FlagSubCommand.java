@@ -257,7 +257,7 @@ public class FlagSubCommand implements SubCommandInterface {
 
     private boolean canEdit(Player player, Island island) {
         return SkylliaAPI.getPermissionsManager()
-                .hasPermission(player, island, PERMISSION_COMMAND_FLAG);
+                .hasPermission(player, island, PERMISSION_COMMAND_FLAG, null, ConfigLoader.general.isDebugPermission());
     }
 
 

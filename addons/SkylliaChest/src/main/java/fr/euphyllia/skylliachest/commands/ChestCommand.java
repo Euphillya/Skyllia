@@ -54,7 +54,7 @@ public class ChestCommand implements SubCommandInterface {
             return;
         }
 
-        boolean isAllowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, OPEN_ISLAND_CHEST_PERMISSION);
+        boolean isAllowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, OPEN_ISLAND_CHEST_PERMISSION, null, ConfigLoader.general.isDebugPermission());
         if (!isAllowed) {
             ConfigLoader.language.sendMessage(player, "addons.island-chest.no-permission");
             return;

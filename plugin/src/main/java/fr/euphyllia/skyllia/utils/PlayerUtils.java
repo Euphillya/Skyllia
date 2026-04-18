@@ -63,7 +63,7 @@ public class PlayerUtils {
             text.append(Component.text(" DOESN'T HAVE ").color(NamedTextColor.RED));
         }
 
-        text.append(Component.text(key)).append(Component.text("permission"));
+        text.append(Component.text(key)).append(Component.text(" permission"));
 
         Bukkit.getConsoleSender().sendMessage(text.build());
 

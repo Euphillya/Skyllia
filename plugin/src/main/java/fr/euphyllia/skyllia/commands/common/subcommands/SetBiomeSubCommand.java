@@ -107,7 +107,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             CommandCacheExecution.addCommandExecute(islandId, "biome");
 
-            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_BIOME_PERMISSION);
+            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_BIOME_PERMISSION, null, ConfigLoader.general.isDebugPermission());
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 CommandCacheExecution.removeCommandExec(islandId, "biome");

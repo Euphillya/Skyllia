@@ -66,7 +66,7 @@ public class DelWarpSubCommand implements SubCommandInterface {
                 return;
             }
 
-            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_DELWARP_PERMISSION);
+            boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_DELWARP_PERMISSION, null, ConfigLoader.general.isDebugPermission());
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
                 return;

@@ -56,7 +56,7 @@ public class BanSubCommand implements SubCommandInterface {
             return;
         }
 
-        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_BAN_PERMISSION);
+        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_BAN_PERMISSION, null, ConfigLoader.general.isDebugPermission());
         if (!allowed) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return;

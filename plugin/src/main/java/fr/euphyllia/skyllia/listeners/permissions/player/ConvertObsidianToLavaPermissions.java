@@ -46,7 +46,7 @@ public class ConvertObsidianToLavaPermissions implements PermissionModule {
         if (island == null) return;
 
         final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(
-                player, island, CONVERT_OBSIDIAN_TO_LAVA, "skyllia.player.convert_obsidian_to_lava.bypass"
+                player, island, CONVERT_OBSIDIAN_TO_LAVA, "skyllia.player.convert_obsidian_to_lava.bypass", ConfigLoader.general.isDebugPermission()
         );
         if (!hasPermission) return;
 

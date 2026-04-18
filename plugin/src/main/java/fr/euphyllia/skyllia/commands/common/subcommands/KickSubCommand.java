@@ -60,7 +60,7 @@ public class KickSubCommand implements SubCommandInterface {
 
         Players executorPlayer = island.getMember(player.getUniqueId());
 
-        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_KICK_PERMISSION);
+        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_KICK_PERMISSION, null, ConfigLoader.general.isDebugPermission());
         if (!allowed) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return;

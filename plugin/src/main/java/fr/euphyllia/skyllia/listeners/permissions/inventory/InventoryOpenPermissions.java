@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
@@ -31,7 +32,7 @@ public class InventoryOpenPermissions implements PermissionModule {
         final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
         if (island == null) return;
 
-        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, INVENTORY_OPEN, "skyllia.player.inventory.open.bypass");
+        final boolean hasPermission = SkylliaAPI.getPermissionsManager().hasPermission(player, island, INVENTORY_OPEN, "skyllia.player.inventory.open.bypass", ConfigLoader.general.isDebugPermission());
         if (!hasPermission) {
             event.setCancelled(true);
         }

@@ -257,7 +257,7 @@ public class PermissionSubCommand implements SubCommandInterface {
 
     private boolean canEdit(Player player, Island island) {
         return SkylliaAPI.getPermissionsManager()
-                .hasPermission(player, island, PERMISSION_COMMAND_PERMISSION);
+                .hasPermission(player, island, PERMISSION_COMMAND_PERMISSION, null, ConfigLoader.general.isDebugPermission());
     }
 
     @Override

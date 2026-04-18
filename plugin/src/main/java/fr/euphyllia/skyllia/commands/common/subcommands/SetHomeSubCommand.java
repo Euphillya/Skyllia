@@ -58,7 +58,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
 
         Position islandPosition = island.getPosition();
 
-        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_HOME_PERMISSION);
+        boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_HOME_PERMISSION, null, ConfigLoader.general.isDebugPermission());
         if (!allowed) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return;

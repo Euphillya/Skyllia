@@ -104,7 +104,7 @@ public class BankCommand implements SubCommandInterface {
         }
 
         boolean isAllowed = SkylliaAPI.getPermissionsManager()
-                .hasPermission(player, island, BANK_DEPOSIT_PERMISSION);
+                .hasPermission(player, island, BANK_DEPOSIT_PERMISSION, null, ConfigLoader.general.isDebugPermission());
         if (!isAllowed) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-deposit");
             CommandCacheExecution.removeCommandExec(playerId, "bank");
@@ -169,7 +169,7 @@ public class BankCommand implements SubCommandInterface {
         }
 
         boolean isAllowed = SkylliaAPI.getPermissionsManager()
-                .hasPermission(player, island, BANK_WITHDRAW_PERMISSION);
+                .hasPermission(player, island, BANK_WITHDRAW_PERMISSION, null, ConfigLoader.general.isDebugPermission());
         if (!isAllowed) {
             ConfigLoader.language.sendMessage(player, "addons.bank.player.no-permission-withdraw");
             CommandCacheExecution.removeCommandExec(playerId, "bank");

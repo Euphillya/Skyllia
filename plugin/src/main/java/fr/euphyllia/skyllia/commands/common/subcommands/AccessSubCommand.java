@@ -54,7 +54,7 @@ public class AccessSubCommand implements SubCommandInterface {
         }
 
         boolean hasPermission = SkylliaAPI.getPermissionsManager()
-                .hasPermission(player, island, ACCESS_COMMAND_PERMISSION);
+                .hasPermission(player, island, ACCESS_COMMAND_PERMISSION, null, ConfigLoader.general.isDebugPermission());
 
         if (!hasPermission) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
