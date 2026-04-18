@@ -11,6 +11,7 @@
 
 [Documentation](https://skyllia.euphyllia.moe) • [GitHub](https://github.com/Euphillya/Skyllia) • [Modrinth](https://modrinth.com/plugin/skyllia) • [Discord](https://discord.gg/uUJQEB7XNN)
 
+[![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
 [![Servers & Players](https://faststats.dev/embed/default:6978bcc2-1574-41ea-b5ae-242398b401c7:servers-and-players?w=800&h=300)](https://faststats.dev/project/skyllia/skyllia-plugin)
 </div>
 
