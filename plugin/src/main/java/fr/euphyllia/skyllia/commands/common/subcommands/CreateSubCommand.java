@@ -145,6 +145,12 @@ public class CreateSubCommand implements SubCommandInterface {
                             }
                             if (first) {
                                 island.addWarps("home", center, true);
+
+                                Skyllia.getInstance().getInterneAPI()
+                                        .getSkyblockManager()
+                                        .cacheIslandAndIndex(island);
+
+                                new SkyblockLoadEvent(island).callEvent();
                                 Location spawnLoc = center.clone().add(0, 0.5, 0);
                                 player.teleportAsync(spawnLoc, PlayerTeleportEvent.TeleportCause.PLUGIN)
                                         .thenRun(() -> {
@@ -159,7 +165,6 @@ public class CreateSubCommand implements SubCommandInterface {
                                             border.setSize(island.getSize());
                                             player.setWorldBorder(border);
                                         });
-                                new SkyblockLoadEvent(island).callEvent();
                             }
                         });
             });

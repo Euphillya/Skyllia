@@ -105,7 +105,7 @@ public class SkyblockManager {
         regionsByIsland.put(id, now);
     }
 
-    private void cacheIslandAndIndex(Island island) {
+    public void cacheIslandAndIndex(Island island) {
         cache.putIsland(island);
         reindexIslandCoverage(island);
     }
