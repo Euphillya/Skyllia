@@ -4,6 +4,7 @@ import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.api.reward.ChallengeReward;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
+import fr.euphyllia.skylliachallenge.hook.HookManager;
 import fr.euphyllia.skylliachallenge.requirement.*;
 import fr.euphyllia.skylliachallenge.reward.BankReward;
 import fr.euphyllia.skylliachallenge.reward.CommandReward;
@@ -76,9 +77,9 @@ public final class ChallengeYamlLoader {
         }
 
         String guiMat = yml.getString("item", "STONE");
-        Material mat = Material.matchMaterial(guiMat);
-        if (mat == null) mat = Material.STONE;
-        challenge.setGuiItem(new ItemStack(mat, Math.max(1, challenge.getGuiItemAmount())));
+        int guiAmount = Math.max(1, challenge.getGuiItemAmount());
+        ItemStack guiStack = resolveGuiItem(guiMat, guiAmount, idStr);
+        challenge.setGuiItem(guiStack);
 
         // REQUIREMENTS
         List<String> reqRaw = yml.getStringList("requirements");
@@ -93,6 +94,25 @@ public final class ChallengeYamlLoader {
         return challenge;
     }
 
+    private static ItemStack resolveGuiItem(String raw, int amount, String challengeId) {
+        if (raw != null && HookManager.isCustomItemRef(raw)) {
+            ItemStack custom = HookManager.itemStackFromRef(raw);
+            if (custom != null) {
+                custom.setAmount(amount);
+                return custom;
+            }
+            log.warn("Custom item '{}' not found for challenge {}, falling back to STONE.", raw, challengeId);
+            return new ItemStack(Material.STONE, amount);
+        }
+        Material mat = raw != null ? Material.matchMaterial(raw) : null;
+        if (mat == null) mat = Material.STONE;
+        return new ItemStack(mat, amount);
+    }
+
+    private static HookManager.CustomItemRef tryParseCustom(String rawAfterPrefix) {
+        return HookManager.parse(rawAfterPrefix);
+    }
+
     private static List<ChallengeRequirement> parseRequirements(SkylliaChallenge plugin, NamespacedKey challengeKey, List<String> lines) {
         if (lines == null) return List.of();
         List<ChallengeRequirement> result = new ArrayList<>();
@@ -103,9 +123,22 @@ public final class ChallengeYamlLoader {
             String head = sp[0];
             if (head.startsWith("ITEM:")) {
                 try {
-                    Material material = Material.matchMaterial(head.substring("ITEM:".length()));
-                    if (material == null) continue;
+                    String rawId = head.substring("ITEM:".length());
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+
+                    HookManager.CustomItemRef customRef = tryParseCustom(rawId);
+                    if (customRef != null) {
+                        result.add(new ItemRequirement(
+                                idx, challengeKey,
+                                null, count,
+                                customRef.fullId(), -1, null,
+                                customRef.namespace(), customRef.id()
+                        ));
+                        continue;
+                    }
+
+                    Material material = Material.matchMaterial(rawId);
+                    if (material == null) continue;
                     String itemName = material.name(); // default
 
                     int customModelData = -1;
@@ -130,21 +163,31 @@ public final class ChallengeYamlLoader {
             }
             if (head.startsWith("CRAFT:")) {
                 try {
-                    Material material = Material.matchMaterial(head.substring("CRAFT:".length()));
-                    if (material == null) continue;
+                    String rawId = head.substring("CRAFT:".length());
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+
+                    HookManager.CustomItemRef customRef = tryParseCustom(rawId);
+                    if (customRef != null) {
+                        result.add(new CraftRequirement(
+                                idx, challengeKey,
+                                null, count,
+                                customRef.fullId(), -1, null,
+                                customRef.namespace(), customRef.id()
+                        ));
+                        continue;
+                    }
+
+                    Material material = Material.matchMaterial(rawId);
+                    if (material == null) continue;
                     String itemName = material.name();
                     int customModelData = -1;
                     NamespacedKey itemModel = null;
 
                     if (sp.length >= 4) {
-                        // Si le 3e param est un nombre → CustomModelData
                         if (sp[3].matches("\\d+")) {
                             itemName = sp[2];
                             customModelData = Integer.parseInt(sp[3]);
-                        }
-                        // Si c'est un NamespacedKey → ItemModel
-                        else if (sp[3].contains(":")) {
+                        } else if (sp[3].contains(":")) {
                             itemName = sp[3];
                             itemModel = NamespacedKey.fromString(sp[3]);
                         }
@@ -176,9 +219,22 @@ public final class ChallengeYamlLoader {
             }
             if (head.startsWith("BLOCKBREAK:")) {
                 try {
-                    Material material = Material.matchMaterial(head.substring("BLOCKBREAK:".length()));
-                    if (material == null) continue;
+                    String rawId = head.substring("BLOCKBREAK:".length());
                     int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+
+                    HookManager.CustomItemRef customRef = tryParseCustom(rawId);
+                    if (customRef != null) {
+                        result.add(new BlockBreakRequirement(
+                                idx, challengeKey,
+                                null, count,
+                                customRef.fullId(),
+                                customRef.namespace(), customRef.id()
+                        ));
+                        continue;
+                    }
+
+                    Material material = Material.matchMaterial(rawId);
+                    if (material == null) continue;
                     result.add(new BlockBreakRequirement(idx, challengeKey, material, count, material.name()));
                 } catch (IllegalArgumentException exception) {
                     log.error("Invalid material for BLOCKBREAK requirement in challenge {}: {}", challengeKey, head.substring("BLOCKBREAK:".length()), exception);
@@ -216,7 +272,17 @@ public final class ChallengeYamlLoader {
             if (head.startsWith("CONSUME:")) {
                 String materialRaw = head.substring("CONSUME:".length());
                 int count = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
-                result.add(new PlayerConsumeRequirement(idx, challengeKey, materialRaw, count));
+
+                HookManager.CustomItemRef customRef = tryParseCustom(materialRaw);
+                if (customRef != null) {
+                    result.add(new PlayerConsumeRequirement(
+                            idx, challengeKey,
+                            customRef.fullId(), count,
+                            customRef.namespace(), customRef.id()
+                    ));
+                } else {
+                    result.add(new PlayerConsumeRequirement(idx, challengeKey, materialRaw, count));
+                }
             }
             if (hasSkylliaBank) {
                 if (head.startsWith("BANK:")) {

@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
+import fr.euphyllia.skylliachallenge.hook.HookManager;
 import fr.euphyllia.skylliachallenge.requirement.PlayerConsumeRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
@@ -71,6 +72,16 @@ public class PlayerConsumeRequirementListener implements Listener {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof PlayerConsumeRequirement ker) {
+                        if (ker.isCustom()) {
+                            if (!HookManager.matches(itemStack, ker.customNamespace(), ker.customId())) continue;
+                            ProgressStoragePartial.addPartial(
+                                    playerIsland.getId(),
+                                    challenge.getId(),
+                                    ker.requirementId(),
+                                    1
+                            );
+                            continue;
+                        }
                         if (ker.isPotionRequirement()) {
                             for (String potionConsumed : potionsConsumed) {
                                 if (ker.isPotion(ker.parsePotion(), potionConsumed)) {

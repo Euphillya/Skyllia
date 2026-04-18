@@ -1,0 +1,28 @@
+id: "skyllia:custom_farmer"
+name: "<yellow>Custom Farmer I"
+lore:
+  - "Harvest 64 custom wheat on your island (Nexo)."
+# Exemples de requirements supportant Nexo/Oraxen :
+#   - "ITEM:nexo:custom_wheat 64"
+#   - "BLOCKBREAK:nexo:custom_ore 100"
+#   - "CRAFT:nexo:custom_sword 10"
+#   - "CONSUME:nexo:custom_food 30"
+# Remplace "nexo:" par "oraxen:" si tu utilises Oraxen.
+requirements:
+  - "ITEM:nexo:custom_wheat 64"
+rewards:
+  - "ITEM:DIAMOND 3"
+  - "CMD:broadcast %player% completed Custom Farmer I !"
+maxTimes: -1
+cooldown: "24h"
+broadcast: true
+showInGui: true
+gui:
+  row: 2
+  column: 6
+  page: 1
+# item peut aussi être une ref Nexo/Oraxen (fallback STONE si inconnu) :
+# item: "nexo:custom_wheat"
+item: "nexo:custom_wheat"
+amount: 1
+itemLore: [ ]

@@ -3,6 +3,7 @@ package fr.euphyllia.skylliachallenge.requirement;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
+import fr.euphyllia.skylliachallenge.hook.HookManager;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -20,7 +21,8 @@ import java.util.Map;
  */
 public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Material material, int count,
                               String itemName, int customModelData,
-                              NamespacedKey itemModel) implements ChallengeRequirement {
+                              NamespacedKey itemModel,
+                              String customNamespace, String customId) implements ChallengeRequirement {
 
     private static final boolean HAS_ITEM_MODEL_METHOD;
 
@@ -35,24 +37,22 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
         HAS_ITEM_MODEL_METHOD = hasMethod;
     }
 
+    public ItemRequirement(int requirementId, NamespacedKey challengeKey, Material material, int count,
+                           String itemName, int customModelData, NamespacedKey itemModel) {
+        this(requirementId, challengeKey, material, count, itemName, customModelData, itemModel, null, null);
+    }
+
+    public boolean isCustom() {
+        return customNamespace != null && customId != null;
+    }
+
     @Override
     public boolean isMet(Player player, Island island) {
         long already = ProgressStoragePartial.getPartial(island.getId(), challengeKey, requirementId);
         int have = 0;
         for (ItemStack is : player.getInventory().getContents()) {
             if (is == null) continue;
-            if (is.getType() != material) continue;
-
-            ItemMeta meta = is.getItemMeta();
-            if (meta == null) continue;
-
-            if (itemModel != null) {
-                if (!HAS_ITEM_MODEL_METHOD) return false;
-                NamespacedKey key = meta.getItemModel();
-                if (key == null || !key.equals(itemModel)) continue;
-            } else if (customModelData != -1) {
-                if (!meta.hasCustomModelData() || meta.getCustomModelData() != customModelData) continue;
-            }
+            if (!matchesItem(is)) continue;
             have += is.getAmount();
         }
         return (already + have) >= count;
@@ -69,17 +69,7 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
         for (int i = 0; i < contents.length; i++) {
             ItemStack is = contents[i];
             if (is == null) continue;
-            if (is.getType() != material) continue;
-            ItemMeta meta = is.getItemMeta();
-            if (meta == null) continue;
-
-            if (itemModel != null) {
-                if (!HAS_ITEM_MODEL_METHOD) return false;
-                NamespacedKey key = meta.getItemModel();
-                if (key == null || !key.equals(itemModel)) continue;
-            } else if (customModelData != -1) {
-                if (!meta.hasCustomModelData() || meta.getCustomModelData() != customModelData) continue;
-            }
+            if (!matchesItem(is)) continue;
 
             int take = (int) Math.min(is.getAmount(), needed - deposited);
             if (take <= 0) continue;
@@ -95,6 +85,28 @@ public record ItemRequirement(int requirementId, NamespacedKey challengeKey, Mat
         }
 
         return deposited == needed;
+    }
+
+    private boolean matchesItem(ItemStack is) {
+        if (is == null || is.getType().isAir()) return false;
+
+        if (isCustom()) {
+            return HookManager.matches(is, customNamespace, customId);
+        }
+
+        if (is.getType() != material) return false;
+
+        ItemMeta meta = is.getItemMeta();
+        if (meta == null) return false;
+
+        if (itemModel != null) {
+            if (!HAS_ITEM_MODEL_METHOD) return false;
+            NamespacedKey key = meta.getItemModel();
+            if (key == null || !key.equals(itemModel)) return false;
+        } else if (customModelData != -1) {
+            if (!meta.hasCustomModelData() || meta.getCustomModelData() != customModelData) return false;
+        }
+        return true;
     }
 
     @Override

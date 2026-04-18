@@ -13,7 +13,18 @@ import java.util.Locale;
 import java.util.Map;
 
 public record BlockBreakRequirement(int requirementId, NamespacedKey challengeKey, Material material,
-                                    int count, String blockName) implements ChallengeRequirement {
+                                    int count, String blockName,
+                                    String customNamespace, String customId) implements ChallengeRequirement {
+
+    public BlockBreakRequirement(int requirementId, NamespacedKey challengeKey, Material material,
+                                 int count, String blockName) {
+        this(requirementId, challengeKey, material, count, blockName, null, null);
+    }
+
+    public boolean isCustom() {
+        return customNamespace != null && customId != null;
+    }
+
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
      *
@@ -42,7 +53,7 @@ public record BlockBreakRequirement(int requirementId, NamespacedKey challengeKe
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.block_break.display", Map.of(
                 "%amount%", String.valueOf(count),
                 "%block_name%", blockName,
-                "%material%", material.name()
+                "%material%", material != null ? material.name() : (customNamespace + ":" + customId)
         ), false);
     }
 

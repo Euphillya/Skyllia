@@ -14,7 +14,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
 
     compileOnly("io.th0rgal:oraxen:1.180.0")
-    compileOnly("com.nexomc:nexo:1.1.0")
+    compileOnly("com.nexomc:nexo:1.16.1")
     compileOnly("me.clip:placeholderapi:2.11.6")
 
     compileOnly(project(":database"))

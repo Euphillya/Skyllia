@@ -10,6 +10,7 @@ import fr.euphyllia.skylliachallenge.database.mariadb.MariaDBChallengeInit;
 import fr.euphyllia.skylliachallenge.database.postgre.PostgresChallengeInit;
 import fr.euphyllia.skylliachallenge.database.sqlite.SQLiteChallengeInit;
 import fr.euphyllia.skylliachallenge.gui.GuiSettings;
+import fr.euphyllia.skylliachallenge.hook.HookManager;
 import fr.euphyllia.skylliachallenge.listener.*;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
@@ -115,6 +116,8 @@ public class SkylliaChallenge extends JavaPlugin {
 
         // ─────────────────────────────────────────────
         this.guiSettings = GuiSettings.load(getConfig());
+        HookManager.init();
+
         this.challengeManager = new ChallengeManagers(this);
         this.challengeManager.loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
         logs.add(gray + " » " + white + "Challenges Loaded: " + violet + challengeManager.getChallenges().size());
@@ -155,6 +158,7 @@ public class SkylliaChallenge extends JavaPlugin {
     public void reload() {
         this.guiSettings = GuiSettings.load(getConfig());
         this.mustBeOnPlayerIsland = getConfig().getBoolean("must_be_on_player_island", true);
+        HookManager.init();
         getChallengeManager().loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
     }
 

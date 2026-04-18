@@ -14,8 +14,18 @@ import java.util.Locale;
 import java.util.Map;
 
 public record PlayerConsumeRequirement(int requirementId, NamespacedKey challengeKey, String material,
-                                       int count) implements ChallengeRequirement {
+                                       int count,
+                                       String customNamespace, String customId) implements ChallengeRequirement {
     private static final Logger log = LoggerFactory.getLogger(PlayerConsumeRequirement.class);
+
+    public PlayerConsumeRequirement(int requirementId, NamespacedKey challengeKey, String material, int count) {
+        this(requirementId, challengeKey, material, count, null, null);
+    }
+
+
+    public boolean isCustom() {
+        return customNamespace != null && customId != null;
+    }
 
     /**
      * Checks whether this requirement is currently fulfilled by the given player and island.
@@ -42,7 +52,14 @@ public record PlayerConsumeRequirement(int requirementId, NamespacedKey challeng
      */
     @Override
     public Component getDisplay(Locale locale) {
-        String displayMaterial = material().startsWith("potion[") ? parsePotion() : this.material;
+        String displayMaterial;
+        if (isCustom()) {
+            displayMaterial = customNamespace + ":" + customId;
+        } else if (material.startsWith("potion[")) {
+            displayMaterial = parsePotion();
+        } else {
+            displayMaterial = this.material;
+        }
         return ConfigLoader.language.translate(locale, "addons.challenge.requirement.player_consume.display", Map.of(
                 "%amount%", String.valueOf(count),
                 "%material%", displayMaterial

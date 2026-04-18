@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
+import fr.euphyllia.skylliachallenge.hook.HookManager;
 import fr.euphyllia.skylliachallenge.requirement.BlockBreakRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
@@ -56,7 +57,7 @@ public class BlockRequirementListener implements Listener {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof BlockBreakRequirement bbr) {
-                        if (!bbr.getMaterial().equals(material)) continue;
+                        if (!matchesBlock(bbr, block, material)) continue;
                         ProgressStoragePartial.addPartial(islandAtLocation.getId(), challenge.getId(), bbr.requirementId(), 1);
                     }
                 }
@@ -66,7 +67,6 @@ public class BlockRequirementListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event) {
-        // Cette Event est fait pour annuler le progrès si un joueur place un bloc et le casse ensuite.
         final Block block = event.getBlock();
         final Location location = block.getLocation();
         final UUID playerId = event.getPlayer().getUniqueId();
@@ -90,11 +90,22 @@ public class BlockRequirementListener implements Listener {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof BlockBreakRequirement bbr) {
-                        if (!bbr.getMaterial().equals(material)) continue;
+                        if (!matchesBlock(bbr, block, material)) continue;
                         ProgressStoragePartial.addPartial(islandAtLocation.getId(), challenge.getId(), bbr.requirementId(), -1);
                     }
                 }
             }
         });
+    }
+
+    /**
+     * Match d'un bloc contre une requirement : custom si la requirement référence Nexo/Oraxen,
+     * sinon comparaison vanilla du {@link Material}.
+     */
+    private boolean matchesBlock(BlockBreakRequirement bbr, Block block, Material material) {
+        if (bbr.isCustom()) {
+            return HookManager.matchesBlock(block, bbr.customNamespace(), bbr.customId());
+        }
+        return bbr.getMaterial() != null && bbr.getMaterial().equals(material);
     }
 }

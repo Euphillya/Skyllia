@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliachallenge.SkylliaChallenge;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import fr.euphyllia.skylliachallenge.challenge.Challenge;
+import fr.euphyllia.skylliachallenge.hook.HookManager;
 import fr.euphyllia.skylliachallenge.requirement.CraftRequirement;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
 import org.bukkit.Bukkit;
@@ -36,10 +37,10 @@ public class CraftRequirementListener implements Listener {
         Integer customModelData;
         if (CraftRequirement.HAS_ITEM_MODEL_METHOD) {
             customModelData = null;
-            model = meta.getItemModel();
+            model = meta != null ? meta.getItemModel() : null;
         } else {
             model = null;
-            if (meta.hasCustomModelData()) {
+            if (meta != null && meta.hasCustomModelData()) {
                 customModelData = meta.getCustomModelData();
             } else {
                 customModelData = null;
@@ -66,15 +67,18 @@ public class CraftRequirementListener implements Listener {
                 if (challenge.getRequirements() == null) continue;
                 for (ChallengeRequirement req : challenge.getRequirements()) {
                     if (req instanceof CraftRequirement cr) {
-                        if (cr.material() != material) continue;
-                        if (result.hasItemMeta()) {
-
-                            if (cr.itemModel() != null) {
-                                if (!CraftRequirement.HAS_ITEM_MODEL_METHOD) continue;
-                                if (model == null || !model.equals(cr.itemModel())) continue;
-                            } else if (cr.customModelData() != -1) {
-                                if (customModelData == null || !customModelData.equals(cr.customModelData())) {
-                                    continue;
+                        if (cr.isCustom()) {
+                            if (!HookManager.matches(result, cr.customNamespace(), cr.customId())) continue;
+                        } else {
+                            if (cr.material() != material) continue;
+                            if (result.hasItemMeta()) {
+                                if (cr.itemModel() != null) {
+                                    if (!CraftRequirement.HAS_ITEM_MODEL_METHOD) continue;
+                                    if (model == null || !model.equals(cr.itemModel())) continue;
+                                } else if (cr.customModelData() != -1) {
+                                    if (customModelData == null || !customModelData.equals(cr.customModelData())) {
+                                        continue;
+                                    }
                                 }
                             }
                         }

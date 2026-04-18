@@ -15,7 +15,8 @@ import java.util.Map;
 
 public record CraftRequirement(int requirementId, NamespacedKey challengeKey, Material material, int count,
                                String itemName,
-                               int customModelData, NamespacedKey itemModel) implements ChallengeRequirement {
+                               int customModelData, NamespacedKey itemModel,
+                               String customNamespace, String customId) implements ChallengeRequirement {
 
     public static final boolean HAS_ITEM_MODEL_METHOD;
 
@@ -28,6 +29,15 @@ public record CraftRequirement(int requirementId, NamespacedKey challengeKey, Ma
             hasMethod = false;
         }
         HAS_ITEM_MODEL_METHOD = hasMethod;
+    }
+
+    public CraftRequirement(int requirementId, NamespacedKey challengeKey, Material material, int count,
+                            String itemName, int customModelData, NamespacedKey itemModel) {
+        this(requirementId, challengeKey, material, count, itemName, customModelData, itemModel, null, null);
+    }
+
+    public boolean isCustom() {
+        return customNamespace != null && customId != null;
     }
 
     /**
