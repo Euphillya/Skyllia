@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.permissions.modules.FlagModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -19,6 +20,11 @@ public class IslandAllowFireSpreadPermissions implements FlagModule {
 
     @EventHandler(ignoreCancelled = true)
     public void onSpread(final BlockSpreadEvent event) {
+        if (event.getSource().getType() != Material.FIRE
+                && event.getSource().getType() != Material.SOUL_FIRE) {
+            return;
+        }
+
         final Location location = event.getBlock().getLocation();
         if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
 
@@ -33,7 +39,6 @@ public class IslandAllowFireSpreadPermissions implements FlagModule {
         }
 
         if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
         }
     }
 
@@ -41,8 +46,8 @@ public class IslandAllowFireSpreadPermissions implements FlagModule {
     public void registerFlags(IslandFlagRegistry registry, Plugin owner) {
         this.ISLAND_ALLOW_FIRE = registry.idOrRegister(new FlagNode(
                 new NamespacedKey(owner, "island.allow.fire"),
-                "Autoriser le feu",
-                "Contrôle la propagation du feu"
+                "island.flag.allow_fire.name",
+                "island.flag.allow_fire.description"
         ));
     }
 }
