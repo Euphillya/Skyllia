@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,5 +322,13 @@ public abstract class Island {
      */
     public abstract boolean setBuildHeight(String worldName, HeightType type, int value);
 
+
+    public abstract Location getMinimumPoint(World world);
+
+    public abstract Location getMaximumPoint(World world);
+
+    public abstract boolean isInside(Location location);
+
+    public abstract boolean isInside(@NotNull World world, int blockX, int blockY, int blockZ);
 }
 

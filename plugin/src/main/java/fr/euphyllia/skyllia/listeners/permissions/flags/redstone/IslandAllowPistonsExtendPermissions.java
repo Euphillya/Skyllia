@@ -9,6 +9,8 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.plugin.Plugin;
@@ -19,23 +21,23 @@ public class IslandAllowPistonsExtendPermissions implements FlagModule {
 
     @EventHandler(ignoreCancelled = true)
     public void onExtend(final BlockPistonExtendEvent event) {
-        final Location location = event.getBlock().getLocation();
-        String worldName = location.getWorld().getName();
+        Block block = event.getBlock();
+        World world = block.getWorld();
+        String worldName = world.getName();
         if (!SkylliaAPI.isWorldSkyblock(worldName)) return;
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        int bx = block.getX();
+        int by = block.getY();
+        int bz = block.getZ();
+
+        Island island = SkylliaAPI.getIslandByChunk(bx >> 4, bz >> 4);
         if (island == null) return;
 
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_PISTONS, worldName)) {
             event.setCancelled(true);
             return;
         }
-
-        if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
-        }
+        ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
     }
 
     @Override

@@ -88,7 +88,7 @@ public class MoveEvent implements Listener {
         int chunkX = to.getBlockX() >> 4;
         int chunkZ = to.getBlockZ() >> 4;
 
-        Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, from.getWorld(), event);
+        Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
         if (island == null) return;
 
         Location center = RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z());

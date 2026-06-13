@@ -3,7 +3,7 @@ package fr.euphyllia.skyllia.api.permissions;
 public final class IslandFlags {
 
     private final BitSet64 bits;
-    private int version;
+    private volatile int version;
 
     public IslandFlags(IslandFlagRegistry registry) {
         this.bits = new BitSet64(registry.size());

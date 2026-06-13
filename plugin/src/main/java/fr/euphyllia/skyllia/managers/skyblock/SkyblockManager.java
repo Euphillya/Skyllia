@@ -307,10 +307,8 @@ public class SkyblockManager {
         return priv;
     }
 
-    public @Nullable Island getIslandByPosition(Position position) {
-        if (position == null) return null;
-
-        long key = pack(position.x(), position.z());
+    public @Nullable Island getIslandByPosition(int rx, int rz) {
+        long key = pack(rx, rz);
         UUID islandId = islandByRegion.get(key);
 
         if (islandId != null) {
@@ -318,26 +316,19 @@ public class SkyblockManager {
             if (cached != null) {
                 return cached;
             }
-
             Island fromDbById = plugin.getInterneAPI()
-                    .getIslandQuery()
-                    .getIslandDataQuery()
-                    .getIslandByIslandId(islandId);
-
+                    .getIslandQuery().getIslandDataQuery().getIslandByIslandId(islandId);
             if (fromDbById != null) {
                 cacheIslandAndIndex(fromDbById);
                 return fromDbById;
             } else {
-                // index stale
                 islandByRegion.remove(key, islandId);
             }
         }
 
+        Position position = new Position(rx, rz);
         Island island = plugin.getInterneAPI()
-                .getIslandQuery()
-                .getIslandDataQuery()
-                .getIslandByPosition(position);
-
+                .getIslandQuery().getIslandDataQuery().getIslandByPosition(position);
         if (island != null) cacheIslandAndIndex(island);
         return island;
     }
@@ -355,10 +346,15 @@ public class SkyblockManager {
     }
 
     public @Nullable Island getIslandByChunk(int chunkX, int chunkZ) {
-        int rx = chunkToRegion(chunkX);
-        int rz = chunkToRegion(chunkZ);
-        return getIslandByPosition(new Position(rx, rz));
+        return getIslandByPosition(chunkToRegion(chunkX), chunkToRegion(chunkZ));
     }
+
+    public @Nullable Island getIslandByPosition(Position position) {
+        if (position == null) return null;
+        return getIslandByPosition(position.x(), position.z());
+    }
+
+
 
     /**
      * Retrieves the island owned by a specific player.

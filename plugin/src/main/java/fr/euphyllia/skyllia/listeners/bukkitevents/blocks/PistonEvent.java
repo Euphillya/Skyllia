@@ -1,14 +1,13 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.blocks;
 
-import com.google.common.collect.ImmutableMap;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -17,39 +16,42 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 
-import java.util.Map;
-
 public class PistonEvent implements Listener {
 
+    private static final int[][] OFFSETS = buildOffsets();
     private final InterneAPI api;
     private final Logger logger = LogManager.getLogger(PistonEvent.class);
-    private final Map<BlockFace, int[]> offsets = ImmutableMap.<BlockFace, int[]>builder()
-            .put(BlockFace.EAST, new int[]{1, 0, 0})
-            .put(BlockFace.WEST, new int[]{-1, 0, 0})
-            .put(BlockFace.UP, new int[]{0, 1, 0})
-            .put(BlockFace.DOWN, new int[]{0, -1, 0})
-            .put(BlockFace.SOUTH, new int[]{0, 0, 1})
-            .put(BlockFace.NORTH, new int[]{0, 0, -1})
-            .build();
 
     public PistonEvent(InterneAPI interneAPI) {
         this.api = interneAPI;
     }
 
+    private static int[][] buildOffsets() {
+        int[][] arr = new int[BlockFace.values().length][];
+        for (BlockFace face : new BlockFace[]{
+                BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH,
+                BlockFace.WEST, BlockFace.UP, BlockFace.DOWN}) {
+            arr[face.ordinal()] = new int[]{face.getModX(), face.getModY(), face.getModZ()};
+        }
+        return arr;
+    }
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
-        if (!WorldUtils.isWorldSkyblock(event.getBlock().getWorld().getName())) {
+        World world = event.getBlock().getWorld();
+        if (!WorldUtils.isWorldSkyblock(world.getName())) {
             return;
         }
-        int[] offset = offsets.get(event.getDirection());
+        int[] offset = OFFSETS[event.getDirection().ordinal()];
         for (Block block : event.getBlocks()) {
             Location location = block.getLocation().add(offset[0], offset[1], offset[2]);
-            Chunk chunk = location.getChunk();
-            Island island = ListenersUtils.checkChunkIsIsland(chunk, event);
+            int chunkX = location.getBlockX() >> 4;
+            int chunkZ = location.getBlockZ() >> 4;
+            Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
             if (island == null) {
                 return;
             }
-            if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
+            if (ListenersUtils.isBlockOutsideIsland(island, world, location.getBlockX(), location.getBlockY(), location.getBlockZ(), event)) {
                 return;
             }
         }
@@ -57,17 +59,19 @@ public class PistonEvent implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
-        if (!WorldUtils.isWorldSkyblock(event.getBlock().getWorld().getName())) {
+        World world = event.getBlock().getWorld();
+        if (!WorldUtils.isWorldSkyblock(world.getName())) {
             return;
         }
         for (Block block : event.getBlocks()) {
             Location location = block.getLocation();
-            Chunk chunk = location.getChunk();
-            Island island = ListenersUtils.checkChunkIsIsland(chunk, event);
+            int chunkX = location.getBlockX() >> 4;
+            int chunkZ = location.getBlockZ() >> 4;
+            Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
             if (island == null) {
                 return;
             }
-            if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
+            if (ListenersUtils.isBlockOutsideIsland(island, world, location.getBlockX(), location.getBlockY(), location.getBlockZ(), event)) {
                 return;
             }
         }

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ce code provient d'ici : <a href="https://github.com/Folia-Inquisitors/MoreFoWorld/blob/master/src/Skyllia/java/me/hsgamer/morefoworld/WorldUtil.java">MoreFoWorld</a> et CraftBukkit
@@ -31,12 +32,8 @@ public final class WorldUtils {
     }
 
     public static Boolean isWorldSkyblock(String name) {
-        for (String worldName : ConfigLoader.worldManager.getWorldConfigs().keySet()) {
-            if (worldName.equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
+        Map<String, WorldConfig> configs = ConfigLoader.worldManager.getWorldConfigs();
+        return configs.containsKey(name);
     }
 
     public static List<WorldConfig> getWorldConfigs() {
