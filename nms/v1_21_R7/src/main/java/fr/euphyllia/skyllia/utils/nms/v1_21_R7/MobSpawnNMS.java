@@ -4,6 +4,8 @@ import fr.euphyllia.skyllia.api.utils.nms.MobsSpawnImpl;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,13 +20,13 @@ public class MobSpawnNMS implements MobsSpawnImpl {
     private static final Map<EntityType, String> PASSIVE_MOBS;
 
     static {
-        IGNORED_REASONS = Set.of(
+        IGNORED_REASONS = Collections.unmodifiableSet(EnumSet.of(
                 CreatureSpawnEvent.SpawnReason.SPAWNER,
                 CreatureSpawnEvent.SpawnReason.SPAWNER_EGG,
                 CreatureSpawnEvent.SpawnReason.CUSTOM,
                 CreatureSpawnEvent.SpawnReason.COMMAND,
                 CreatureSpawnEvent.SpawnReason.TRIAL_SPAWNER
-        );
+        ));
 
         BOSS_MOBS = Map.of(
                 EntityType.ENDER_DRAGON, "ender_dragon",

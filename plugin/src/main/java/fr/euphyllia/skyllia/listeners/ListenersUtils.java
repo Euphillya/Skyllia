@@ -130,5 +130,9 @@ public class ListenersUtils {
         return checkChunkIsIsland(chunk, cancellable);
     }
 
+    public static @Nullable Island islandAtBlock(World world, int bx, int bz) {
+        if (!SkylliaAPI.isWorldSkyblock(world.getName())) return null;
+        return SkylliaAPI.getIslandByChunk(bx >> 4, bz >> 4);
+    }
 
 }

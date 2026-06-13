@@ -31,8 +31,9 @@ public class GrowEvent implements Listener {
         }
 
         Location saplingLocation = event.getLocation();
-        Chunk saplingChunk = saplingLocation.getChunk();
-        Island island = ListenersUtils.checkChunkIsIsland(saplingChunk, event);
+        int chunkX = saplingLocation.getBlockX() >> 4;
+        int chunkZ = saplingLocation.getBlockZ() >> 4;
+        Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
         if (island == null) {
             return;
         }

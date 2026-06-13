@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,24 +29,25 @@ public class BlockPhysicalPermissions implements PermissionModule {
         final Block clicked = event.getClickedBlock();
         if (clicked == null) return;
 
-        final Player player = event.getPlayer();
-        final Location location = clicked.getLocation();
+        final World world = clicked.getWorld();
 
-        if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
+        final int bx = clicked.getX();
+        final int by = clicked.getY();
+        final int bz = clicked.getZ();
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
+        final Player player = event.getPlayer();
         final boolean hasBypass = player.hasPermission("skyllia.player.physical.bypass");
-        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_PHYSICAL, null, ConfigLoader.general.getDebugSettings().permission());
+        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, BLOCK_PHYSICAL, null, ConfigLoader.general.getDebugSettings().permission());
         if (!hasPermission) {
             event.setCancelled(true);
             return;
         }
-        if (!hasBypass && ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
+        if (!hasBypass) {
+            ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
         }
     }
 

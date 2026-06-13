@@ -10,6 +10,8 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -22,23 +24,26 @@ public class BlockBreakPermissions implements PermissionModule {
     @EventHandler(ignoreCancelled = true)
     public void onBreak(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
-        final Location location = event.getBlock().getLocation();
+        final Block block = event.getBlock();
+        final World world = block.getWorld();
 
-        if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
+        if (!SkylliaAPI.isWorldSkyblock(world.getName())) return;
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final int bx = block.getX();
+        final int by = block.getY();
+        final int bz = block.getZ();
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
         final boolean hasBypass = player.hasPermission("skyllia.player.break.bypass");
-        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager().hasPermission(player, island, BLOCK_BREAK, null, ConfigLoader.general.getDebugSettings().permission());
+        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, BLOCK_BREAK, null, ConfigLoader.general.getDebugSettings().permission());
         if (!hasPermission) {
             event.setCancelled(true);
             return;
         }
         if (!hasBypass) {
-            ListenersUtils.isBlockOutsideIsland(island, location, event);
+            ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
         }
     }
 

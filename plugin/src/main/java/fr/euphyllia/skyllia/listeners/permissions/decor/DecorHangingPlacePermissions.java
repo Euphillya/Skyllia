@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -24,22 +25,25 @@ public class DecorHangingPlacePermissions implements PermissionModule {
         final Player player = event.getPlayer();
         if (player == null) return;
 
-        final Location location = event.getEntity().getLocation();
-        if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
+        final var hanging = event.getEntity();
+        final World world = hanging.getWorld();
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final int bx = Location.locToBlock(hanging.getX());
+        final int by = Location.locToBlock(hanging.getY());
+        final int bz = Location.locToBlock(hanging.getZ());
+
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
         final boolean hasBypass = player.hasPermission("skyllia.player.decor.hanging.place.bypass");
-        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager().hasPermission(player, island, DECOR_HANGING_PLACE, null, ConfigLoader.general.getDebugSettings().permission());
+        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, DECOR_HANGING_PLACE, null, ConfigLoader.general.getDebugSettings().permission());
         if (!hasPermission) {
             event.setCancelled(true);
             return;
         }
-        if (!hasBypass && ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
+        if (!hasBypass) {
+            ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
         }
     }
 

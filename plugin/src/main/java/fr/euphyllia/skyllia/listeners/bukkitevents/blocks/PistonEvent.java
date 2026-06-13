@@ -1,9 +1,9 @@
 package fr.euphyllia.skyllia.listeners.bukkitevents.blocks;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
-import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
@@ -39,19 +39,21 @@ public class PistonEvent implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
         World world = event.getBlock().getWorld();
-        if (!WorldUtils.isWorldSkyblock(world.getName())) {
+        if (!SkylliaAPI.isWorldSkyblock(world.getName())) {
             return;
         }
         int[] offset = OFFSETS[event.getDirection().ordinal()];
         for (Block block : event.getBlocks()) {
             Location location = block.getLocation().add(offset[0], offset[1], offset[2]);
-            int chunkX = location.getBlockX() >> 4;
-            int chunkZ = location.getBlockZ() >> 4;
+            int blockX = location.getBlockX();
+            int blockZ = location.getBlockZ();
+            int chunkX = blockX >> 4;
+            int chunkZ = blockZ >> 4;
             Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
             if (island == null) {
                 return;
             }
-            if (ListenersUtils.isBlockOutsideIsland(island, world, location.getBlockX(), location.getBlockY(), location.getBlockZ(), event)) {
+            if (ListenersUtils.isBlockOutsideIsland(island, world, blockX, location.getBlockY(), blockZ, event)) {
                 return;
             }
         }
@@ -60,18 +62,20 @@ public class PistonEvent implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
         World world = event.getBlock().getWorld();
-        if (!WorldUtils.isWorldSkyblock(world.getName())) {
+        if (!SkylliaAPI.isWorldSkyblock(world.getName())) {
             return;
         }
         for (Block block : event.getBlocks()) {
             Location location = block.getLocation();
-            int chunkX = location.getBlockX() >> 4;
-            int chunkZ = location.getBlockZ() >> 4;
+            int blockX = location.getBlockX();
+            int blockZ = location.getBlockZ();
+            int chunkX = blockX >> 4;
+            int chunkZ = blockZ >> 4;
             Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
             if (island == null) {
                 return;
             }
-            if (ListenersUtils.isBlockOutsideIsland(island, world, location.getBlockX(), location.getBlockY(), location.getBlockZ(), event)) {
+            if (ListenersUtils.isBlockOutsideIsland(island, world, blockX, location.getBlockY(), blockZ, event)) {
                 return;
             }
         }
