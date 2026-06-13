@@ -9,6 +9,8 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.plugin.Plugin;
@@ -19,23 +21,23 @@ public class IslandAllowExplosionsBlockPermissions implements FlagModule {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockExplode(final BlockExplodeEvent event) {
-        final Location location = event.getBlock().getLocation();
-        String worldName = location.getWorld().getName();
-        if (!SkylliaAPI.isWorldSkyblock(worldName)) return;
+        final Block block = event.getBlock();
+        final World world = block.getWorld();
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final int bx = block.getX();
+        final int by = block.getY();
+        final int bz = block.getZ();
+
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
+        final String worldName = world.getName();
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_EXPLOSIONS, worldName)) {
             event.setCancelled(true);
             return;
         }
 
-        if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
-        }
+        ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
     }
 
     @Override

@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,24 +26,27 @@ public class ItemPickupPermissions implements PermissionModule {
         final Entity entity = event.getEntity();
         if (!(entity instanceof Player player)) return;
 
-        final Location location = player.getLocation();
-        if (!SkylliaAPI.isWorldSkyblock(location.getWorld())) return;
+        final World world = player.getWorld();
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final int bx = Location.locToBlock(player.getX());
+        final int by = Location.locToBlock(player.getY());
+        final int bz = Location.locToBlock(player.getZ());
+
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
         final boolean hasBypass = player.hasPermission("skyllia.player.item.pickup.bypass");
-        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager().hasPermission(player, island, ITEM_PICKUP, null, ConfigLoader.general.getDebugSettings().permission());
+        final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager()
+                .hasPermission(player, island, ITEM_PICKUP, null, ConfigLoader.general.getDebugSettings().permission());
         if (!hasPermission) {
             event.setCancelled(true);
             return;
         }
-        if (!hasBypass && ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
+        if (!hasBypass) {
+            ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
         }
     }
+
 
     @Override
     public void registerPermissions(PermissionRegistry registry, Plugin owner) {

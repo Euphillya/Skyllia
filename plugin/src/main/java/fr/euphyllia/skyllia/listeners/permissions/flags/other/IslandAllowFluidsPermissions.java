@@ -9,6 +9,8 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.plugin.Plugin;
@@ -19,23 +21,23 @@ public class IslandAllowFluidsPermissions implements FlagModule {
 
     @EventHandler(ignoreCancelled = true)
     public void onFromTo(final BlockFromToEvent event) {
-        final Location to = event.getToBlock().getLocation();
-        String worldName = to.getWorld().getName();
-        if (!SkylliaAPI.isWorldSkyblock(worldName)) return;
+        final Block to = event.getToBlock();
+        final World world = to.getWorld();
 
-        final int chunkX = to.getBlockX() >> 4;
-        final int chunkZ = to.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final int bx = to.getX();
+        final int by = to.getY();
+        final int bz = to.getZ();
+
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
+        final String worldName = world.getName();
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_FLUIDS, worldName)) {
             event.setCancelled(true);
             return;
         }
 
-        if (ListenersUtils.isBlockOutsideIsland(island, to, event)) {
-            return;
-        }
+        ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
     }
 
     @Override

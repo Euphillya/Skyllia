@@ -53,9 +53,8 @@ public class PistonEvent implements Listener {
             if (island == null) {
                 return;
             }
-            if (ListenersUtils.isBlockOutsideIsland(island, world, blockX, location.getBlockY(), blockZ, event)) {
-                return;
-            }
+
+            ListenersUtils.isBlockOutsideIsland(island, world, blockX, location.getBlockY(), blockZ, event);
         }
     }
 
@@ -75,9 +74,7 @@ public class PistonEvent implements Listener {
             if (island == null) {
                 return;
             }
-            if (ListenersUtils.isBlockOutsideIsland(island, world, blockX, location.getBlockY(), blockZ, event)) {
-                return;
-            }
+            ListenersUtils.isBlockOutsideIsland(island, world, blockX, location.getBlockY(), blockZ, event);
         }
     }
 }

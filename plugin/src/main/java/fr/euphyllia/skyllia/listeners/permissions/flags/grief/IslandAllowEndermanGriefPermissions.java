@@ -9,6 +9,8 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Enderman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -23,22 +25,23 @@ public class IslandAllowEndermanGriefPermissions implements FlagModule {
     public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
         if (!(event.getEntity() instanceof Enderman)) return;
 
-        final Location location = event.getBlock().getLocation();
-        String worldName = location.getWorld().getName();
-        if (!SkylliaAPI.isWorldSkyblock(worldName)) return;
+        final Block block = event.getBlock();
+        final World world = block.getWorld();
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final int bx = block.getX();
+        final int by = block.getY();
+        final int bz = block.getZ();
+
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
+        final String worldName = world.getName();
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ISLAND_ALLOW_ENDERMAN_GRIEF, ISLAND_ALLOW_MOB_GRIEF, worldName)) {
             event.setCancelled(true);
             return;
         }
-        if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
-        }
+
+        ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
     }
 
     @Override

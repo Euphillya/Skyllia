@@ -10,6 +10,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,35 +44,42 @@ public class IslandMobSpawnPassiveFlag implements FlagModule {
         }
     }
 
-    private void handleSpawn(EntityType type, Location location, Runnable cancel) {
-        if (flagByType == null) return;
+    private boolean shouldCancelSpawn(EntityType type, Location location) {
+        if (flagByType == null) return false;
         FlagId specific = flagByType.get(type);
-        if (specific == null) return;
-        String worldName = location.getWorld().getName();
-        if (!SkylliaAPI.isWorldSkyblock(worldName)) return;
-        Island island = SkylliaAPI.getIslandByChunk(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-        if (island == null) return;
+        if (specific == null) return false;
+
+        final World world = location.getWorld();
+        final String worldName = world.getName();
+        if (!SkylliaAPI.isWorldSkyblock(worldName)) return false;
+
+        final int bx = location.getBlockX();
+        final int by = location.getBlockY();
+        final int bz = location.getBlockZ();
+
+        final Island island = SkylliaAPI.getIslandByChunk(bx >> 4, bz >> 4);
+        if (island == null) return false;
+
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, specific, ALLOW_SPAWN_ALL_PASSIVE, worldName)) {
-            cancel.run();
-            return;
+            return true;
         }
-        if (ListenersUtils.isBlockOutsideIsland(island, location, null)) {
-            cancel.run();
-        }
+        return ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, null);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onPreCreatureSpawn(final PreCreatureSpawnEvent event) {
         if (SkylliaAPI.getMobsSpawnImpl().ignoredReasons().contains(event.getReason())) return;
-        handleSpawn(event.getType(), event.getSpawnLocation(), () -> {
+        if (shouldCancelSpawn(event.getType(), event.getSpawnLocation())) {
             event.setCancelled(true);
             event.setShouldAbortSpawn(true);
-        });
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         if (SkylliaAPI.getMobsSpawnImpl().ignoredReasons().contains(event.getSpawnReason())) return;
-        handleSpawn(event.getEntityType(), event.getLocation(), () -> event.setCancelled(true));
+        if (shouldCancelSpawn(event.getEntityType(), event.getLocation())) {
+            event.setCancelled(true);
+        }
     }
 }

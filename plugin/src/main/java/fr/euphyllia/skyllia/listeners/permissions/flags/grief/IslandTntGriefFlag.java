@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
@@ -41,22 +42,22 @@ public class IslandTntGriefFlag implements FlagModule {
         if (!(entity instanceof TNTPrimed) && !(entity instanceof ExplosiveMinecart)) return;
 
         final Location location = event.getLocation();
-        if (location.getWorld() == null) return;
-        String worldName = location.getWorld().getName();
-        if (!SkylliaAPI.isWorldSkyblock(worldName)) return;
+        final World world = location.getWorld();
+        if (world == null) return;
 
-        final int chunkX = location.getBlockX() >> 4;
-        final int chunkZ = location.getBlockZ() >> 4;
-        final Island island = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        final int bx = location.getBlockX();
+        final int by = location.getBlockY();
+        final int bz = location.getBlockZ();
+
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
+        final String worldName = world.getName();
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, ALLOW_TNT_GRIEF, ALLOW_MOB_GRIEF, worldName)) {
             event.setCancelled(true);
             return;
         }
 
-        if (ListenersUtils.isBlockOutsideIsland(island, location, event)) {
-            return;
-        }
+        ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
     }
 }
