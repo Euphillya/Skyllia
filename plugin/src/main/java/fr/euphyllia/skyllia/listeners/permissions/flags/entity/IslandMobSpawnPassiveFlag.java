@@ -44,22 +44,17 @@ public class IslandMobSpawnPassiveFlag implements FlagModule {
         }
     }
 
-    private boolean shouldCancelSpawn(EntityType type, Location location) {
-        if (flagByType == null) return false;
-        FlagId specific = flagByType.get(type);
-        if (specific == null) return false;
-
+    private boolean shouldCancelSpawn(FlagId specific, Location location) {
         final World world = location.getWorld();
-        final String worldName = world.getName();
-        if (!SkylliaAPI.isWorldSkyblock(worldName)) return false;
 
         final int bx = location.getBlockX();
         final int by = location.getBlockY();
         final int bz = location.getBlockZ();
 
-        final Island island = SkylliaAPI.getIslandByChunk(bx >> 4, bz >> 4);
+        final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return false;
 
+        final String worldName = world.getName();
         if (!SkylliaAPI.getPermissionsManager().hasFlag(island, specific, ALLOW_SPAWN_ALL_PASSIVE, worldName)) {
             return true;
         }
@@ -68,8 +63,13 @@ public class IslandMobSpawnPassiveFlag implements FlagModule {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onPreCreatureSpawn(final PreCreatureSpawnEvent event) {
+        if (flagByType == null) return;
         if (SkylliaAPI.getMobsSpawnImpl().ignoredReasons().contains(event.getReason())) return;
-        if (shouldCancelSpawn(event.getType(), event.getSpawnLocation())) {
+
+        final FlagId specific = flagByType.get(event.getType());
+        if (specific == null) return;
+
+        if (shouldCancelSpawn(specific, event.getSpawnLocation())) {
             event.setCancelled(true);
             event.setShouldAbortSpawn(true);
         }
@@ -77,8 +77,13 @@ public class IslandMobSpawnPassiveFlag implements FlagModule {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
+        if (flagByType == null) return;
         if (SkylliaAPI.getMobsSpawnImpl().ignoredReasons().contains(event.getSpawnReason())) return;
-        if (shouldCancelSpawn(event.getEntityType(), event.getLocation())) {
+
+        final FlagId specific = flagByType.get(event.getEntityType());
+        if (specific == null) return;
+
+        if (shouldCancelSpawn(specific, event.getLocation())) {
             event.setCancelled(true);
         }
     }
