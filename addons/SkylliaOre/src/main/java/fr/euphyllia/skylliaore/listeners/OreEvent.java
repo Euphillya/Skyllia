@@ -66,14 +66,14 @@ public class OreEvent implements Listener {
                 
                 // Check if it's a CraftEngine block and handle it specially
                 if ((selectedBlockKey.startsWith("craftengine:") || (selectedBlockKey.contains(":") && !selectedBlockKey.contains("minecraft:"))) && isCraftEngineLoaded) {
-                    // For CraftEngine blocks, we need to place them after the event completes
+                    // For CraftEngine blocks, we allow the event to complete first, then replace the block
                     Location location = event.getBlock().getLocation();
-                    event.setCancelled(true); // Cancel the default block formation
                     
-                    // Schedule the CraftEngine block placement on next tick
-                    org.bukkit.Bukkit.getScheduler().runTask(SkylliaOre.getInstance(), () -> {
-                        CraftEngineHook.placeBlock(location, selectedBlockKey);
-                    });
+                    // Use Folia-compatible chunk scheduler
+                    event.getBlock().getChunk().getPluginChunkTickScheduler(SkylliaOre.getInstance())
+                        .runDelayed((task) -> {
+                            CraftEngineHook.placeBlock(location, selectedBlockKey);
+                        }, 1L);
                 } else {
                     // For vanilla/Oraxen/Nexo blocks, use the old method
                     BlockData blockByChance = getCachedBlockData(selectedBlockKey);
