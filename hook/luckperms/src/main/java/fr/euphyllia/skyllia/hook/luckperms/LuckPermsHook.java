@@ -41,7 +41,6 @@ public class LuckPermsHook implements PermissionHook {
         if (lp != null) {
             lp.getEventBus().subscribe(plugin, NodeAddEvent.class, this::onNodeAdd);
             lp.getEventBus().subscribe(plugin, NodeRemoveEvent.class, this::onNodeRemove);
-            log.info("LuckPerms hook enabled !");
         }
     }
 
