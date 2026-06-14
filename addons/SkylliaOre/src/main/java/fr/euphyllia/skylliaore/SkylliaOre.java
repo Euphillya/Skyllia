@@ -96,6 +96,17 @@ public final class SkylliaOre extends JavaPlugin {
         oraxenLoaded = Bukkit.getPluginManager().getPlugin("Oraxen") != null;
         nexoLoaded = Bukkit.getPluginManager().getPlugin("Nexo") != null;
         craftEngineLoaded = Bukkit.getPluginManager().getPlugin("CraftEngine") != null;
+        
+        // Additional verification for CraftEngine
+        if (craftEngineLoaded) {
+            if (fr.euphyllia.skylliaore.hook.CraftEngineHook.isAvailable()) {
+                getLogger().info("CraftEngine integration enabled");
+            } else {
+                getLogger().warning("CraftEngine plugin found but API not available yet");
+                craftEngineLoaded = false;
+            }
+        }
+        
         // Plugin startup logic
         initializeConfig();
 

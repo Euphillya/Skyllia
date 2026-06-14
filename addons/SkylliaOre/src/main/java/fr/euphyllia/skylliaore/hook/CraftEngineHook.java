@@ -1,38 +1,32 @@
 package fr.euphyllia.skylliaore.hook;
 
-import net.momirealms.craftengine.bukkit.util.BlockStateUtils;
+import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
+import net.momirealms.craftengine.bukkit.api.CraftEngineWorlds;
 import net.momirealms.craftengine.core.block.BlockDefinition;
-import net.momirealms.craftengine.core.block.BlockManager;
-import net.momirealms.craftengine.core.plugin.CraftEngine;
+import net.momirealms.craftengine.core.block.BlockStateWrapper;
+import net.momirealms.craftengine.core.block.ImmutableBlockState;
+import net.momirealms.craftengine.core.block.UpdateFlags;
 import net.momirealms.craftengine.core.util.Key;
-import org.bukkit.block.data.BlockData;
+import net.momirealms.craftengine.core.world.World;
+import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CraftEngineHook {
 
+    private static final Logger logger = LoggerFactory.getLogger(CraftEngineHook.class);
+
     /**
-     * Get BlockData from CraftEngine block ID
+     * Get BlockStateWrapper from CraftEngine block ID
      * Supports formats: "namespace:block_id" or "namespace:block_id[properties]"
      * 
      * @param id CraftEngine block identifier, e.g. "craftengine:custom_ore" or "craftengine:custom_ore[variant=iron]"
-     * @return The corresponding BlockData, or null if the block doesn't exist
+     * @return The corresponding BlockStateWrapper, or null if the block doesn't exist
      */
     @Nullable
-    public static BlockData getBlockData(String id) {
+    public static BlockStateWrapper getBlockStateWrapper(String id) {
         try {
-            // Get the BlockManager instance from CraftEngine
-            CraftEngine craftEngine = CraftEngine.instance();
-            if (craftEngine == null) {
-                return null;
-            }
-            
-            BlockManager blockManager = craftEngine.blockManager();
-            if (blockManager == null) {
-                return null;
-            }
-
             // Parse block ID (ignore properties for now, just get the base block)
             String blockId;
             
@@ -43,24 +37,64 @@ public class CraftEngineHook {
                 blockId = id;
             }
 
-            // Get block definition
+            // Get block definition using CraftEngine API
             Key key = Key.of(blockId);
-            Optional<BlockDefinition> blockDefOpt = blockManager.blockById(key);
+            BlockDefinition blockDef = CraftEngineBlocks.byId(key);
             
-            if (blockDefOpt.isEmpty()) {
+            if (blockDef == null) {
+                logger.debug("CraftEngine block not found: {}", blockId);
                 return null;
             }
 
-            BlockDefinition blockDef = blockDefOpt.get();
+            // Get default state
+            ImmutableBlockState blockState = blockDef.defaultState();
             
-            // Get default state and convert to BlockData
-            // The visual block state is what the client sees
-            Object minecraftState = blockDef.defaultState().visualBlockState().minecraftState();
+            // Convert to BlockStateWrapper
+            BlockStateWrapper wrapper = blockState.customBlockState();
             
-            // Use BlockStateUtils to convert to BlockData
-            return BlockStateUtils.fromBlockData(minecraftState);
+            logger.debug("Successfully resolved CraftEngine block: {} -> {}", blockId, wrapper);
+            return wrapper;
         } catch (Exception e) {
+            logger.error("Error getting BlockStateWrapper for CraftEngine block: {}", id, e);
             return null;
+        }
+    }
+
+    /**
+     * Place a CraftEngine block at the specified location
+     * 
+     * @param location The location where to place the block
+     * @param id CraftEngine block identifier, e.g. "craftengine:custom_ore"
+     * @return true if the block was successfully placed, false otherwise
+     */
+    public static boolean placeBlock(Location location, String id) {
+        try {
+            BlockStateWrapper wrapper = getBlockStateWrapper(id);
+            if (wrapper == null) {
+                return false;
+            }
+
+            // Get CraftEngine world wrapper
+            World ceWorld = CraftEngineWorlds.adapt(location.getWorld());
+            if (ceWorld == null) {
+                logger.error("Failed to adapt Bukkit world to CraftEngine world");
+                return false;
+            }
+
+            // Place the block using CraftEngine API with UPDATE_ALL flag
+            ceWorld.setBlockState(
+                location.getBlockX(),
+                location.getBlockY(),
+                location.getBlockZ(),
+                wrapper,
+                UpdateFlags.UPDATE_ALL
+            );
+
+            logger.debug("Successfully placed CraftEngine block {} at {}", id, location);
+            return true;
+        } catch (Exception e) {
+            logger.error("Error placing CraftEngine block {} at {}", id, location, e);
+            return false;
         }
     }
 
@@ -71,13 +105,11 @@ public class CraftEngineHook {
      */
     public static boolean isAvailable() {
         try {
-            CraftEngine craftEngine = CraftEngine.instance();
-            if (craftEngine == null) {
-                return false;
-            }
-            BlockManager blockManager = craftEngine.blockManager();
-            return blockManager != null;
+            // Try to access CraftEngineBlocks API to verify it's loaded
+            CraftEngineBlocks.loadedBlocks();
+            return true;
         } catch (Throwable e) {
+            logger.warn("CraftEngine is not available", e);
             return false;
         }
     }
