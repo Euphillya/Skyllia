@@ -50,7 +50,7 @@ public class CraftEngineHook {
             BlockDefinition blockDef = blockDefOpt.get();
             
             // Get default state
-            ImmutableBlockState blockState = blockDef.variantProvider().defaultState();
+            ImmutableBlockState blockState = blockDef.variantProvider().getDefaultState();
             
             // If properties are specified, try to parse them
             if (properties != null && !properties.isEmpty()) {
