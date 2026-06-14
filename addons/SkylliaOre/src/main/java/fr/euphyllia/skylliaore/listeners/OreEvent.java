@@ -129,24 +129,20 @@ public class OreEvent implements Listener {
                     String oraxenBlock = k.substring("oraxen:".length());
                     BlockData data = OraxenHook.getBlockData(oraxenBlock);
                     if (data != null) return data;
-                    log.error("{} is not a valid Oraxen block", k);
-                    return Material.COBBLESTONE.createBlockData();
                 } else if (k.startsWith("nexo:") && isNexoLoaded) {
                     String nexoBlock = k.substring("nexo:".length());
                     BlockData data = NexoHook.getBlockData(nexoBlock);
                     if (data != null) return data;
-                    log.error("{} is not a valid Nexo block", k);
-                    return Material.COBBLESTONE.createBlockData();
                 } else if (k.contains(":") && !k.startsWith("minecraft:")) {
-                    // Unknown custom block plugin
-                    log.error("{} appears to be a custom block but no plugin is loaded to handle it", k);
+                    // Unknown custom block - CraftEngine blocks are handled separately
+                    log.warn("{} appears to be a custom block but no plugin is loaded to handle it", k);
                     return Material.COBBLESTONE.createBlockData();
                 }
                 // Try vanilla Minecraft material
                 String materialName = k.startsWith("minecraft:") ? k.substring("minecraft:".length()) : k;
                 return Material.valueOf(materialName.toUpperCase()).createBlockData();
             } catch (IllegalArgumentException e) {
-                log.error("{} is not a valid Minecraft material", k);
+                log.error("{} is not a valid block in Minecraft, Oraxen or Nexo", k, e);
                 return Material.COBBLESTONE.createBlockData();
             }
         });
