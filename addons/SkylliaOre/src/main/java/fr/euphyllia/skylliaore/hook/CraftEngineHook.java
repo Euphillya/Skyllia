@@ -3,6 +3,7 @@ package fr.euphyllia.skylliaore.hook;
 import net.momirealms.craftengine.bukkit.util.BlockStateUtils;
 import net.momirealms.craftengine.core.block.BlockDefinition;
 import net.momirealms.craftengine.core.block.BlockManager;
+import net.momirealms.craftengine.core.plugin.CraftEngine;
 import net.momirealms.craftengine.core.util.Key;
 import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,13 @@ public class CraftEngineHook {
     @Nullable
     public static BlockData getBlockData(String id) {
         try {
-            BlockManager blockManager = BlockManager.instance();
+            // Get the BlockManager instance from CraftEngine
+            CraftEngine craftEngine = CraftEngine.instance();
+            if (craftEngine == null) {
+                return null;
+            }
+            
+            BlockManager blockManager = craftEngine.blockManager();
             if (blockManager == null) {
                 return null;
             }
@@ -64,7 +71,11 @@ public class CraftEngineHook {
      */
     public static boolean isAvailable() {
         try {
-            BlockManager blockManager = BlockManager.instance();
+            CraftEngine craftEngine = CraftEngine.instance();
+            if (craftEngine == null) {
+                return false;
+            }
+            BlockManager blockManager = craftEngine.blockManager();
             return blockManager != null;
         } catch (Throwable e) {
             return false;
