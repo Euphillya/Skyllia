@@ -60,8 +60,6 @@ public class LuckPermsHook implements PermissionHook {
             if (cached != null) return cached;
         }
 
-        log.info("Check perms " + node);
-
         boolean result = luckPerms.getPlayerAdapter(Player.class)
                 .getPermissionData(player)
                 .checkPermission(node)
