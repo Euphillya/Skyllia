@@ -69,11 +69,10 @@ public class OreEvent implements Listener {
                     // For CraftEngine blocks, we allow the event to complete first, then replace the block
                     Location location = event.getBlock().getLocation();
                     
-                    // Use Folia-compatible chunk scheduler
-                    event.getBlock().getChunk().getPluginChunkTickScheduler(SkylliaOre.getInstance())
-                        .runDelayed((task) -> {
-                            CraftEngineHook.placeBlock(location, selectedBlockKey);
-                        }, 1L);
+                    // Use Folia-compatible region scheduler
+                    org.bukkit.Bukkit.getRegionScheduler().runDelayed(SkylliaOre.getInstance(), location, (task) -> {
+                        CraftEngineHook.placeBlock(location, selectedBlockKey);
+                    }, 1L);
                 } else {
                     // For vanilla/Oraxen/Nexo blocks, use the old method
                     BlockData blockByChance = getCachedBlockData(selectedBlockKey);
