@@ -322,13 +322,58 @@ public abstract class Island {
      */
     public abstract boolean setBuildHeight(String worldName, HeightType type, int value);
 
-
+    /**
+     * Returns the minimum corner of the island's bounding box in the given world.
+     * <p>
+     * This is the lowest point on the X/Y/Z axes: the X and Z coordinates are derived
+     * from the island center minus half its size, while the Y coordinate uses the island's
+     * custom minimum build height if set, otherwise the world's minimum height.
+     * </p>
+     *
+     * @param world The {@link World} in which to compute the point.
+     * @return The minimum {@link Location} of the island in the given world.
+     */
     public abstract Location getMinimumPoint(World world);
 
+    /**
+     * Returns the maximum corner of the island's bounding box in the given world.
+     * <p>
+     * This is the highest point on the X/Y/Z axes: the X and Z coordinates are derived
+     * from the island center plus half its size, while the Y coordinate uses the island's
+     * custom maximum build height if set, otherwise the world's maximum height.
+     * </p>
+     *
+     * @param world The {@link World} in which to compute the point.
+     * @return The maximum {@link Location} of the island in the given world.
+     */
     public abstract Location getMaximumPoint(World world);
 
+    /**
+     * Checks whether the given location lies within this island's bounds.
+     * <p>
+     * Convenience overload that extracts the world and block coordinates from the
+     * location. Returns {@code false} if the location has no associated world.
+     * </p>
+     *
+     * @param location The {@link Location} to test.
+     * @return {@code true} if the location is inside the island, {@code false} otherwise.
+     */
     public abstract boolean isInside(Location location);
 
+    /**
+     * Checks whether the given block coordinates lie within this island's bounds
+     * in the specified world.
+     * <p>
+     * This is the allocation-free variant intended for hot code paths: it resolves the
+     * island bounds (X/Y/Z) from a cache rather than recomputing them on each call.
+     * </p>
+     *
+     * @param world  The {@link World} to test against.
+     * @param blockX The block X coordinate.
+     * @param blockY The block Y coordinate.
+     * @param blockZ The block Z coordinate.
+     * @return {@code true} if the coordinates are inside the island, {@code false} otherwise.
+     */
     public abstract boolean isInside(@NotNull World world, int blockX, int blockY, int blockZ);
 }
 
