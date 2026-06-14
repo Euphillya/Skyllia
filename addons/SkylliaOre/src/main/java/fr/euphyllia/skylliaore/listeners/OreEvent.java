@@ -63,23 +63,31 @@ public class OreEvent implements Listener {
             String blockName = blockType.name().toLowerCase();
             if (optimized.getGenerator().replaceBlocks().contains(blockName)) {
                 String selectedBlockKey = getBlockKeyByChance(optimized);
+                Location location = event.getBlock().getLocation();
                 
-                // Check if it's a CraftEngine block and handle it specially
-                if ((selectedBlockKey.startsWith("craftengine:") || (selectedBlockKey.contains(":") && !selectedBlockKey.contains("minecraft:"))) && isCraftEngineLoaded) {
-                    // For CraftEngine blocks, we allow the event to complete first, then replace the block
-                    Location location = event.getBlock().getLocation();
-                    
-                    // Use Folia-compatible region scheduler
-                    org.bukkit.Bukkit.getRegionScheduler().runDelayed(SkylliaOre.getInstance(), location, (task) -> {
-                        CraftEngineHook.placeBlock(location, selectedBlockKey);
-                    }, 1L);
-                } else {
-                    // For vanilla/Oraxen/Nexo blocks, use the old method
-                    BlockData blockByChance = getCachedBlockData(selectedBlockKey);
-                    event.getNewState().setBlockData(blockByChance);
+                // Handle block placement based on type
+                if (!placeCustomBlock(location, selectedBlockKey)) {
+                    // Fallback to BlockData method for vanilla/Oraxen/Nexo blocks
+                    BlockData blockData = getCachedBlockData(selectedBlockKey);
+                    event.getNewState().setBlockData(blockData);
                 }
             }
         }
+    }
+
+    /**
+     * Try to place a custom block (CraftEngine) at the location
+     * @param location The location to place the block
+     * @param blockKey The block key
+     * @return true if the block was handled as a custom block, false otherwise
+     */
+    private boolean placeCustomBlock(Location location, String blockKey) {
+        // Check if it's a CraftEngine block
+        if ((blockKey.startsWith("craftengine:") || (blockKey.contains(":") && !blockKey.startsWith("minecraft:") && !blockKey.startsWith("oraxen:") && !blockKey.startsWith("nexo:"))) && isCraftEngineLoaded) {
+            // Place CraftEngine block directly (we're already on the region thread from the event)
+            return CraftEngineHook.placeBlock(location, blockKey);
+        }
+        return false;
     }
 
     private Generator getGeneratorSync(UUID islandId) {
@@ -124,19 +132,15 @@ public class OreEvent implements Listener {
                     log.error("{} is not a valid Nexo block", k);
                     return Material.COBBLESTONE.createBlockData();
                 } else if (k.contains(":") && !k.startsWith("minecraft:")) {
-                    // For CraftEngine blocks, return a placeholder (note blocks are handled separately)
-                    // This shouldn't be called for CraftEngine blocks anymore
-                    log.warn("{} appears to be a custom block that should be handled specially", k);
-                    return Material.NOTE_BLOCK.createBlockData();
+                    // Unknown custom block plugin
+                    log.error("{} appears to be a custom block but no plugin is loaded to handle it", k);
+                    return Material.COBBLESTONE.createBlockData();
                 }
                 // Try vanilla Minecraft material
                 String materialName = k.startsWith("minecraft:") ? k.substring("minecraft:".length()) : k;
                 return Material.valueOf(materialName.toUpperCase()).createBlockData();
             } catch (IllegalArgumentException e) {
                 log.error("{} is not a valid Minecraft material", k);
-                return Material.COBBLESTONE.createBlockData();
-            } catch (Exception e) {
-                log.error("Error processing block data for {}", k, e);
                 return Material.COBBLESTONE.createBlockData();
             }
         });
