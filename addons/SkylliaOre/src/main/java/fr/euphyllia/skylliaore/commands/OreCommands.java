@@ -3,6 +3,7 @@ package fr.euphyllia.skylliaore.commands;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
 import fr.euphyllia.skylliaore.config.DefaultConfig;
@@ -31,7 +32,7 @@ public class OreCommands implements SubCommandInterface {
 
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skylliaore.use")) return;
+        if (!PlayerUtils.hasPermission(sender, "skylliaore.use")) return;
         if (args.length < 2) {
             sender.sendMessage(Component.text("Usage: /skylliaadmin generator <player> <generator>").color(NamedTextColor.RED));
             return;

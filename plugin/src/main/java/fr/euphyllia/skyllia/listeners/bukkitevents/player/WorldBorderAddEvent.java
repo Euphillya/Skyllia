@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -44,7 +45,7 @@ public class WorldBorderAddEvent implements Listener {
             if (island == null) {
                 return;
             }
-            if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+            if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
                 return;
             }
 

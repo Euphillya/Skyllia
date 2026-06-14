@@ -78,7 +78,7 @@ public class VisitSubCommand implements SubCommandInterface {
                 return;
             }
 
-            boolean bypass = player.hasPermission("skyllia.island.command.visit.bypass")
+            boolean bypass = PlayerUtils.hasPermission(player, "skyllia.island.command.visit.bypass")
                     || SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_VISIT_BYPASS_PERMISSION, null, ConfigLoader.general.getDebugSettings().permission());
 
             if (!bypass) {
@@ -104,7 +104,7 @@ public class VisitSubCommand implements SubCommandInterface {
                 }
                 loc.setY(loc.getY() + 0.5);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
-                    if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                    if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
                         return;
                     }
 

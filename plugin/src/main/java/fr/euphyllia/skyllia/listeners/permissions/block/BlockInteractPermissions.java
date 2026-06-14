@@ -8,7 +8,7 @@ import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
-import org.bukkit.Location;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -43,7 +43,7 @@ public class BlockInteractPermissions implements PermissionModule {
         final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
-        final boolean hasBypass = player.hasPermission("skyllia.player.interact.bypass");
+        final boolean hasBypass = PlayerUtils.hasPermission(player, "skyllia.player.interact.bypass");
         final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager()
                 .hasPermission(player, island, BLOCK_INTERACT, null, ConfigLoader.general.getDebugSettings().permission());
         if (!hasPermission) {

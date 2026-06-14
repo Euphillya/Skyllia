@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -32,7 +33,7 @@ public class MoveEvent implements Listener {
         if (!ConfigLoader.general.getIslandSettings().teleportOutsideIsland()) return;
 
         final Player player = event.getPlayer();
-        if (player.hasPermission("skyllia.island.outside.bypass")) return;
+        if (PlayerUtils.hasPermission(player, "skyllia.island.outside.bypass")) return;
 
         Location location = player.getLocation();
         World world = location.getWorld();
@@ -75,7 +76,7 @@ public class MoveEvent implements Listener {
         if (!ConfigLoader.general.getIslandSettings().restrictPlayerMovement()) return;
 
         final Player player = event.getPlayer();
-        if (player.hasPermission("skyllia.island.border.bypass")) return;
+        if (PlayerUtils.hasPermission(player, "skyllia.island.border.bypass")) return;
 
         final Location to = event.getTo();
         if (to == null || to.getWorld() == null) return;

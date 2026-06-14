@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class ImplPermissionsManagers implements PermissionsManagers {
      * @return {@code true} if the player has the permission, {@code false} otherwise.
      */
     public boolean hasPermission(Player player, Island island, PermissionId permission, @Nullable String bukkitPermission, boolean debug) {
-        if (bukkitPermission != null && player.hasPermission(bukkitPermission)) {
+        if (bukkitPermission != null && PlayerUtils.hasPermission(player, bukkitPermission)) {
             if (debug) {
                 String permName;
                 try {

@@ -69,7 +69,7 @@ public class HomeSubCommand implements SubCommandInterface {
 
                 ConfigLoader.language.sendMessage(player, "island.home.success");
 
-                if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
                     return;
                 }
 

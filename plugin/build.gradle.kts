@@ -19,6 +19,7 @@ dependencies {
     compileOnly(project(":hook:canvas"))
     compileOnly(project(":hook:luminol"))
     compileOnly(project(":hook:essentialsx"))
+    compileOnly(project(":hook:luckperms"))
 
     // NMS Version
     compileOnly(project(":nms:v1_20_R4"))

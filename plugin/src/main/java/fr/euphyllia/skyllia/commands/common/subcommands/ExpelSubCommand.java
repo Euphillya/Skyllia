@@ -105,7 +105,7 @@ public class ExpelSubCommand implements SubCommandInterface {
                 ConfigLoader.language.sendMessage(player, "island.player.not-connected");
                 return;
             }
-            if (bPlayerToExpel.hasPermission("skyllia.island.command.expel.bypass")) {
+            if (PlayerUtils.hasPermission(bPlayerToExpel, "skyllia.island.command.expel.bypass")) {
                 ConfigLoader.language.sendMessage(player, "island.kick.failed");
                 return;
             }

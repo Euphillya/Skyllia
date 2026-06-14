@@ -86,7 +86,7 @@ public class DelWarpSubCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (sender.hasPermission("skyllia.island.command.delwarp") && sender instanceof Player player) {
+        if (sender instanceof Player player && PlayerUtils.hasPermission(player, "skyllia.island.command.delwarp")) {
             if (args.length == 1) {
                 String partial = args[0].trim().toLowerCase();
                 List<String> warpList = CacheCommands.getWarps(player.getUniqueId());

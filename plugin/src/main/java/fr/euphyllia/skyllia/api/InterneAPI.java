@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.api;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.exceptions.UnsupportedMinecraftVersionException;
+import fr.euphyllia.skyllia.api.hooks.PermissionHook;
 import fr.euphyllia.skyllia.api.hooks.SchematicHook;
 import fr.euphyllia.skyllia.api.hooks.SpawnHook;
 import fr.euphyllia.skyllia.api.service.TrustService;
@@ -11,6 +12,7 @@ import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
 import fr.euphyllia.skyllia.hook.SkylliaSchematicHookResolver;
 import fr.euphyllia.skyllia.hook.essentialsx.EssentialsSpawnHook;
+import fr.euphyllia.skyllia.hook.luckperms.LuckPermsHook;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -51,6 +53,7 @@ public class InterneAPI {
     private final SkylliaSchematicHookResolver schematicHookResolver;
     // Hook brigdes
     private final SpawnHook spawnHook;
+    private final PermissionHook permissionHook;
     // World tools
     private WorldModifier worldModifier;
     // IslandQuery : lazy (DB must be initialized first)
@@ -82,6 +85,9 @@ public class InterneAPI {
         this.spawnHook = Bukkit.getPluginManager().getPlugin("Essentials") != null &&
                 Bukkit.getPluginManager().getPlugin("EssentialsSpawn") != null ?
                 new EssentialsSpawnHook() : null;
+
+        this.permissionHook = Bukkit.getPluginManager().getPlugin("LuckPerms") != null ?
+                new LuckPermsHook(plugin) : null;
 
         loadAPI();
     }
@@ -249,6 +255,10 @@ public class InterneAPI {
 
     public @NotNull SchematicHook getSchematicHook(@NotNull fr.euphyllia.skyllia.api.skyblock.model.SchematicPlugin requested) {
         return this.schematicHookResolver.resolve(requested);
+    }
+
+    public @Nullable PermissionHook getPermissionHook() {
+        return this.permissionHook;
     }
 
     public void initWorldModifier() {

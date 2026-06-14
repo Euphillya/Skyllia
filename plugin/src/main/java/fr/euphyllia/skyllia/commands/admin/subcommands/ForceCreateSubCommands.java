@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.*;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.IslandUtils;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,7 @@ public class ForceCreateSubCommands implements SubCommandInterface {
 
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.create")) {
+        if (!PlayerUtils.hasPermission(sender, "skyllia.admins.commands.island.create")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return;
         }
@@ -200,7 +201,7 @@ public class ForceCreateSubCommands implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.create")) {
+        if (!PlayerUtils.hasPermission(sender, "skyllia.admins.commands.island.create")) {
             return Collections.emptyList();
         }
 

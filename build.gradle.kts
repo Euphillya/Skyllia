@@ -31,6 +31,7 @@ dependencies {
     implementation(project(":hook:canvas"))
     implementation(project(":hook:luminol"))
     implementation(project(":hook:essentialsx"))
+    implementation(project(":hook:luckperms"))
 
     // NMS Version
     implementation(project(":nms:v1_20_R4"))

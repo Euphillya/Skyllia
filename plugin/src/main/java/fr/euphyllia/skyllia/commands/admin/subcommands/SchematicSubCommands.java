@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.commands.admin.subcommands;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.SchematicUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,7 +35,7 @@ public class SchematicSubCommands implements SubCommandInterface {
      */
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.schematic")) {
+        if (!PlayerUtils.hasPermission(sender, "skyllia.admins.commands.island.schematic")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return;
         }

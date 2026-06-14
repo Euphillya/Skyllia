@@ -228,7 +228,7 @@ public class DeleteSubCommand implements SubCommandInterface {
         for (WorldConfig worldConfig : WorldUtils.getWorldConfigs()) {
             RegionUtils.getEntitiesInRegion(Skyllia.getInstance(), ConfigLoader.general.getIslandSettings().regionDistance(), EntityType.PLAYER, worldConfig.getWorld(), island.getPosition(), island.getSize(), entity -> {
                 Player playerInIsland = (Player) entity;
-                if (entity.hasPermission("skyllia.island.command.access.bypass")) return;
+                if (PlayerUtils.hasPermission(playerInIsland, "skyllia.island.command.access.bypass")) return;
                 PlayerUtils.teleportPlayerSpawn(playerInIsland);
             });
         }

@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skylliabackup.SkylliaBackup;
 import fr.euphyllia.skylliabackup.configuration.BackupConfigLoader;
 import org.bukkit.Bukkit;
@@ -28,7 +29,7 @@ public class BackupAdminCommand implements SubCommandInterface {
 
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
-        if (!sender.hasPermission(permission())) {
+        if (!PlayerUtils.hasPermission(sender, permission())) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return;
         }
@@ -88,7 +89,7 @@ public class BackupAdminCommand implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NonNull @NotNull String[] args) {
-        if (!sender.hasPermission(permission())) return List.of();
+        if (!PlayerUtils.hasPermission(sender, permission())) return List.of();
         if (args.length == 1) {
             String partial = args[0].toLowerCase();
             List<String> suggestions = new ArrayList<>();

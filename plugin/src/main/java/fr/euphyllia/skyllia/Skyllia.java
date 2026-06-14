@@ -175,15 +175,15 @@ public class Skyllia extends JavaPlugin {
 
     private void printStartupBanner() {
         final String VIOLET = "§d";
-        final String GRAY   = "§7";
-        final String WHITE  = "§f";
-        final String SEP    = VIOLET + "━".repeat(50);
+        final String GRAY = "§7";
+        final String WHITE = "§f";
+        final String SEP = VIOLET + "━".repeat(50);
 
         String[][] info = {
-                {"Version",      getPluginMeta().getVersion()},
-                {"Server",       Bukkit.getName() + WHITE + " (" + VIOLET + Bukkit.getVersion() + WHITE + ")"},
+                {"Version", getPluginMeta().getVersion()},
+                {"Server", Bukkit.getName() + WHITE + " (" + VIOLET + Bukkit.getVersion() + WHITE + ")"},
                 {"Thread Model", SkylliaAPI.isFolia() ? "Multi" : "Single"},
-                {"CPU Cores",    String.valueOf(Runtime.getRuntime().availableProcessors())},
+                {"CPU Cores", String.valueOf(Runtime.getRuntime().availableProcessors())},
         };
 
         List<String> lines = new ArrayList<>();

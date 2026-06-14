@@ -2,6 +2,7 @@ package fr.euphyllia.skylliachat.commands;
 
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skylliachat.SkylliaChat;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class IslandChatCommand implements SubCommandInterface {
             ConfigLoader.language.sendMessage(sender, "island.player.player-only-command");
             return;
         }
-        if (!sender.hasPermission("skylliachat.use")) {
+        if (!PlayerUtils.hasPermission(player, "skylliachat.use")) {
             ConfigLoader.language.sendMessage(player, "addons.chat.no-permission");
             return;
         }

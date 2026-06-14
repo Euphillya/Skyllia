@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.permissions.modules.PermissionModule;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -45,7 +46,7 @@ public class DecorHangingBreakPermissions implements PermissionModule {
         final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
-        final boolean hasBypass = player.hasPermission("skyllia.player.decor.hanging.break.bypass");
+        final boolean hasBypass = PlayerUtils.hasPermission(player, "skyllia.player.decor.hanging.break.bypass");
         final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager()
                 .hasPermission(player, island, DECOR_HANGING_BREAK, null, ConfigLoader.general.getDebugSettings().permission());
         if (!hasPermission) {

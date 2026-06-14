@@ -355,7 +355,6 @@ public class SkyblockManager {
     }
 
 
-
     /**
      * Retrieves the island owned by a specific player.
      *

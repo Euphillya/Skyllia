@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEv
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,7 +110,7 @@ public class PortalTeleportListener implements Listener {
     }
 
     private void applyWorldBorder(Player player, Location center, double size) {
-        if (player.hasPermission("skyllia.island.worldborder.bypass")) return;
+        if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) return;
         WorldBorder border = player.getWorldBorder();
         if (border == null) {
             border = Bukkit.createWorldBorder();

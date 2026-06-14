@@ -3,14 +3,18 @@ package fr.euphyllia.skyllia.utils;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.event.players.PlayerTeleportSpawnEvent;
+import fr.euphyllia.skyllia.api.hooks.PermissionHook;
 import fr.euphyllia.skyllia.api.hooks.SpawnHook;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class PlayerUtils {
@@ -48,8 +52,25 @@ public class PlayerUtils {
     }
 
     public static boolean hasPermission(Player player, String key) {
-        var result = player.hasPermission(key);
+        PermissionHook hook = Skyllia.getInstance().getInterneAPI().getPermissionHook();
 
+        boolean result = (hook != null && hook.isAvailable())
+                ? hook.hasPermission(player, key)
+                : player.hasPermission(key);
+
+        return logPermission(player.getName(), player.locale(), key, result);
+    }
+
+    public static boolean hasPermission(CommandSender sender, String key) {
+        if (sender instanceof Player player) {
+            return hasPermission(player, key);
+        }
+
+        boolean result = sender.hasPermission(key);
+        return logPermission(sender.getName(), Locale.ENGLISH, key, result);
+    }
+
+    private static boolean logPermission(String name, @Nullable Locale locale, String key, boolean result) {
         if (!ConfigLoader.general.getDebugSettings().permission())
             return result;
 
@@ -58,19 +79,19 @@ public class PlayerUtils {
                 : "debug.permission-missing";
 
         Map<String, String> placeholders = Map.of(
-                "%player%", player.getName(),
+                "%player%", name,
                 "%permission%", key
         );
 
         Component message = ConfigLoader.language.translate(
-                player.locale(),
+                locale,
                 translationKey,
                 placeholders,
                 false
         );
 
         Bukkit.getConsoleSender().sendMessage(message);
-
         return result;
     }
+
 }

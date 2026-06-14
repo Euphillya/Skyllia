@@ -169,7 +169,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
             String partial = args[0].trim().toLowerCase();
 
             return biomeNameList.stream()
-                    .filter(biome -> sender.hasPermission("skyllia.island.command.biome.%s".formatted(biome)))
+                    .filter(biome -> PlayerUtils.hasPermission(sender, "skyllia.island.command.biome.%s".formatted(biome)))
                     .filter(biome -> biome.toLowerCase().startsWith(partial))
                     .toList();
         }
@@ -179,7 +179,7 @@ public class SetBiomeSubCommand implements SubCommandInterface {
 
             List<String> options = new ArrayList<>();
             options.add("chunk");
-            if (sender.hasPermission("skyllia.island.command.biome_island")) {
+            if (PlayerUtils.hasPermission(sender, "skyllia.island.command.biome_island")) {
                 options.add("island");
             }
 

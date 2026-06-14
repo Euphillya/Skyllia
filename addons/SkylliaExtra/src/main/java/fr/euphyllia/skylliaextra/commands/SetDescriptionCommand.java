@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skylliaextra.SkylliaExtra;
 import fr.euphyllia.skylliaextra.utils.Keys;
 import org.bukkit.NamespacedKey;
@@ -35,7 +36,7 @@ public class SetDescriptionCommand implements SubCommandInterface {
 
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission(permission())) {
+        if (!PlayerUtils.hasPermission(sender, permission())) {
             ConfigLoader.language.sendMessage(sender, "addons.skylliaextra.player.setdescription.no-permission");
             return;
         }

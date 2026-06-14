@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +28,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
 
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
+        if (!PlayerUtils.hasPermission(sender, "skyllia.admins.commands.island.transfer")) {
             ConfigLoader.language.sendMessage(sender, "island.player.permission-denied");
             return;
         }
@@ -108,7 +109,7 @@ public class ForceTransferSubCommands implements SubCommandInterface {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.admins.commands.island.transfer")) {
+        if (!PlayerUtils.hasPermission(sender, "skyllia.admins.commands.island.transfer")) {
             return Collections.emptyList();
         }
 

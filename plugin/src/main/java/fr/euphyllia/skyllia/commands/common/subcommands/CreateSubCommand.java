@@ -163,7 +163,7 @@ public class CreateSubCommand implements SubCommandInterface {
                                         .thenRun(() -> {
                                             player.setVelocity(new Vector(0, 0, 0));
                                             player.setFallDistance(0);
-                                            if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                                            if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
                                                 return;
                                             }
                                             WorldBorder border = player.getWorldBorder();
@@ -219,7 +219,7 @@ public class CreateSubCommand implements SubCommandInterface {
 
             List<String> list = new ArrayList<>();
             for (String schem : nameSchem) {
-                if (sender.hasPermission("skyllia.island.command.create.%s".formatted(schem))) {
+                if (PlayerUtils.hasPermission(sender, "skyllia.island.command.create.%s".formatted(schem))) {
                     if (schem.toLowerCase().startsWith(partial)) {
                         list.add(schem);
                     }

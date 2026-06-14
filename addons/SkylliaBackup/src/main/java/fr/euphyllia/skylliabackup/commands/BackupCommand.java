@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skylliabackup.SkylliaBackup;
 import fr.euphyllia.skylliabackup.configuration.BackupConfigLoader;
 import org.bukkit.Bukkit;
@@ -33,7 +34,7 @@ public class BackupCommand implements SubCommandInterface {
             return;
         }
 
-        if (!player.hasPermission(permission())) {
+        if (!PlayerUtils.hasPermission(player, permission())) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
             return;
         }

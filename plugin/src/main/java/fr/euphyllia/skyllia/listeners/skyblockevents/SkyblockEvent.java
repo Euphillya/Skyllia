@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skyllia.utils.WorldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +46,7 @@ public class SkyblockEvent implements Listener {
                     entity -> {
                         Player player = (Player) entity;
 
-                        if (player.hasPermission("skyllia.island.worldborder.bypass")) {
+                        if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
                             return;
                         }
 

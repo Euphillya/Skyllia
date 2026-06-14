@@ -7,7 +7,6 @@ import fr.euphyllia.skyllia.api.addons.skylliaacidrain.event.EntityDamageAcidEve
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliaacidrain.SkylliaAcidRain;
 import fr.euphyllia.skylliaacidrain.configuration.AcidConfigLoader;
-import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;

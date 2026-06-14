@@ -1,16 +1,18 @@
 # SkylliaBackup
 
-**SkylliaBackup** is an addon for the [Skyllia](https://github.com/Euphyllia/Skyllia) skyblock plugin. It allows automatic and on-demand backups of skyblock islands: each backup packages the relevant Minecraft region files (`.mca`) into a ZIP archive, with optional rotation and HTTP upload support.
+**SkylliaBackup** is an addon for the [Skyllia](https://github.com/Euphyllia/Skyllia) skyblock plugin. It allows
+automatic and on-demand backups of skyblock islands: each backup packages the relevant Minecraft region files (`.mca`)
+into a ZIP archive, with optional rotation and HTTP upload support.
 
 ---
 
 ## Requirements
 
-| Dependency    | Version   |
-|---------------|-----------|
-| Paper / Folia | 1.20.6+   |
-| Java          | 21+       |
-| Skyllia       | Latest    |
+| Dependency    | Version |
+|---------------|---------|
+| Paper / Folia | 1.20.6+ |
+| Java          | 21+     |
+| Skyllia       | Latest  |
 
 ---
 
@@ -48,7 +50,8 @@ When a backup is triggered (by a player or an admin), the following steps occur:
 
 ### Backup Rotation
 
-Old backups are automatically pruned when the number of ZIPs in an island's folder exceeds `max-per-island`. The oldest files (by last-modified date) are deleted first.
+Old backups are automatically pruned when the number of ZIPs in an island's folder exceeds `max-per-island`. The oldest
+files (by last-modified date) are deleted first.
 
 ### Upload
 
@@ -73,9 +76,9 @@ An `Authorization: Bearer <token>` header is added when `upload.token` is set.
 
 Creates a backup of the player's own island. Subject to cooldown.
 
-| Permission            | Description                  |
-|-----------------------|------------------------------|
-| `skyllia.island.backup` | Allows using `/is backup`  |
+| Permission              | Description               |
+|-------------------------|---------------------------|
+| `skyllia.island.backup` | Allows using `/is backup` |
 
 ### Admin Command
 
@@ -86,9 +89,9 @@ Creates a backup of the player's own island. Subject to cooldown.
 - `<player>` — backs up the specified player's island immediately.
 - `all` — backs up every active island on the server.
 
-| Permission                        | Description                      |
-|-----------------------------------|----------------------------------|
-| `skyllia.admins.commands.backup`  | Allows using `/isadmin backup`   |
+| Permission                       | Description                    |
+|----------------------------------|--------------------------------|
+| `skyllia.admins.commands.backup` | Allows using `/isadmin backup` |
 
 ---
 

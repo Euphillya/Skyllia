@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skyllia.utils.PlayerUtils;
 import fr.euphyllia.skylliabank.EconomyManager;
 import fr.euphyllia.skylliabank.SkylliaBank;
 import fr.euphyllia.skylliabank.api.BankAccount;
@@ -228,7 +229,7 @@ public class BankAdminCommand implements SubCommandInterface {
 
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
-        if (!sender.hasPermission("skyllia.bank.admin")) {
+        if (!PlayerUtils.hasPermission(sender, "skyllia.bank.admin")) {
             ConfigLoader.language.sendMessage(sender, "addons.bank.no-permissions");
             return;
         }
