@@ -22,21 +22,24 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OreEvent implements Listener {
 
     private static final Logger log = LoggerFactory.getLogger(OreEvent.class);
+
     private static final boolean isOraxenLoaded = SkylliaOre.isOraxenLoaded();
     private static final boolean isNexoLoaded = SkylliaOre.isNexoLoaded();
     private static final boolean isCraftEngineLoaded = SkylliaOre.isCraftEngineLoaded();
+
     private static final ConcurrentHashMap<String, BlockData> blockDataCache = new ConcurrentHashMap<>();
+    private static final BlockData defaultBlockData = Material.COBBLESTONE.createBlockData();
 
     @EventHandler
     public void onBlockForm(final BlockFormEvent event) {
         if (event.isCancelled()) return;
+
         Block block = event.getBlock();
         Location location = block.getLocation();
         World world = location.getWorld();
@@ -62,45 +65,13 @@ public class OreEvent implements Listener {
         if (optimized.getGenerator().worlds().contains(worldName)) {
             String blockName = blockType.name().toLowerCase();
             if (optimized.getGenerator().replaceBlocks().contains(blockName)) {
-                String selectedBlockKey = getBlockKeyByChance(optimized);
-                Location location = event.getBlock().getLocation();
-                
-                // Check if it's a CraftEngine block
-                if ((selectedBlockKey.startsWith("craftengine:") || (selectedBlockKey.contains(":") && !selectedBlockKey.startsWith("minecraft:") && !selectedBlockKey.startsWith("oraxen:") && !selectedBlockKey.startsWith("nexo:"))) && isCraftEngineLoaded) {
-                    // For CraftEngine blocks, let the event complete first, then place the custom block
-                    // We need to let the base block (cobblestone/obsidian) form first
-                    org.bukkit.Bukkit.getRegionScheduler().run(SkylliaOre.getInstance(), location, (task) -> {
-                        CraftEngineHook.placeBlock(location, selectedBlockKey);
-                    });
-                } else {
-                    // For vanilla/Oraxen/Nexo blocks, modify the event directly
-                    BlockData blockData = getCachedBlockData(selectedBlockKey);
-                    event.getNewState().setBlockData(blockData);
-                }
+                BlockData blockByChance = getBlockByChance(optimized);
+                event.getNewState().setBlockData(blockByChance);
             }
         }
     }
 
-    /**
-     * Try to place a custom block (CraftEngine) at the location
-     * @param location The location to place the block
-     * @param blockKey The block key
-     * @return true if the block was handled as a custom block, false otherwise
-     */
-    private boolean placeCustomBlock(Location location, String blockKey) {
-        // Check if it's a CraftEngine block
-        if ((blockKey.startsWith("craftengine:") || (blockKey.contains(":") && !blockKey.startsWith("minecraft:") && !blockKey.startsWith("oraxen:") && !blockKey.startsWith("nexo:"))) && isCraftEngineLoaded) {
-            // Place CraftEngine block directly (we're already on the region thread from the event)
-            return CraftEngineHook.placeBlock(location, blockKey);
-        }
-        return false;
-    }
-
-    private Generator getGeneratorSync(UUID islandId) {
-        return SkylliaOre.getCachedGenerator(islandId);
-    }
-
-    private String getBlockKeyByChance(OptimizedGenerator optimizedGenerator) {
+    private BlockData getBlockByChance(OptimizedGenerator optimizedGenerator) {
         double randomChance = ThreadLocalRandom.current().nextDouble() * optimizedGenerator.getTotalChance();
         List<OptimizedGenerator.BlockProbability> cumulativeProbabilities = optimizedGenerator.getCumulativeProbabilities();
 
@@ -112,38 +83,34 @@ public class OreEvent implements Listener {
         }
 
         if (index >= 0 && index < cumulativeProbabilities.size()) {
-            return cumulativeProbabilities.get(index).blockKey();
+            return getCachedBlockData(cumulativeProbabilities.get(index).blockKey());
         }
 
-        return "cobblestone";
-    }
-
-    private BlockData getBlockByChance(OptimizedGenerator optimizedGenerator) {
-        return getCachedBlockData(getBlockKeyByChance(optimizedGenerator));
+        return defaultBlockData;
     }
 
     private BlockData getCachedBlockData(String key) {
         return blockDataCache.computeIfAbsent(key, k -> {
             try {
                 if (k.startsWith("oraxen:") && isOraxenLoaded) {
-                    String oraxenBlock = k.substring("oraxen:".length());
-                    BlockData data = OraxenHook.getBlockData(oraxenBlock);
+                    BlockData data = OraxenHook.getBlockData(k.substring("oraxen:".length()));
                     if (data != null) return data;
                 } else if (k.startsWith("nexo:") && isNexoLoaded) {
-                    String nexoBlock = k.substring("nexo:".length());
-                    BlockData data = NexoHook.getBlockData(nexoBlock);
+                    BlockData data = NexoHook.getBlockData(k.substring("nexo:".length()));
+                    if (data != null) return data;
+                } else if (key.startsWith("craftengine:") && isCraftEngineLoaded) {
+                    BlockData data = CraftEngineHook.getBlockData(k);
                     if (data != null) return data;
                 } else if (k.contains(":") && !k.startsWith("minecraft:")) {
-                    // Unknown custom block - CraftEngine blocks are handled separately
-                    log.warn("{} appears to be a custom block but no plugin is loaded to handle it", k);
-                    return Material.COBBLESTONE.createBlockData();
+                    log.warn("'{}' looks like a custom block but no matching plugin is loaded", k);
+                    return defaultBlockData;
                 }
-                // Try vanilla Minecraft material
+
                 String materialName = k.startsWith("minecraft:") ? k.substring("minecraft:".length()) : k;
                 return Material.valueOf(materialName.toUpperCase()).createBlockData();
             } catch (IllegalArgumentException e) {
-                log.error("{} is not a valid block in Minecraft, Oraxen or Nexo", k, e);
-                return Material.COBBLESTONE.createBlockData();
+                log.error("'{}' is not a valid block (Minecraft / Oraxen / Nexo / CraftEngine)", k, e);
+                return defaultBlockData;
             }
         });
     }
