@@ -30,6 +30,7 @@ public final class SkylliaOre extends JavaPlugin {
 
     private static boolean oraxenLoaded = false;
     private static boolean nexoLoaded = false;
+    private static boolean craftEngineLoaded = false;
     private static SkylliaOre instance;
     private static DefaultConfig config;
     private static GeneratorManager generatorManager;
@@ -51,6 +52,10 @@ public final class SkylliaOre extends JavaPlugin {
 
     public static boolean isNexoLoaded() {
         return nexoLoaded;
+    }
+
+    public static boolean isCraftEngineLoaded() {
+        return craftEngineLoaded;
     }
 
     public static SkylliaOre getInstance() {
@@ -90,6 +95,7 @@ public final class SkylliaOre extends JavaPlugin {
         instance = this;
         oraxenLoaded = Bukkit.getPluginManager().getPlugin("Oraxen") != null;
         nexoLoaded = Bukkit.getPluginManager().getPlugin("Nexo") != null;
+        craftEngineLoaded = Bukkit.getPluginManager().getPlugin("CraftEngine") != null;
         // Plugin startup logic
         initializeConfig();
 

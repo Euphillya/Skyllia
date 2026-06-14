@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skylliaore.SkylliaOre;
 import fr.euphyllia.skylliaore.api.Generator;
+import fr.euphyllia.skylliaore.hook.CraftEngineHook;
 import fr.euphyllia.skylliaore.hook.NexoHook;
 import fr.euphyllia.skylliaore.hook.OraxenHook;
 import fr.euphyllia.skylliaore.utils.OptimizedGenerator;
@@ -30,6 +31,7 @@ public class OreEvent implements Listener {
     private static final Logger log = LoggerFactory.getLogger(OreEvent.class);
     private static final boolean isOraxenLoaded = SkylliaOre.isOraxenLoaded();
     private static final boolean isNexoLoaded = SkylliaOre.isNexoLoaded();
+    private static final boolean isCraftEngineLoaded = SkylliaOre.isCraftEngineLoaded();
     private static final ConcurrentHashMap<String, BlockData> blockDataCache = new ConcurrentHashMap<>();
 
     @EventHandler
@@ -99,10 +101,17 @@ public class OreEvent implements Listener {
                     String nexoBlock = k.substring("nexo:".length());
                     BlockData data = NexoHook.getBlockData(nexoBlock);
                     if (data != null) return data;
+                } else if (k.startsWith("craftengine:") && isCraftEngineLoaded) {
+                    BlockData data = CraftEngineHook.getBlockData(k);
+                    if (data != null) return data;
+                } else if (k.contains(":") && isCraftEngineLoaded) {
+                    // Try to handle other namespaced blocks as CraftEngine blocks
+                    BlockData data = CraftEngineHook.getBlockData(k);
+                    if (data != null) return data;
                 }
                 return Material.valueOf(k.toUpperCase()).createBlockData();
             } catch (Exception e) {
-                log.error("{} is not a valid block in Minecraft, Oraxen or Nexo", k, e);
+                log.error("{} is not a valid block in Minecraft, Oraxen, Nexo or CraftEngine", k, e);
                 return Material.COBBLESTONE.createBlockData();
             }
         });
