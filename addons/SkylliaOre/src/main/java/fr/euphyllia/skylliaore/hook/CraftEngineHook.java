@@ -1,13 +1,13 @@
 package fr.euphyllia.skylliaore.hook;
 
+import net.momirealms.craftengine.bukkit.api.BukkitAdaptor;
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
-import net.momirealms.craftengine.bukkit.api.CraftEngineWorlds;
+import net.momirealms.craftengine.bukkit.world.BukkitWorld;
 import net.momirealms.craftengine.core.block.BlockDefinition;
 import net.momirealms.craftengine.core.block.BlockStateWrapper;
 import net.momirealms.craftengine.core.block.ImmutableBlockState;
 import net.momirealms.craftengine.core.block.UpdateFlags;
 import net.momirealms.craftengine.core.util.Key;
-import net.momirealms.craftengine.core.world.World;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -74,8 +74,8 @@ public class CraftEngineHook {
                 return false;
             }
 
-            // Get CraftEngine world wrapper
-            World ceWorld = CraftEngineWorlds.adapt(location.getWorld());
+            // Get CraftEngine world wrapper using BukkitAdaptor
+            BukkitWorld ceWorld = BukkitAdaptor.adapt(location.getWorld());
             if (ceWorld == null) {
                 logger.error("Failed to adapt Bukkit world to CraftEngine world");
                 return false;
