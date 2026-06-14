@@ -65,9 +65,15 @@ public class OreEvent implements Listener {
                 String selectedBlockKey = getBlockKeyByChance(optimized);
                 Location location = event.getBlock().getLocation();
                 
-                // Handle block placement based on type
-                if (!placeCustomBlock(location, selectedBlockKey)) {
-                    // Fallback to BlockData method for vanilla/Oraxen/Nexo blocks
+                // Check if it's a CraftEngine block
+                if ((selectedBlockKey.startsWith("craftengine:") || (selectedBlockKey.contains(":") && !selectedBlockKey.startsWith("minecraft:") && !selectedBlockKey.startsWith("oraxen:") && !selectedBlockKey.startsWith("nexo:"))) && isCraftEngineLoaded) {
+                    // For CraftEngine blocks, let the event complete first, then place the custom block
+                    // We need to let the base block (cobblestone/obsidian) form first
+                    org.bukkit.Bukkit.getRegionScheduler().run(SkylliaOre.getInstance(), location, (task) -> {
+                        CraftEngineHook.placeBlock(location, selectedBlockKey);
+                    });
+                } else {
+                    // For vanilla/Oraxen/Nexo blocks, modify the event directly
                     BlockData blockData = getCachedBlockData(selectedBlockKey);
                     event.getNewState().setBlockData(blockData);
                 }
