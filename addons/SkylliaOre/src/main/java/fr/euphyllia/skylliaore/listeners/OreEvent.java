@@ -98,11 +98,15 @@ public class OreEvent implements Listener {
                 } else if (k.startsWith("nexo:") && isNexoLoaded) {
                     BlockData data = NexoHook.getBlockData(k.substring("nexo:".length()));
                     if (data != null) return data;
-                } else if (key.startsWith("craftengine:") && isCraftEngineLoaded) {
-                    BlockData data = CraftEngineHook.getBlockData(k);
+                } else if (k.startsWith("craftengine:") && isCraftEngineLoaded) {
+                    // "craftengine:ore:bcop2" -> "ore:bcop2"
+                    String ceKey = k.substring("craftengine:".length());
+                    BlockData data = CraftEngineHook.getBlockData(ceKey);
                     if (data != null) return data;
+                    log.warn("CraftEngine block not found: '{}'", ceKey);
+                    return defaultBlockData;
                 } else if (k.contains(":") && !k.startsWith("minecraft:")) {
-                    log.warn("'{}' looks like a custom block but no matching plugin is loaded", k);
+                    log.warn("'{}' is namespaced but has no provider marker (use oraxen:/nexo:/craftengine:)", k);
                     return defaultBlockData;
                 }
 
