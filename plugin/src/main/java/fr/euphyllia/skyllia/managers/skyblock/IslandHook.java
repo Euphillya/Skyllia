@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.managers.skyblock;
 
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.event.SkyblockChangeSizeEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockCreateWarpEvent;
 import fr.euphyllia.skyllia.api.event.SkyblockDeleteEvent;
@@ -42,7 +43,7 @@ public class IslandHook extends Island {
     private final Skyllia plugin;
     private final UUID islandId;
     private final Timestamp createDate;
-    private final Position position;
+    private final RegionCoordinate regionCoordinate;
     private final int maxMemberInIsland;
     private final Map<World, Location> islandCenterLocations;
     private final ConcurrentHashMap<String, Integer> buildMinHeightCache = new ConcurrentHashMap<>();
@@ -63,13 +64,13 @@ public class IslandHook extends Island {
      */
     public IslandHook(UUID islandId,
                       int maxMembers,
-                      Position position,
+                      RegionCoordinate position,
                       double size,
                       Timestamp date) {
         this.plugin = Skyllia.getInstance();
         this.islandId = islandId;
         this.createDate = date;
-        this.position = position;
+        this.regionCoordinate = regionCoordinate;
         this.maxMemberInIsland = maxMembers;
         this.islandSize = size;
         this.islandCenterLocations = new ConcurrentHashMap<>();
@@ -254,12 +255,9 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Position getPosition() {
-        return this.position;
+    public RegionCoordinate getRegionCoordinate() {
+        return this.regionCoordinate;
     }
 
     /**
@@ -358,7 +356,7 @@ public class IslandHook extends Island {
         Location location = islandCenterLocations.get(world);
         if (location != null) return location;
 
-        Location fallback = RegionHelper.getCenterRegion(world, this.position.x(), this.position.z());
+        Location fallback = RegionHelper.getCenterRegion(world, regionCoordinate.x(), regionCoordinate.z());
         fallback.setY(64.0);
         setCenterLocation(fallback);
         return fallback;

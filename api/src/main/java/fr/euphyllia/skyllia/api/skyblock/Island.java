@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.api.skyblock;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.permissions.IslandFlags;
@@ -203,11 +204,34 @@ public abstract class Island {
     public abstract boolean updateMember(Players member);
 
     /**
-     * Gets the position (region-based) of the island.
+     * Gets the region coordinate of the island.
      *
-     * @return A {@link Position} object representing the island's coordinates.
+     * @return The island's region coordinate.
+     *
+     * @since 3.x
      */
-    public abstract Position getPosition();
+    public abstract RegionCoordinate getRegionCoordinate();
+
+    /**
+     * Gets the region coordinate of the island.
+     * <p>
+     * This method is deprecated because {@link Position} was historically
+     * used for multiple coordinate types (regions, chunks, etc.), making
+     * its purpose ambiguous.
+     * </p>
+     * <p>
+     * Use {@link #getRegionCoordinate()} instead.
+     * </p>
+     *
+     * @return The island's region coordinate.
+     *
+     * @deprecated since 3.x, replaced by {@link #getRegionCoordinate()}.
+     */
+    @Deprecated(forRemoval = false, since = "3.x")
+    public Position getPosition() {
+        RegionCoordinate coordinate = getRegionCoordinate();
+        return new Position(coordinate.x(), coordinate.z());
+    }
 
     /**
      * Gets the maximum number of members allowed on the island.

@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.database.sqlite;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandDataQuery;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -291,7 +292,7 @@ public class SQLiteIslandData extends IslandDataQuery {
 
         Timestamp timestamp = parseSqliteTimestamp(rs.getString("create_time"));
 
-        Position position = new Position(regionX, regionZ);
-        return new IslandHook(UUID.fromString(islandId), maxMembers, position, size, timestamp);
+        RegionCoordinate regionCoordinate = new RegionCoordinate(regionX, regionZ);
+        return new IslandHook(UUID.fromString(islandId), maxMembers, regionCoordinate, size, timestamp);
     }
 }

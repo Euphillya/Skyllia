@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.database.postgresql;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandDataQuery;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -248,7 +249,7 @@ public class PostgreSQLIslandData extends IslandDataQuery {
         double size = resultSet.getDouble("size");
         Timestamp timestamp = resultSet.getTimestamp("create_time");
 
-        Position position = new Position(regionX, regionZ);
-        return new IslandHook(islandId, maxMembers, position, size, timestamp);
+        RegionCoordinate regionCoordinate = new RegionCoordinate(regionX, regionZ);
+        return new IslandHook(islandId, maxMembers, regionCoordinate, size, timestamp);
     }
 }
