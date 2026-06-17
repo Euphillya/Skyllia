@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -358,7 +359,8 @@ public class SkyblockManager {
     /**
      * @deprecated Use {@link #getIslandByRegion(RegionCoordinate)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public @Nullable Island getIslandByRegion(Position position) {
         if (position == null) return null;
         return getIslandByRegion(position.x(), position.z());

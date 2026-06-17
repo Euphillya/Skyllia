@@ -56,7 +56,7 @@ public class InfoSubCommand implements SubCommandInterface {
             return;
         }
 
-        Location center = RegionHelper.getCenterRegion(null, island.getPosition().x(), island.getPosition().z());
+        Location center = RegionHelper.getCenterRegion(null, island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
         Timestamp createdAt = island.getCreateDate();
         double size = island.getSize();
         int maxMembers = island.getMaxMembers();

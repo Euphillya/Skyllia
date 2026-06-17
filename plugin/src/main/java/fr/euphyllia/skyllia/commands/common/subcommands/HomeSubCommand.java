@@ -51,8 +51,8 @@ public class HomeSubCommand implements SubCommandInterface {
             double rayon = island.getSize();
             Location center = RegionHelper.getCenterRegion(
                     Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()),
-                    island.getPosition().x(),
-                    island.getPosition().z()
+                    island.getRegionCoordinate().x(),
+                    island.getRegionCoordinate().z()
             );
 
             Location loc;

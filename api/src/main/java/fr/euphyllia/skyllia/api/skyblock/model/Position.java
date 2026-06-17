@@ -1,5 +1,7 @@
 package fr.euphyllia.skyllia.api.skyblock.model;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * Represents a generic two-dimensional position.
  * <p>
@@ -19,6 +21,7 @@ package fr.euphyllia.skyllia.api.skyblock.model;
  * {@link fr.euphyllia.skyllia.api.coordinate.RegionCoordinate}
  * to provide explicit coordinate types.
  */
-@Deprecated(forRemoval = false, since = "3.x")
+@Deprecated(forRemoval = true, since = "3.x")
+@ApiStatus.ScheduledForRemoval(inVersion = "4.x")
 public record Position(int x, int z) {
 }

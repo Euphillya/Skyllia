@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -141,7 +142,8 @@ public class RegionUtils {
      * @param callbackEntity A callback that will be invoked for each matching {@link Entity}.
      * @deprecated Use {@link #getEntitiesInRegion(JavaPlugin, int, EntityType, World, RegionCoordinate, double, CallbackEntity)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static void getEntitiesInRegion(JavaPlugin plugin,
                                            int regionDistance,
                                            EntityType entityType,
@@ -205,7 +207,8 @@ public class RegionUtils {
      * @param callbackChunkPosition A callback invoked with each chunk position.
      * @deprecated Use {@link #spiralTraverseAroundRegion(int, RegionCoordinate, double, Consumer)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static void spiralTraverseAroundRegion(int regionDistance, Position islandRegion, double size,
                                                   CallBackPosition callbackChunkPosition) {
         spiralTraverseAroundRegion(regionDistance, new RegionCoordinate(islandRegion.x(), islandRegion.z()), size,
@@ -262,7 +265,8 @@ public class RegionUtils {
      * @param callbackChunkPosition Callback to process each chunk position.
      * @deprecated Use {@link #spiralStartCenter(RegionCoordinate, int, double, Consumer)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static void spiralStartCenter(Position islandRegion, int regionDistance, double size,
                                          CallBackPosition callbackChunkPosition) {
         spiralStartCenter(new RegionCoordinate(islandRegion.x(), islandRegion.z()), regionDistance, size,

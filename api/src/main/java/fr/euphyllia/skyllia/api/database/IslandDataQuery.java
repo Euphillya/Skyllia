@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Location;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -51,7 +52,8 @@ public abstract class IslandDataQuery {
      * @return The island, or {@code null} if not found.
      * @deprecated Use {@link #getIslandByRegion(RegionCoordinate)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public @Nullable Island getIslandByPosition(Position position) {
         if (position == null) return null;
         return getIslandByRegion(new RegionCoordinate(position.x(), position.z()));

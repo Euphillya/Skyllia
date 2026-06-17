@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.permissions.*;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.UUID;
 
@@ -16,11 +17,10 @@ public abstract class IslandPermissionQuery {
      * Returns {@code null} if no flags are stored yet (caller will use an empty {@link IslandFlags}).
      */
     @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public IslandFlags loadIslandFlags(UUID islandId, IslandFlagRegistry registry) {
         return this.loadIslandFlags(islandId, registry, SkylliaAPI.getRegisteredWorlds().getFirst().getWorldName());
     }
-
-    ;
 
     public abstract IslandFlags loadIslandFlags(UUID islandId, IslandFlagRegistry registry, String worldName);
 
@@ -28,6 +28,7 @@ public abstract class IslandPermissionQuery {
      * Persist the full flag bitset for an island.
      */
     @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public boolean saveIslandFlags(UUID islandId, byte[] wordsBlob) {
         for (String world : SkylliaAPI.getRegisteredWorlds().stream().map(WorldConfig::getWorldName).toList()) {
             if (!saveIslandFlags(islandId, wordsBlob, world)) {

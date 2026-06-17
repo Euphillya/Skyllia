@@ -74,7 +74,7 @@ public class AccessSubCommand implements SubCommandInterface {
                             ConfigLoader.general.getIslandSettings().regionDistance(),
                             EntityType.PLAYER,
                             worldConfig.getWorld(),
-                            island.getPosition(),
+                            island.getRegionCoordinate(),
                             island.getSize(),
                             entity -> {
                                 Player playerInIsland = (Player) entity;

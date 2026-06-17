@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -66,8 +67,8 @@ public class SetVisitSubCommand implements SubCommandInterface {
             int regionLocX = playerLocation.getChunk().getX();
             int regionLocZ = playerLocation.getChunk().getZ();
 
-            Position islandPosition = island.getPosition();
-            Position playerRegionPosition = RegionHelper.getRegionFromChunk(regionLocX, regionLocZ);
+            RegionCoordinate islandPosition = island.getRegionCoordinate();
+            RegionCoordinate playerRegionPosition = RegionHelper.getRegionCoordinateFromChunk(regionLocX, regionLocZ);
 
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");

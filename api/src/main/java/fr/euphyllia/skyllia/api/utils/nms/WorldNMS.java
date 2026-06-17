@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import org.bukkit.*;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +55,8 @@ public abstract class WorldNMS {
      * @param position   The position of the chunk to reset.
      * @deprecated Use {@link #resetChunk(World, ChunkCoordinate)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public void resetChunk(World craftWorld, Position position) {
         resetChunk(craftWorld, new ChunkCoordinate(position.x(), position.z()));
     }

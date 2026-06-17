@@ -11,6 +11,7 @@ import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -225,7 +226,8 @@ public abstract class Island {
      * @return The island's region coordinate.
      * @deprecated since 3.x, replaced by {@link #getRegionCoordinate()}.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public Position getPosition() {
         RegionCoordinate coordinate = getRegionCoordinate();
         return new Position(coordinate.x(), coordinate.z());
@@ -273,6 +275,7 @@ public abstract class Island {
      * @deprecated Use {@link #getIslandFlags(String)} instead.
      */
     @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public IslandFlags getIslandFlags() {
         List<WorldConfig> worlds = SkylliaAPI.getRegisteredWorlds();
         if (worlds.isEmpty()) return new IslandFlags(SkylliaAPI.getFlagRegistry());
@@ -283,6 +286,7 @@ public abstract class Island {
      * @deprecated Use {@link #invalidateIslandFlags(String)} instead.
      */
     @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public void invalidateIslandFlags() {
         for (WorldConfig w : SkylliaAPI.getRegisteredWorlds()) {
             invalidateIslandFlags(w.getWorldName());

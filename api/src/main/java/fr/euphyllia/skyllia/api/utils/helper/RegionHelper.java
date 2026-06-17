@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,8 @@ public class RegionHelper {
      * @return A {@link Position} representing the chunk coordinates of the region center.
      * @deprecated Use {@link #getCenterChunkOfChunk(int, int)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static Position getCenterChunkOfRegion(int regionX, int regionZ) {
         ChunkCoordinate chunkCoordinate = getCenterChunkOfChunk(regionX, regionZ);
         return new Position(chunkCoordinate.x(), chunkCoordinate.z());
@@ -95,7 +97,8 @@ public class RegionHelper {
      * @return A {@link Position} (regionX, regionZ).
      * @deprecated Use {@link #getRegionCoordinateFromChunk(int, int)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static Position getRegionFromChunk(int chunkX, int chunkZ) {
         RegionCoordinate regionCoordinate = getRegionCoordinateFromChunk(chunkX, chunkZ);
         return new Position(regionCoordinate.x(), regionCoordinate.z());
@@ -125,7 +128,8 @@ public class RegionHelper {
      * @return A {@link Position} representing the region (regionX, regionZ).
      * @deprecated Use {@link #getRegionCoordinateFromLocation(Location)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static Position getRegionFromLocation(Location location) {
         RegionCoordinate regionCoordinate = getRegionCoordinateFromLocation(location);
         return new Position(regionCoordinate.x(), regionCoordinate.z());
@@ -138,7 +142,8 @@ public class RegionHelper {
      * @return The corresponding region {@link Position}.
      * @deprecated Use {@link #getRegionCoordinateFromChunk(int, int)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static Position getRegionFromChunk(Position chunk) {
         return getRegionFromChunk(chunk.x(), chunk.z());
     }
@@ -153,7 +158,8 @@ public class RegionHelper {
      * @return The corresponding region {@link Position}.
      * @deprecated Use {@link #getRegionCoordinateFromBlock(int, int)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static Position getRegionFromBlock(int blockX, int blockZ) {
         return getRegionFromChunk(blockX >> 4, blockZ >> 4);
     }
@@ -232,7 +238,8 @@ public class RegionHelper {
      * @return A list of {@link Position} objects representing all regions in that bounding range.
      * @deprecated Use {@link #getRegionCoordinateWithinBlockRange(int, int, int)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static List<Position> getRegionsWithinBlockRange(int regionX, int regionZ, int blockRange) {
         int regionRadius = (blockRange + (int) REGION_HALF_SIZE) >> 9;
         List<Position> regions = new ArrayList<>((2 * regionRadius + 1) * (2 * regionRadius + 1));
@@ -252,7 +259,8 @@ public class RegionHelper {
      * @return A list of {@link Position} objects representing all regions in that bounding range.
      * @deprecated Use {@link #getRegionsWithinBlockRange(RegionCoordinate, int)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static List<Position> getRegionsWithinBlockRange(Position position, int blockRange) {
         return getRegionsWithinBlockRange(position.x(), position.z(), blockRange);
     }

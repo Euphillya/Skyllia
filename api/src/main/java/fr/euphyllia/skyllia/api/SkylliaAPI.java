@@ -104,9 +104,10 @@ public final class SkylliaAPI {
      * @return The island at the specified position, or null if none is found.
      * @deprecated Use {@link #getIslandByRegion(RegionCoordinate)} instead.
      */
-    @Deprecated(forRemoval = false, since = "3.x")
+    @Deprecated(forRemoval = true, since = "3.x")
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.x")
     public static @Nullable Island getIslandByRegion(Position position) {
-        return implementation.getIslandByRegion(position);
+        return implementation.getIslandByRegion(new RegionCoordinate(position.x(), position.z()));
     }
 
     /**
