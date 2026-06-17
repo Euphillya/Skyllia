@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.SkylliaImplementation;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
@@ -16,7 +17,6 @@ import fr.euphyllia.skyllia.api.service.TrustService;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.IslandSettings;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.api.utils.nms.MobsSpawnImpl;
 import fr.euphyllia.skyllia.api.utils.nms.WorldNMS;
@@ -59,8 +59,8 @@ public final class APISkyllia implements SkylliaImplementation {
     }
 
     @Override
-    public @Nullable Island getIslandByPosition(Position position) {
-        return this.interneAPI.getSkyblockManager().getIslandByPosition(position);
+    public @Nullable Island getIslandByRegion(RegionCoordinate region) {
+        return this.interneAPI.getSkyblockManager().getIslandByRegion(region);
     }
 
     @Override

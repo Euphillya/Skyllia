@@ -3,10 +3,10 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
@@ -56,7 +56,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
             return;
         }
 
-        Position islandPosition = island.getPosition();
+        RegionCoordinate islandPosition = island.getRegionCoordinate();
 
         boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_HOME_PERMISSION, null, ConfigLoader.general.getDebugSettings().permission());
         if (!allowed) {
@@ -70,7 +70,7 @@ public class SetHomeSubCommand implements SubCommandInterface {
             int regionLocZ = playerLocation.getChunk().getZ();
 
             try {
-                Position playerRegionPosition = RegionHelper.getRegionFromChunk(regionLocX, regionLocZ);
+                RegionCoordinate playerRegionPosition = RegionHelper.getRegionCoordinateFromChunk(regionLocX, regionLocZ);
                 if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                     ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");
                     return;

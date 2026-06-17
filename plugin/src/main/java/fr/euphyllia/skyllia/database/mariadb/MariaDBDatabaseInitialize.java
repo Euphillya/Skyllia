@@ -1,9 +1,9 @@
 package fr.euphyllia.skyllia.database.mariadb;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.api.skyblock.IslandData;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
@@ -240,7 +240,7 @@ public class MariaDBDatabaseInitialize extends DatabaseInitializeQuery {
         Runnable spiralTask = () -> {
             List<IslandData> islandDataList = new ArrayList<>();
             for (int i = 1; i < maxIslands; i++) {
-                Position pos = RegionUtils.computeNewIslandRegionPosition(i);
+                RegionCoordinate pos = RegionUtils.computeNewIslandRegionPosition(i);
                 islandDataList.add(new IslandData(
                         i,
                         pos.x() * regionDistance,

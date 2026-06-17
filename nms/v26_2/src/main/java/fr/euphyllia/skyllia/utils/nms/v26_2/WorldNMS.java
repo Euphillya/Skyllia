@@ -4,7 +4,7 @@ import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import io.papermc.paper.FeatureHooks;
 import io.papermc.paper.world.PaperWorldLoader;
@@ -267,7 +267,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     }
 
     @Override
-    public void resetChunk(World craftWorld, Position position) {
+    public void resetChunk(World craftWorld, ChunkCoordinate position) {
         final ServerLevel nms = ((CraftWorld) craftWorld).getHandle();
         final int chunkX = position.x();
         final int chunkZ = position.z();
@@ -401,6 +401,4 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     public double @Nullable [] getAverageTickTimes(Chunk chunk) {
         return fr.euphyllia.skyllia.utils.nms.v1_21_R7.WorldNMS.getAverageTickTimesHelper(chunk);
     }
-
-
 }

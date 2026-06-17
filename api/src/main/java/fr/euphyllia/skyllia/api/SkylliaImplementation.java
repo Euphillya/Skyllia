@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
@@ -59,12 +60,25 @@ public interface SkylliaImplementation {
     @Nullable Island getIslandByOwner(UUID ownerId);
 
     /**
+     * Retrieves the island at a specific region coordinate.
+     *
+     * @param region The region coordinate to check.
+     * @return The island at the specified region coordinate, or null if none is found.
+     */
+    @Nullable Island getIslandByRegion(RegionCoordinate region);
+
+    /**
      * Retrieves the island at a specific position.
      *
      * @param position The position to check.
      * @return The island at the specified position, or null if none is found.
+     * @deprecated Use {@link #getIslandByRegion(RegionCoordinate)} instead.
      */
-    @Nullable Island getIslandByPosition(Position position);
+    @Deprecated(forRemoval = false, since = "3.x")
+    default @Nullable Island getIslandByRegion(Position position) {
+        if (position == null) return null;
+        return getIslandByRegion(new RegionCoordinate(position.x(), position.z()));
+    }
 
     /**
      * Retrieves the island associated with a specific chunk.

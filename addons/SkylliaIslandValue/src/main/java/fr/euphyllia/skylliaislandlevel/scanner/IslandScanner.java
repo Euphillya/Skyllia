@@ -1,9 +1,9 @@
 package fr.euphyllia.skylliaislandlevel.scanner;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skylliaislandlevel.SkylliaIslandLevel;
 import fr.euphyllia.skylliaislandlevel.configuration.IslandLevelConfigLoader;
 import fr.euphyllia.skylliaislandlevel.configuration.IslandLevelConfigManager;
@@ -58,7 +58,7 @@ public class IslandScanner {
         // DEBUG
         log.debug("[Scanner] Island {} — center chunk ({},{}) size={} → {} chunks to scan",
                 island.getId(),
-                island.getPosition().x(), island.getPosition().z(),
+                island.getRegionCoordinate().x(), island.getRegionCoordinate().z(),
                 island.getSize(),
                 chunkCoords.size());
 
@@ -169,7 +169,7 @@ public class IslandScanner {
     }
 
     private List<int[]> getIslandChunks(Island island) {
-        Position pos = island.getPosition();
+        RegionCoordinate pos = island.getRegionCoordinate();
         double size = island.getSize();
 
         int centerChunkX = (pos.x() << 5) + 16;

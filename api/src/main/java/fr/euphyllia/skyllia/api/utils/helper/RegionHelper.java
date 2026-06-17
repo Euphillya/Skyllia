@@ -1,5 +1,7 @@
 package fr.euphyllia.skyllia.api.utils.helper;
 
+import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -41,13 +43,46 @@ public class RegionHelper {
      *
      * @param regionX The region's X coordinate.
      * @param regionZ The region's Z coordinate.
-     * @return A {@link Position} representing the chunk coordinates of the region center.
+     * @return A {@link ChunkCoordinate} representing the chunk coordinates of the region center.
+     * @since 3.x
      */
-    public static Position getCenterChunkOfRegion(int regionX, int regionZ) {
+    public static ChunkCoordinate getCenterChunkOfChunk(int regionX, int regionZ) {
         int centerBlockX = (regionX << 9) + (int) REGION_HALF_SIZE;
         int centerBlockZ = (regionZ << 9) + (int) REGION_HALF_SIZE;
         // Convert block coords to chunk coords (>> 4 means /16)
-        return new Position(centerBlockX >> 4, centerBlockZ >> 4);
+        return new ChunkCoordinate(centerBlockX >> 4, centerBlockZ >> 4);
+    }
+
+    /**
+     * Gets the center chunk position of a region.
+     * <p>This calculates the block center of the region, then converts it to chunk coordinates
+     * by shifting right by 4 (i.e., dividing by 16).</p>
+     *
+     * @param regionX The region's X coordinate.
+     * @param regionZ The region's Z coordinate.
+     * @return A {@link Position} representing the chunk coordinates of the region center.
+     * @deprecated Use {@link #getCenterChunkOfChunk(int, int)} instead.
+     */
+    @Deprecated(forRemoval = false, since = "3.x")
+    public static Position getCenterChunkOfRegion(int regionX, int regionZ) {
+        ChunkCoordinate chunkCoordinate = getCenterChunkOfChunk(regionX, regionZ);
+        return new Position(chunkCoordinate.x(), chunkCoordinate.z());
+    }
+
+    /**
+     * Gets the region coordinate from the given chunk coordinates.
+     * <p>A single region is 32 chunks wide, so shifting right by 5 (>> 5) effectively
+     * does {@code chunkCoord / 32}.</p>
+     *
+     * @param chunkX The chunk's X coordinate.
+     * @param chunkZ The chunk's Z coordinate.
+     * @return A {@link RegionCoordinate} (regionX, regionZ).
+     * @since 3.x
+     */
+    public static RegionCoordinate getRegionCoordinateFromChunk(int chunkX, int chunkZ) {
+        int regionX = chunkX >> 5; // chunkX / 32
+        int regionZ = chunkZ >> 5; // chunkZ / 32
+        return new RegionCoordinate(regionX, regionZ);
     }
 
     /**
@@ -58,11 +93,27 @@ public class RegionHelper {
      * @param chunkX The chunk's X coordinate.
      * @param chunkZ The chunk's Z coordinate.
      * @return A {@link Position} (regionX, regionZ).
+     * @deprecated Use {@link #getRegionCoordinateFromChunk(int, int)} instead.
      */
+    @Deprecated(forRemoval = false, since = "3.x")
     public static Position getRegionFromChunk(int chunkX, int chunkZ) {
-        int regionX = chunkX >> 5; // chunkX / 32
-        int regionZ = chunkZ >> 5; // chunkZ / 32
-        return new Position(regionX, regionZ);
+        RegionCoordinate regionCoordinate = getRegionCoordinateFromChunk(chunkX, chunkZ);
+        return new Position(regionCoordinate.x(), regionCoordinate.z());
+    }
+
+    /**
+     * Gets the region coordinate from a {@link Location}.
+     * <p>This method converts the location to chunk coordinates, then determines
+     * the region by dividing by 32 (using bit shifting: {@code >> 5}).</p>
+     *
+     * @param location The Bukkit {@link Location} (block coordinates).
+     * @return A {@link RegionCoordinate} representing the region (regionX, regionZ).
+     * @since 3.x
+     */
+    public static RegionCoordinate getRegionCoordinateFromLocation(Location location) {
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        return getRegionCoordinateFromChunk(chunkX, chunkZ);
     }
 
     /**
@@ -72,19 +123,22 @@ public class RegionHelper {
      *
      * @param location The Bukkit {@link Location} (block coordinates).
      * @return A {@link Position} representing the region (regionX, regionZ).
+     * @deprecated Use {@link #getRegionCoordinateFromLocation(Location)} instead.
      */
+    @Deprecated(forRemoval = false, since = "3.x")
     public static Position getRegionFromLocation(Location location) {
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
-        return getRegionFromChunk(chunkX, chunkZ);
+        RegionCoordinate regionCoordinate = getRegionCoordinateFromLocation(location);
+        return new Position(regionCoordinate.x(), regionCoordinate.z());
     }
 
     /**
-     * Overload for {@link #getRegionFromChunk(int, int)} using a {@link Position} for chunk coordinates.
+     * Overload for {@link #getRegionCoordinateFromChunk(int, int)} using a {@link Position} for chunk coordinates.
      *
      * @param chunk A {@link Position} representing chunk coordinates.
      * @return The corresponding region {@link Position}.
+     * @deprecated Use {@link #getRegionCoordinateFromChunk(int, int)} instead.
      */
+    @Deprecated(forRemoval = false, since = "3.x")
     public static Position getRegionFromChunk(Position chunk) {
         return getRegionFromChunk(chunk.x(), chunk.z());
     }
@@ -97,10 +151,23 @@ public class RegionHelper {
      * @param blockX The absolute block X coordinate.
      * @param blockZ The absolute block Z coordinate.
      * @return The corresponding region {@link Position}.
+     * @deprecated Use {@link #getRegionCoordinateFromBlock(int, int)} instead.
      */
+    @Deprecated(forRemoval = false, since = "3.x")
     public static Position getRegionFromBlock(int blockX, int blockZ) {
-        // Convert block -> chunk -> region
         return getRegionFromChunk(blockX >> 4, blockZ >> 4);
+    }
+
+    /**
+     * Gets the region coordinate from absolute block coordinates.
+     *
+     * @param blockX The absolute block X coordinate.
+     * @param blockZ The absolute block Z coordinate.
+     * @return The corresponding region {@link RegionCoordinate}.
+     * @since 3.x
+     */
+    public static RegionCoordinate getRegionCoordinateFromBlock(int blockX, int blockZ) {
+        return getRegionCoordinateFromChunk(blockX >> 4, blockZ >> 4);
     }
 
     /**
@@ -116,29 +183,57 @@ public class RegionHelper {
      */
     public static boolean isBlockWithinSquare(Location center, int blockX, int blockZ, double size) {
         double half = size / 2.0;
-
         double centerX = center.getX();
         double centerZ = center.getZ();
         double blockXCenter = blockX + 0.5;
         double blockZCenter = blockZ + 0.5;
-
         return blockXCenter >= centerX - half && blockXCenter < centerX + half &&
                 blockZCenter >= centerZ - half && blockZCenter < centerZ + half;
     }
 
     /**
+     * Gets a list of all region coordinates within a given block range from the specified region.
+     *
+     * @param regionX    The region's X coordinate.
+     * @param regionZ    The region's Z coordinate.
+     * @param blockRange The range in blocks around the region center.
+     * @return A list of {@link RegionCoordinate} objects representing all regions in that bounding range.
+     * @since 3.x
+     */
+    public static List<RegionCoordinate> getRegionCoordinateWithinBlockRange(int regionX, int regionZ, int blockRange) {
+        int regionRadius = (blockRange + (int) REGION_HALF_SIZE) >> 9;
+        List<RegionCoordinate> regions = new ArrayList<>((2 * regionRadius + 1) * (2 * regionRadius + 1));
+        for (int x = -regionRadius; x <= regionRadius; x++) {
+            for (int z = -regionRadius; z <= regionRadius; z++) {
+                regions.add(new RegionCoordinate(regionX + x, regionZ + z));
+            }
+        }
+        return regions;
+    }
+
+    /**
+     * Overload of {@link #getRegionCoordinateWithinBlockRange(int, int, int)} that takes a {@link RegionCoordinate}.
+     *
+     * @param region     A {@link RegionCoordinate} representing the region coordinates.
+     * @param blockRange The range in blocks around the region center.
+     * @return A list of {@link RegionCoordinate} objects representing all regions in that bounding range.
+     * @since 3.x
+     */
+    public static List<RegionCoordinate> getRegionsWithinBlockRange(RegionCoordinate region, int blockRange) {
+        return getRegionCoordinateWithinBlockRange(region.x(), region.z(), blockRange);
+    }
+
+    /**
      * Gets a list of all region positions within a given block range from the specified region.
-     * <p>This uses a bounding-box approach, not a strict circle. It shifts the region center back
-     * to block coordinates, adjusts by {@link #REGION_HALF_SIZE}, and divides by 512 ({@literal <<} 9) to find
-     * how many regions fit in that range.</p>
      *
      * @param regionX    The region's X coordinate.
      * @param regionZ    The region's Z coordinate.
      * @param blockRange The range in blocks around the region center.
      * @return A list of {@link Position} objects representing all regions in that bounding range.
+     * @deprecated Use {@link #getRegionCoordinateWithinBlockRange(int, int, int)} instead.
      */
+    @Deprecated(forRemoval = false, since = "3.x")
     public static List<Position> getRegionsWithinBlockRange(int regionX, int regionZ, int blockRange) {
-        // Convert (blockRange + regionHalfSize) to a region-based radius
         int regionRadius = (blockRange + (int) REGION_HALF_SIZE) >> 9;
         List<Position> regions = new ArrayList<>((2 * regionRadius + 1) * (2 * regionRadius + 1));
         for (int x = -regionRadius; x <= regionRadius; x++) {
@@ -155,7 +250,9 @@ public class RegionHelper {
      * @param position   A {@link Position} representing the region coordinates.
      * @param blockRange The range in blocks around the region center.
      * @return A list of {@link Position} objects representing all regions in that bounding range.
+     * @deprecated Use {@link #getRegionsWithinBlockRange(RegionCoordinate, int)} instead.
      */
+    @Deprecated(forRemoval = false, since = "3.x")
     public static List<Position> getRegionsWithinBlockRange(Position position, int blockRange) {
         return getRegionsWithinBlockRange(position.x(), position.z(), blockRange);
     }

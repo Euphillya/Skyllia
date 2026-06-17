@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
 import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
@@ -87,13 +88,25 @@ public final class SkylliaAPI {
     }
 
     /**
+     * Retrieves the island at a specific region coordinate.
+     *
+     * @param region The region coordinate to check.
+     * @return The island at the specified region coordinate, or null if none is found.
+     */
+    public static @Nullable Island getIslandByRegion(RegionCoordinate region) {
+        return implementation.getIslandByRegion(region);
+    }
+
+    /**
      * Retrieves the island at a specific position.
      *
      * @param position The position to check.
      * @return The island at the specified position, or null if none is found.
+     * @deprecated Use {@link #getIslandByRegion(RegionCoordinate)} instead.
      */
-    public static @Nullable Island getIslandByPosition(Position position) {
-        return implementation.getIslandByPosition(position);
+    @Deprecated(forRemoval = false, since = "3.x")
+    public static @Nullable Island getIslandByRegion(Position position) {
+        return implementation.getIslandByRegion(position);
     }
 
     /**

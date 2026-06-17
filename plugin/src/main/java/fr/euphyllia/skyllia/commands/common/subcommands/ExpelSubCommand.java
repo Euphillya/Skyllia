@@ -3,10 +3,10 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
@@ -54,8 +54,8 @@ public class ExpelSubCommand implements SubCommandInterface {
             int chunkLocX = bPlayerExpelLocation.getChunk().getX();
             int chunkLocZ = bPlayerExpelLocation.getChunk().getZ();
 
-            Position islandPosition = island.getPosition();
-            Position playerRegionPosition = RegionHelper.getRegionFromChunk(chunkLocX, chunkLocZ);
+            RegionCoordinate islandPosition = island.getRegionCoordinate();
+            RegionCoordinate playerRegionPosition = RegionHelper.getRegionCoordinateFromChunk(chunkLocX, chunkLocZ);
 
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                 if (!silent) ConfigLoader.language.sendMessage(executor, "island.expel.player-not-in-island");

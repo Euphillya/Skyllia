@@ -7,7 +7,7 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
+import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import io.papermc.paper.FeatureHooks;
 import net.minecraft.core.BlockPos;
@@ -326,7 +326,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     }
 
     @Override
-    public void resetChunk(World craftWorld, Position position) {
+    public void resetChunk(World craftWorld, ChunkCoordinate position) {
         final ServerLevel nms = ((CraftWorld) craftWorld).getHandle();
         final int chunkX = position.x();
         final int chunkZ = position.z();

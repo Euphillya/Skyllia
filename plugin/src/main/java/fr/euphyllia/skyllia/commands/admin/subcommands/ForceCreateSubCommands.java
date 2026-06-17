@@ -156,8 +156,8 @@ public class ForceCreateSubCommands implements SubCommandInterface {
             chain = chain.thenCompose(ignored -> {
                 Location center = RegionHelper.getCenterRegion(
                         Bukkit.getWorld(worldName),
-                        island.getPosition().x(),
-                        island.getPosition().z()
+                        island.getRegionCoordinate().x(),
+                        island.getRegionCoordinate().z()
                 );
                 center.setY(setting.height());
                 island.setCenterLocation(center);

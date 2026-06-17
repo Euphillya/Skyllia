@@ -13,7 +13,6 @@ package fr.euphyllia.skyllia.api.skyblock.model;
  *
  * @param x the X coordinate
  * @param z the Z coordinate
- *
  * @deprecated since 3.x, replaced by
  * {@link fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate}
  * and

@@ -7,7 +7,6 @@ package fr.euphyllia.skyllia.api.coordinate;
  *
  * @param x the chunk X coordinate
  * @param z the chunk Z coordinate
- *
  * @since 3.x
  */
 public record ChunkCoordinate(int x, int z)

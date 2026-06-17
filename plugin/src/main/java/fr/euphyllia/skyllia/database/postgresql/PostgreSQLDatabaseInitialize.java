@@ -1,9 +1,9 @@
 package fr.euphyllia.skyllia.database.postgresql;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
 import fr.euphyllia.skyllia.api.skyblock.IslandData;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
@@ -254,7 +254,7 @@ public class PostgreSQLDatabaseInitialize extends DatabaseInitializeQuery {
         Runnable spiralTask = () -> {
             List<IslandData> islandDataList = new ArrayList<>();
             for (int i = 1; i < maxIslands; i++) {
-                Position position = RegionUtils.computeNewIslandRegionPosition(i);
+                RegionCoordinate position = RegionUtils.computeNewIslandRegionPosition(i);
                 islandDataList.add(new IslandData(
                         i,
                         position.x() * distancePerIsland,

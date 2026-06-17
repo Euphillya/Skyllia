@@ -69,7 +69,7 @@ public class PortalTeleportListener implements Listener {
 
         Location playerLocation = player.getLocation();
 
-        Location center = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+        Location center = RegionHelper.getCenterRegion(world, island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
         double rayon = island.getSize();
 
         world.getChunkAtAsync(playerLocation.getBlockX() >> 4, playerLocation.getBlockZ() >> 4, false, false).thenAccept(ignored -> {

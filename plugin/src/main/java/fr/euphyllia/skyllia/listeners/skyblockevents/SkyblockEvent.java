@@ -3,8 +3,8 @@ package fr.euphyllia.skyllia.listeners.skyblockevents;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.event.SkyblockChangeSizeEvent;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -31,7 +31,7 @@ public class SkyblockEvent implements Listener {
 
     @EventHandler
     public void onSkyblockSize(final SkyblockChangeSizeEvent event) {
-        Position islandRegion = event.getIsland().getPosition();
+        RegionCoordinate islandRegion = event.getIsland().getRegionCoordinate();
 
         double newSize = event.getNewSize();
 

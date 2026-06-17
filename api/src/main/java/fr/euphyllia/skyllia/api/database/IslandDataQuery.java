@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.api.database;
 
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import org.bukkit.Location;
@@ -35,7 +36,26 @@ public abstract class IslandDataQuery {
 
     public abstract Integer getMaxMemberInIsland(Island island);
 
-    public abstract @Nullable Island getIslandByPosition(Position position);
+    /**
+     * Retrieves the island at the given region coordinate.
+     *
+     * @param region The region coordinate.
+     * @return The island, or {@code null} if not found.
+     */
+    public abstract @Nullable Island getIslandByRegion(RegionCoordinate region);
+
+    /**
+     * Retrieves the island at the given position.
+     *
+     * @param position The position.
+     * @return The island, or {@code null} if not found.
+     * @deprecated Use {@link #getIslandByRegion(RegionCoordinate)} instead.
+     */
+    @Deprecated(forRemoval = false, since = "3.x")
+    public @Nullable Island getIslandByRegion(Position position) {
+        if (position == null) return null;
+        return getIslandByRegion(new RegionCoordinate(position.x(), position.z()));
+    }
 
     public abstract boolean upsertCenterLocation(UUID islandId, Location location);
 

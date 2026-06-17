@@ -2,9 +2,9 @@ package fr.euphyllia.skyllia.listeners;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.event.players.PlayerPrepareChangeWorldSkyblockEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,8 +19,8 @@ public class ListenersUtils {
     }
 
     public static @Nullable Island checkChunkIsIsland(int chunkX, int chunkZ, Cancellable cancellable) {
-        Position pos = RegionHelper.getRegionFromChunk(chunkX, chunkZ);
-        Island island = SkylliaAPI.getIslandByPosition(pos);
+        RegionCoordinate pos = RegionHelper.getRegionCoordinateFromChunk(chunkX, chunkZ);
+        Island island = SkylliaAPI.getIslandByRegion(pos);
 
         if (island == null) {
             cancellable.setCancelled(true);

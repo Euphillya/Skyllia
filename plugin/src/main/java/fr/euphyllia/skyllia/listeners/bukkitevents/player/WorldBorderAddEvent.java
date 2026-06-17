@@ -49,7 +49,7 @@ public class WorldBorderAddEvent implements Listener {
                 return;
             }
 
-            Location centerIsland = RegionHelper.getCenterRegion(world, island.getPosition().x(), island.getPosition().z());
+            Location centerIsland = RegionHelper.getCenterRegion(world, island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
 
             player.getScheduler().runDelayed(api.getPlugin(), playerTask -> {
                 WorldBorder border = player.getWorldBorder();

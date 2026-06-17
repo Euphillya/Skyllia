@@ -5,7 +5,6 @@ import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandDataQuery;
 import fr.euphyllia.skyllia.api.event.SkyblockLoadEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.managers.skyblock.IslandHook;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
 import fr.euphyllia.skyllia.sgbd.utils.sql.SQLExecute;
@@ -226,7 +225,7 @@ public class SQLiteIslandData extends IslandDataQuery {
     }
 
     @Override
-    public @Nullable Island getIslandByPosition(Position position) {
+    public @Nullable Island getIslandByRegion(RegionCoordinate position) {
         if (position == null) return null;
 
         return SQLExecute.queryMap(
@@ -237,7 +236,7 @@ public class SQLiteIslandData extends IslandDataQuery {
                     try {
                         if (rs.next()) return constructIslandQuery(rs);
                     } catch (Exception e) {
-                        logger.log(Level.ERROR, "getIslandByPosition failed", e);
+                        logger.log(Level.ERROR, "getIslandByRegion failed", e);
                     }
                     return null;
                 }
@@ -292,7 +291,7 @@ public class SQLiteIslandData extends IslandDataQuery {
 
         Timestamp timestamp = parseSqliteTimestamp(rs.getString("create_time"));
 
-        RegionCoordinate regionCoordinate = new RegionCoordinate(regionX, regionZ);
-        return new IslandHook(UUID.fromString(islandId), maxMembers, regionCoordinate, size, timestamp);
+        RegionCoordinate position = new RegionCoordinate(regionX, regionZ);
+        return new IslandHook(UUID.fromString(islandId), maxMembers, position, size, timestamp);
     }
 }

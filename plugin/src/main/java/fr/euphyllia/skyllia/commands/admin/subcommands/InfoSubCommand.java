@@ -28,7 +28,6 @@ public class InfoSubCommand implements SubCommandInterface {
      * @param plugin the {@link Plugin} instance that is executing the command
      * @param sender the {@link CommandSender} who issued the command
      * @param args   the arguments provided with the command
-     * @return {@code true} if the command was successfully handled, {@code false} otherwise
      */
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
@@ -63,7 +62,7 @@ public class InfoSubCommand implements SubCommandInterface {
             return;
         }
 
-        Location center = RegionHelper.getCenterRegion(null, island.getPosition().x(), island.getPosition().z());
+        Location center = RegionHelper.getCenterRegion(null, island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
         Timestamp createdAt = island.getCreateDate();
         double size = island.getSize();
         int maxMembers = island.getMaxMembers();

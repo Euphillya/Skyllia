@@ -98,7 +98,7 @@ public class VisitSubCommand implements SubCommandInterface {
             player.getScheduler().execute(plugin, () -> {
                 Location loc;
                 if (warpIsland == null) {
-                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getPosition().x(), island.getPosition().z());
+                    loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
                 } else {
                     loc = warpIsland.location();
                 }
@@ -111,7 +111,7 @@ public class VisitSubCommand implements SubCommandInterface {
                     ConfigLoader.language.sendMessage(player, "island.visit.success", Map.of(
                             "%player%", visitPlayer));
 
-                    Location center = RegionHelper.getCenterRegion(loc.getWorld(), island.getPosition().x(), island.getPosition().z());
+                    Location center = RegionHelper.getCenterRegion(loc.getWorld(), island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
 
                     WorldBorder border = player.getWorldBorder();
                     if (border == null) {

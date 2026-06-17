@@ -4,10 +4,10 @@ import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.api.utils.nms.BiomesImpl;
 import fr.euphyllia.skyllia.cache.commands.CommandCacheExecution;
@@ -113,9 +113,9 @@ public class SetBiomeSubCommand implements SubCommandInterface {
                 return;
             }
 
-            Position islandPosition = island.getPosition();
+            RegionCoordinate islandPosition = island.getRegionCoordinate();
 
-            Position playerRegionPosition = RegionHelper.getRegionFromLocation(playerLocation);
+            RegionCoordinate playerRegionPosition = RegionHelper.getRegionCoordinateFromLocation(playerLocation);
 
             if (islandPosition.x() != playerRegionPosition.x() || islandPosition.z() != playerRegionPosition.z()) {
                 ConfigLoader.language.sendMessage(player, "island.player.not-on-own-island");

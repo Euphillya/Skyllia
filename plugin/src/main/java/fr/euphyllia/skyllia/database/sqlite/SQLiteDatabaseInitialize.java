@@ -1,8 +1,8 @@
 package fr.euphyllia.skyllia.database.sqlite;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.DatabaseInitializeQuery;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.RegionUtils;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.sgbd.utils.model.DatabaseLoader;
@@ -223,7 +223,7 @@ public class SQLiteDatabaseInitialize extends DatabaseInitializeQuery {
         Runnable spiralTask = () -> {
             List<SQLiteSpiralBatchInserter.IslandData> islandDataList = new ArrayList<>();
             for (int i = 1; i < ConfigLoader.general.getIslandSettings().maxIslands(); i++) {
-                Position position = RegionUtils.computeNewIslandRegionPosition(i);
+                RegionCoordinate position = RegionUtils.computeNewIslandRegionPosition(i);
                 islandDataList.add(new SQLiteSpiralBatchInserter.IslandData(
                         i,
                         position.x() * distancePerIsland,

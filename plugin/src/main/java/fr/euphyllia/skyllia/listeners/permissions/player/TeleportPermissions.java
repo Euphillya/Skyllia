@@ -90,7 +90,7 @@ public class TeleportPermissions implements PermissionModule {
 
         if (island == null) return;
 
-        Location centerIsland = RegionHelper.getCenterRegion(to.getWorld(), island.getPosition().x(), island.getPosition().z());
+        Location centerIsland = RegionHelper.getCenterRegion(to.getWorld(), island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
 
         WorldBorder border = player.getWorldBorder();
         if (border == null) {

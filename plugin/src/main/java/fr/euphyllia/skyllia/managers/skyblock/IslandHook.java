@@ -13,7 +13,6 @@ import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import org.bukkit.Bukkit;
@@ -43,7 +42,7 @@ public class IslandHook extends Island {
     private final Skyllia plugin;
     private final UUID islandId;
     private final Timestamp createDate;
-    private final RegionCoordinate regionCoordinate;
+    private final RegionCoordinate position;
     private final int maxMemberInIsland;
     private final Map<World, Location> islandCenterLocations;
     private final ConcurrentHashMap<String, Integer> buildMinHeightCache = new ConcurrentHashMap<>();
@@ -70,7 +69,7 @@ public class IslandHook extends Island {
         this.plugin = Skyllia.getInstance();
         this.islandId = islandId;
         this.createDate = date;
-        this.regionCoordinate = regionCoordinate;
+        this.position = position;
         this.maxMemberInIsland = maxMembers;
         this.islandSize = size;
         this.islandCenterLocations = new ConcurrentHashMap<>();
@@ -255,9 +254,12 @@ public class IslandHook extends Island {
         return this.plugin.getInterneAPI().getSkyblockManager().updateMember(this, member);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RegionCoordinate getRegionCoordinate() {
-        return this.regionCoordinate;
+        return this.position;
     }
 
     /**
@@ -356,7 +358,7 @@ public class IslandHook extends Island {
         Location location = islandCenterLocations.get(world);
         if (location != null) return location;
 
-        Location fallback = RegionHelper.getCenterRegion(world, regionCoordinate.x(), regionCoordinate.z());
+        Location fallback = RegionHelper.getCenterRegion(world, this.position.x(), this.position.z());
         fallback.setY(64.0);
         setCenterLocation(fallback);
         return fallback;

@@ -2,9 +2,9 @@ package fr.euphyllia.skylliabackup.manager;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skylliabackup.SkylliaBackup;
@@ -51,7 +51,7 @@ public class BackupManager {
 
     public File backupIsland(Island island, String trigger) {
         UUID islandId = island.getId();
-        Position pos = island.getPosition();
+        RegionCoordinate pos = island.getRegionCoordinate();
 
         List<WorldConfig> worlds = SkylliaAPI.getRegisteredWorlds();
         if (worlds == null || worlds.isEmpty()) {
@@ -62,8 +62,8 @@ public class BackupManager {
         List<File> regionFiles = new ArrayList<>();
         for (WorldConfig worldCfg : worlds) {
             String worldName = worldCfg.getWorldName();
-            List<Position> regions = RegionHelper.getRegionsWithinBlockRange(pos, (int) island.getSize());
-            for (Position region : regions) {
+            List<RegionCoordinate> regions = RegionHelper.getRegionsWithinBlockRange(pos, (int) island.getSize());
+            for (RegionCoordinate region : regions) {
                 File mca = getRegionFile(worldName, region);
                 if (mca != null && mca.exists()) {
                     regionFiles.add(mca);
@@ -122,7 +122,7 @@ public class BackupManager {
         return count;
     }
 
-    private File getRegionFile(String worldName, Position region) {
+    private File getRegionFile(String worldName, RegionCoordinate region) {
         org.bukkit.World world = Bukkit.getWorld(worldName);
         if (world == null) {
             log.warn("World '{}' is not loaded, skipping", worldName);

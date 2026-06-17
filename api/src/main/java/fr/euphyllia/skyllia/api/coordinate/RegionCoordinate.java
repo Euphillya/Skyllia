@@ -8,7 +8,6 @@ package fr.euphyllia.skyllia.api.coordinate;
  *
  * @param x the region X coordinate
  * @param z the region Z coordinate
- *
  * @since 3.x
  */
 public record RegionCoordinate(int x, int z)

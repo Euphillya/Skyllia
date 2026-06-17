@@ -2,8 +2,8 @@ package fr.euphyllia.skyllia.listeners.bukkitevents.blocks;
 
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import org.apache.logging.log4j.LogManager;
@@ -38,14 +38,14 @@ public class GrowEvent implements Listener {
             return;
         }
 
-        Position islandRegion = island.getPosition();
+        RegionCoordinate islandRegion = island.getRegionCoordinate();
 
         Location center = RegionHelper.getCenterRegion(event.getWorld(), islandRegion.x(), islandRegion.z());
 
         event.getBlocks().removeIf(blockState -> {
             Location blockLocation = blockState.getLocation();
             Chunk blockChunk = blockLocation.getChunk();
-            Position blockRegion = RegionHelper.getRegionFromChunk(blockChunk.getX(), blockChunk.getZ());
+            RegionCoordinate blockRegion = RegionHelper.getRegionCoordinateFromChunk(blockChunk.getX(), blockChunk.getZ());
 
             if (blockRegion.x() != islandRegion.x() || blockRegion.z() != islandRegion.z()) {
                 return true;

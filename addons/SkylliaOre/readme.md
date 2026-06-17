@@ -12,7 +12,8 @@ This plugin manages custom block generators for SkyBlock islands, with support f
 ## Installation
 
 1. Clone the Skyllia repository and follow the instructions to install Skyllia.
-2. (Optional) Ensure Oraxen/Nexo or CraftEngine is installed and configured on your server if you want to use custom blocks.
+2. (Optional) Ensure Oraxen/Nexo or CraftEngine is installed and configured on your server if you want to use custom
+   blocks.
 3. Place the `SkylliaOre.jar` file in your server's `plugins` directory.
 4. Start your server to generate the default configuration files.
 
@@ -46,10 +47,10 @@ generators:
 
 - **generator_default**: The default generator to be used if no specific generator is found in the database.
 - **generators**: A list of generator configurations.
-  - **name**: The name of the generator.
-  - **replace_block**: The list of blocks to be replaced by the generator.
-  - **world**: The list of worlds where the generator is active.
-  - **block_chance**: The list of blocks to generate with their respective chances.
+    - **name**: The name of the generator.
+    - **replace_block**: The list of blocks to be replaced by the generator.
+    - **world**: The list of worlds where the generator is active.
+    - **block_chance**: The list of blocks to generate with their respective chances.
 
 ### Detailed Example
 
@@ -83,7 +84,8 @@ In this example, the default generator is set to "test". The generator named "te
 ### Commands
 
 - `/skylliaadmin generator <player> <generator>`: Change the generator for a specific player.
-- `/skylliaadmin generator reload`: Reload the `config.yml` from disk and clear the generator caches. The new generator definitions take effect immediately, without restarting the server.
+- `/skylliaadmin generator reload`: Reload the `config.yml` from disk and clear the generator caches. The new generator
+  definitions take effect immediately, without restarting the server.
 
 ### Note on Generator Change
 

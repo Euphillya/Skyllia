@@ -6,8 +6,9 @@ import dev.frankheijden.insights.api.objects.chunk.ChunkLocation;
 import dev.frankheijden.insights.api.objects.chunk.ChunkPart;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import org.bukkit.World;
 
@@ -55,9 +56,9 @@ public class SkylliaInsightAddon implements InsightsAddon {
         }
 
         private static List<ChunkPart> buildChunkParts(Island island, World world) {
-            Position islandRegion = island.getPosition();
+            RegionCoordinate islandRegion = island.getRegionCoordinate();
             double sizeInBlocks = island.getSize();
-            Position centerChunk = RegionHelper.getCenterChunkOfRegion(islandRegion.x(), islandRegion.z());
+            ChunkCoordinate centerChunk = RegionHelper.getCenterChunkOfChunk(islandRegion.x(), islandRegion.z());
             int cx = centerChunk.x();
             int cz = centerChunk.z();
 

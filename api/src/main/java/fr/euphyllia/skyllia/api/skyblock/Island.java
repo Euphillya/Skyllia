@@ -158,14 +158,14 @@ public abstract class Island {
     public abstract boolean setPrivateIsland(boolean privateIsland);
 
     /**
-     * Gets the list of all members in the island (from the database).
+     * Gets the list of all members on the island (from the database).
      *
      * @return A {@link List} of {@link Players}.
      */
     public abstract List<Players> getMembers();
 
     /**
-     * Gets the list of all banned members in the island.
+     * Gets the list of all banned members on the island.
      *
      * @return A {@link List} of {@link Players} who are banned.
      */
@@ -204,10 +204,9 @@ public abstract class Island {
     public abstract boolean updateMember(Players member);
 
     /**
-     * Gets the region coordinate of the island.
+     * Gets the region-based coordinate of the island.
      *
-     * @return The island's region coordinate.
-     *
+     * @return A {@link RegionCoordinate} representing the island's region coordinates.
      * @since 3.x
      */
     public abstract RegionCoordinate getRegionCoordinate();
@@ -224,7 +223,6 @@ public abstract class Island {
      * </p>
      *
      * @return The island's region coordinate.
-     *
      * @deprecated since 3.x, replaced by {@link #getRegionCoordinate()}.
      */
     @Deprecated(forRemoval = false, since = "3.x")

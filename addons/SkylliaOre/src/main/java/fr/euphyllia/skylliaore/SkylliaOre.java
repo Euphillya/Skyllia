@@ -96,7 +96,7 @@ public final class SkylliaOre extends JavaPlugin {
         oraxenLoaded = Bukkit.getPluginManager().getPlugin("Oraxen") != null;
         nexoLoaded = Bukkit.getPluginManager().getPlugin("Nexo") != null;
         craftEngineLoaded = Bukkit.getPluginManager().getPlugin("CraftEngine") != null;
-        
+
         // Additional verification for CraftEngine
         if (craftEngineLoaded) {
             if (fr.euphyllia.skylliaore.hook.CraftEngineHook.isAvailable()) {
@@ -106,7 +106,7 @@ public final class SkylliaOre extends JavaPlugin {
                 craftEngineLoaded = false;
             }
         }
-        
+
         // Plugin startup logic
         initializeConfig();
 

@@ -3,10 +3,10 @@ package fr.euphyllia.skyllia.commands.common.subcommands;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.commands.SubCommandInterface;
+import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
-import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
@@ -76,10 +76,10 @@ public class SetWarpSubCommand implements SubCommandInterface {
             return;
         }
 
-        Position islandPosition = island.getPosition();
+        RegionCoordinate islandPosition = island.getRegionCoordinate();
         int chunkX = playerLocation.getBlockX() >> 4;
         int chunkZ = playerLocation.getBlockZ() >> 4;
-        Position playerRegionPosition = RegionHelper.getRegionFromChunk(
+        RegionCoordinate playerRegionPosition = RegionHelper.getRegionCoordinateFromChunk(
                 chunkX,
                 chunkZ
         );
