@@ -1,6 +1,7 @@
 package fr.euphyllia.skyllia.managers.world;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
 import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.Island;
@@ -70,6 +71,7 @@ public class WorldModifier {
 
     public void deleteIsland(@NotNull Island island, @NotNull World world, int regionDistance, Consumer<Boolean> onFinish) {
         RegionCoordinate position = island.getRegionCoordinate();
+        Biome defaultBiome = resolveDefaultBiome(world);
         List<ChunkCoordinate> chunks = RegionUtils.computeChunksToDelete(position, regionDistance, island.getSize());
         if (chunks.isEmpty()) {
             if (onFinish != null) onFinish.accept(true);
@@ -84,6 +86,9 @@ public class WorldModifier {
                 world.getChunkAtAsync(chunkPos.x(), chunkPos.z()).thenAccept(ignored -> {
                     try {
                         SkylliaAPI.getWorldNMS().resetChunk(world, chunkPos);
+                        if (!SkylliaAPI.getBiomesImpl().setBiome(world, chunkPos.x(), chunkPos.z(), defaultBiome)) {
+                            failed.set(true);
+                        }
                     } catch (Exception e) {
                         failed.set(true);
                     }
@@ -93,6 +98,22 @@ public class WorldModifier {
                 });
             }, delay, TimeUnit.MILLISECONDS);
         }
+    }
+
+    private Biome resolveDefaultBiome(@NotNull World world) {
+        WorldConfig worldConfig = ConfigLoader.worldManager.getWorldConfig(world.getName());
+        Biome fallback = switch (world.getEnvironment()) {
+            case NETHER -> Biome.NETHER_WASTES;
+            case THE_END -> Biome.THE_END;
+            default -> Biome.PLAINS;
+        };
+
+        if (worldConfig == null || worldConfig.getBiomeId() == null || worldConfig.getBiomeId().isBlank()) {
+            return fallback;
+        }
+
+        Biome configuredBiome = SkylliaAPI.getBiomesImpl().getBiome(worldConfig.getBiomeId());
+        return configuredBiome != null ? configuredBiome : fallback;
     }
 
     public CompletableFuture<Boolean> changeBiomeChunk(@NotNull World world, int chunkX, int chunkZ, @NotNull Biome biome) {
