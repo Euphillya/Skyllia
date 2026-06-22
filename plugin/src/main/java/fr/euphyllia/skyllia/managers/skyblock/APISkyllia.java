@@ -8,6 +8,7 @@ import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
+import fr.euphyllia.skyllia.api.language.LanguageProvider;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
@@ -248,6 +249,11 @@ public final class APISkyllia implements SkylliaImplementation {
     @Override
     public TrustService getTrustService() {
         return this.interneAPI.getTrustService();
+    }
+
+    @Override
+    public LanguageProvider getLanguageProvider() {
+        return ConfigLoader.language;
     }
 
     private double[] append(double[] arr, double element) {

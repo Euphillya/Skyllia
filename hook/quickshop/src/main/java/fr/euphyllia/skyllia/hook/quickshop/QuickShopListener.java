@@ -11,7 +11,6 @@ import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
-import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.hook.quickshop.configuration.QSConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,15 +58,14 @@ public class QuickShopListener implements Listener {
             if (QSConfigLoader.config.isOnlyOwnerCanCreateShop()) {
                 final var owner = island.getOwner();
                 if (owner == null || !owner.getMojangId().equals(player.getUniqueId())) {
-                    event.setCancelled(true, ConfigLoader.language.translate(player, "hook.quickshop.create.owner-only"));
+                    event.setCancelled(true, SkylliaAPI.getLanguageProvider().translate(player, "hook.quickshop.create.owner-only"));
                 }
             } else {
                 boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(
-                        player, island, QUICKSHOP_CREATE_SHOP, null,
-                        ConfigLoader.general.getDebugSettings().permission()
+                        player, island, QUICKSHOP_CREATE_SHOP, null
                 );
                 if (!allowed) {
-                    event.setCancelled(true, ConfigLoader.language.translate(player, "hook.quickshop.create.permission-denied"));
+                    event.setCancelled(true, SkylliaAPI.getLanguageProvider().translate(player, "hook.quickshop.create.permission-denied"));
                 }
             }
         });
@@ -83,7 +81,7 @@ public class QuickShopListener implements Listener {
 
         if (island.isDisable()) {
             event.getPurchaser().getBukkitPlayer().ifPresent(player ->
-                    event.setCancelled(true, ConfigLoader.language.translate(player, "hook.quickshop.purchase.island-disabled"))
+                    event.setCancelled(true, SkylliaAPI.getLanguageProvider().translate(player, "hook.quickshop.purchase.island-disabled"))
             );
         }
     }

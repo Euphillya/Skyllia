@@ -20,6 +20,7 @@ dependencies {
     compileOnly(project(":hook:luminol"))
     compileOnly(project(":hook:essentialsx"))
     compileOnly(project(":hook:luckperms"))
+    compileOnly(project(":hook:quickshop"))
 
     // NMS Version
     compileOnly(project(":nms:v1_20_R4"))

@@ -13,7 +13,6 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly(project(":api"))
-    compileOnly(project(":plugin"))
 
     compileOnly("com.ghostchu:quickshop-api:6.2.0.11")
 }

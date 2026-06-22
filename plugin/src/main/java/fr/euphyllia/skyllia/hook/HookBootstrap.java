@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.hook.canvas.CanvasHook;
 import fr.euphyllia.skyllia.hook.fastasyncworldedit.FAWESchematicHook;
 import fr.euphyllia.skyllia.hook.internal.InternalSchematicHook;
 import fr.euphyllia.skyllia.hook.luminol.LuminolHook;
+import fr.euphyllia.skyllia.hook.quickshop.QuickShopHook;
 import fr.euphyllia.skyllia.hook.worldedit.WorldEditSchematicHook;
 import org.bukkit.plugin.Plugin;
 import org.slf4j.Logger;
@@ -43,7 +44,9 @@ public class HookBootstrap {
             break;
         }
 
-        List<PluginHook> pluginHooks = List.of();
+        List<PluginHook> pluginHooks = List.of(
+                new QuickShopHook()
+        );
 
         for (PluginHook pluginHook : pluginHooks) {
             if (!pluginHook.isAvailable()) continue;

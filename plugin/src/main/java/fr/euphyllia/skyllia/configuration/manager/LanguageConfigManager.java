@@ -8,6 +8,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.configuration.IConfigurationProvider;
+import fr.euphyllia.skyllia.api.language.LanguageProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class LanguageConfigManager implements IConfigurationProvider {
+public class LanguageConfigManager implements IConfigurationProvider, LanguageProvider {
 
     private static final Logger log = LogManager.getLogger(LanguageConfigManager.class);
     private final MiniMessage miniMessage = MiniMessage.miniMessage();

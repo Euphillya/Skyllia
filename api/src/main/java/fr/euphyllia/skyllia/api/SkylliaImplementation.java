@@ -5,6 +5,7 @@ import fr.euphyllia.skyllia.api.configuration.IConfigRegistry;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.database.IslandCustomDataQuery;
+import fr.euphyllia.skyllia.api.language.LanguageProvider;
 import fr.euphyllia.skyllia.api.permissions.IslandFlagRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.permissions.PermissionsManagers;
@@ -280,4 +281,15 @@ public interface SkylliaImplementation {
      * @return The {@link TrustService} instance.
      */
     TrustService getTrustService();
+
+    /**
+     * Retrieves the language provider.
+     * <p>
+     * The language provider handles translation lookups, placeholder replacement,
+     * and message dispatching. Hooks and addons should use this instead of
+     * accessing the internal {@code ConfigLoader} directly.
+     *
+     * @return the {@link LanguageProvider} instance
+     */
+    LanguageProvider getLanguageProvider();
 }
