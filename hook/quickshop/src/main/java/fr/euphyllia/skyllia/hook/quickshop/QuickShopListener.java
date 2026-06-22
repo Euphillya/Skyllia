@@ -126,11 +126,13 @@ public class QuickShopListener implements Listener {
 
                 if (ownerFilter != null && !Objects.equals(shop.getOwner().getUniqueId(), ownerFilter)) continue;
 
-                try {
-                    api.getShopManager().deleteShop(shop);
-                } catch (Exception e) {
-                    log.error("Failed to delete shop at {} during island cleanup", loc, e);
-                }
+                Bukkit.getRegionScheduler().execute(SkylliaAPI.getPlugin(), loc, () -> {
+                    try {
+                        api.getShopManager().deleteShop(shop);
+                    } catch (Exception e) {
+                        log.error("Failed to delete shop at {} during island cleanup", loc, e);
+                    }
+                });
             }
         }
     }

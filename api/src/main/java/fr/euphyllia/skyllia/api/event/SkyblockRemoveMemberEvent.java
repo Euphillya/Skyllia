@@ -29,7 +29,7 @@ public class SkyblockRemoveMemberEvent extends IslandEvent {
      * @param cause         The reason for the removal.
      */
     public SkyblockRemoveMemberEvent(Island island, Players removedPlayer, RemovalCause cause) {
-        super(island);
+        super(island, true);
         this.removedPlayer = removedPlayer;
         this.cause = cause;
     }

@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.hook.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.hooks.SchematicHook;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import fr.euphyllia.skyllia.api.utils.schematics.SchematicDTO;
@@ -29,8 +30,8 @@ public class InternalSchematicHook implements SchematicHook {
 
     private final Plugin plugin;
 
-    public InternalSchematicHook(Plugin plugin) {
-        this.plugin = plugin;
+    public InternalSchematicHook() {
+        this.plugin = SkylliaAPI.getPlugin();
     }
 
     private static boolean isAir(BlockData bd) {

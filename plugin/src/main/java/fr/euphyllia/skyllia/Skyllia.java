@@ -95,7 +95,7 @@ public class Skyllia extends JavaPlugin {
         // Register listeners
         new ListenersRegistrar(this, interneAPI).registerListeners();
 
-        HookBootstrap.registerAll(this);
+        HookBootstrap.registerAll();
 
         bStatsMetrics = new BStatsMetrics(this, 20874);
 
@@ -118,6 +118,8 @@ public class Skyllia extends JavaPlugin {
 
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
+
+        HookBootstrap.unregisterAll();
 
         if (this.interneAPI != null) {
             this.interneAPI.getWorldModifier().shutdown();

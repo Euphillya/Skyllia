@@ -21,13 +21,14 @@ public class QuickShopHook implements PluginHook {
 
     @Override
     public boolean isAvailable() {
-        return CLASS_AVAILABLE && Bukkit.getPluginManager().getPlugin("QuickShop") != null;
+        return CLASS_AVAILABLE && Bukkit.getPluginManager().getPlugin("QuickShop-Hikari") != null;
     }
 
     @Override
     public void register(Plugin skylliaPlugin) {
         try {
             QSConfigLoader.init(skylliaPlugin.getDataFolder());
+            log.debug("Hook QuickShop-Hikari enabled");
         } catch (Exception e) {
             log.error("Failed to load QuickShop hook configuration — hook will not be registered", e);
             return;

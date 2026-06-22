@@ -12,6 +12,7 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.SideEffectSet;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.hooks.SchematicHook;
 import fr.euphyllia.skyllia.api.skyblock.model.SchematicSetting;
 import org.apache.logging.log4j.Level;
@@ -34,8 +35,8 @@ public class WorldEditSchematicHook implements SchematicHook {
 
     private final Plugin plugin;
 
-    public WorldEditSchematicHook(Plugin plugin) {
-        this.plugin = plugin;
+    public WorldEditSchematicHook() {
+        this.plugin = SkylliaAPI.getPlugin();
     }
 
     @Override

@@ -14,9 +14,9 @@ public class SkylliaSchematicHookResolver {
     private final InternalSchematicHook internal;
 
     public SkylliaSchematicHookResolver(JavaPlugin plugin) {
-        this.internal = new InternalSchematicHook(plugin);
-        this.fawe = tryLoad(() -> new FAWESchematicHook(plugin));
-        this.we = tryLoad(() -> new WorldEditSchematicHook(plugin));
+        this.internal = new InternalSchematicHook();
+        this.fawe = tryLoad(FAWESchematicHook::new);
+        this.we = tryLoad(WorldEditSchematicHook::new);
     }
 
     private SchematicHook tryLoad(java.util.function.Supplier<SchematicHook> supplier) {
