@@ -94,6 +94,7 @@ Extend Skyllia with 7 free official addons:
 - Vault (for SkylliaBank)
 - PlaceholderAPI (for placeholders)
 - LuckPerms (for server permissions)
+- QuickShop-Hikari (for shop island)
 
 ## 🚀 Quick Installation
 
@@ -137,10 +138,10 @@ Skyllia provides a complete API to create your own addons:
 </repository>
 
 <dependency>
-<groupId>fr.euphyllia.skyllia</groupId>
-<artifactId>api</artifactId>
-<version>3.x</version>
-<scope>provided</scope>
+  <groupId>fr.euphyllia.skyllia</groupId>
+  <artifactId>api</artifactId>
+  <version>3.x</version>
+  <scope>provided</scope>
 </dependency>
 ```
 
