@@ -4,14 +4,15 @@
 
 ### The first Skyblock plugin fully compatible with Folia
 
-[![Folia](https://img.shields.io/badge/Folia-Compatible-green.svg)](https://papermc.io/software/folia)
+[![Folia](https://img.shields.io/badge/Built%20for-Folia-brightgreen.svg)](https://papermc.io/software/folia)
 [![Paper](https://img.shields.io/badge/Paper-1.20.6+-blue.svg)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/Java-21+-orange.svg)](https://www.oracle.com/java/)
-[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Euphillya/Skyllia)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Euphillya/Skyllia/blob/ver/3.x/LICENSE)
+[![Servers](https://img.shields.io/endpoint?url=https%3A%2F%2Ffaststats.dev%2Fapi%2Fshields%2Fskyllia%3Fmetric%3Dservers&style=flat)](https://faststats.dev/project/skyllia)
+[![Total downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Ffaststats.dev%2Fapi%2Fshields%2Fskyllia%3Fmetric%3Ddownloads&style=flat)](https://faststats.dev/project/skyllia)
 
 [Documentation](https://skyllia.euphyllia.moe) • [GitHub](https://github.com/Euphillya/Skyllia) • [Modrinth](https://modrinth.com/plugin/skyllia) • [Discord](https://discord.gg/uUJQEB7XNN)
 
-[![](https://bstats.org/signatures/bukkit/Skyllia.svg)](https://bstats.org/plugin/bukkit/Skyllia/20874)
 [![Servers & Players](https://faststats.dev/embed/default:6978bcc2-1574-41ea-b5ae-242398b401c7:servers-and-players?w=800&h=300)](https://faststats.dev/project/skyllia/skyllia-plugin)
 </div>
 
@@ -90,11 +91,11 @@ Extend Skyllia with 7 free official addons:
 
 ### Compatible plugins (optional)
 
-- WorldEdit or FastAsyncWorldEdit (recommended)
-- Vault (for SkylliaBank)
-- PlaceholderAPI (for placeholders)
-- LuckPerms (for server permissions)
-- QuickShop-Hikari (for shop island)
+- [WorldEdit](https://modrinth.com/plugin/worldedit) (recommended) or [FastAsyncWorldEdit](https://modrinth.com/plugin/fastasyncworldedit)
+- [Vault](https://www.spigotmc.org/resources/vault.34315/) (for SkylliaBank)
+- [PlaceholderAPI](https://modrinth.com/plugin/placeholderapi) (for placeholders)
+- [LuckPerms](https://modrinth.com/plugin/luckperms) (for server permissions)
+- [QuickShop-Hikari](https://modrinth.com/plugin/quickshop-hikari) (for shop island)
 
 ## 🚀 Quick Installation
 
@@ -205,4 +206,4 @@ Skyllia is open source, you can contribute via:
 
 ## 📜 License
 
-Skyllia is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file in the GitHub repository.
+Skyllia is licensed under the MIT License. For more details, see the [LICENSE](https://github.com/Euphillya/Skyllia/blob/ver/3.x/LICENSE) file in the GitHub repository.
