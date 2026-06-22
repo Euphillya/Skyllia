@@ -45,7 +45,7 @@ public class LuckPermsHook implements PermissionHook {
             // Subscribe to node add and remove events
             lp.getEventBus().subscribe(plugin, NodeAddEvent.class, this::onNodeAdd);
             lp.getEventBus().subscribe(plugin, NodeRemoveEvent.class, this::onNodeRemove);
-            
+
             // Subscribe to user data recalculation event (triggered when permissions are inherited through groups)
             lp.getEventBus().subscribe(plugin, UserDataRecalculateEvent.class, this::onUserDataRecalculate);
         }
@@ -111,7 +111,7 @@ public class LuckPermsHook implements PermissionHook {
      */
     private void invalidateUsersInGroup(Group group) {
         String groupName = group.getName();
-        
+
         // Iterate through all online players and check if they inherit this group
         for (Player player : Bukkit.getOnlinePlayers()) {
             User user = luckPerms.getPlayerAdapter(Player.class).getUser(player);

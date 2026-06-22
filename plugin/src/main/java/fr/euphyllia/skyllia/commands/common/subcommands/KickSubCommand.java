@@ -79,7 +79,7 @@ public class KickSubCommand implements SubCommandInterface {
             return;
         }
 
-        boolean isRemoved = island.removeMember(players);
+        boolean isRemoved = island.removeMember(players, RemovalCause.KICKED);
         if (isRemoved) {
             ConfigLoader.language.sendMessage(player, "island.kick.success");
             DeleteSubCommand.checkClearPlayer(skyblockManager, players, RemovalCause.KICKED);

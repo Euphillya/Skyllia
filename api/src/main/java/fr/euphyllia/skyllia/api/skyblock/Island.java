@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.permissions.IslandFlags;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
@@ -189,12 +190,25 @@ public abstract class Island {
     public abstract @Nullable Players getMember(String playerName);
 
     /**
-     * Removes a member from the island.
+     * Removes a member from the island with {@link RemovalCause#KICKED} as the default cause.
      *
-     * @param players The {@link Players} to remove.
+     * @param players The member to remove.
+     * @return {@code true} if successfully removed, {@code false} otherwise.
+     * @deprecated Use {@link #removeMember(Players, RemovalCause)} to provide an explicit cause.
+     */
+    @Deprecated(since = "3.x")
+    public boolean removeMember(Players players) {
+        return removeMember(players, RemovalCause.KICKED);
+    }
+
+    /**
+     * Removes a member from the island with an explicit removal cause.
+     *
+     * @param players The member to remove.
+     * @param cause   The reason for the removal (KICKED, LEAVE, ISLAND_DELETED…).
      * @return {@code true} if successfully removed, {@code false} otherwise.
      */
-    public abstract boolean removeMember(Players players);
+    public abstract boolean removeMember(Players players, RemovalCause cause);
 
     /**
      * Updates a member's information on the island.

@@ -53,7 +53,7 @@ public class LeaveSubCommand implements SubCommandInterface {
 
         if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
 
-            boolean hasLeft = island.removeMember(players);
+            boolean hasLeft = island.removeMember(players, RemovalCause.LEAVE);
 
             if (hasLeft) {
                 DeleteSubCommand.checkClearPlayer(skyblockManager, players, RemovalCause.LEAVE);

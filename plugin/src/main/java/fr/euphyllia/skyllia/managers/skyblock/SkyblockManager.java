@@ -6,6 +6,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
 import fr.euphyllia.skyllia.api.event.PrepareSkyblockCreateEvent;
+import fr.euphyllia.skyllia.api.event.SkyblockRemoveMemberEvent;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
@@ -640,15 +641,17 @@ public class SkyblockManager {
     }
 
     /**
-     * Deletes a member from the island.
+     * Deletes a member from the island and fires {@link SkyblockRemoveMemberEvent}.
      *
      * @param island    The {@link Island}.
      * @param oldMember The {@link Players} object representing the member to delete.
-     * @return A {@link CompletableFuture} with {@code true} if deleted, {@code false} otherwise.
+     * @param cause     The reason the member is being removed.
+     * @return {@code true} if deleted, {@code false} otherwise.
      */
-    public Boolean deleteMember(Island island, Players oldMember) {
+    public Boolean deleteMember(Island island, Players oldMember, RemovalCause cause) {
         boolean ok = plugin.getInterneAPI().getIslandQuery().getIslandMemberQuery().deleteMember(island, oldMember);
         if (ok) {
+            new SkyblockRemoveMemberEvent(island, oldMember, cause).callEvent();
             cache.invalidateMembers(island.getId());
             cache.invalidatePlayerLink(oldMember.getMojangId());
             island.invalidateCompiledPermissions();

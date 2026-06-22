@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.api.permissions.PermissionId;
 import fr.euphyllia.skyllia.api.permissions.PermissionNode;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.model.RoleType;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
 import org.apache.logging.log4j.LogManager;
@@ -71,7 +72,9 @@ public class UnbanSubCommand implements SubCommandInterface {
             return;
         }
 
-        boolean isRemoved = island.removeMember(players);
+        players.setRoleType(RoleType.VISITOR);
+
+        boolean isRemoved = island.updateMember(players);
         if (isRemoved) {
             ConfigLoader.language.sendMessage(player, "island.unban.success");
         } else {

@@ -1073,3 +1073,14 @@ description = "<aqua>Description:</aqua> <white>%description%</white>"
 [update-checker]
 update-available-one = "<gold>Skyllia is <red>1 version behind</red>! Latest: <green>%version%</green>. Download it here: <aqua><click:open_url:'%url%'>%url%</click></aqua>"
 update-available-many = "<gold>Skyllia is <red>%behind% versions behind</red>! Latest: <green>%version%</green>. Download it here: <aqua><click:open_url:'%url%'>%url%</click></aqua>"
+
+[hook.quickshop.create]
+owner-only = "<red>Only the island owner can create a shop here."
+permission-denied = "<red>Your island role does not allow you to create a shop here."
+
+[hook.quickshop.purchase]
+island-disabled = "<red>This island is currently disabled."
+
+[island.permission.quickshop.shop.create]
+name = "Create a QuickShop"
+description = "Allows creating a QuickShop on the island."

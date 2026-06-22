@@ -137,10 +137,10 @@ Skyllia provides a complete API to create your own addons:
 </repository>
 
 <dependency>
-   <groupId>fr.euphyllia.skyllia</groupId>
-   <artifactId>api</artifactId>
-   <version>3.x</version>
-   <scope>provided</scope>
+<groupId>fr.euphyllia.skyllia</groupId>
+<artifactId>api</artifactId>
+<version>3.x</version>
+<scope>provided</scope>
 </dependency>
 ```
 
@@ -154,14 +154,14 @@ import org.bukkit.event.Listener;
 
 public class MyPlugin implements Listener {
 
-   @EventHandler
-   public void onPlayerJoin(PlayerJoinEvent event) {
-      Player player = event.getPlayer();
-      Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
-      if (island != null) {
-         player.sendMessage("Your island: " + island.getId());
-      }
-   }
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        if (island != null) {
+            player.sendMessage("Your island: " + island.getId());
+        }
+    }
 }
 ```
 

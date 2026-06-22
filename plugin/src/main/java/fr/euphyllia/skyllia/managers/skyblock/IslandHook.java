@@ -12,6 +12,7 @@ import fr.euphyllia.skyllia.api.permissions.IslandFlags;
 import fr.euphyllia.skyllia.api.permissions.PermissionRegistry;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
+import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
@@ -242,8 +243,8 @@ public class IslandHook extends Island {
      * {@inheritDoc}
      */
     @Override
-    public boolean removeMember(Players oldMember) {
-        return this.plugin.getInterneAPI().getSkyblockManager().deleteMember(this, oldMember);
+    public boolean removeMember(Players oldMember, RemovalCause cause) {
+        return this.plugin.getInterneAPI().getSkyblockManager().deleteMember(this, oldMember, cause);
     }
 
     /**

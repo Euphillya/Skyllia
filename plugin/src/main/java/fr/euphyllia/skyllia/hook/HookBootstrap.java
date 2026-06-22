@@ -1,5 +1,6 @@
 package fr.euphyllia.skyllia.hook;
 
+import fr.euphyllia.skyllia.api.hooks.PluginHook;
 import fr.euphyllia.skyllia.api.hooks.SchematicHook;
 import fr.euphyllia.skyllia.api.hooks.ServerHook;
 import fr.euphyllia.skyllia.hook.canvas.CanvasHook;
@@ -40,6 +41,12 @@ public class HookBootstrap {
             if (!hook.isAvailable()) continue;
             log.info("Active schematic hook: {}", hook.name());
             break;
+        }
+
+        List<PluginHook> pluginHooks = List.of();
+
+        for (PluginHook pluginHook : pluginHooks) {
+            if (!pluginHook.isAvailable()) continue;
         }
     }
 }
