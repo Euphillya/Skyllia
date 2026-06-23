@@ -64,7 +64,7 @@ public class CreateSubCommand implements SubCommandInterface {
                 return;
             }
 
-            String schemKey = (args.length > 0 && schematicsKeys.contains(args[0])) ? args[0] : schematicsKeys.getFirst();
+            String schemKey = resolveSchematicKey(args.length > 0 ? args[0] : null, schematicsKeys);
             Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
             if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                 ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
@@ -116,6 +116,19 @@ public class CreateSubCommand implements SubCommandInterface {
                         CommandCacheExecution.removeCommandExec(playerId, "create");
                     });
         });
+    }
+
+    private String resolveSchematicKey(String requestedKey, List<String> schematicsKeys) {
+        if (requestedKey != null && schematicsKeys.contains(requestedKey)) {
+            return requestedKey;
+        }
+
+        String defaultSchemKey = ConfigLoader.islandManager.getDefaultIslandKey();
+        if (defaultSchemKey != null && schematicsKeys.contains(defaultSchemKey)) {
+            return defaultSchemKey;
+        }
+
+        return schematicsKeys.getFirst();
     }
 
     private CompletableFuture<Void> pasteAllSchematics(Skyllia plugin, Player player, Island island,
