@@ -97,12 +97,12 @@ public class VisitSubCommand implements SubCommandInterface {
 
             player.getScheduler().execute(plugin, () -> {
                 Location loc;
-                if (warpIsland == null) {
+                if (warpIsland == null || warpIsland.location() == null || warpIsland.location().getWorld() == null) {
                     loc = RegionHelper.getCenterRegion(Bukkit.getWorld(WorldUtils.getWorldConfigs().getFirst().getWorldName()), island.getRegionCoordinate().x(), island.getRegionCoordinate().z());
                 } else {
-                    loc = warpIsland.location();
+                    loc = warpIsland.location().clone();
                 }
-                loc.setY(loc.getY() + 0.5);
+                loc.add(0, 0.5, 0);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() -> {
                     if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
                         return;
