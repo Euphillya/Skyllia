@@ -88,9 +88,7 @@ public class ForceCreateSubCommands implements SubCommandInterface {
                 return;
             }
 
-            String schemKey = (schemArg != null && schematicsKeys.contains(schemArg))
-                    ? schemArg
-                    : schematicsKeys.getFirst();
+            String schemKey = resolveSchematicKey(schemArg, schematicsKeys);
 
             Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
             if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
@@ -140,6 +138,19 @@ public class ForceCreateSubCommands implements SubCommandInterface {
             logger.log(Level.FATAL, e.getMessage(), e);
             ConfigLoader.language.sendMessage(sender, "island.generic.unexpected-error");
         }
+    }
+
+    private String resolveSchematicKey(String requestedKey, List<String> schematicsKeys) {
+        if (requestedKey != null && schematicsKeys.contains(requestedKey)) {
+            return requestedKey;
+        }
+
+        String defaultSchemKey = ConfigLoader.islandManager.getDefaultIslandKey();
+        if (defaultSchemKey != null && schematicsKeys.contains(defaultSchemKey)) {
+            return defaultSchemKey;
+        }
+
+        return schematicsKeys.getFirst();
     }
 
     private CompletableFuture<Void> pasteAllSchematics(Island island,
