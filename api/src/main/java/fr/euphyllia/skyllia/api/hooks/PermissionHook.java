@@ -17,37 +17,7 @@ import org.bukkit.entity.Player;
  * threads). When no supported provider is present, callers should fall back to
  * {@link Player#hasPermission(String)}.
  */
-public interface PermissionHook {
-
-    /**
-     * Tests whether a class is present on the classpath.
-     * <p>
-     * Used by implementations to detect, at load time, whether their backing
-     * provider's API is available before attempting to bind to it.
-     *
-     * @param className the fully qualified name of the class to look up.
-     * @return {@code true} if the class can be loaded, {@code false} otherwise.
-     */
-    static boolean hasClass(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Checks whether this hook is usable.
-     * <p>
-     * A hook is available only when its backing provider is both present on the
-     * classpath and successfully bound. Callers must check this before invoking
-     * {@link #hasPermission(Player, String)} and fall back to the Bukkit
-     * permission API when it returns {@code false}.
-     *
-     * @return {@code true} if the hook can resolve permissions, {@code false} otherwise.
-     */
-    boolean isAvailable();
+public interface PermissionHook extends PluginHook {
 
     /**
      * Checks whether the given player holds the specified permission node,

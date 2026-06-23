@@ -21,6 +21,7 @@ dependencies {
     compileOnly(project(":hook:essentialsx"))
     compileOnly(project(":hook:luckperms"))
     compileOnly(project(":hook:quickshop"))
+    compileOnly(project(":hook:cmi"))
 
     // NMS Version
     compileOnly(project(":nms:v1_20_R4"))

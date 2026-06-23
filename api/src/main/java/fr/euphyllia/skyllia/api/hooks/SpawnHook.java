@@ -4,18 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public interface SpawnHook {
-
-    static boolean hasClass(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    boolean isAvailable();
+public interface SpawnHook extends PluginHook {
 
     @Nullable Location getSpawnLocation(Player player);
 }

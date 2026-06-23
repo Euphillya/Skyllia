@@ -10,9 +10,8 @@ import fr.euphyllia.skyllia.api.utils.nms.*;
 import fr.euphyllia.skyllia.cache.SkyblockCache;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.database.IslandQuery;
+import fr.euphyllia.skyllia.hook.HookBootstrap;
 import fr.euphyllia.skyllia.hook.SkylliaSchematicHookResolver;
-import fr.euphyllia.skyllia.hook.essentialsx.EssentialsSpawnHook;
-import fr.euphyllia.skyllia.hook.luckperms.LuckPermsHook;
 import fr.euphyllia.skyllia.managers.Managers;
 import fr.euphyllia.skyllia.managers.skyblock.APISkyllia;
 import fr.euphyllia.skyllia.managers.skyblock.SkyblockManager;
@@ -51,9 +50,7 @@ public class InterneAPI {
     private final TrustService trustService;
     private final SkyblockManager skyblockManager;
     private final SkylliaSchematicHookResolver schematicHookResolver;
-    // Hook brigdes
-    private final SpawnHook spawnHook;
-    private final PermissionHook permissionHook;
+
     // World tools
     private WorldModifier worldModifier;
     // IslandQuery : lazy (DB must be initialized first)
@@ -81,13 +78,6 @@ public class InterneAPI {
         this.skyblockManager = new SkyblockManager(this.plugin, this.skyblockCache);
 
         this.schematicHookResolver = new SkylliaSchematicHookResolver(this.plugin);
-
-        this.spawnHook = Bukkit.getPluginManager().getPlugin("Essentials") != null &&
-                Bukkit.getPluginManager().getPlugin("EssentialsSpawn") != null ?
-                new EssentialsSpawnHook() : null;
-
-        this.permissionHook = Bukkit.getPluginManager().getPlugin("LuckPerms") != null ?
-                new LuckPermsHook(plugin) : null;
 
         loadAPI();
     }
@@ -258,7 +248,7 @@ public class InterneAPI {
     }
 
     public @Nullable PermissionHook getPermissionHook() {
-        return this.permissionHook;
+        return HookBootstrap.getPermissionHook();
     }
 
     public void initWorldModifier() {
@@ -266,6 +256,6 @@ public class InterneAPI {
     }
 
     public @Nullable SpawnHook getSpawnHook() {
-        return this.spawnHook;
+        return HookBootstrap.getSpawnHook();
     }
 }

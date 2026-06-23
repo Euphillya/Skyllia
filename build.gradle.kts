@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":hook:essentialsx"))
     implementation(project(":hook:luckperms"))
     implementation(project(":hook:quickshop"))
+    implementation(project(":hook:cmi"))
 
     // NMS Version
     implementation(project(":nms:v1_20_R4"))
@@ -68,7 +69,7 @@ allprojects {
         maven(sonatypeRepo)
         maven(engineHubRepo)
         maven(mojang)
-        maven(jitpack)
+        //maven(jitpack)
         maven(extendedclip)
         maven(theNextLvl)
         maven(euphyRepo)

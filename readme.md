@@ -2,7 +2,7 @@
 
 # <img src="https://cdn.modrinth.com/data/fGbtispn/d3a18500b1a981a2207407035798e918437d0f94_96.webp" height="25"> Skyllia
 
-### The first Skyblock plugin fully compatible with Folia
+### The first Skyblock plugin built for Folia
 
 [![Folia](https://img.shields.io/badge/Built%20for-Folia-brightgreen.svg)](https://papermc.io/software/folia)
 [![Paper](https://img.shields.io/badge/Paper-1.20.6+-blue.svg)](https://papermc.io/)

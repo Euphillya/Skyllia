@@ -1,15 +1,17 @@
 package fr.euphyllia.skyllia.hook;
 
 import fr.euphyllia.skyllia.Skyllia;
-import fr.euphyllia.skyllia.api.hooks.PluginHook;
-import fr.euphyllia.skyllia.api.hooks.SchematicHook;
-import fr.euphyllia.skyllia.api.hooks.ServerHook;
+import fr.euphyllia.skyllia.api.hooks.*;
 import fr.euphyllia.skyllia.hook.canvas.CanvasHook;
+import fr.euphyllia.skyllia.hook.cmi.CMISpawnHook;
+import fr.euphyllia.skyllia.hook.essentialsx.EssentialsSpawnHook;
 import fr.euphyllia.skyllia.hook.fastasyncworldedit.FAWESchematicHook;
 import fr.euphyllia.skyllia.hook.internal.InternalSchematicHook;
+import fr.euphyllia.skyllia.hook.luckperms.LuckPermsHook;
 import fr.euphyllia.skyllia.hook.luminol.LuminolHook;
 import fr.euphyllia.skyllia.hook.quickshop.QuickShopHook;
 import fr.euphyllia.skyllia.hook.worldedit.WorldEditSchematicHook;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +23,14 @@ public class HookBootstrap {
             new CanvasHook(),
             new LuminolHook()
     );
+
     static final List<PluginHook> pluginHooks = List.of(
+            new LuckPermsHook(),
+            new CMISpawnHook(),
+            new EssentialsSpawnHook(),
             new QuickShopHook()
     );
+
     static final FAWESchematicHook faweHook = new FAWESchematicHook();
     static final WorldEditSchematicHook worldEditHook = new WorldEditSchematicHook();
     static final InternalSchematicHook internalHook = new InternalSchematicHook();
@@ -33,6 +40,9 @@ public class HookBootstrap {
             internalHook
     );
     private static final Logger log = LoggerFactory.getLogger(HookBootstrap.class);
+
+    private static @Nullable SpawnHook activeSpawnHook = null;
+    private static @Nullable PermissionHook activePermissionHook = null;
 
     private HookBootstrap() {
     }
@@ -51,9 +61,28 @@ public class HookBootstrap {
             break;
         }
 
-        for (PluginHook pluginHook : pluginHooks) {
-            if (!pluginHook.isAvailable()) continue;
-            pluginHook.register(Skyllia.getInstance());
+        boolean spawnHookFound = false;
+        for (PluginHook hook : pluginHooks) {
+            if (!hook.isAvailable()) continue;
+            if (hook instanceof SpawnHook spawnHook) {
+                if (spawnHookFound) continue;
+                spawnHook.register(Skyllia.getInstance());
+                activeSpawnHook = spawnHook;
+                spawnHookFound = true;
+                log.debug("Active spawn hook: {}", spawnHook.name());
+                continue;
+            }
+
+            if (hook instanceof PermissionHook permissionHook) {
+                if (activePermissionHook != null) continue;
+                permissionHook.register(Skyllia.getInstance());
+                activePermissionHook = permissionHook;
+                log.debug("Active permission hook: {}", permissionHook.name());
+                continue;
+            }
+
+            hook.register(Skyllia.getInstance());
+            log.error("Registered plugin hook: {}", hook.name());
         }
     }
 
@@ -65,5 +94,13 @@ public class HookBootstrap {
         for (SchematicHook schematicHook : schematicHooks) {
             if (schematicHook.isAvailable()) schematicHook.unregister();
         }
+    }
+
+    public static @Nullable SpawnHook getSpawnHook() {
+        return activeSpawnHook;
+    }
+
+    public static @Nullable PermissionHook getPermissionHook() {
+        return activePermissionHook;
     }
 }
