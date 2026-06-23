@@ -114,7 +114,9 @@ public class Skyllia extends JavaPlugin {
     @Override
     public void onDisable() {
         context.shutdown();
-        bStatsMetrics.shutdown();
+        if (bStatsMetrics != null) {
+            bStatsMetrics.shutdown();
+        }
 
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
@@ -122,7 +124,10 @@ public class Skyllia extends JavaPlugin {
         HookBootstrap.unregisterAll();
 
         if (this.interneAPI != null) {
-            this.interneAPI.getWorldModifier().shutdown();
+            var worldModifier = this.interneAPI.getWorldModifier();
+            if (worldModifier != null) {
+                worldModifier.shutdown();
+            }
             if (this.interneAPI.getDatabaseLoader() != null) {
                 this.interneAPI.getDatabaseLoader().closeDatabase();
             }
