@@ -181,7 +181,7 @@ public class CreateSubCommand implements SubCommandInterface {
                                         .cacheIslandAndIndex(island);
 
                                 new SkyblockLoadEvent(island).callEvent();
-                                return teleportAndApplyBorder(plugin, player, island, center);
+                                return teleportAndApplyBorder(player, island, center);
                             }
                             return CompletableFuture.completedFuture(null);
                         });
@@ -190,32 +190,23 @@ public class CreateSubCommand implements SubCommandInterface {
         return chain;
     }
 
-    private CompletableFuture<Void> teleportAndApplyBorder(Skyllia plugin, Player player, Island island, Location center) {
+    private CompletableFuture<Void> teleportAndApplyBorder(Player player, Island island, Location center) {
         Location spawnLoc = center.clone().add(0, 0.5, 0);
         return player.teleportAsync(spawnLoc, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                .thenCompose(successTeleport -> {
+                .thenAccept(successTeleport -> {
                     if (!successTeleport) {
-                        return CompletableFuture.completedFuture(null);
+                        return;
                     }
-
-                    CompletableFuture<Void> playerUpdate = new CompletableFuture<>();
-                    player.getScheduler().run(plugin, task -> {
-                        try {
-                            player.setVelocity(new Vector(0, 0, 0));
-                            player.setFallDistance(0);
-                            if (!PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
-                                WorldBorder border = player.getWorldBorder();
-                                if (border == null) border = Bukkit.createWorldBorder();
-                                border.setCenter(center);
-                                border.setSize(island.getSize());
-                                player.setWorldBorder(border);
-                            }
-                            playerUpdate.complete(null);
-                        } catch (Throwable throwable) {
-                            playerUpdate.completeExceptionally(throwable);
-                        }
-                    }, () -> playerUpdate.complete(null));
-                    return playerUpdate;
+                    player.setVelocity(new Vector(0, 0, 0));
+                    player.setFallDistance(0);
+                    if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
+                        return;
+                    }
+                    WorldBorder border = player.getWorldBorder();
+                    if (border == null) border = Bukkit.createWorldBorder();
+                    border.setCenter(center);
+                    border.setSize(island.getSize());
+                    player.setWorldBorder(border);
                 });
     }
 
