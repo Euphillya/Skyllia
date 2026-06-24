@@ -35,54 +35,49 @@ public class CreateSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(CreateSubCommand.class);
 
     public CompletableFuture<Void> runCreateIsland(Skyllia plugin, Player player, String[] args) {
-        return CompletableFuture.runAsync(() -> {
+        final UUID playerId = player.getUniqueId();
+        final AtomicBoolean acquired = new AtomicBoolean(false);
 
-            final UUID playerId = player.getUniqueId();
-
+        return CompletableFuture.<CompletableFuture<Void>>supplyAsync(() -> {
             if (!CommandCacheExecution.tryAcquire(playerId, "create")) {
                 ConfigLoader.language.sendMessage(player, "island.generic.command-in-progress");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
+            acquired.set(true);
 
             if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create")) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             Island existingIsland = SkylliaAPI.getIslandByPlayerId(playerId);
             if (existingIsland != null) {
                 new HomeSubCommand().onExecute(plugin, player, args);
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             List<String> schematicsKeys = ConfigLoader.schematicManager.getIslandTypes();
             if (schematicsKeys.isEmpty()) {
                 ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             String schemKey = resolveSchematicKey(args.length > 0 ? args[0] : null, schematicsKeys);
             Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
             if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                 ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
             if (islandSettings == null) {
                 ConfigLoader.language.sendMessage(player, "island.type-not-exist");
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create.%s".formatted(schemKey))) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             ConfigLoader.language.sendMessage(player, "island.create-in-progress");
@@ -92,29 +87,35 @@ public class CreateSubCommand implements SubCommandInterface {
             boolean isCreate = SkylliaAPI.createIsland(idIsland, islandSettings, owners);
             if (!isCreate) {
                 ConfigLoader.language.sendMessage(player, "island.generic-error");
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             Island island = SkylliaAPI.getIslandByIslandId(idIsland);
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.generic-error");
-                CommandCacheExecution.removeCommandExec(playerId, "create");
-                return;
+                return CompletableFuture.<Void>completedFuture(null);
             }
 
             new SkyblockCreateEvent(island, playerId).callEvent();
 
-            pasteAllSchematics(plugin, player, island, schematicSettingMap)
-                    .whenComplete((result, throwable) -> {
+            return pasteAllSchematics(plugin, player, island, schematicSettingMap)
+                    .handle((result, throwable) -> {
                         if (throwable != null) {
-                            logger.error("Island creation failed for {}: {}", island.getId(), throwable.getMessage());
+                            logger.error("Island creation failed for {}: {}", island.getId(), throwable.getMessage(), throwable);
                             ConfigLoader.language.sendMessage(player, "island.generic-error");
                         } else {
                             ConfigLoader.language.sendMessage(player, "island.create-finish");
                         }
-                        CommandCacheExecution.removeCommandExec(playerId, "create");
+                        return (Void) null;
                     });
+        }).thenCompose(future -> future).whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                logger.error("Island creation failed for {}: {}", playerId, throwable.getMessage(), throwable);
+                ConfigLoader.language.sendMessage(player, "island.generic-error");
+            }
+            if (acquired.get()) {
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+            }
         });
     }
 
@@ -173,17 +174,22 @@ public class CreateSubCommand implements SubCommandInterface {
                                 new SkyblockLoadEvent(island).callEvent();
                                 Location spawnLoc = center.clone().add(0, 0.5, 0);
                                 player.teleportAsync(spawnLoc, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                                        .thenRun(() -> {
-                                            player.setVelocity(new Vector(0, 0, 0));
-                                            player.setFallDistance(0);
-                                            if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
+                                        .thenAccept(successTeleport -> {
+                                            if (!successTeleport) {
                                                 return;
                                             }
-                                            WorldBorder border = player.getWorldBorder();
-                                            if (border == null) border = Bukkit.createWorldBorder();
-                                            border.setCenter(center);
-                                            border.setSize(island.getSize());
-                                            player.setWorldBorder(border);
+                                            player.getScheduler().run(plugin, task -> {
+                                                player.setVelocity(new Vector(0, 0, 0));
+                                                player.setFallDistance(0);
+                                                if (PlayerUtils.hasPermission(player, "skyllia.island.worldborder.bypass")) {
+                                                    return;
+                                                }
+                                                WorldBorder border = player.getWorldBorder();
+                                                if (border == null) border = Bukkit.createWorldBorder();
+                                                border.setCenter(center);
+                                                border.setSize(island.getSize());
+                                                player.setWorldBorder(border);
+                                            }, null);
                                         });
                             }
                         });
