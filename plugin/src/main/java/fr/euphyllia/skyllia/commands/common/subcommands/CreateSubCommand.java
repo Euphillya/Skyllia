@@ -35,49 +35,63 @@ public class CreateSubCommand implements SubCommandInterface {
     private final Logger logger = LogManager.getLogger(CreateSubCommand.class);
 
     public CompletableFuture<Void> runCreateIsland(Skyllia plugin, Player player, String[] args) {
+        final CompletableFuture<Void> result = new CompletableFuture<>();
         final UUID playerId = player.getUniqueId();
         final AtomicBoolean acquired = new AtomicBoolean(false);
 
-        return CompletableFuture.<CompletableFuture<Void>>supplyAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             if (!CommandCacheExecution.tryAcquire(playerId, "create")) {
                 ConfigLoader.language.sendMessage(player, "island.generic.command-in-progress");
-                return CompletableFuture.<Void>completedFuture(null);
+                result.complete(null);
+                return;
             }
             acquired.set(true);
 
             if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create")) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             Island existingIsland = SkylliaAPI.getIslandByPlayerId(playerId);
             if (existingIsland != null) {
                 new HomeSubCommand().onExecute(plugin, player, args);
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             List<String> schematicsKeys = ConfigLoader.schematicManager.getIslandTypes();
             if (schematicsKeys.isEmpty()) {
                 ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             String schemKey = resolveSchematicKey(args.length > 0 ? args[0] : null, schematicsKeys);
             Map<String, SchematicSetting> schematicSettingMap = IslandUtils.getSchematic(schemKey);
             if (schematicSettingMap == null || schematicSettingMap.isEmpty()) {
                 ConfigLoader.language.sendMessage(player, "island.schematic-not-exist");
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             IslandSettings islandSettings = IslandUtils.getIslandSettings(schemKey);
             if (islandSettings == null) {
                 ConfigLoader.language.sendMessage(player, "island.type-not-exist");
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             if (!PlayerUtils.hasPermission(player, "skyllia.island.command.create.%s".formatted(schemKey))) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             ConfigLoader.language.sendMessage(player, "island.create-in-progress");
@@ -87,36 +101,43 @@ public class CreateSubCommand implements SubCommandInterface {
             boolean isCreate = SkylliaAPI.createIsland(idIsland, islandSettings, owners);
             if (!isCreate) {
                 ConfigLoader.language.sendMessage(player, "island.generic-error");
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             Island island = SkylliaAPI.getIslandByIslandId(idIsland);
             if (island == null) {
                 ConfigLoader.language.sendMessage(player, "island.generic-error");
-                return CompletableFuture.<Void>completedFuture(null);
+                CommandCacheExecution.removeCommandExec(playerId, "create");
+                result.complete(null);
+                return;
             }
 
             new SkyblockCreateEvent(island, playerId).callEvent();
 
-            return pasteAllSchematics(plugin, player, island, schematicSettingMap)
-                    .handle((result, throwable) -> {
+            pasteAllSchematics(plugin, player, island, schematicSettingMap)
+                    .whenComplete((pasteResult, throwable) -> {
                         if (throwable != null) {
                             logger.error("Island creation failed for {}: {}", island.getId(), throwable.getMessage(), throwable);
                             ConfigLoader.language.sendMessage(player, "island.generic-error");
                         } else {
                             ConfigLoader.language.sendMessage(player, "island.create-finish");
                         }
-                        return (Void) null;
+                        CommandCacheExecution.removeCommandExec(playerId, "create");
+                        result.complete(null);
                     });
-        }).thenCompose(future -> future).whenComplete((result, throwable) -> {
-            if (throwable != null) {
-                logger.error("Island creation failed for {}: {}", playerId, throwable.getMessage(), throwable);
-                ConfigLoader.language.sendMessage(player, "island.generic-error");
-            }
+        }).exceptionally(throwable -> {
+            logger.error("Island creation failed for {}: {}", playerId, throwable.getMessage(), throwable);
+            ConfigLoader.language.sendMessage(player, "island.generic-error");
             if (acquired.get()) {
                 CommandCacheExecution.removeCommandExec(playerId, "create");
             }
+            result.complete(null);
+            return null;
         });
+
+        return result;
     }
 
     private String resolveSchematicKey(String requestedKey, List<String> schematicsKeys) {
