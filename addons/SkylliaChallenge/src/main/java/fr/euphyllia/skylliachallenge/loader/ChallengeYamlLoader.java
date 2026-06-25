@@ -94,7 +94,7 @@ public final class ChallengeYamlLoader {
         return challenge;
     }
 
-    private static ItemStack resolveGuiItem(String raw, int amount, String challengeId) {
+    static ItemStack resolveGuiItem(String raw, int amount, String challengeId) {
         if (raw != null && HookManager.isCustomItemRef(raw)) {
             ItemStack custom = HookManager.itemStackFromRef(raw);
             if (custom != null) {
@@ -207,6 +207,16 @@ public final class ChallengeYamlLoader {
                     log.error("Invalid entity type for NEAR requirement in challenge {}: {}", challengeKey, head.substring("NEAR:".length()), e);
                 }
             }
+            if (head.startsWith("ENTITY:")) {
+                try {
+                    EntityType t = EntityType.valueOf(head.substring("ENTITY:".length()).toUpperCase(Locale.ROOT));
+                    int amount = sp.length > 1 ? Integer.parseInt(sp[1]) : 1;
+                    double radius = sp.length > 2 ? Double.parseDouble(sp[2]) : -1.0D;
+                    result.add(new EntityRequirement(t, amount, radius));
+                } catch (Exception e) {
+                    log.error("Invalid entity type for ENTITY requirement in challenge {}: {}", challengeKey, head.substring("ENTITY:".length()), e);
+                }
+            }
             if (head.startsWith("POTION:")) {
                 try {
                     PotionType p = PotionType.valueOf(sp[1].toUpperCase(Locale.ROOT));
@@ -308,7 +318,7 @@ public final class ChallengeYamlLoader {
         return result;
     }
 
-    private static List<ChallengeReward> parseRewards(List<String> lines) {
+    static List<ChallengeReward> parseRewards(List<String> lines) {
         if (lines == null) return List.of();
         List<ChallengeReward> list = new ArrayList<>();
         for (String line : lines) {

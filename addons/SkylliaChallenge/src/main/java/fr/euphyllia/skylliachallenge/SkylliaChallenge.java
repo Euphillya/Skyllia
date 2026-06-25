@@ -12,6 +12,7 @@ import fr.euphyllia.skylliachallenge.database.sqlite.SQLiteChallengeInit;
 import fr.euphyllia.skylliachallenge.gui.GuiSettings;
 import fr.euphyllia.skylliachallenge.hook.HookManager;
 import fr.euphyllia.skylliachallenge.listener.*;
+import fr.euphyllia.skylliachallenge.managers.ChallengeLevelManagers;
 import fr.euphyllia.skylliachallenge.managers.ChallengeManagers;
 import fr.euphyllia.skylliachallenge.storage.ProgressStorage;
 import fr.euphyllia.skylliachallenge.storage.ProgressStoragePartial;
@@ -30,6 +31,7 @@ public class SkylliaChallenge extends JavaPlugin {
     private static final Logger log = LoggerFactory.getLogger(SkylliaChallenge.class);
     private static SkylliaChallenge instance;
     private ChallengeManagers challengeManager;
+    private ChallengeLevelManagers challengeLevelManager;
     private GuiSettings guiSettings;
     private boolean mustBeOnPlayerIsland;
     private ProgressBackend progressBackend;
@@ -44,6 +46,10 @@ public class SkylliaChallenge extends JavaPlugin {
 
     public ChallengeManagers getChallengeManager() {
         return challengeManager;
+    }
+
+    public ChallengeLevelManagers getChallengeLevelManager() {
+        return challengeLevelManager;
     }
 
     public GuiSettings getGuiSettings() {
@@ -80,6 +86,7 @@ public class SkylliaChallenge extends JavaPlugin {
         // ─────────────────────────────────────────────
         getDataFolder().mkdirs();
         getDataFolder().toPath().resolve("challenges").toFile().mkdirs();
+        getDataFolder().toPath().resolve("levels").toFile().mkdirs();
 
         if (ConfigLoader.database.getMariaDBConfig() != null) {
             MariaDBChallengeInit dbInit = new MariaDBChallengeInit();
@@ -122,6 +129,10 @@ public class SkylliaChallenge extends JavaPlugin {
         this.challengeManager.loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
         logs.add(gray + " » " + white + "Challenges Loaded: " + violet + challengeManager.getChallenges().size());
 
+        this.challengeLevelManager = new ChallengeLevelManagers(this);
+        this.challengeLevelManager.loadLevels(getDataFolder().toPath().resolve("levels").toFile());
+        logs.add(gray + " » " + white + "Challenge Levels Loaded: " + violet + challengeLevelManager.getLevels().size());
+
         // Commands
         SkylliaAPI.registerCommands(new ChallengeCommand(this), "challenge");
         SkylliaAPI.registerAdminCommands(new ChallengeAdminCommand(this), "challenge");
@@ -160,6 +171,7 @@ public class SkylliaChallenge extends JavaPlugin {
         this.mustBeOnPlayerIsland = getConfig().getBoolean("must_be_on_player_island", true);
         HookManager.init();
         getChallengeManager().loadChallenges(getDataFolder().toPath().resolve("challenges").toFile());
+        getChallengeLevelManager().loadLevels(getDataFolder().toPath().resolve("levels").toFile());
     }
 
     public boolean isMustBeOnPlayerIsland() {

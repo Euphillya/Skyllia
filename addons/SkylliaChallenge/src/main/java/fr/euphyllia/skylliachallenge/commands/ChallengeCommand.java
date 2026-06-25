@@ -25,11 +25,18 @@ public record ChallengeCommand(SkylliaChallenge plugin) implements SubCommandInt
             ConfigLoader.language.sendMessage(sender, "addons.challenge.player.no-island");
             return;
         }
+        if (args.length >= 1 && args[0].equalsIgnoreCase("levels")) {
+            plugin.getChallengeLevelManager().openGui(p);
+            return;
+        }
         plugin.getChallengeManager().openGui(p);
     }
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length <= 1) {
+            return List.of("levels");
+        }
         return List.of();
     }
 

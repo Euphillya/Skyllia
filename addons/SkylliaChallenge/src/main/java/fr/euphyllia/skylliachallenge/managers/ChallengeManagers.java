@@ -200,6 +200,12 @@ public class ChallengeManagers {
             )), "skyllia.challenge.notify");
         }
 
+        // A completed challenge may finish a challenge level (and unlock the next one).
+        ChallengeLevelManagers levelManager = skylliaChallenge.getChallengeLevelManager();
+        if (levelManager != null) {
+            levelManager.evaluate(island, actor);
+        }
+
         return true;
     }
 
