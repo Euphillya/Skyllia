@@ -390,6 +390,10 @@ display = "<!italic><gray>- Break %amount% of %material%.</gray>"
 [addons.challenge.requirement.nearby_entity]
 display = "<!italic><gray>- Have %amount% %entity_type% nearby (%radius% m).</gray>"
 
+[addons.challenge.requirement.entity]
+display = "<!italic><gray>- Have %amount% %entity_type% on your island.</gray>"
+display_radius = "<!italic><gray>- Have %amount% %entity_type% within %radius% m.</gray>"
+
 [addons.challenge.requirement.item]
 display = "<!italic><gray>- Have %amount% of %item_name%.</gray>"
 
@@ -401,6 +405,18 @@ display = "<!italic><gray>- Have %amount% in your island account.</gray>"
 
 [addons.challenge.requirement.craft]
 display = "<!italic><gray>- Craft %amount% of %item_name%.</gray>"
+
+[addons.challenge.level]
+complete = "<green>You have completed the challenge level: %level_name%!</green>"
+notify-complete = "<green>Congratulations! %player_name%'s island has completed the challenge level: %level_name%!</green>"
+
+[addons.challenge.level.display]
+title = "<gold>=== Challenge Levels ===</gold>"
+progression = "<gray>Challenges: <white>%done%/%required%</white> (total %total%)"
+max-skip = "<!italic><gray>You may skip up to %max_skip% challenge(s).</gray>"
+completed = "<green>✔ Completed</green>"
+unlocked = "<yellow>Unlocked — in progress</yellow>"
+locked = "<red>🔒 Locked</red>"
 
 [addons.challenge.reward.bank]
 success = "<green>You have received %amount% in your island account as a reward for completing the %challenge_name% challenge.</green>"

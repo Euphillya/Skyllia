@@ -1,0 +1,22 @@
+id: "skyllia:challenge_level_1"
+name: "<white>Tier I"
+lore:
+  - "The first and default level of challenges."
+challenges:                       # challenges included in this level
+  - "skyllia:farmer_1"
+  - "skyllia:rancher_1"
+max-skip: 1                       # how many challenges may be left unfinished
+next-level: "skyllia:challenge_level_2"  # level unlocked once this one is completed
+rewards:                          # granted on level completion
+  - "ITEM:DIAMOND 3"
+  - "CMD:broadcast %player% completed challenge level I !"
+broadcast: true
+showInGui: true
+gui:
+  row: 2
+  column: 4
+  page: 1
+item: "IRON_BLOCK"
+icon-locked: "BARRIER"
+amount: 1
+itemLore: [ ]

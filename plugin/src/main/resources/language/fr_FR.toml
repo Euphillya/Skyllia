@@ -397,6 +397,10 @@ display = "<!italic><gray>- Avoir cassé %amount% de %material%.</gray>"
 [addons.challenge.requirement.nearby_entity]
 display = "<!italic><gray>- Avoir %amount% de %entity_type% à proximité ( %radius% m)</gray>"
 
+[addons.challenge.requirement.entity]
+display = "<!italic><gray>- Avoir %amount% de %entity_type% sur son île.</gray>"
+display_radius = "<!italic><gray>- Avoir %amount% de %entity_type% dans un rayon de %radius% m.</gray>"
+
 [addons.challenge.requirement.item]
 display = "<!italic><gray>- Avoir %amount% de %item_name%</gray>"
 
@@ -408,6 +412,18 @@ display = "<!italic><gray>- Avoir %amount% dans le compte de l'île.</gray>"
 
 [addons.challenge.requirement.craft]
 display = "<!italic><gray>- Avoir crafté %amount% de %item_name%</gray>"
+
+[addons.challenge.level]
+complete = "<green>Vous avez complété le palier de défis : %level_name% !</green>"
+notify-complete = "<green>Félicitations ! L'île de %player_name% a complété le palier de défis : %level_name% !</green>"
+
+[addons.challenge.level.display]
+title = "<gold>=== Paliers de défis ===</gold>"
+progression = "<gray>Défis : <white>%done%/%required%</white> (total %total%)"
+max-skip = "<!italic><gray>Vous pouvez ignorer jusqu'à %max_skip% défi(s).</gray>"
+completed = "<green>✔ Terminé</green>"
+unlocked = "<yellow>Débloqué — en cours</yellow>"
+locked = "<red>🔒 Verrouillé</red>"
 
 [addons.challenge.reward.bank]
 success = "<green>Vous avez reçu %amount% dans le compte de l'île en récompense du défi %challenge_name%.</green>"

@@ -1,0 +1,22 @@
+id: "skyllia:challenge_level_2"
+name: "<aqua>Tier II"
+lore:
+  - "Unlocked after completing Tier I."
+challenges:
+  - "skyllia:farmer_1"
+  - "skyllia:rancher_1"
+max-skip: 0                       # every challenge of this level must be completed
+# next-level: "skyllia:challenge_level_3"  # last level here, so no next-level
+rewards:
+  - "ITEM:DIAMOND 6"
+  - "CMD:broadcast %player% completed challenge level II !"
+broadcast: true
+showInGui: true
+gui:
+  row: 2
+  column: 5
+  page: 1
+item: "DIAMOND_BLOCK"
+icon-locked: "BARRIER"
+amount: 1
+itemLore: [ ]

@@ -1,0 +1,22 @@
+id: "skyllia:rancher_1"
+name: "<yellow>Rancher I"
+lore:
+  - "Raise 20 cows on your island."
+requirements:
+  - "ENTITY:COW 20"            # 20 cows anywhere on the island
+  # Optional scanning-distance variant (player must stand within 10 blocks of the cows):
+  # - "ENTITY:COW 20 10"
+rewards:
+  - "ITEM:DIAMOND 3"
+  - "CMD:broadcast %player% completed Rancher I !"
+maxTimes: -1
+cooldown: "24h"
+broadcast: true
+showInGui: true
+gui:
+  row: 2
+  column: 6
+  page: 1
+item: "COW_SPAWN_EGG"
+amount: 1
+itemLore: [ ]
