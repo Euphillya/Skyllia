@@ -1,12 +1,21 @@
 package fr.euphyllia.skylliachallenge.requirement;
 
+import fr.euphyllia.skyllia.Skyllia;
+import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -36,9 +45,51 @@ public record EntityRequirement(EntityType type, int amount, double radius) impl
     @Override
     public boolean isMet(Player player, Island island) {
         if (radius > 0) {
-            return false; // Todo :  find a way to get the list of entity positions
+            return countAroundPlayer(player) >= amount;
         }
-        return false; // Todo : find a way to get the list of entity positions
+        return countOnIsland(island) >= amount;
+    }
+
+    private int countAroundPlayer(Player player) {
+        Location loc = player.getLocation();
+        World world = loc.getWorld();
+        if (world == null) return 0;
+
+        if (!SkylliaAPI.isWorldSkyblock(world)) return 0;
+
+        // Le joueur doit être sur sa propre île
+        int chunkX = loc.getBlockX() >> 4;
+        int chunkZ = loc.getBlockZ() >> 4;
+
+        Island islandAtLocation = SkylliaAPI.getIslandByChunk(chunkX, chunkZ);
+        if (islandAtLocation == null) return 0;
+        Island playerIsland = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
+        if (playerIsland == null) return 0;
+        if (!islandAtLocation.getId().equals(playerIsland.getId())) return 0;
+
+        BoundingBox box = BoundingBox.of(loc, radius, radius, radius);
+        return SkylliaAPI.getWorldNMS().getEntities(world, null, box,
+                e -> e.getType() == type && islandAtLocation.isInside(e.getLocation())).size();
+    }
+
+    private int countOnIsland(Island island) {
+        int total = 0;
+        for (WorldConfig worldConfig : SkylliaAPI.getRegisteredWorlds()) {
+            World world = worldConfig.getWorld();
+            if (world == null) continue;
+
+            Location min = island.getMinimumPoint(world);
+            Location max = island.getMaximumPoint(world);
+            if (min == null || max == null) continue;
+
+            BoundingBox box = BoundingBox.of(min, max);
+            List<Entity> entities = SkylliaAPI.getWorldNMS().getEntities(world, null, box,
+                    e -> e.getType() == type && island.isInside(e.getLocation()));
+            total += entities.size();
+
+            if (total >= amount) return total;
+        }
+        return total;
     }
 
     @Override

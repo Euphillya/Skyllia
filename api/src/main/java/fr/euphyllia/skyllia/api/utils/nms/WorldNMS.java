@@ -5,11 +5,16 @@ import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.world.WorldFeedback;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
 /**
  * Provides methods for interacting with the Minecraft world using NMS (net.minecraft.server) classes.
@@ -92,4 +97,8 @@ public abstract class WorldNMS {
      * @return an array of average tick times, or null if the region doesn't exist
      */
     public abstract double @Nullable [] getAverageTickTimes(Chunk chunk);
+
+    public List<Entity> getEntities(World craftWorld, final @Nullable Entity except, final BoundingBox bb, Predicate<? super Entity> filter) {
+        return List.of();
+    };
 }
