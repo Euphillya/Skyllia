@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    paperweight.paperDevBundle("26.2-rc-2.build.3-alpha")
+    paperweight.paperDevBundle("26.2.build.+")
     compileOnly(project(":nms:v1_21_R7"))
     compileOnly(project(":api"))
 }

@@ -1,13 +1,11 @@
 package fr.euphyllia.skylliachallenge.requirement;
 
-import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skylliachallenge.api.requirement.ChallengeRequirement;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;

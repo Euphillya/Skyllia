@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.utils.nms.v1_21_R6;
 
 import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
@@ -45,10 +46,12 @@ import net.minecraft.world.level.storage.LevelDataAndDimensions;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.validation.ContentValidationException;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.generator.CraftWorldInfo;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -58,6 +61,7 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,9 +71,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
@@ -434,5 +440,26 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         final int z = chunk.getZ();
         final ServerLevel world = ((CraftWorld) chunk.getWorld()).getHandle();
         return fr.euphyllia.skyllia.utils.nms.v1_21_R5.WorldNMS.getAverageTickTime(world, x, z);
+    }
+
+    @Override
+    public List<Entity> getEntities(World craftWorld, final @Nullable Entity except, final BoundingBox boundingBox, Predicate<? super Entity> filter) {
+        final ServerLevel nms = ((CraftWorld) craftWorld).getHandle();
+        AABB bb = new AABB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        final List<net.minecraft.world.entity.Entity> entityList = new java.util.ArrayList<>();
+
+        net.minecraft.world.entity.Entity exceptNms = except != null ? ((CraftEntity) except).getHandle() : null;
+        nms.moonrise$getEntityLookup().getEntities(exceptNms, bb, entityList, Predicates.alwaysTrue());
+
+        List<Entity> bukkitEntityList = new ArrayList<>(entityList.size());
+
+        for (net.minecraft.world.entity.Entity entity : entityList) {
+            Entity bukkitEntity = entity.getBukkitEntity();
+            if (filter == null || filter.test(bukkitEntity)) {
+                bukkitEntityList.add(bukkitEntity);
+            }
+        }
+
+        return bukkitEntityList;
     }
 }

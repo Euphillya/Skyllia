@@ -25,7 +25,6 @@ import net.minecraft.world.entity.npc.CatSpawner;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTraderSpawner;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.CustomSpawner;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,7 +63,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 import static net.minecraft.server.MinecraftServer.getServer;
@@ -133,6 +131,11 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
                     ex
             );
         }
+    }
+
+    private static int floorCoord(double value) {
+        final int truncated = (int) value;
+        return value < (double) truncated ? truncated - 1 : truncated;
     }
 
     @Override
@@ -514,7 +517,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         AABB bb = new AABB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
         final List<net.minecraft.world.entity.Entity> entityList = new java.util.ArrayList<>();
 
-        net.minecraft.world.entity.Entity exceptNms = except != null ?  ((CraftEntity) except).getHandle() : null;
+        net.minecraft.world.entity.Entity exceptNms = except != null ? ((CraftEntity) except).getHandle() : null;
         nms.moonrise$getEntityLookup().getEntities(exceptNms, bb, entityList, Predicates.alwaysTrue());
 
         List<Entity> bukkitEntityList = new ArrayList<>(entityList.size());
@@ -527,10 +530,5 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         }
 
         return bukkitEntityList;
-    }
-
-    private static int floorCoord(double value) {
-        final int truncated = (int) value;
-        return value < (double) truncated ? truncated - 1 : truncated;
     }
 }

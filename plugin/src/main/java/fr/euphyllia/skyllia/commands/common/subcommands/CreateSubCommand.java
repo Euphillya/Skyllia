@@ -34,9 +34,6 @@ public class CreateSubCommand implements SubCommandInterface {
 
     private final Logger logger = LogManager.getLogger(CreateSubCommand.class);
 
-    private record IslandCreationContext(Island island, Map<String, SchematicSetting> schematicSettingMap) {
-    }
-
     public CompletableFuture<Void> runCreateIsland(Skyllia plugin, Player player, String[] args) {
         final UUID playerId = player.getUniqueId();
         final AtomicBoolean acquired = new AtomicBoolean(false);
@@ -210,7 +207,6 @@ public class CreateSubCommand implements SubCommandInterface {
                 });
     }
 
-
     @Override
     public void onExecute(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -238,7 +234,6 @@ public class CreateSubCommand implements SubCommandInterface {
         }
     }
 
-
     @Override
     public @NotNull List<String> onTabComplete(@NotNull Plugin plugin, @NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) {
@@ -260,5 +255,8 @@ public class CreateSubCommand implements SubCommandInterface {
         }
 
         return Collections.emptyList();
+    }
+
+    private record IslandCreationContext(Island island, Map<String, SchematicSetting> schematicSettingMap) {
     }
 }

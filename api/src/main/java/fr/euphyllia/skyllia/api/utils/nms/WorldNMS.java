@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 /**
@@ -100,5 +99,7 @@ public abstract class WorldNMS {
 
     public List<Entity> getEntities(World craftWorld, final @Nullable Entity except, final BoundingBox bb, Predicate<? super Entity> filter) {
         return List.of();
-    };
+    }
+
+    ;
 }

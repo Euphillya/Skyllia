@@ -2,6 +2,7 @@ package fr.euphyllia.skyllia.utils.nms.v26_2;
 
 import ca.spottedleaf.moonrise.common.util.TickThread;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.coordinate.ChunkCoordinate;
@@ -19,6 +20,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Util;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.world.entity.ai.village.VillageSiege;
 import net.minecraft.world.entity.npc.CatSpawner;
@@ -36,10 +38,12 @@ import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.SavedDataStorage;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.generator.CraftWorldInfo;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
@@ -49,15 +53,18 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static net.minecraft.server.MinecraftServer.getServer;
 
@@ -208,7 +215,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
 
         ServerLevel serverLevel = new ServerLevel(
                 console,
-                console.executor,
+                Util.backgroundExecutor(),
                 console.storageSource,
                 genSettingsFinal,
                 dimensionKey,
@@ -256,7 +263,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
         for (LevelChunkSection section : sections) {
             if (section == null || section.hasOnlyAir()) continue;
 
-            section.states.count((state, count) -> {
+            section.getStates().count((state, count) -> {
                 if (state.isAir()) return;
                 Material mat = state.getBukkitMaterial();
                 blockCounts.merge(mat, count, Integer::sum);
@@ -400,5 +407,26 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
     @Override
     public double @Nullable [] getAverageTickTimes(Chunk chunk) {
         return fr.euphyllia.skyllia.utils.nms.v1_21_R7.WorldNMS.getAverageTickTimesHelper(chunk);
+    }
+
+    @Override
+    public List<Entity> getEntities(World craftWorld, final @Nullable Entity except, final BoundingBox boundingBox, Predicate<? super Entity> filter) {
+        final ServerLevel nms = ((CraftWorld) craftWorld).getHandle();
+        AABB bb = new AABB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        final List<net.minecraft.world.entity.Entity> entityList = new java.util.ArrayList<>();
+
+        net.minecraft.world.entity.Entity exceptNms = except != null ? ((CraftEntity) except).getHandle() : null;
+        nms.moonrise$getEntityLookup().getEntities(exceptNms, bb, entityList, Predicates.alwaysTrue());
+
+        List<Entity> bukkitEntityList = new ArrayList<>(entityList.size());
+
+        for (net.minecraft.world.entity.Entity entity : entityList) {
+            Entity bukkitEntity = entity.getBukkitEntity();
+            if (filter == null || filter.test(bukkitEntity)) {
+                bukkitEntityList.add(bukkitEntity);
+            }
+        }
+
+        return bukkitEntityList;
     }
 }
