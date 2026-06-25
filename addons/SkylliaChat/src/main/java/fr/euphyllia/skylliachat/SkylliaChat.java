@@ -2,6 +2,7 @@ package fr.euphyllia.skylliachat;
 
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skylliachat.commands.IslandChatCommand;
+import fr.euphyllia.skylliachat.configuration.ChatConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +15,13 @@ public final class SkylliaChat extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        try {
+            ChatConfigLoader.init(getDataFolder());
+        } catch (Exception e) {
+            getLogger().severe("Error while loading SkylliaChat config");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         SkylliaAPI.registerCommands(new IslandChatCommand(this), "chat");
 
@@ -23,6 +30,7 @@ public final class SkylliaChat extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        ChatConfigLoader.unregister();
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
     }
