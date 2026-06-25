@@ -14,6 +14,8 @@ public final class SkylliaChat extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         SkylliaAPI.registerCommands(new IslandChatCommand(this), "chat");
 
         getServer().getPluginManager().registerEvents(new ChatListeners(this), this);
