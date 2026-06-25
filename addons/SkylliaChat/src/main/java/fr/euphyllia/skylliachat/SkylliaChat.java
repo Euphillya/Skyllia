@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public final class SkylliaChat extends JavaPlugin {
 
@@ -18,7 +19,7 @@ public final class SkylliaChat extends JavaPlugin {
         try {
             ChatConfigLoader.init(getDataFolder());
         } catch (Exception e) {
-            getLogger().severe("Error while loading SkylliaChat config");
+            getLogger().log(Level.SEVERE, "Error while loading SkylliaChat config", e);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
