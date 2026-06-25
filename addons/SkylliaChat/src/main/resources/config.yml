@@ -1,2 +1,0 @@
-chat:
-  format: "<red>[Messaging Island] %player_name%: <gray>%message%"
