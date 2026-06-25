@@ -4,6 +4,7 @@ import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
+import fr.euphyllia.skylliachat.configuration.ChatConfigLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -50,7 +51,7 @@ public class ChatListeners implements Listener {
                 }
 
                 String message = event.getMessage();
-                String format = this.plugin.getConfig().getString("chat.format", "<red>[Messaging Island] %player_name%: <gray>%message%")
+                String format = ChatConfigLoader.config.getFormat()
                         .replace("%player_name%", "<player_name>")
                         .replace("%message%", "<message>");
 
