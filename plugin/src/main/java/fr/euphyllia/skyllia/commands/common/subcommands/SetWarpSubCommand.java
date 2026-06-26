@@ -70,6 +70,11 @@ public class SetWarpSubCommand implements SubCommandInterface {
 
         String warpName = args[0];
 
+        if (warpName.equalsIgnoreCase("spawn") || warpName.equalsIgnoreCase("home") || warpName.equalsIgnoreCase("visit")) {
+            ConfigLoader.language.sendMessage(player, "island.warp.reserved-name");
+            return;
+        }
+
         boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_SET_WARP_PERMISSION, null, ConfigLoader.general.getDebugSettings().permission());
         if (!allowed) {
             ConfigLoader.language.sendMessage(player, "island.player.permission-denied");
@@ -121,5 +126,4 @@ public class SetWarpSubCommand implements SubCommandInterface {
                 .limit(20)
                 .toList();
     }
-
 }

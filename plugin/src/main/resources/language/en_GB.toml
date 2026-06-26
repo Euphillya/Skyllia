@@ -210,6 +210,8 @@ command-in-progress = "The command is already being executed, please wait a mome
 create-success = "Your warp %s has been created."
 args-missing = "You must specify the name of the warp to register: /skyllia <set/del>warp <warp_name>"
 delete-home-forbidden = "You cannot delete the home warp."
+reserved-name = "This warp name is reserved and cannot be used."
+delete-spawn-forbidden = "You cannot delete the spawn warp. Use /skyllia setspawn to move it."
 delete-success = "The warp has been deleted."
 warp-not-exist = "The requested warp does not exist."
 teleport-success = "You have been teleported to the requested warp."
@@ -1099,3 +1101,12 @@ island-disabled = "<red>This island is currently disabled."
 [island.permission.quickshop.shop.create]
 name = "Create a QuickShop"
 description = "Allows creating a QuickShop on the island."
+[island.spawn]
+block-protected = "You cannot break the island spawn block."
+
+[island.spawn.set]
+success = "Your island spawn point has been set."
+
+[island.permission.command.set_spawn]
+name = "Set Spawn"
+description = "Allows moving the island spawn point."

@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.api.skyblock;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
 import fr.euphyllia.skyllia.api.configuration.WorldConfig;
 import fr.euphyllia.skyllia.api.coordinate.RegionCoordinate;
+import fr.euphyllia.skyllia.api.event.SkyblockSpawnChangeEvent;
 import fr.euphyllia.skyllia.api.exceptions.MaxIslandSizeExceedException;
 import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.permissions.IslandFlags;
@@ -27,6 +28,15 @@ import java.util.UUID;
  */
 public abstract class Island {
 
+    /**
+     * The reserved warp name under which the island spawn point is stored.
+     * <p>
+     * This name is reserved by Skyllia: it cannot be set or deleted through the
+     * regular {@code /is setwarp} / {@code /is delwarp} commands, and is never
+     * listed as a public warp.
+     * </p>
+     */
+    public static final String SPAWN_WARP_NAME = "spawn";
     private static final Logger log = LoggerFactory.getLogger(Island.class);
 
     /**
@@ -332,6 +342,94 @@ public abstract class Island {
     public abstract void setCenterLocation(Location location);
 
     /**
+     * Returns the raw, stored custom spawn of this island, if any.
+     * <p>
+     * Returns {@code null} when no custom spawn has been set; in that case callers
+     * should fall back to {@link #getCenterLocation(World)} (see
+     * {@link #getSpawnLocation(World)}).
+     * </p>
+     *
+     * @return The custom spawn {@link WarpIsland}, or {@code null} if none is set.
+     */
+    public @Nullable WarpIsland getSpawn() {
+        return getWarpByName(SPAWN_WARP_NAME);
+    }
+
+    /**
+     * Returns whether this island has an explicit, customized spawn point.
+     *
+     * @return {@code true} if a custom spawn has been set, {@code false} if the
+     * island still uses the default (center-based) spawn.
+     */
+    public boolean hasCustomSpawn() {
+        WarpIsland spawn = getSpawn();
+        return spawn != null && spawn.location() != null && spawn.location().getWorld() != null;
+    }
+
+    /**
+     * Resolves the spawn {@link Location} of this island for the given world.
+     * <p>
+     * Resolution order:
+     * <ol>
+     *     <li>The custom spawn set via {@link #setSpawnLocation(Location)} or
+     *     {@code /is setspawn}, if it exists and belongs to {@code world}.</li>
+     *     <li>Otherwise, the island {@link #getCenterLocation(World) center} of
+     *     {@code world}, which acts as the always-available default spawn.</li>
+     * </ol>
+     * The returned location is a defensive copy and is never {@code null} as long
+     * as the world is valid. Callers that want the player to stand on top of the
+     * spawn block should add a {@code +0.5} Y offset themselves, mirroring the
+     * behaviour of {@code /is home}.
+     * </p>
+     *
+     * @param world The {@link World} for which to resolve the spawn.
+     * @return The resolved spawn {@link Location} for the given world.
+     */
+    public Location getSpawnLocation(World world) {
+        WarpIsland spawn = getSpawn();
+        if (spawn != null && spawn.location() != null) {
+            Location loc = spawn.location();
+            if (loc.getWorld() != null && loc.getWorld().equals(world)) {
+                return loc.clone();
+            }
+        }
+        return getCenterLocation(world);
+    }
+
+    /**
+     * Sets a custom spawn point for this island.
+     * <p>
+     * The spawn is persisted under the reserved {@link #SPAWN_WARP_NAME} warp and
+     * becomes the location used by {@code /is home}, respawn, and post-creation
+     * teleport. An {@link fr.euphyllia.skyllia.api.event.SkyblockSpawnChangeEvent}
+     * is fired beforehand, allowing other addons to adjust or veto the change.
+     * </p>
+     *
+     * @param location The {@link Location} to use as the island spawn. The world
+     *                 is inferred from {@link Location#getWorld()}.
+     * @return {@code true} if the spawn was successfully saved, {@code false} if
+     * the change was cancelled or persistence failed.
+     */
+    public boolean setSpawnLocation(Location location) {
+        SkyblockSpawnChangeEvent event = new SkyblockSpawnChangeEvent(this, location);
+        event.callEvent();
+        if (event.isCancelled()) {
+            return false;
+        }
+        return addWarps(SPAWN_WARP_NAME, event.getSpawnLocation(), true);
+    }
+
+    /**
+     * Clears any custom spawn, reverting this island to the default
+     * (center-based) spawn point.
+     *
+     * @return {@code true} if a custom spawn was removed, {@code false} otherwise.
+     */
+    public boolean resetSpawn() {
+        return delWarp(SPAWN_WARP_NAME);
+    }
+
+    /**
      * Returns the custom minimum build height for this island in the given world,
      * or {@code null} if no custom value is set (the world default applies).
      *
@@ -416,4 +514,3 @@ public abstract class Island {
      */
     public abstract boolean isInside(@NotNull World world, int blockX, int blockY, int blockZ);
 }
-

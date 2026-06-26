@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.configuration.ConfigLoader;
 import fr.euphyllia.skyllia.listeners.ListenersUtils;
 import fr.euphyllia.skyllia.utils.PlayerUtils;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -35,6 +36,13 @@ public class BlockBreakPermissions implements PermissionModule {
         final Island island = ListenersUtils.islandAtBlock(world, bx, bz);
         if (island == null) return;
 
+        if (isSpawnProtected(island, world, bx, by, bz)
+                && !PlayerUtils.hasPermission(player, "skyllia.island.spawn.break.bypass")) {
+            event.setCancelled(true);
+            ConfigLoader.language.sendMessage(player, "island.spawn.block-protected");
+            return;
+        }
+
         final boolean hasBypass = PlayerUtils.hasPermission(player, "skyllia.player.break.bypass");
         final boolean hasPermission = hasBypass || SkylliaAPI.getPermissionsManager()
                 .hasPermission(player, island, BLOCK_BREAK, null, ConfigLoader.general.getDebugSettings().permission());
@@ -45,6 +53,20 @@ public class BlockBreakPermissions implements PermissionModule {
         if (!hasBypass) {
             ListenersUtils.isBlockOutsideIsland(island, world, bx, by, bz, event);
         }
+    }
+
+    private boolean isSpawnProtected(Island island, World world, int bx, int by, int bz) {
+        Location spawn = island.getSpawnLocation(world);
+        if (spawn == null || spawn.getWorld() == null || !spawn.getWorld().equals(world)) {
+            return false;
+        }
+        int sx = spawn.getBlockX();
+        int sy = spawn.getBlockY();
+        int sz = spawn.getBlockZ();
+        if (bx != sx || bz != sz) {
+            return false;
+        }
+        return by == sy || by == sy - 1;
     }
 
     @Override

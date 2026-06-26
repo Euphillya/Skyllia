@@ -172,6 +172,7 @@ public class CreateSubCommand implements SubCommandInterface {
                             }
                             if (first) {
                                 island.addWarps("home", center, true);
+                                island.setSpawnLocation(center);
 
                                 Skyllia.getInstance().getInterneAPI()
                                         .getSkyblockManager()

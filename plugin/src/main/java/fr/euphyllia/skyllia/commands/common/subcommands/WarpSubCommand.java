@@ -61,6 +61,11 @@ public class WarpSubCommand implements SubCommandInterface {
 
         String warpName = args[0];
 
+        if (warpName.equalsIgnoreCase("spawn")) {
+            ConfigLoader.language.sendMessage(player, "island.warp.warp-not-exist");
+            return;
+        }
+
         try {
             Island island = SkylliaAPI.getIslandByPlayerId(player.getUniqueId());
             if (island == null) {
@@ -130,7 +135,9 @@ public class WarpSubCommand implements SubCommandInterface {
 
         return warps.stream()
                 .map(WarpIsland::warpName)
-                .filter(n -> n != null && n.toLowerCase(Locale.ROOT).startsWith(prefix))
+                .filter(n ->
+                        n != null && !n.equalsIgnoreCase("spawn") && n.toLowerCase(Locale.ROOT).startsWith(prefix)
+                )
                 .distinct()
                 .sorted()
                 .limit(20)

@@ -49,6 +49,7 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new TransferSubCommand(), "transfer");
         registry.registerSubCommand(new TrustSubCommand(), "trust");
         registry.registerSubCommand(new SetHomeSubCommand(), "sethome");
+        registry.registerSubCommand(new SetSpawnSubCommand(), "setspawn");
         registry.registerSubCommand(new SetVisitSubCommand(), "setvisit");
         registry.registerSubCommand(new SetWarpSubCommand(), "setwarp");
         registry.registerSubCommand(new UnbanSubCommand(), "unban");

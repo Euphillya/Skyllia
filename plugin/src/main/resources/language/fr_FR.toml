@@ -210,6 +210,8 @@ command-in-progress = "La commande est déjà en cours d'exécution, veuillez pa
 create-success = "Le warp %s a été créé avec succès."
 args-missing = "Vous devez spécifier le nom du warp à enregistrer : /skyllia warp <create/delete/teleport> <nom>"
 delete-home-forbidden = "Vous ne pouvez pas supprimer le warp 'home' de votre île."
+reserved-name = "Ce nom de warp est réservé et ne peut pas être utilisé."
+delete-spawn-forbidden = "Vous ne pouvez pas supprimer le warp d'apparition. Utilisez /skyllia setspawn pour le déplacer."
 delete-success = "Le warp a été supprimé avec succès."
 warp-not-exist = "Le warp n'existe pas."
 teleport-success = "Vous avez été téléporté au warp."
@@ -1106,3 +1108,12 @@ island-disabled = "<red>Cette île est actuellement désactivée."
 [island.permission.quickshop.shop.create]
 name = "Créer un shop QuickShop"
 description = "Autorise la création d'un shop QuickShop sur l'île."
+[island.spawn]
+block-protected = "Vous ne pouvez pas casser le bloc d'apparition de l'île."
+
+[island.spawn.set]
+success = "Le point d'apparition de votre île a été défini."
+
+[island.permission.command.set_spawn]
+name = "Définir l'apparition"
+description = "Permet de déplacer le point d'apparition de l'île."

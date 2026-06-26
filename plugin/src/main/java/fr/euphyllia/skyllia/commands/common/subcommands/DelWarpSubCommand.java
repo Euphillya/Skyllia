@@ -66,6 +66,11 @@ public class DelWarpSubCommand implements SubCommandInterface {
                 return;
             }
 
+            if (warpName.equalsIgnoreCase("spawn")) {
+                ConfigLoader.language.sendMessage(player, "island.warp.delete-spawn-forbidden");
+                return;
+            }
+
             boolean allowed = SkylliaAPI.getPermissionsManager().hasPermission(player, island, ISLAND_DELWARP_PERMISSION, null, ConfigLoader.general.getDebugSettings().permission());
             if (!allowed) {
                 ConfigLoader.language.sendMessage(player, "island.player.permission-denied");

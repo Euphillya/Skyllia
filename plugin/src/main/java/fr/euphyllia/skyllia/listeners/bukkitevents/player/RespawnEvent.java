@@ -50,9 +50,9 @@ public class RespawnEvent implements Listener {
         final Island island = SkylliaAPI.getIslandByPlayerId(playerId);
 
         if (island != null) {
-            Location center = island.getCenterLocation(islandWorld);
-            if (center != null && center.getWorld() != null) {
-                return center;
+            Location spawn = island.getSpawnLocation(islandWorld);
+            if (spawn != null && spawn.getWorld() != null) {
+                return spawn.add(0, 0.5, 0);
             }
         }
 
