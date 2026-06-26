@@ -171,15 +171,19 @@ public class CreateSubCommand implements SubCommandInterface {
                                 island.setBuildHeight(worldName, HeightType.MAX, setting.maxBuildHeight());
                             }
                             if (first) {
-                                island.addWarps("home", center, true);
-                                island.setSpawnLocation(center);
+                                // After schematic paste, find the actual ground location on the main thread
+                                return findGroundLocationAsync(center).thenCompose(spawnLocation -> {
+                                    island.addWarps("home", spawnLocation, true);
+                                    island.setSpawnLocation(spawnLocation);
 
-                                Skyllia.getInstance().getInterneAPI()
-                                        .getSkyblockManager()
-                                        .cacheIslandAndIndex(island);
+                                    Skyllia.getInstance().getInterneAPI()
+                                            .getSkyblockManager()
+                                            .cacheIslandAndIndex(island);
 
-                                new SkyblockLoadEvent(island).callEvent();
-                                return teleportAndApplyBorder(player, island, center);
+                                    new SkyblockLoadEvent(island).callEvent();
+                                    
+                                    return teleportAndApplyBorder(player, island, spawnLocation);
+                                });
                             }
                             return CompletableFuture.completedFuture(null);
                         });
@@ -259,5 +263,55 @@ public class CreateSubCommand implements SubCommandInterface {
     }
 
     private record IslandCreationContext(Island island, Map<String, SchematicSetting> schematicSettingMap) {
+    }
+
+    /**
+     * Finds the highest solid ground block at the given XZ coordinates asynchronously.
+     * This method MUST run on the main thread (Region Scheduler) to read block data.
+     *
+     * @param center Location with the center XZ coordinates and schematic Y height
+     * @return CompletableFuture with the location of the highest solid block
+     */
+    private CompletableFuture<Location> findGroundLocationAsync(Location center) {
+        CompletableFuture<Location> future = new CompletableFuture<>();
+        
+        org.bukkit.World world = center.getWorld();
+        if (world == null) {
+            future.complete(center);
+            return future;
+        }
+
+        // Schedule on region scheduler to access block data safely
+        Bukkit.getRegionScheduler().run(Skyllia.getInstance(), center, task -> {
+            try {
+                int x = center.getBlockX();
+                int z = center.getBlockZ();
+                int startY = center.getBlockY();
+                
+                // Get world height limits
+                int maxY = Math.min(startY + 20, world.getMaxHeight() - 1);
+                int minY = Math.max(startY - 10, world.getMinHeight());
+                
+                // Search downward from max height to find the first solid block
+                for (int y = maxY; y >= minY; y--) {
+                    org.bukkit.block.Block block = world.getBlockAt(x, y, z);
+                    
+                    // Check if the block is solid (not air, not water, not lava, etc.)
+                    if (block.getType().isSolid() && !block.isPassable()) {
+                        Location groundLoc = new Location(world, center.getX(), y + 1.0, center.getZ());
+                        future.complete(groundLoc);
+                        return;
+                    }
+                }
+                
+                // If no solid block found, return the original center location
+                future.complete(center);
+            } catch (Exception e) {
+                logger.error("Error finding ground location", e);
+                future.complete(center);
+            }
+        });
+        
+        return future;
     }
 }

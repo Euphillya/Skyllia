@@ -176,10 +176,10 @@ public class ForceCreateSubCommands implements SubCommandInterface {
                 return Skyllia.getInstance().getInterneAPI()
                         .getSchematicHook(SchematicPlugin.fromString(setting.plugin()))
                         .paste(center, setting)
-                        .thenAcceptAsync(success -> {
+                        .thenComposeAsync(success -> {
                             if (!success) {
                                 island.setDisable(true);
-                                throw new RuntimeException("Schematic paste failed for world " + worldName);
+                                return CompletableFuture.failedFuture(new RuntimeException("Schematic paste failed for world " + worldName));
                             }
                             if (setting.minBuildHeight() != null) {
                                 island.setBuildHeight(worldName, HeightType.MIN, setting.minBuildHeight());
@@ -188,23 +188,27 @@ public class ForceCreateSubCommands implements SubCommandInterface {
                                 island.setBuildHeight(worldName, HeightType.MAX, setting.maxBuildHeight());
                             }
                             if (first) {
-                                island.addWarps("home", center, true);
-                                island.setSpawnLocation(center);
+                                // After schematic paste, find the actual ground location on the main thread
+                                return findGroundLocationAsync(center).thenAccept(spawnLocation -> {
+                                    island.addWarps("home", spawnLocation, true);
+                                    island.setSpawnLocation(spawnLocation);
 
-                                Skyllia.getInstance().getInterneAPI()
-                                        .getSkyblockManager()
-                                        .cacheIslandAndIndex(island);
+                                    Skyllia.getInstance().getInterneAPI()
+                                            .getSkyblockManager()
+                                            .cacheIslandAndIndex(island);
 
-                                new SkyblockLoadEvent(island).callEvent();
+                                    new SkyblockLoadEvent(island).callEvent();
 
-                                // Téléportation si le joueur est en ligne
-                                Player onlineOwner = Bukkit.getPlayer(ownerId);
-                                if (onlineOwner != null) {
-                                    Location spawnLoc = center.clone().add(0, 0.5, 0);
-                                    onlineOwner.teleportAsync(spawnLoc,
-                                            org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.PLUGIN);
-                                }
+                                    // Téléportation si le joueur est en ligne
+                                    Player onlineOwner = Bukkit.getPlayer(ownerId);
+                                    if (onlineOwner != null) {
+                                        Location spawnLoc = spawnLocation.clone().add(0, 0.5, 0);
+                                        onlineOwner.teleportAsync(spawnLoc,
+                                                org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.PLUGIN);
+                                    }
+                                });
                             }
+                            return CompletableFuture.completedFuture(null);
                         });
             });
         }
@@ -233,5 +237,55 @@ public class ForceCreateSubCommands implements SubCommandInterface {
         }
 
         return Collections.emptyList();
+    }
+
+    /**
+     * Finds the highest solid ground block at the given XZ coordinates asynchronously.
+     * This method MUST run on the main thread (Region Scheduler) to read block data.
+     *
+     * @param center Location with the center XZ coordinates and schematic Y height
+     * @return CompletableFuture with the location of the highest solid block
+     */
+    private CompletableFuture<Location> findGroundLocationAsync(Location center) {
+        CompletableFuture<Location> future = new CompletableFuture<>();
+        
+        org.bukkit.World world = center.getWorld();
+        if (world == null) {
+            future.complete(center);
+            return future;
+        }
+
+        // Schedule on region scheduler to access block data safely
+        Bukkit.getRegionScheduler().run(Skyllia.getInstance(), center, task -> {
+            try {
+                int x = center.getBlockX();
+                int z = center.getBlockZ();
+                int startY = center.getBlockY();
+                
+                // Get world height limits
+                int maxY = Math.min(startY + 20, world.getMaxHeight() - 1);
+                int minY = Math.max(startY - 10, world.getMinHeight());
+                
+                // Search downward from max height to find the first solid block
+                for (int y = maxY; y >= minY; y--) {
+                    org.bukkit.block.Block block = world.getBlockAt(x, y, z);
+                    
+                    // Check if the block is solid (not air, not water, not lava, etc.)
+                    if (block.getType().isSolid() && !block.isPassable()) {
+                        Location groundLoc = new Location(world, center.getX(), y + 1.0, center.getZ());
+                        future.complete(groundLoc);
+                        return;
+                    }
+                }
+                
+                // If no solid block found, return the original center location
+                future.complete(center);
+            } catch (Exception e) {
+                logger.error("Error finding ground location", e);
+                future.complete(center);
+            }
+        });
+        
+        return future;
     }
 }
