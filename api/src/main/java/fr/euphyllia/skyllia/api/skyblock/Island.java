@@ -39,12 +39,35 @@ public abstract class Island {
     public static final String SPAWN_WARP_NAME = "spawn";
     private static final Logger log = LoggerFactory.getLogger(Island.class);
 
-    public @Nullable abstract String getName();
+    /**
+     * Gets the name of the island.
+     *
+     * @return The island name, or {@code null} if none has been set.
+     */
+    public @Nullable
+    abstract String getName();
 
+    /**
+     * Sets the display name of the island.
+     *
+     * @param name The new name, or {@code null} to remove the current name.
+     * @return {@code true} if successfully updated, {@code false} otherwise.
+     */
     public abstract boolean setName(@Nullable String name);
 
+    /**
+     * Gets the description of the island.
+     *
+     * @return The description, or {@code null} if none has been set.
+     */
     public abstract @Nullable String getDescription();
 
+    /**
+     * Sets the description of the island.
+     *
+     * @param description The new description, or {@code null} to remove it.
+     * @return {@code true} if successfully updated, {@code false} otherwise.
+     */
     public abstract boolean setDescription(@Nullable String description);
 
     /**
@@ -280,8 +303,24 @@ public abstract class Island {
      */
     public abstract boolean setMaxMembers(int maxMembers);
 
+    /**
+     * Returns the compiled permission set for this island.
+     * <p>
+     * Compiled permissions aggregate all role-based and member-specific
+     * permission rules into a single, ready-to-query object. The result
+     * may be cached; call {@link #invalidateCompiledPermissions()} to
+     * force a reload from the database.
+     * </p>
+     *
+     * @return The {@link CompiledPermissions} for this island, never {@code null}.
+     */
     public abstract CompiledPermissions getCompiledPermissions();
 
+    /**
+     * Invalidates the cached compiled permissions for this island,
+     * forcing a reload from the database on the next call to
+     * {@link #getCompiledPermissions()}.
+     */
     public abstract void invalidateCompiledPermissions();
 
     /**

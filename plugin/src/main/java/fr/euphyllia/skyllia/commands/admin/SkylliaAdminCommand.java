@@ -81,6 +81,10 @@ public class SkylliaAdminCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new SetHeightSubCommands(), "set_height", "setheight");
         registry.registerSubCommand(new SchematicSubCommands(), "schematic", "schem");
         registry.registerSubCommand(new ForceCreateSubCommands(), "create");
+
+        // extra
+        registry.registerSubCommand(new AdminSetDescriptionCommand(), "set_name", "setname");
+        registry.registerSubCommand(new AdminSetDescriptionCommand(), "set_description", "setdescription");
     }
 
     @Override

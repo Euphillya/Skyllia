@@ -5,6 +5,9 @@ import fr.euphyllia.skyllia.api.service.TrustService;
 import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.papi.SkylliaPAPIUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -55,6 +58,9 @@ import java.util.UUID;
  * </table>
  */
 public class IslandHandler implements PlaceholderHandler {
+
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     private static @NotNull String ownerName(@NotNull Island island) {
         Players owner = island.getOwner();
@@ -165,8 +171,28 @@ public class IslandHandler implements PlaceholderHandler {
 
             case "access" -> String.valueOf(island.isPrivateIsland());
             case "disabled" -> String.valueOf(island.isDisable());
-
+            case "name" -> {
+                String raw = island.getName();
+                yield raw != null ? render(raw) : player.getName() + "'s Island";
+            }
+            case "name_raw" -> {
+                String raw = island.getName();
+                yield raw != null ? raw : player.getName() + "'s Island";
+            }
+            case "description" -> {
+                String raw = island.getDescription();
+                yield raw != null ? render(raw) : "";
+            }
+            case "description_raw" -> {
+                String raw = island.getDescription();
+                yield raw != null ? raw : "";
+            }
             default -> null;
         };
+    }
+
+    private String render(String miniMessageString) {
+        Component component = miniMessage.deserialize(miniMessageString);
+        return LEGACY.serialize(component);
     }
 }

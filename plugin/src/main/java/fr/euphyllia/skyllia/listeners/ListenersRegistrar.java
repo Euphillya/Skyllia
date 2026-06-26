@@ -7,6 +7,7 @@ import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.GrowEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.paper.PortalAlternativePaperEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.player.*;
+import fr.euphyllia.skyllia.listeners.extra.IslandInfoExtraListener;
 import fr.euphyllia.skyllia.listeners.permissions.block.*;
 import fr.euphyllia.skyllia.listeners.permissions.decor.DecorHangingBreakPermissions;
 import fr.euphyllia.skyllia.listeners.permissions.decor.DecorHangingPlacePermissions;
@@ -79,6 +80,7 @@ public class ListenersRegistrar {
         // Skyblock Events
         registerEvent(pluginManager, new SkyblockEvent(interneAPI));
         registerEvent(pluginManager, new PortalTeleportListener());
+        registerEvent(pluginManager, new IslandInfoExtraListener());
 
         // Permissions Listeners
         var moduleManager = SkylliaAPI.getPermissionModuleManager();

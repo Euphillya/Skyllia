@@ -56,6 +56,10 @@ public class SkylliaCommand implements SkylliaCommandInterface {
         registry.registerSubCommand(new UntrustSubCommand(), "untrust");
         registry.registerSubCommand(new VisitSubCommand(), "visit");
         registry.registerSubCommand(new WarpSubCommand(), "warp");
+
+        // extra
+        registry.registerSubCommand(new SetNameCommand(plugin), "set_name", "setname");
+        registry.registerSubCommand(new SetDescriptionCommand(plugin), "set_description", "setdescription");
     }
 
     @Override

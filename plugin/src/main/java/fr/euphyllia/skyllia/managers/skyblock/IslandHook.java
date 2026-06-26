@@ -15,10 +15,12 @@ import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
+import fr.euphyllia.skyllia.api.utils.Keys;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,6 +76,44 @@ public class IslandHook extends Island {
         this.maxMemberInIsland = maxMembers;
         this.islandSize = size;
         this.islandCenterLocations = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public @Nullable String getName() {
+        return SkylliaAPI.getIslandCustomDataQuery().get(
+                Keys.NAMESPACE_KEY_EXTRA, this, Keys.KEY_NAME, PersistentDataType.STRING
+        );
+    }
+
+    @Override
+    public boolean setName(@Nullable String name) {
+        if (name == null) {
+            return SkylliaAPI.getIslandCustomDataQuery().remove(
+                    Keys.NAMESPACE_KEY_EXTRA, this, Keys.KEY_NAME
+            );
+        }
+        return SkylliaAPI.getIslandCustomDataQuery().set(
+                Keys.NAMESPACE_KEY_EXTRA, this, Keys.KEY_NAME, PersistentDataType.STRING, name
+        );
+    }
+
+    @Override
+    public @Nullable String getDescription() {
+        return SkylliaAPI.getIslandCustomDataQuery().get(
+                Keys.NAMESPACE_KEY_EXTRA, this, Keys.KEY_DESCRIPTION, PersistentDataType.STRING
+        );
+    }
+
+    @Override
+    public boolean setDescription(@Nullable String description) {
+        if (description == null) {
+            return SkylliaAPI.getIslandCustomDataQuery().remove(
+                    Keys.NAMESPACE_KEY_EXTRA, this, Keys.KEY_DESCRIPTION
+            );
+        }
+        return SkylliaAPI.getIslandCustomDataQuery().set(
+                Keys.NAMESPACE_KEY_EXTRA, this, Keys.KEY_DESCRIPTION, PersistentDataType.STRING, description
+        );
     }
 
     /**
