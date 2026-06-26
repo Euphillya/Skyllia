@@ -39,6 +39,14 @@ public abstract class Island {
     public static final String SPAWN_WARP_NAME = "spawn";
     private static final Logger log = LoggerFactory.getLogger(Island.class);
 
+    public @Nullable abstract String getName();
+
+    public abstract boolean setName(@Nullable String name);
+
+    public abstract @Nullable String getDescription();
+
+    public abstract boolean setDescription(@Nullable String description);
+
     /**
      * Gets the owner of the island.
      *
