@@ -241,6 +241,7 @@ public class ForceCreateSubCommands implements SubCommandInterface {
     /**
      * Finds the highest solid ground block at the given XZ coordinates asynchronously.
      * Uses getChunkAtAsync for better performance by ensuring chunk is loaded before access.
+     * If no solid block is found at center, expands search radius in a spiral pattern.
      *
      * @param center Location with the center XZ coordinates and schematic Y height
      * @return CompletableFuture with the location of the highest solid block
@@ -251,33 +252,73 @@ public class ForceCreateSubCommands implements SubCommandInterface {
             return CompletableFuture.completedFuture(center);
         }
 
-        int x = center.getBlockX();
-        int z = center.getBlockZ();
+        int centerX = center.getBlockX();
+        int centerZ = center.getBlockZ();
         int startY = center.getBlockY();
         
         // Get world height limits
         int maxY = Math.min(startY + 20, world.getMaxHeight() - 1);
         int minY = Math.max(startY - 10, world.getMinHeight());
 
-        // Load chunk asynchronously first, then access blocks
-        return world.getChunkAtAsync(x >> 4, z >> 4).thenApply(chunk -> {
+        // Load chunk asynchronously first, then search for ground
+        return world.getChunkAtAsync(centerX >> 4, centerZ >> 4).thenApply(chunk -> {
             try {
-                // Search downward from max height to find the first solid block
-                for (int y = maxY; y >= minY; y--) {
-                    org.bukkit.block.Block block = world.getBlockAt(x, y, z);
-                    
-                    // Check if the block is solid (not air, not water, not lava, etc.)
-                    if (block.getType().isSolid() && !block.isPassable()) {
-                        return new Location(world, center.getX(), y + 1.0, center.getZ());
+                // First try center location
+                Location result = searchColumnForGround(world, centerX, centerZ, minY, maxY);
+                if (result != null) {
+                    return result;
+                }
+                
+                // If center has no solid block, expand search in spiral pattern
+                int maxRadius = 10; // Maximum search radius
+                for (int radius = 1; radius <= maxRadius; radius++) {
+                    // Search in a square spiral pattern
+                    for (int dx = -radius; dx <= radius; dx++) {
+                        for (int dz = -radius; dz <= radius; dz++) {
+                            // Only check the outer ring of current radius
+                            if (Math.abs(dx) != radius && Math.abs(dz) != radius) {
+                                continue;
+                            }
+                            
+                            int x = centerX + dx;
+                            int z = centerZ + dz;
+                            
+                            result = searchColumnForGround(world, x, z, minY, maxY);
+                            if (result != null) {
+                                return result;
+                            }
+                        }
                     }
                 }
                 
-                // If no solid block found, return the original center location
+                // If no solid block found within radius, return the original center location
                 return center;
             } catch (Exception e) {
                 logger.error("Error finding ground location", e);
                 return center;
             }
         });
+    }
+    
+    /**
+     * Searches a single column (X,Z) for the highest solid block.
+     *
+     * @param world The world
+     * @param x Block X coordinate
+     * @param z Block Z coordinate
+     * @param minY Minimum Y to search
+     * @param maxY Maximum Y to search
+     * @return Location of solid block + 1, or null if none found
+     */
+    private Location searchColumnForGround(org.bukkit.World world, int x, int z, int minY, int maxY) {
+        for (int y = maxY; y >= minY; y--) {
+            org.bukkit.block.Block block = world.getBlockAt(x, y, z);
+            
+            // Check if the block is solid (not air, not water, not lava, etc.)
+            if (block.getType().isSolid() && !block.isPassable()) {
+                return new Location(world, x + 0.5, y + 1.0, z + 0.5);
+            }
+        }
+        return null;
     }
 }
