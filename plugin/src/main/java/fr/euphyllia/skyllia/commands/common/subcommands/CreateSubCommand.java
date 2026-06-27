@@ -159,10 +159,10 @@ public class CreateSubCommand implements SubCommandInterface {
                 return Skyllia.getInstance().getInterneAPI()
                         .getSchematicHook(SchematicPlugin.fromString(setting.plugin()))
                         .paste(center, setting)
-                        .thenComposeAsync(success -> {
+                        .thenAcceptAsync(success -> {
                             if (!success) {
                                 island.setDisable(true);
-                                return CompletableFuture.failedFuture(new RuntimeException("Schematic paste failed for world " + worldName));
+                                throw new RuntimeException("Schematic paste failed for world " + worldName);
                             }
                             if (setting.minBuildHeight() != null) {
                                 island.setBuildHeight(worldName, HeightType.MIN, setting.minBuildHeight());
@@ -171,8 +171,8 @@ public class CreateSubCommand implements SubCommandInterface {
                                 island.setBuildHeight(worldName, HeightType.MAX, setting.maxBuildHeight());
                             }
                             if (first) {
-                                // After schematic paste, find the actual ground location
-                                return findGroundLocationAsync(center).thenComposeAsync(spawnLocation -> {
+                                // After schematic paste, find the actual ground location and setup island
+                                findGroundLocationAsync(center).thenComposeAsync(spawnLocation -> {
                                     island.addWarps("home", spawnLocation, true);
                                     island.setSpawnLocation(spawnLocation);
 
@@ -185,7 +185,6 @@ public class CreateSubCommand implements SubCommandInterface {
                                     return teleportAndApplyBorder(player, island, spawnLocation);
                                 });
                             }
-                            return CompletableFuture.completedFuture(null);
                         });
             });
         }

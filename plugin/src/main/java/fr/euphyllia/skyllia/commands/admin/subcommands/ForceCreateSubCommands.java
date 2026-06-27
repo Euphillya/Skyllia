@@ -176,10 +176,10 @@ public class ForceCreateSubCommands implements SubCommandInterface {
                 return Skyllia.getInstance().getInterneAPI()
                         .getSchematicHook(SchematicPlugin.fromString(setting.plugin()))
                         .paste(center, setting)
-                        .thenComposeAsync(success -> {
+                        .thenAcceptAsync(success -> {
                             if (!success) {
                                 island.setDisable(true);
-                                return CompletableFuture.failedFuture(new RuntimeException("Schematic paste failed for world " + worldName));
+                                throw new RuntimeException("Schematic paste failed for world " + worldName);
                             }
                             if (setting.minBuildHeight() != null) {
                                 island.setBuildHeight(worldName, HeightType.MIN, setting.minBuildHeight());
@@ -189,7 +189,7 @@ public class ForceCreateSubCommands implements SubCommandInterface {
                             }
                             if (first) {
                                 // After schematic paste, find the actual ground location
-                                return findGroundLocationAsync(center).thenAcceptAsync(spawnLocation -> {
+                                findGroundLocationAsync(center).thenAcceptAsync(spawnLocation -> {
                                     island.addWarps("home", spawnLocation, true);
                                     island.setSpawnLocation(spawnLocation);
 
@@ -208,7 +208,6 @@ public class ForceCreateSubCommands implements SubCommandInterface {
                                     }
                                 });
                             }
-                            return CompletableFuture.completedFuture(null);
                         });
             });
         }
