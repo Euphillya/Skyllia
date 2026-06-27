@@ -172,30 +172,17 @@ public class CreateSubCommand implements SubCommandInterface {
                             }
                             if (first) {
                                 // After schematic paste, find the actual ground location
-                                return findGroundLocationAsync(center).thenCompose(spawnLocation -> {
-                                    CompletableFuture<Void> future = new CompletableFuture<>();
-                                    
-                                    // Database operations must run in async scheduler
-                                    Bukkit.getAsyncScheduler().runNow(plugin, aScheduler -> {
-                                        try {
-                                            island.addWarps("home", spawnLocation, true);
-                                            island.setSpawnLocation(spawnLocation);
+                                return findGroundLocationAsync(center).thenComposeAsync(spawnLocation -> {
+                                    island.addWarps("home", spawnLocation, true);
+                                    island.setSpawnLocation(spawnLocation);
 
-                                            Skyllia.getInstance().getInterneAPI()
-                                                    .getSkyblockManager()
-                                                    .cacheIslandAndIndex(island);
+                                    Skyllia.getInstance().getInterneAPI()
+                                            .getSkyblockManager()
+                                            .cacheIslandAndIndex(island);
 
-                                            new SkyblockLoadEvent(island).callEvent();
-                                            
-                                            future.complete(null);
-                                        } catch (Exception e) {
-                                            future.completeExceptionally(e);
-                                        }
-                                    });
+                                    new SkyblockLoadEvent(island).callEvent();
                                     
-                                    return future.thenCompose(v -> 
-                                        teleportAndApplyBorder(player, island, spawnLocation)
-                                    );
+                                    return teleportAndApplyBorder(player, island, spawnLocation);
                                 });
                             }
                             return CompletableFuture.completedFuture(null);
@@ -299,34 +286,25 @@ public class CreateSubCommand implements SubCommandInterface {
         int maxY = Math.min(startY + 20, world.getMaxHeight() - 1);
         int minY = Math.max(startY - 10, world.getMinHeight());
 
-        // Load chunk asynchronously first, then access blocks on region scheduler
-        return world.getChunkAtAsync(x >> 4, z >> 4).thenCompose(chunk -> {
-            CompletableFuture<Location> future = new CompletableFuture<>();
-            
-            // Schedule on region scheduler to access block data safely
-            Bukkit.getRegionScheduler().run(Skyllia.getInstance(), center, task -> {
-                try {
-                    // Search downward from max height to find the first solid block
-                    for (int y = maxY; y >= minY; y--) {
-                        org.bukkit.block.Block block = world.getBlockAt(x, y, z);
-                        
-                        // Check if the block is solid (not air, not water, not lava, etc.)
-                        if (block.getType().isSolid() && !block.isPassable()) {
-                            Location groundLoc = new Location(world, center.getX(), y + 1.0, center.getZ());
-                            future.complete(groundLoc);
-                            return;
-                        }
-                    }
+        // Load chunk asynchronously first, then access blocks
+        return world.getChunkAtAsync(x >> 4, z >> 4).thenApply(chunk -> {
+            try {
+                // Search downward from max height to find the first solid block
+                for (int y = maxY; y >= minY; y--) {
+                    org.bukkit.block.Block block = world.getBlockAt(x, y, z);
                     
-                    // If no solid block found, return the original center location
-                    future.complete(center);
-                } catch (Exception e) {
-                    logger.error("Error finding ground location", e);
-                    future.complete(center);
+                    // Check if the block is solid (not air, not water, not lava, etc.)
+                    if (block.getType().isSolid() && !block.isPassable()) {
+                        return new Location(world, center.getX(), y + 1.0, center.getZ());
+                    }
                 }
-            });
-            
-            return future;
+                
+                // If no solid block found, return the original center location
+                return center;
+            } catch (Exception e) {
+                logger.error("Error finding ground location", e);
+                return center;
+            }
         });
     }
 }
