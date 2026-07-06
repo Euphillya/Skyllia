@@ -14,11 +14,13 @@ import fr.euphyllia.skyllia.api.skyblock.Island;
 import fr.euphyllia.skyllia.api.skyblock.Players;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
+import fr.euphyllia.skyllia.api.skyblock.model.IslandWeatherType;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import fr.euphyllia.skyllia.api.utils.Keys;
 import fr.euphyllia.skyllia.api.utils.helper.RegionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -496,6 +498,21 @@ public class IslandHook extends Island {
             boundsCache.put(worldName, b);
         }
         return b.contains(blockX, blockY, blockZ);
+    }
+
+    @Override
+    public IslandWeatherType getWeatherType(World world) {
+        // Todo : Add support for custom weather types per island - currently, it just returns the world's weather type.
+        // Should also accommodate the support for wet blocks, fishing gear, etc.
+        boolean isThunder = world.hasStorm() && world.isThundering();
+        boolean isRain = world.hasStorm() && !world.isThundering();
+        if (isThunder) {
+            return IslandWeatherType.THUNDER;
+        } else if (isRain) {
+            return IslandWeatherType.RAIN;
+        } else {
+            return IslandWeatherType.CLEAR;
+        }
     }
 
     private Bounds computeBounds(World world) {

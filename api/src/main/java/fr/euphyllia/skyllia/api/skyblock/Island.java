@@ -9,6 +9,7 @@ import fr.euphyllia.skyllia.api.permissions.CompiledPermissions;
 import fr.euphyllia.skyllia.api.permissions.IslandFlags;
 import fr.euphyllia.skyllia.api.skyblock.enums.RemovalCause;
 import fr.euphyllia.skyllia.api.skyblock.model.HeightType;
+import fr.euphyllia.skyllia.api.skyblock.model.IslandWeatherType;
 import fr.euphyllia.skyllia.api.skyblock.model.Position;
 import fr.euphyllia.skyllia.api.skyblock.model.WarpIsland;
 import org.bukkit.Location;
@@ -16,8 +17,6 @@ import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -37,7 +36,6 @@ public abstract class Island {
      * </p>
      */
     public static final String SPAWN_WARP_NAME = "spawn";
-    private static final Logger log = LoggerFactory.getLogger(Island.class);
 
     /**
      * Gets the name of the island.
@@ -560,4 +558,11 @@ public abstract class Island {
      * @return {@code true} if the coordinates are inside the island, {@code false} otherwise.
      */
     public abstract boolean isInside(@NotNull World world, int blockX, int blockY, int blockZ);
+
+    /**
+     * Gets the weather type of the island.
+     *
+     * @return The {@link IslandWeatherType} representing the island's weather.
+     */
+    public abstract IslandWeatherType getWeatherType(World world);
 }
