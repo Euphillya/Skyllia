@@ -43,13 +43,27 @@ public class PistonEvent implements Listener {
             return;
         }
         int[] offset = OFFSETS[event.getDirection().ordinal()];
+
+        Block piston = event.getBlock();
+        Location headLocation = piston.getLocation().add(offset[0], offset[1], offset[2]);
+        int headX = headLocation.getBlockX();
+        int headZ = headLocation.getBlockZ();
+        Island island = ListenersUtils.checkChunkIsIsland(headX >> 4, headZ >> 4, event);
+        if (island == null) {
+            return;
+        }
+        ListenersUtils.isBlockOutsideIsland(island, world, headX, headLocation.getBlockY(), headZ, event);
+        if (event.isCancelled()) {
+            return;
+        }
+
         for (Block block : event.getBlocks()) {
             Location location = block.getLocation().add(offset[0], offset[1], offset[2]);
             int blockX = location.getBlockX();
             int blockZ = location.getBlockZ();
             int chunkX = blockX >> 4;
             int chunkZ = blockZ >> 4;
-            Island island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
+            island = ListenersUtils.checkChunkIsIsland(chunkX, chunkZ, event);
             if (island == null) {
                 return;
             }
