@@ -3,6 +3,7 @@ package fr.euphyllia.skyllia.listeners;
 import fr.euphyllia.skyllia.Skyllia;
 import fr.euphyllia.skyllia.api.InterneAPI;
 import fr.euphyllia.skyllia.api.SkylliaAPI;
+import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.FallingBlockEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.GrowEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.blocks.PistonEvent;
 import fr.euphyllia.skyllia.listeners.bukkitevents.paper.PortalAlternativePaperEvent;
@@ -89,6 +90,7 @@ public class ListenersRegistrar {
         registerEvent(pluginManager, new WorldBorderAddEvent(interneAPI));
         registerEvent(pluginManager, new PistonEvent(interneAPI));
         registerEvent(pluginManager, new GrowEvent(interneAPI));
+        registerEvent(pluginManager, new FallingBlockEvent());
         registerEvent(pluginManager, new MoveEvent());
         registerEvent(pluginManager, new QuitEvent());
         registerEvent(pluginManager, new RespawnEvent(interneAPI));
