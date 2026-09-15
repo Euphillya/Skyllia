@@ -7,7 +7,7 @@ group = "fr.euphyllia.skyllia.hook.luminol"
 repositories {
     maven {
         name = "Luminol"
-        url = uri("https://repo.menthamc.org/repository/maven-public/")
+        url = uri("https://repo.bacteriawa.com/maven-public/")
     }
 }
 

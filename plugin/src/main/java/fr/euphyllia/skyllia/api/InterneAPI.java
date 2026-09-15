@@ -70,7 +70,7 @@ public class InterneAPI {
     private @Nullable DatabaseLoader database;
     private Managers managers;
 
-    public InterneAPI(Skyllia plugin) throws UnsupportedMinecraftVersionException {
+    public InterneAPI(final Skyllia plugin) throws UnsupportedMinecraftVersionException {
         this.plugin = plugin;
 
         this.setVersionNMS();
@@ -91,7 +91,7 @@ public class InterneAPI {
 
     private void setVersionNMS() throws UnsupportedMinecraftVersionException {
         final String minecraftVersion = Bukkit.getServer().getMinecraftVersion();
-        String pkg = switch (minecraftVersion) {
+        final String pkg = switch (minecraftVersion) {
             case "1.20.5", "1.20.6" -> "fr.euphyllia.skyllia.utils.nms.v1_20_R4.";
             case "1.21", "1.21.1" -> "fr.euphyllia.skyllia.utils.nms.v1_21_R1.";
             case "1.21.2", "1.21.3" -> "fr.euphyllia.skyllia.utils.nms.v1_21_R2.";
@@ -102,6 +102,7 @@ public class InterneAPI {
             case "1.21.11" -> "fr.euphyllia.skyllia.utils.nms.v1_21_R7.";
             case "26.1", "26.1.1", "26.1.2" -> "fr.euphyllia.skyllia.utils.nms.v26_1.";
             case "26.2" -> "fr.euphyllia.skyllia.utils.nms.v26_2.";
+            case "26.3" -> "fr.euphyllia.skyllia.utils.nms.v26_3.";
             default ->
                     throw new UnsupportedMinecraftVersionException("Unsupported Minecraft version: " + minecraftVersion);
         };
@@ -112,62 +113,62 @@ public class InterneAPI {
             this.biomesImpl = (BiomesImpl) Class.forName(pkg + "BiomeNMS").getDeclaredConstructor().newInstance();
             this.explosionEntityImpl = (ExplosionEntityImpl) Class.forName(pkg + "ExplosionEntityImpl").getDeclaredConstructor().newInstance();
             this.mobsSpawnImpl = (MobsSpawnImpl) Class.forName(pkg + "MobSpawnNMS").getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
+        } catch (final ReflectiveOperationException e) {
             throw new UnsupportedMinecraftVersionException("Failed to load NMS classes for version " + minecraftVersion + ": " + e.getMessage());
         }
     }
 
-    public void createAndCopyResources(File pluginFile, String folderName) {
-        File targetDir = new File(plugin.getDataFolder(), folderName);
+    public void createAndCopyResources(final File pluginFile, final String folderName) {
+        final File targetDir = new File(plugin.getDataFolder(), folderName);
         if (!targetDir.exists()) targetDir.mkdirs();
         copyFilesFromJarResources(pluginFile, folderName, targetDir);
     }
 
-    private void copyFilesFromJarResources(File file, String resourceFolder, File targetFolder) {
-        try (JarFile jarFile = new JarFile(file)) {
-            Enumeration<JarEntry> entries = jarFile.entries();
+    private void copyFilesFromJarResources(final File file, final String resourceFolder, final File targetFolder) {
+        try (final JarFile jarFile = new JarFile(file)) {
+            final Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String entryName = entry.getName();
+                final JarEntry entry = entries.nextElement();
+                final String entryName = entry.getName();
 
                 if (entryName.startsWith(resourceFolder + "/")
                         && !entry.isDirectory()
                         && !entryName.endsWith("paper-plugin.yml")) {
 
-                    File outFile = new File(targetFolder, entryName.substring(resourceFolder.length() + 1));
+                    final File outFile = new File(targetFolder, entryName.substring(resourceFolder.length() + 1));
                     if (!outFile.exists()) {
                         outFile.getParentFile().mkdirs();
-                        try (InputStream in = plugin.getResource(entryName);
-                             FileOutputStream out = new FileOutputStream(outFile)) {
-                            byte[] buffer = new byte[1024];
+                        try (final InputStream in = plugin.getResource(entryName);
+                             final FileOutputStream out = new FileOutputStream(outFile)) {
+                            final byte[] buffer = new byte[1024];
                             int len;
                             while ((len = in.read(buffer)) > 0) out.write(buffer, 0, len);
                         }
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("Impossible de copier les ressources : {}", resourceFolder, e);
         }
     }
 
     public boolean setupSGBD() throws DatabaseException {
         if (ConfigLoader.database.getMariaDBConfig() != null) {
-            MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
+            final MariaDB mariaDB = new MariaDB(ConfigLoader.database.getMariaDBConfig());
             this.database = new MariaDBLoader(mariaDB);
             if (!this.database.loadDatabase()) return false;
             return getIslandQuery().getDatabaseInitializeQuery().init();
         }
 
         if (ConfigLoader.database.getPostgreConfig() != null) {
-            Postgres postgres = new Postgres(ConfigLoader.database.getPostgreConfig());
+            final Postgres postgres = new Postgres(ConfigLoader.database.getPostgreConfig());
             this.database = new PostgresLoader(postgres);
             if (!this.database.loadDatabase()) return false;
             return getIslandQuery().getDatabaseInitializeQuery().init();
         }
 
         if (ConfigLoader.database.getSqLiteConfig() != null) {
-            SQLite sqlite = new SQLite(ConfigLoader.database.getSqLiteConfig());
+            final SQLite sqlite = new SQLite(ConfigLoader.database.getSqLiteConfig());
             this.database = new SQLiteDatabaseLoader(sqlite);
             if (!this.database.loadDatabase()) return false;
             return getIslandQuery().getDatabaseInitializeQuery().init();
@@ -184,7 +185,7 @@ public class InterneAPI {
         return managers;
     }
 
-    public void setManagers(Managers managers) {
+    public void setManagers(final Managers managers) {
         this.managers = managers;
     }
 
@@ -250,7 +251,7 @@ public class InterneAPI {
         return this.worldModifier;
     }
 
-    public @NotNull SchematicHook getSchematicHook(@NotNull SchematicPlugin requested) {
+    public @NotNull SchematicHook getSchematicHook(@NotNull final SchematicPlugin requested) {
         return this.schematicHookResolver.resolve(requested);
     }
 
