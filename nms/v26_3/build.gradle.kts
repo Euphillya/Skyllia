@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    paperweight.foliaDevBundle("26.2.build.+")
+    paperweight.paperDevBundle("26.3.build.+")
     compileOnly(project(":nms:v1_21_R7"))
     compileOnly(project(":api"))
 }

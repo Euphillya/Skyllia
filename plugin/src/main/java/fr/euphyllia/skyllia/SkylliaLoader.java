@@ -10,8 +10,8 @@ import org.eclipse.aether.repository.RemoteRepository;
 @SuppressWarnings("UnstableApiUsage")
 public class SkylliaLoader implements PluginLoader {
     @Override
-    public void classloader(PluginClasspathBuilder classpathBuilder) {
-        MavenLibraryResolver resolver = new MavenLibraryResolver();
+    public void classloader(final PluginClasspathBuilder classpathBuilder) {
+        final MavenLibraryResolver resolver = new MavenLibraryResolver();
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo.papermc.io/repository/maven-public/").build());
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo.euphyllia.moe/repository/maven-public/").build());
         resolver.addRepository(new RemoteRepository.Builder("mojang", "default", "https://libraries.minecraft.net").build());
@@ -19,10 +19,8 @@ public class SkylliaLoader implements PluginLoader {
         resolver.addRepository(new RemoteRepository.Builder("thenextlvl", "default", "https://repo.thenextlvl.net/releases").build());
 
         // Maven Repository Dependencies
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-core:2.26.0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-api:2.26.0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-minimessage:5.1.1"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("net.kyori:adventure-text-serializer-legacy:5.1.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-core:2.26.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.apache.logging.log4j:log4j-api:2.26.1"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("com.electronwill.night-config:toml:3.9.0"), null));
 
         // HikariCP dependency
