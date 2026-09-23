@@ -35,6 +35,7 @@ dependencies {
     compileOnly(project(":nms:v1_21_R7"))
     compileOnly(project(":nms:v26_1"))
     compileOnly(project(":nms:v26_2"))
+    compileOnly(project(":nms:v26_3"))
 }
 java.disableAutoTargetJvm()
 

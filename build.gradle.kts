@@ -2,13 +2,11 @@ plugins {
     id("java-library")
     id("java")
     id("maven-publish")
-    id("io.github.goooler.shadow") version "8.1.8"
+    id("com.gradleup.shadow") version "9.6.1"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.21" apply false
-    id("xyz.jpenilla.run-paper") version "3.0.2"
+    id("xyz.jpenilla.run-paper") version "3.1.0"
     id("com.modrinth.minotaur") version "2.9.0"
 }
-
-evaluationDependsOn(":plugin")
 
 java.disableAutoTargetJvm()
 
@@ -47,6 +45,7 @@ dependencies {
     implementation(project(":nms:v1_21_R7"))
     implementation(project(":nms:v26_1"))
     implementation(project(":nms:v26_2"))
+    implementation(project(":nms:v26_3"))
 }
 
 allprojects {
@@ -54,7 +53,7 @@ allprojects {
     description = "Plugin Skyblock on Folia";
 
     apply(plugin = "java-library")
-    apply(plugin = "io.github.goooler.shadow")
+    apply(plugin = "com.gradleup.shadow")
     apply(plugin = "maven-publish")
 
     java {
@@ -106,6 +105,8 @@ allprojects {
     }
 }
 
+evaluationDependsOn(":plugin")
+
 tasks.test {
     useJUnitPlatform()
 }
@@ -123,13 +124,19 @@ fun getGitCommitHash(): String {
     }
 }
 
+//runPaper.folia.registerTask()
 
-
-runPaper.folia.registerTask()
+val java25Launcher = javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(25))
+}
 
 tasks {
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("26.3")
+    }
+
+    withType<xyz.jpenilla.runtask.task.AbstractRun>().configureEach {
+        javaLauncher.set(java25Launcher)
     }
 }
 
