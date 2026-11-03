@@ -174,7 +174,7 @@ public class WorldNMS extends fr.euphyllia.skyllia.api.utils.nms.WorldNMS {
             final WorldOptions worldOptions = new WorldOptions(creator.seed(), creator.generateStructures(), creator.bonusChest());
 
             final DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(GsonHelper.parse((creator.generatorSettings().isEmpty()) ? "{}" : creator.generatorSettings()), creator.type().name().toLowerCase(Locale.ROOT));
-            final WorldDimensions worldDimensions = properties.create(registryAccess);
+            final WorldDimensions worldDimensions = properties.create(context.datapackWorldRegistries());
 
             final WorldDimensions.Complete complete = worldDimensions.bake(contextLevelStemRegistry);
             if (complete.dimensions().getValue(actualDimension) == null) {

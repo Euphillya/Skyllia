@@ -124,7 +124,7 @@ fun getGitCommitHash(): String {
     }
 }
 
-//runPaper.folia.registerTask()
+runPaper.folia.registerTask()
 
 val java25Launcher = javaToolchains.launcherFor {
     languageVersion.set(JavaLanguageVersion.of(25))
