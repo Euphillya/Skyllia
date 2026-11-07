@@ -13,3 +13,7 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
+    SkylliaBank:
+      load: BEFORE
+      required: false
+      join-classpath: true

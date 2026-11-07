@@ -20,19 +20,19 @@ public record BankReward(Number amount) implements ChallengeReward {
     private static final Logger log = LoggerFactory.getLogger(BankReward.class);
 
     @Override
-    public void apply(Player player, Island island, Challenge challenge) {
+    public void apply(final Player player, final Island island, final Challenge challenge) {
         Bukkit.getAsyncScheduler().runNow(SkylliaChallenge.getInstance(), task -> {
-            boolean result = SkylliaBank.getBankManager().deposit(island.getId(), amount.doubleValue());
+            final boolean result = SkylliaBank.getBankManager().deposit(island.getId(), amount.doubleValue());
             if (result) {
                 ConfigLoader.language.sendMessage(player, "addons.challenge.reward.bank.success", Map.of(
                         "%amount%", String.valueOf(amount.doubleValue()),
-                        "%challenge_name", challenge.getName()
+                        "%challenge_name%", challenge.getName()
                 ));
                 return;
             } else {
                 ConfigLoader.language.sendMessage(player, "addons.challenge.reward.bank.failed", Map.of(
                         "%amount%", String.valueOf(amount.doubleValue()),
-                        "%challenge_name", challenge.getName()
+                        "%challenge_name%", challenge.getName()
                 ));
                 log.error("Failed to deposit money to island bank for challenge reward");
             }
@@ -55,7 +55,7 @@ public record BankReward(Number amount) implements ChallengeReward {
      * @return a short displayable string describing this reward
      */
     @Override
-    public Component getDisplay(Locale locale) {
+    public Component getDisplay(final Locale locale) {
         return null;
     }
 }
